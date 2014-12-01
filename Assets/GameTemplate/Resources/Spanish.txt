@@ -1,0 +1,79 @@
+cargando = Cargando...
+mas_juegos = MAS JUEGOS
+mas = Más
+en_pausa = EN PAUSA
+pausa = PAUSA
+records = RECORDS
+jugar = JUGAR
+reintentar = REINTENTAR
+boton_login = CONECTAR
+boton_logout = DESCONECTAR
+boton_opciones = OPCIONES
+boton_logros = LOGROS
+pronto = PRÓXIMAMENTE
+sonido = SOUND
+menu = MENU
+continuar = CONTINUAR
+conectar = CONECTAR
+conectando_fb = CONECTANDO CON LA CUENTA DE FACEBOOK...
+conectado_fb = FACEBOOK CONECTADO CON ÉXITO
+error_conexion_fb = ERROR INTENTANDO CONECTAR CON FACEBOOK
+yo = Yo
+cargando_scores_amigos = Cargando puntuaciones de tus amigos...
+facil = FACIL
+dificil = DIFICIL
+normal = NORMAL
+
+titulo_popup_rate = Valóranos!
+mensaje_popup_rate = Vota ahora y ayúdanos a mejorar!
+btn_votar_popup_rate = Valorar ahora
+btn_recordar_popup_rate = Recordar más tarde
+btn_rechazar_popup_rate = No gracias
+
+pregunta_compra = ESTAS SEGURO QUE QUIERES COMPRAR ESTE COCHE?
+comprar = COMPRAR
+cancelar_compra = CANCELAR
+
+record_acual = ACTUAL
+mejor_record = MEJOR
+tocar_pantalla = TOCA LA PANTALLA
+
+post_descripcion1 = Mi puntuación actual:
+post_descripcion2 = Mi mejor puntuación:
+titulo_popup_fallo = Error
+post_descripcion_fallo = Algo falló enviando el mensaje
+titulo_exito_popup_post_enviado = Envío completado
+post_descripcion_exito_enviado = Puntuación compartida con éxito
+
+titulo_popup_min_ver_and_req = Versión mínima	
+desc_popup_min_ver_and_req = Versión mínima requerida 4.2.2 para disfrutar de los logros
+
+titulo_popup_login_gps = Login
+desc_popup_login_gps = Tienes que iniciar sesión en Google Play Services
+boton_ok_login_gps = Login
+boton_cancel_login_gps = Cancelar 
+
+fb_invitacion = Ven y juega a Ball Boy conmigo!
+fb_titulo_invitacion = Invita a tus amigos
+btn_invita = Invitar
+seleccionar_todos = Seleccionar todo
+
+nivel = NIVEL
+punt_max = PUNTUACIÓN MÁXIMA
+nivel_completado = NIVEL COMPLETADO
+nivel_no_completado = NIVEL NO SUPERADO
+puntos = PUNTOS
+seguir = SIGUIENTE
+objetivo = OBJETIVO:
+seguir_jugando = SEGUIR JUGANDO
+dejar_jugar = TERMINAR PARTIDA
+mensaje_confirma_salir = ¿QUIERES ABANDONAR LA PARTIDA?
+cantidad = CANTIDAD:
+
+
+gameover_colision = ¡Te golpeaste duro!
+gameover_salirse_pista = ¡Has salido de la pista!
+
+tutorial_tit = TUTORIAL
+tuto_fin = ENHORABUENA HAS COMPLETADO EL TUTORIAL!\nAHORA A JUGAR Y A DIVERTIRSE!
+

@@ -1,0 +1,76 @@
+﻿cargando = Loading...
+mas_juegos = MORE GAMES
+mas = More
+en_pausa = PAUSED
+pausa = PAUSE
+records = SCORE
+jugar = PLAY
+reintentar = RETRY
+boton_login = LOGIN
+boton_logout = LOGOUT
+boton_opciones = SETTINGS
+boton_logros = ACHIEVEMENTS
+pronto = COMING SOON
+sonido = SOUND
+menu = MENU
+continuar = CONTINUE
+conectar = CONNECT
+conectando_fb = CONNECTING TO FACEBOOK ACCOUNT...
+conectado_fb = FACEBOOK CONNECTED SUCCESSFULLY
+error_conexion_fb = ERROR TRYING TO CONNECT WITH FACEBOOK
+yo = Me
+cargando_scores_amigos = Loading scores of your friends...
+facil = EASY
+dificil = HARD
+normal = NORMAL
+
+titulo_popup_rate = Rate us!
+mensaje_popup_rate = Rate now! Help us to improve!
+btn_votar_popup_rate = Rate now
+btn_recordar_popup_rate = Ask me later
+btn_rechazar_popup_rate = No thanks
+
+record_acual = CURRENT
+mejor_record = BEST
+tocar_pantalla = TAP THE SCREEN
+
+post_descripcion1 = My current score:
+post_descripcion2 = My best score:
+titulo_popup_fallo = Error
+post_descripcion_fallo = Post failed, something was wrong
+titulo_exito_popup_post_enviado = Success
+post_descripcion_exito_enviado = Score shared successfully
+
+titulo_popup_min_ver_and_req = Minimum version	
+desc_popup_min_ver_and_req = Mimimum required version to enjoy the Achiviements 4.2.2 
+
+titulo_popup_login_gps = Login
+desc_popup_login_gps = You have to login on Google Play Services
+boton_ok_login_gps = Login
+boton_cancel_login_gps = Cancel
+
+fb_invitacion = Come and play Ball Boy with me!
+fb_titulo_invitacion = Invite your friends
+btn_invita = Invite
+seleccionar_todos = Select all
+
+pregunta_compra = ARE YOU SURE YOU WANT TO BUY THIS CAR?
+comprar = BUY
+cancelar_compra = CANCEL
+
+nivel = LEVEL
+punt_max = MAXIMUM SCORE
+nivel_completado = MISSION COMPLETED
+nivel_no_completado = MISSION FAILED
+puntos = SCORE
+seguir = CONTINUE
+objetivo = GOAL:
+seguir_jugando = RESUME
+dejar_jugar = EXIT GAME
+mensaje_confirma_salir = ARE YOU SURE YOU WANT TO EXIT THE GAME?
+cantidad = QUANTITY:
+
+tutorial_tit = TUTORIAL
+tuto_fin = CONGRATULATIONS, YOU HAVE COMPLETE THE TUTORIAL!!\nNOW PLAY AND ENJOY!
+
+

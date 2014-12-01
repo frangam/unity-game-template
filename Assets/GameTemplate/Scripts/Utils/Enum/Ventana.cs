@@ -1,0 +1,16 @@
+public enum Ventana{
+	CONFIRMACION_NIVEL 	= 0,
+	SALIR				= 1,
+	MOSTRAR_MISION		= 2,
+	GAMEOVER			= 3,
+	MISION_SUPERADA		= 4,
+	CONECTANDO_FB		= 5,
+	FB_CONECTADO		= 6,
+	FB_ERROR_CONEXION	= 7,
+	FB_INVITA_AMIGOS	= 8,
+	BACK_COUNTER		= 9,		//Contador de cuenta a tras
+	PAUSA				= 10,
+
+
+	AVISO_COMPRA_COCHE	= 11
+}

@@ -1,0 +1,436 @@
+fileFormatVersion: 2
+guid: 7a4788ec3ff22445581944d0e5e1f06c
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: boton-logros
+    21300002: boton-mute
+    21300004: boton-pausa
+    21300006: boton-play
+    21300008: boton-volumen
+    21300010: boton-volver
+    21300012: boton
+    21300014: clasificacion
+    21300016: btnAchievements
+    21300018: btnBack
+    21300020: btnPause
+    21300022: btnPlay
+    21300024: btnSimple
+    21300026: btnSoundOff
+    21300028: btnSoundOn
+    21300030: buttons-btnAchievements
+    21300032: buttons-btnAction
+    21300034: buttons-btnBack
+    21300036: buttons-btnCancel
+    21300038: buttons-btnClose
+    21300040: buttons-btnFaceboockConnect
+    21300042: buttons-btnGPSLogin
+    21300044: buttons-btnMusicOn
+    21300046: buttons-btnPause
+    21300048: buttons-btnPlay
+    21300050: buttons-btnRanking
+    21300052: buttons-btnSimple
+    21300054: buttons-btnSoundOn
+    21300056: buttons-toggleOff
+    21300058: buttons-toggleOn
+    21300060: sliders-basicSlider-slBackground
+    21300062: sliders-basicSlider-slForeground
+    21300064: sliders-basicSlider-slOverGloss
+    21300066: sprites-Level selection-spCurrentLevelIndicator
+    21300068: sprites-Level selection-spLevelBase0
+    21300070: sprites-Level selection-spLevelBase1
+    21300072: sprites-Level selection-spLevelBase2
+    21300074: sprites-Level selection-spLevelBase3
+    21300076: sprites-Level selection-spLevelPathNode
+    21300078: sprites-Level selection-spLevelStar
+    21300080: sprites-spEmptyStar
+    21300082: sprites-spFacebook
+    21300084: sprites-spForbidden
+    21300086: sprites-spFriendProfImgFrame
+    21300088: sprites-spPlayerProfImgFrame
+    21300090: sprites-spProfileImgAnon
+    21300092: sprites-spStar
+    21300094: buttons-btnSettings
+    21300096: sprites-spWhiteSquare
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 4096
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: buttons-btnAchievements
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 439
+        width: 151
+        height: 151
+      alignment: 9
+      pivot: {x: .466887414, y: .533112586}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnAction
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 554
+        width: 220
+        height: 224
+      alignment: 9
+      pivot: {x: .49545455, y: .493303567}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnBack
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 94
+        width: 151
+        height: 151
+      alignment: 9
+      pivot: {x: .466887414, y: .533112586}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnCancel
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 902
+        width: 428
+        height: 120
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnClose
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 80
+        width: 96
+        height: 99
+      alignment: 9
+      pivot: {x: .489583343, y: .484848499}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnFaceboockConnect
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 780
+        width: 428
+        height: 120
+      alignment: 9
+      pivot: {x: .501168251, y: .495833337}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnGPSLogin
+      rect:
+        serializedVersion: 2
+        x: 765
+        y: 554
+        width: 219
+        height: 224
+      alignment: 9
+      pivot: {x: .502283096, y: .491071433}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnMusicOn
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 762
+        width: 109
+        height: 109
+      alignment: 9
+      pivot: {x: .495412856, y: .495412856}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnPause
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 274
+        width: 151
+        height: 151
+      alignment: 9
+      pivot: {x: .466887414, y: .533112586}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnPlay
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 121
+        width: 151
+        height: 151
+      alignment: 9
+      pivot: {x: .466887414, y: .533112586}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnRanking
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 286
+        width: 151
+        height: 151
+      alignment: 9
+      pivot: {x: .466887414, y: .533112586}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnSettings
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 427
+        width: 163
+        height: 163
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnSimple
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 751
+        width: 428
+        height: 120
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-btnSoundOn
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 651
+        width: 109
+        height: 109
+      alignment: 9
+      pivot: {x: .495412856, y: .495412856}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-toggleOff
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 524
+        width: 125
+        height: 125
+      alignment: 9
+      pivot: {x: .495999992, y: .504000008}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: buttons-toggleOn
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 663
+        width: 86
+        height: 86
+      alignment: 9
+      pivot: {x: .488372087, y: .511627913}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sliders-basicSlider-slBackground
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 956
+        width: 555
+        height: 66
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sliders-basicSlider-slForeground
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 898
+        width: 546
+        height: 56
+      alignment: 9
+      pivot: {x: .499084234, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sliders-basicSlider-slOverGloss
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 873
+        width: 526
+        height: 23
+      alignment: 9
+      pivot: {x: .499049425, y: -.0869565234}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-Level selection-spCurrentLevelIndicator
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 247
+        width: 96
+        height: 178
+      alignment: 9
+      pivot: {x: .546875, y: .522471905}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-Level selection-spLevelBase0
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 3
+        width: 123
+        height: 116
+      alignment: 9
+      pivot: {x: .556910574, y: .512931049}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-Level selection-spLevelBase1
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 3
+        width: 123
+        height: 116
+      alignment: 9
+      pivot: {x: .556910574, y: .512931049}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-Level selection-spLevelBase2
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 406
+        width: 123
+        height: 116
+      alignment: 9
+      pivot: {x: .556910574, y: .512931049}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-Level selection-spLevelBase3
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 288
+        width: 123
+        height: 116
+      alignment: 9
+      pivot: {x: .556910574, y: .512931049}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-Level selection-spLevelPathNode
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 36
+        width: 54
+        height: 56
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-Level selection-spLevelStar
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 514
+        width: 71
+        height: 68
+      alignment: 9
+      pivot: {x: .542253494, y: .529411793}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spEmptyStar
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 592
+        width: 165
+        height: 157
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spFacebook
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 584
+        width: 77
+        height: 77
+      alignment: 9
+      pivot: {x: .506493509, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spForbidden
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 11
+        width: 67
+        height: 81
+      alignment: 9
+      pivot: {x: .49253732, y: .481481493}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spFriendProfImgFrame
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 154
+        width: 149
+        height: 130
+      alignment: 9
+      pivot: {x: .516778529, y: .469230771}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spPlayerProfImgFrame
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 22
+        width: 149
+        height: 130
+      alignment: 9
+      pivot: {x: .516778529, y: .469230771}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spProfileImgAnon
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 181
+        width: 105
+        height: 105
+      alignment: 9
+      pivot: {x: .504761934, y: .495238096}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spStar
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 592
+        width: 165
+        height: 157
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: sprites-spWhiteSquare
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 990
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
