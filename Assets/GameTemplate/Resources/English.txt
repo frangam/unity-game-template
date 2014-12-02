@@ -1,27 +1,27 @@
-﻿cargando = Loading...
-mas_juegos = MORE GAMES
-mas = More
-en_pausa = PAUSED
-pausa = PAUSE
-records = SCORE
-jugar = PLAY
-reintentar = RETRY
+﻿loading = Loading...
+more_games = MORE GAMES
+more = More
+pause_game = PAUSED
+pause = PAUSE
+score = SCORE
+play = PLAY
+retry = RETRY
 simple_login_button = LOGIN
 simple_logout_button = LOGOUT
-boton_opciones = SETTINGS
-boton_logros = ACHIEVEMENTS
-pronto = COMING SOON
-sonido = SOUND
+settings = SETTINGS
+achievements = ACHIEVEMENTS
+comming_soon = COMING SOON
+sound = SOUND
 menu = MENU
-continuar = CONTINUE
-conectar = CONNECT
-conectando_fb = CONNECTING TO FACEBOOK ACCOUNT...
-conectado_fb = FACEBOOK CONNECTED SUCCESSFULLY
-error_conexion_fb = ERROR TRYING TO CONNECT WITH FACEBOOK
-yo = Me
-cargando_scores_amigos = Loading scores of your friends...
-facil = EASY
-dificil = HARD
+lb_continue = CONTINUE
+connect = CONNECT
+connecting_to_fb = CONNECTING TO FACEBOOK ACCOUNT...
+fb_connected = FACEBOOK CONNECTED SUCCESSFULLY
+fb_error_connection = ERROR TRYING TO CONNECT WITH FACEBOOK
+me = Me
+loading_friends_scores = Loading scores of your friends...
+easy = EASY
+hard = HARD
 normal = NORMAL
 
 rate_popup_title = Rate us!
@@ -30,9 +30,9 @@ rate_popup_vote_button = Rate now
 rate_popup_remember_button = Ask me later
 rate_popup_refuse_button = No thanks
 
-record_acual = CURRENT
-mejor_record = BEST
-tocar_pantalla = TAP THE SCREEN
+current_score = CURRENT
+best_score = BEST
+tap_screen = TAP THE SCREEN
 
 social_post_current_score = My current score:
 social_post_best_score = My best score:
@@ -50,27 +50,26 @@ ok_button_gps_login_popup = Login
 cancel_button_gps_login_popup = Cancel
 
 fb_invitation = Come and play Ball Boy with me!
-fb_titulo_invitacion = Invite your friends
-btn_invita = Invite
-seleccionar_todos = Select all
+fb_invitation_title = Invite your friends
+fb_invitation_button_name = Invite
+select_all = Select all
 
-pregunta_compra = ARE YOU SURE YOU WANT TO BUY THIS CAR?
-comprar = BUY
-cancelar_compra = CANCEL
+question_item_purchase = ARE YOU SURE YOU WANT TO BUY THIS CAR?
+purchase = PURCHASE
+calcel_purchase = CANCEL
 
 level = LEVEL
-punt_max = MAXIMUM SCORE
-nivel_completado = MISSION COMPLETED
-nivel_no_completado = MISSION FAILED
-puntos = SCORE
-seguir = CONTINUE
-objetivo = GOAL:
-seguir_jugando = RESUME
-dejar_jugar = EXIT GAME
-mensaje_confirma_salir = ARE YOU SURE YOU WANT TO EXIT THE GAME?
-cantidad = QUANTITY:
+max_score = MAXIMUM SCORE
+mission_completed = MISSION COMPLETED
+mission_failed = MISSION FAILED
+score = SCORE
 
-tutorial_tit = TUTORIAL
-tuto_fin = CONGRATULATIONS, YOU HAVE COMPLETE THE TUTORIAL!!\nNOW PLAY AND ENJOY!
+goal = GOAL:
+resume_game = RESUME
+exit_game = EXIT GAME
+exit_confirmation_message = ARE YOU SURE YOU WANT TO EXIT THE GAME?
+
+tutorial_title = TUTORIAL
+end_tutorial_desc = CONGRATULATIONS, YOU HAVE COMPLETE THE TUTORIAL!!\nNOW PLAY AND ENJOY!
 
 

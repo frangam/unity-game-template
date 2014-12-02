@@ -1,27 +1,27 @@
-cargando = Cargando...
-mas_juegos = MAS JUEGOS
-mas = Más
-en_pausa = EN PAUSA
-pausa = PAUSA
-records = RECORDS
-jugar = JUGAR
-reintentar = REINTENTAR
+loading = Cargando...
+more_games = MAS JUEGOS
+more = Más
+pause_game = EN PAUSA
+pause = PAUSA
+score = RECORDS
+play = JUGAR
+retry = REINTENTAR
 simple_login_button = CONECTAR
 simple_logout_button = SALIR
-boton_opciones = OPCIONES
-boton_logros = LOGROS
-pronto = PRÓXIMAMENTE
-sonido = SOUND
+settings = OPCIONES
+achievements = LOGROS
+comming_soon = PRÓXIMAMENTE
+sound = SOUND
 menu = MENU
-continuar = CONTINUAR
-conectar = CONECTAR
-conectando_fb = CONECTANDO CON LA CUENTA DE FACEBOOK...
-conectado_fb = FACEBOOK CONECTADO CON ÉXITO
-error_conexion_fb = ERROR INTENTANDO CONECTAR CON FACEBOOK
-yo = Yo
-cargando_scores_amigos = Cargando puntuaciones de tus amigos...
-facil = FACIL
-dificil = DIFICIL
+lb_continue = CONTINUAR
+connect = CONECTAR
+connecting_to_fb = CONECTANDO CON LA CUENTA DE FACEBOOK...
+fb_connected = FACEBOOK CONECTADO CON ÉXITO
+fb_error_connection = ERROR INTENTANDO CONECTAR CON FACEBOOK
+me = Yo
+loading_friends_scores = Cargando puntuaciones de tus amigos...
+easy = FACIL
+hard = DIFICIL
 normal = NORMAL
 
 rate_popup_title = Valóranos!
@@ -30,13 +30,9 @@ rate_popup_vote_button = Valorar ahora
 rate_popup_remember_button = Recordar más tarde
 rate_popup_refuse_button = No gracias
 
-pregunta_compra = ESTAS SEGURO QUE QUIERES COMPRAR ESTE COCHE?
-comprar = COMPRAR
-cancelar_compra = CANCELAR
-
-record_acual = ACTUAL
-mejor_record = MEJOR
-tocar_pantalla = TOCA LA PANTALLA
+current_score = ACTUAL
+best_score = MEJOR
+tap_screen = TOCA LA PANTALLA
 
 social_post_current_score = Mi puntuación actual:
 social_post_best_score = Mi mejor puntuación:
@@ -54,26 +50,25 @@ ok_button_gps_login_popup = Login
 cancel_button_gps_login_popup = Cancelar 
 
 fb_invitation = Ven y juega a Ball Boy conmigo!
-fb_titulo_invitacion = Invita a tus amigos
-btn_invita = Invitar
-seleccionar_todos = Seleccionar todo
+fb_invitation_title = Invita a tus amigos
+fb_invitation_button_name = Invitar
+select_all = Seleccionar todo
+
+question_item_purchase = ESTAS SEGURO QUE QUIERES COMPRAR ESTE COCHE?
+purchase = COMPRAR
+calcel_purchase = CANCELAR
 
 level = NIVEL
-punt_max = PUNTUACIÓN MÁXIMA
-nivel_completado = NIVEL COMPLETADO
-nivel_no_completado = NIVEL NO SUPERADO
-puntos = PUNTOS
-seguir = SIGUIENTE
-objetivo = OBJETIVO:
-seguir_jugando = SEGUIR JUGANDO
-dejar_jugar = TERMINAR PARTIDA
-mensaje_confirma_salir = ¿QUIERES ABANDONAR LA PARTIDA?
-cantidad = CANTIDAD:
+max_score = PUNTUACIÓN MÁXIMA
+mission_completed = NIVEL COMPLETADO
+mission_failed = NIVEL NO SUPERADO
+score = PUNTOS
 
+goal = OBJETIVO:
+resume_game = SEGUIR JUGANDO
+exit_game = TERMINAR PARTIDA
+exit_confirmation_message = ¿QUIERES ABANDONAR LA PARTIDA?
 
-gameover_colision = ¡Te golpeaste duro!
-gameover_salirse_pista = ¡Has salido de la pista!
-
-tutorial_tit = TUTORIAL
-tuto_fin = ENHORABUENA HAS COMPLETADO EL TUTORIAL!\nAHORA A JUGAR Y A DIVERTIRSE!
+tutorial_title = TUTORIAL
+end_tutorial_desc = ENHORABUENA HAS COMPLETADO EL TUTORIAL!\nAHORA A JUGAR Y A DIVERTIRSE!
 
