@@ -45,7 +45,7 @@ public class TerrainSpawner : MonoBehaviour
 		// if the camera is farther than the number last position minus 16 terrain is spawned
 		// a lesser number may make the terrain 'pop' into the scene too early
 		// showing the player the terrain spawning which would be unwanted
-		if ((atrezo || (GameManager.gameStart && !GameManager.gameOver)) && cam.transform.position.x+margenCambio >= lastPosition - startSpawnPosition && canSpawn == true)
+		if ((atrezo || (GameManager.gameStart && !GameManager.isGameOver)) && cam.transform.position.x+margenCambio >= lastPosition - startSpawnPosition && canSpawn == true)
 		{
 			// turn off spawning until ready to spawn again
 			canSpawn = false;

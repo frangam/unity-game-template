@@ -4,43 +4,50 @@ using System.Collections;
 
 public class AndroidBackButton : MonoBehaviour {	
 	
-	public enum TipoAccion{
+	public enum Action{
 		QUIT
-		,MENU_PPAL_SIN_CONFIRMAR
+		,MAIN_MENU_WITHOUT_CONFIRMATION
 		,POPUP_PAUSE
-		,RESUME
-		,JUEGO
-		,ELEGIR_ESCENARIO
+		,RESUME_GAME
+		,GAME_SCREEN
+		,WORLD_SELECTION_SCREEN
 		,ELEGIR_JUGADOR
-		,MENU_PPAL_CON_CONFIRMACION
+		,MAIN_MENU_WITH_CONFIRMATION
 	}
+
+	//--------------------------------------
+	// Setting Attributes
+	//--------------------------------------
+	[SerializeField]
+	private Action action;
 	
-	public TipoAccion tipo;
-	
-	
+	//--------------------------------------
+	// Unity Methods
+	//--------------------------------------
+	#region Unity
 	void LateUpdate () {
 				
 		#if UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			
-			switch(tipo){
-				case TipoAccion.QUIT:
+			switch(action){
+				case Action.QUIT:
 					
 
 				Application.Quit(); 
 					break;
 
-			case TipoAccion.JUEGO:
+			case Action.GAME_SCREEN:
 
 				StartCoroutine( ScreenLoaderIndicator.Instance.Load (Configuration.SCENE_GAME));
 				break;
 
 
-			case TipoAccion.POPUP_PAUSE:
-				if(GameManager.Instance.EnPausa && !GameManager.Instance.ShowingGOPanel){
+			case Action.POPUP_PAUSE:
+				if(GameManager.Instance.InPause && !GameManager.Instance.ShowingGOPanel){
 					GameManager.Instance.pause (false);
 				}
-				else if(!GameManager.Instance.EnPausa && !GameManager.Instance.ShowingGOPanel){
+				else if(!GameManager.Instance.InPause && !GameManager.Instance.ShowingGOPanel){
 					GameManager.Instance.pause (true);
 				}
 				else if(GameManager.Instance.ShowingGOPanel){
@@ -51,7 +58,7 @@ public class AndroidBackButton : MonoBehaviour {
 				break;
 
 				
-			case TipoAccion.MENU_PPAL_SIN_CONFIRMAR:
+			case Action.MAIN_MENU_WITHOUT_CONFIRMATION:
 					
 				((PanelCargando) GameObject.FindObjectOfType(typeof(PanelCargando))).mostrar();
 				StartCoroutine( ScreenLoaderIndicator.Instance.Load (Configuration.SCENE_MAINMENU));
@@ -59,27 +66,21 @@ public class AndroidBackButton : MonoBehaviour {
 				
 				break;
 
-			case TipoAccion.MENU_PPAL_CON_CONFIRMACION:
-				if(GameManager.gameStart && GameManager.Instance.EnPausa && !GameManager.Instance.ShowingGOPanel){
-					UIHandler.Instance.abrir(Ventana.SALIR, false);
+			case Action.MAIN_MENU_WITH_CONFIRMATION:
+				if(GameManager.gameStart && GameManager.Instance.InPause && !GameManager.Instance.ShowingGOPanel){
+					UIHandler.Instance.abrir(GameScreen.EXIT, false);
 				}
-				else if(GameManager.gameStart && !GameManager.Instance.EnPausa && !GameManager.Instance.ShowingGOPanel){
-					UIHandler.Instance.abrir(Ventana.SALIR);
+				else if(GameManager.gameStart && !GameManager.Instance.InPause && !GameManager.Instance.ShowingGOPanel){
+					UIHandler.Instance.abrir(GameScreen.EXIT);
 				}
 				else if(GameManager.Instance.ShowingGOPanel){
 					((PanelCargando) GameObject.FindObjectOfType(typeof(PanelCargando))).mostrar();
 					StartCoroutine( ScreenLoaderIndicator.Instance.Load (Configuration.SCENE_LEVEL_SELECTION));
 				}
-
-
-
 				break;
-
-
-			
 			}				
 		}
 		#endif
-		
 	}
+	#endregion
 }

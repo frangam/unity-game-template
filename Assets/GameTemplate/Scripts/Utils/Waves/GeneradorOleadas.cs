@@ -116,7 +116,7 @@ public class GeneradorOleadas : MonoBehaviour {
 		while(!GameManager.gameStart)
 			yield return null;
 		
-		while(cont<oleadas.Length && !GameManager.gameOver){
+		while(cont<oleadas.Length && !GameManager.isGameOver){
 			if(siguiente){
 				siguiente = false;
 				oleadas[cont].generar();

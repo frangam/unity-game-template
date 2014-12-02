@@ -132,7 +132,7 @@ public class GestorSocial : Singleton<GestorSocial> {
             //if(ParseUser.CurrentUser == null)
             //    GestorParse.instance.login(); //logear en Parse
 		} else {
-			UIHandler.Instance.abrir(Ventana.FB_ERROR_CONEXION);
+			UIHandler.Instance.abrir(GameScreen.FACEBOOK_FAILED_CONNECTION);
 //			Debug.Log ("FBLoginCallback: User canceled login");
 		}
 
@@ -142,7 +142,7 @@ public class GestorSocial : Singleton<GestorSocial> {
 		estaLogeadoEnFB = false;
 //		Debug.Log ("FB fallo autenticacion");
 		
-		UIHandler.Instance.abrir(Ventana.FB_ERROR_CONEXION);
+		UIHandler.Instance.abrir(GameScreen.FACEBOOK_FAILED_CONNECTION);
 		
 	}
 

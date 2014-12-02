@@ -1,4 +1,4 @@
 public enum GameoverType{
-	MISION_SUPERADA 							= 0,
+	COMPLETED_MISSION 							= 0, //Default game over (it is positive for the player)
 
 }

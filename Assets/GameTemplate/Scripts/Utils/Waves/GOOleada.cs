@@ -37,7 +37,7 @@ public class GOOleada : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		if(datosOleada != null && datosOleada.canMove && datosOleada.Vivo && !GameManager.gameOver && GameManager.gameStart && this.collider2D != null){
+		if(datosOleada != null && datosOleada.canMove && datosOleada.Vivo && !GameManager.isGameOver && GameManager.gameStart && this.collider2D != null){
 			if(datosOleada.dirMov == Vector3.left)
 				transform.position = new Vector3 (transform.position.x- datosOleada.Velocidad*Time.deltaTime, transform.position.y , transform.position.z);
 			else if(datosOleada.dirMov == Vector3.left)

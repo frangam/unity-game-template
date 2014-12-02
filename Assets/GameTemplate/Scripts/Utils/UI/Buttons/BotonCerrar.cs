@@ -11,7 +11,7 @@ public class BotonCerrar : MonoBehaviour {
 			if(!panelConexionFB)	
 				panel.gameObject.SetActive(false);
 			else
-				UIHandler.Instance.abrir(Ventana.FB_CONECTADO, false);
+				UIHandler.Instance.abrir(GameScreen.FACEBOOK_ACCOUNT_CONNECTED, false);
 		}
 	}
 }

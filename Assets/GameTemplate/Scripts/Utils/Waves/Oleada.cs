@@ -75,7 +75,7 @@ public class Oleada : MonoBehaviour {
 
 		//Generacion FINITA
 		if(totalObjetosGenerados > 0){
-			for(cont=0; cont<totalObjetosGenerados && !GameManager.gameOver; ){
+			for(cont=0; cont<totalObjetosGenerados && !GameManager.isGameOver; ){
 				//si no hay ninguna zona libre no generamos
 				if(!gestorOleadas.todasOcupadas())
 					generarObjetos();
@@ -93,7 +93,7 @@ public class Oleada : MonoBehaviour {
 		//Generacion INFINITA
 		else{
 //			Debug.Log("generacion infinita");
-			while(!GameManager.gameOver){
+			while(!GameManager.isGameOver){
 				//si no hay ninguna zona libre no generamos
 				if(!gestorOleadas.todasOcupadas())
 					generarObjetos();

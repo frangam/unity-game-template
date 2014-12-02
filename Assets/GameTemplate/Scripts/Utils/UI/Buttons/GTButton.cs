@@ -148,7 +148,7 @@ public class GTButton : MonoBehaviour {
 			break;
 			
 		case UIFunction.MAIN_MENU_WITH_COMFIRMATION:
-			UIHandler.Instance.abrir(Ventana.SALIR);
+			UIHandler.Instance.abrir(GameScreen.EXIT);
 			break;
 			
 		case UIFunction.INFO_SCREEN:
@@ -164,12 +164,12 @@ public class GTButton : MonoBehaviour {
 			break;
 			
 		case UIFunction.TEST_INC_POINTS:
-			GameManager.Instance.Level.Mision.Progreso += 5;
+			GameManager.Instance.CurrentLevel.Mision.Progreso += 5;
 			
 			break;
 			
 		case UIFunction.ACCEPT_QUEST:
-			UIHandler.Instance.abrir(Ventana.MOSTRAR_MISION, false);
+			UIHandler.Instance.abrir(GameScreen.SHOW_MISSION, false);
 			break;
 			
 		case UIFunction.ELECCION_NIVEL:

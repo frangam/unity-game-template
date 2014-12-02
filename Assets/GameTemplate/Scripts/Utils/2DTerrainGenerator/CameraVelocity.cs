@@ -60,7 +60,7 @@ public class CameraVelocity : MonoBehaviour
 
 
 
-		if(atrezo || !GameManager.gameOver && GameManager.gameStart){
+		if(atrezo || !GameManager.isGameOver && GameManager.gameStart){
 
 
         	rigidbody2D.velocity = new Vector2(speed, rigidbody2D.velocity.y);
@@ -106,7 +106,7 @@ public class CameraVelocity : MonoBehaviour
 	}
 
 	private IEnumerator iniciar(){
-		if(!atrezo && !GameManager.gameOver && GameManager.gameStart)
+		if(!atrezo && !GameManager.isGameOver && GameManager.gameStart)
 			StartCoroutine(incrementaVel());
 		else{
 			yield return new WaitForSeconds(0.5f);
@@ -115,7 +115,7 @@ public class CameraVelocity : MonoBehaviour
 	}
 	
 	private IEnumerator incrementaVel(){
-		if(!interrumpido && !GameManager.gameOver){
+		if(!interrumpido && !GameManager.isGameOver){
 			yield return new WaitForSeconds (ritmo);
 			
 			if(!interrumpido){

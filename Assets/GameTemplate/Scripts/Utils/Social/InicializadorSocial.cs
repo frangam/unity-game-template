@@ -161,7 +161,7 @@ public class InicializadorSocial : Singleton<InicializadorSocial> {
             //if(ParseUser.CurrentUser == null)
             //    GestorParse.instance.login(); //logear en Parse
 		} else {
-			UIHandler.Instance.abrir(Ventana.FB_ERROR_CONEXION);
+			UIHandler.Instance.abrir(GameScreen.FACEBOOK_FAILED_CONNECTION);
 			//			Debug.Log ("FBLoginCallback: User canceled login");
 		}
 	}

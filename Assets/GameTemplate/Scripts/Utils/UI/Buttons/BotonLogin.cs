@@ -124,7 +124,7 @@ public class BotonLogin : MonoBehaviour {
 				else if(!FB.IsLoggedIn){
 					
 
-					UIHandler.Instance.abrir(Ventana.CONECTANDO_FB); //abre la ventana de conectando
+					UIHandler.Instance.abrir(GameScreen.CONNECTING_FACEBOOK); //abre la ventana de conectando
 					GestorSocial.Instance.login(red);
 				}
 				break;

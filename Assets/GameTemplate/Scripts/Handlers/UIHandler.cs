@@ -66,9 +66,9 @@ public class UIHandler : Singleton<UIHandler> {
 		switch (StartScene.Instance.Section) {
 			case  Section.GAME:
 				//cerrar
-				abrir (Ventana.GAMEOVER, false);
-				abrir (Ventana.MISION_SUPERADA, false);
-				abrir (Ventana.SALIR, false);
+				abrir (GameScreen.GAMEOVER, false);
+				abrir (GameScreen.COMPLETED_MISSION, false);
+				abrir (GameScreen.EXIT, false);
 			break;
 		}
 
@@ -94,8 +94,8 @@ public class UIHandler : Singleton<UIHandler> {
 	void Update(){
 		if(lbScore)
 			lbScore.text = GameManager.score.ToString();
-		if(lbProgresoMision && GameManager.Instance.Level != null)
-			lbProgresoMision.text = GameManager.Instance.Level.Mision.Progreso.ToString () + "/"+GameManager.Instance.Level.Mision.Cantidad.ToString();
+		if(lbProgresoMision && GameManager.Instance.CurrentLevel != null)
+			lbProgresoMision.text = GameManager.Instance.CurrentLevel.Mision.Progreso.ToString () + "/"+GameManager.Instance.CurrentLevel.Mision.Cantidad.ToString();
 		if(lbMonedasTotal)
 			lbMonedasTotal.text = PlayerPrefs.GetInt(Configuration.PP_TOTAL_COINS).ToString();
 	}
@@ -103,9 +103,9 @@ public class UIHandler : Singleton<UIHandler> {
 
 
 
-	public void abrir(Ventana ventana, bool abre = true, object data = null){
+	public void abrir(GameScreen ventana, bool abre = true, object data = null){
 		//gestion sonido
-		if(ventana != Ventana.MOSTRAR_MISION && ventana != Ventana.BACK_COUNTER && ventana != Ventana.GAMEOVER){
+		if(ventana != GameScreen.SHOW_MISSION && ventana != GameScreen.BACK_COUNTER && ventana != GameScreen.GAMEOVER){
 			if(abre)
 				GestorSonidos.Instance.play(GestorSonidos.ID_SONIDO.FX_ABRIR_VENTANA);
 			else
@@ -125,23 +125,23 @@ public class UIHandler : Singleton<UIHandler> {
 //
 //			break;
 
-		case Ventana.PAUSA:
+		case GameScreen.PAUSE:
 			if(pnlPausa)
 				pnlPausa.gameObject.SetActive(abre);
 			break;
 		
 		
 
-		case Ventana.SALIR:
+		case GameScreen.EXIT:
 			GameManager.Instance.pause(abre);
 			pnlSalir.gameObject.SetActive(abre);
 			break;
 
-		case Ventana.GAMEOVER:
+		case GameScreen.GAMEOVER:
 			if(abre){
 				
-				if(GameManager.Instance.Level != null){
-					int n = GameManager.Instance.Level.Id;
+				if(GameManager.Instance.CurrentLevel != null){
+					int n = GameManager.Instance.CurrentLevel.Id;
 
 					if(lbNivelVentanaGameOver)
 						lbNivelVentanaGameOver.text = Localization.Localize (ExtraLocalizations.NIVEL) + " " + n.ToString ();
@@ -176,14 +176,14 @@ public class UIHandler : Singleton<UIHandler> {
 
 		
 
-		case Ventana.MOSTRAR_MISION:
+		case GameScreen.SHOW_MISSION:
 //			pnlPelotasPerdidas.gameObject.SetActive(GestorJuego.Instance.Nivel.Mision.CantidadNoSePuedenPerderPelotas > 0); //se muestra este panel si se tiene una mision de no perder un tipo de bolas
 
 			if(abre){
-				int nivel = GameManager.Instance.Level.Id;
+				int nivel = GameManager.Instance.CurrentLevel.Id;
 				lbNivelVentanaMision.text = Localization.Localize (ExtraLocalizations.NIVEL) + " " + nivel.ToString ();
-				lbDescMision.text = GameManager.Instance.Level.Mision.Description;
-				lbCantidadMision.text = GameManager.Instance.Level.Mision.Cantidad.ToString();
+				lbDescMision.text = GameManager.Instance.CurrentLevel.Mision.Description;
+				lbCantidadMision.text = GameManager.Instance.CurrentLevel.Mision.Cantidad.ToString();
 			}
 			else{
 				StartCoroutine(aceptarMision());
@@ -192,7 +192,7 @@ public class UIHandler : Singleton<UIHandler> {
 			pnlQuest.gameObject.SetActive(abre);
 			break;
 
-		case Ventana.CONECTANDO_FB:
+		case GameScreen.CONNECTING_FACEBOOK:
 			pnlFBErrorConexion.gameObject.SetActive(false);
 			pnlConectandoFB.gameObject.SetActive(abre);
 
@@ -200,9 +200,9 @@ public class UIHandler : Singleton<UIHandler> {
 //				icoConectandoFB.GetComponent<Animator>().SetBool("conectado", );
 			break;
 
-		case Ventana.FB_CONECTADO:
+		case GameScreen.FACEBOOK_ACCOUNT_CONNECTED:
 			if(abre){
-				abrir(Ventana.CONECTANDO_FB, false); //cerrar primero la de conectando
+				abrir(GameScreen.CONNECTING_FACEBOOK, false); //cerrar primero la de conectando
 //				btnLoginFB.gameObject.SetActive(false); //ocultar boton de login
 
 				pnlFBConectado.gameObject.SetActive(true); //abrir fb conectado
@@ -216,7 +216,7 @@ public class UIHandler : Singleton<UIHandler> {
 
 			break;
 
-		case Ventana.FB_ERROR_CONEXION:
+		case GameScreen.FACEBOOK_FAILED_CONNECTION:
 			if(abre){
 				pnlFBConectado.gameObject.SetActive(false);
 				pnlConectandoFB.gameObject.SetActive(false);
@@ -225,7 +225,7 @@ public class UIHandler : Singleton<UIHandler> {
 			pnlFBErrorConexion.gameObject.SetActive(abre);
 			break;
 
-		case Ventana.FB_INVITA_AMIGOS:
+		case GameScreen.FACEBOOK_FRIENDS_INVITATION:
 			pnlInvitaAmigos.gameObject.SetActive(abre);
 			break;
 		}
