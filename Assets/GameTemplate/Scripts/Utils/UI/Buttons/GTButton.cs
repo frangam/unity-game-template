@@ -221,7 +221,7 @@ public class GTButton : MonoBehaviour {
 			
 		case UIFunction.ABRIR_MENU_INVITAR_AMIGOS_FB:
 			if(SPFacebook.instance.IsLoggedIn )
-				SPFacebook.instance.AppRequest (Localization.Get(ExtraLocalizations.FB_INVITACION));
+				SPFacebook.instance.AppRequest (Localization.Get(ExtraLocalizations.FACEBOOK_INVITATION));
 			//				GestorUI.Instancia.abrir(Ventana.FB_INVITA_AMIGOS);
 			break;
 			

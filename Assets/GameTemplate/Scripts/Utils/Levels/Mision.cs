@@ -62,11 +62,11 @@ public class Mision : MonoBehaviour {
 
 			switch(tipo){
 			case TipoMision.RECOGE_MONEDAS:
-				res = Localization.Localize(ExtraLocalizations.OBJETIVO_RECOGE_MONEDAS) + " " +  cantidadObjetivo + Localization.Localize(ExtraLocalizations.OBJETIVO_RECOGE_MONEDAS_FIN);
+				res = Localization.Localize(ExtraLocalizations.GOAL_GET_COINS) + " " +  cantidadObjetivo + Localization.Localize(ExtraLocalizations.GOAL_GET_COINS_END);
 				break;
 
 			case TipoMision.AGUANTAR_TIEMPO:
-				res = Localization.Localize(ExtraLocalizations.OBJETIVO_AGUANTAR_TIEMPO) + " " +  cantidadObjetivo + Localization.Localize(ExtraLocalizations.OBJETIVO_AGUANTAR_TIEMPO_FIN);
+				res = Localization.Localize(ExtraLocalizations.GOAL_KEEP_TIME) + " " +  cantidadObjetivo + Localization.Localize(ExtraLocalizations.GOAL_KEEP_TIME_END);
 				break;
 
 			case TipoMision.DISTANCIA_RECORRIDA:

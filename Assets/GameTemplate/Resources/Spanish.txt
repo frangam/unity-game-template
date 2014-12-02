@@ -6,8 +6,8 @@ pausa = PAUSA
 records = RECORDS
 jugar = JUGAR
 reintentar = REINTENTAR
-boton_login = CONECTAR
-boton_logout = DESCONECTAR
+simple_login_button = CONECTAR
+simple_logout_button = SALIR
 boton_opciones = OPCIONES
 boton_logros = LOGROS
 pronto = PRÓXIMAMENTE
@@ -24,11 +24,11 @@ facil = FACIL
 dificil = DIFICIL
 normal = NORMAL
 
-titulo_popup_rate = Valóranos!
-mensaje_popup_rate = Vota ahora y ayúdanos a mejorar!
-btn_votar_popup_rate = Valorar ahora
-btn_recordar_popup_rate = Recordar más tarde
-btn_rechazar_popup_rate = No gracias
+rate_popup_title = Valóranos!
+rate_popup_message = Vota ahora y ayúdanos a mejorar!
+rate_popup_vote_button = Valorar ahora
+rate_popup_remember_button = Recordar más tarde
+rate_popup_refuse_button = No gracias
 
 pregunta_compra = ESTAS SEGURO QUE QUIERES COMPRAR ESTE COCHE?
 comprar = COMPRAR
@@ -38,27 +38,27 @@ record_acual = ACTUAL
 mejor_record = MEJOR
 tocar_pantalla = TOCA LA PANTALLA
 
-post_descripcion1 = Mi puntuación actual:
-post_descripcion2 = Mi mejor puntuación:
-titulo_popup_fallo = Error
-post_descripcion_fallo = Algo falló enviando el mensaje
-titulo_exito_popup_post_enviado = Envío completado
-post_descripcion_exito_enviado = Puntuación compartida con éxito
+social_post_current_score = Mi puntuación actual:
+social_post_best_score = Mi mejor puntuación:
+popup_title_error = Error
+social_post_description_error = Algo falló enviando el mensaje
+popup_title_social_post_successful_sent = Envío completado
+social_post_desc_sent = Puntuación compartida con éxito
 
-titulo_popup_min_ver_and_req = Versión mínima	
-desc_popup_min_ver_and_req = Versión mínima requerida 4.2.2 para disfrutar de los logros
+popup_title_min_vers_android_req = Versión mínima	
+popup_desc_min_android_vers_req = Versión mínima requerida 4.2.2 para disfrutar de los logros
 
-titulo_popup_login_gps = Login
-desc_popup_login_gps = Tienes que iniciar sesión en Google Play Services
-boton_ok_login_gps = Login
-boton_cancel_login_gps = Cancelar 
+popup_title_gps_login = Login
+popup_desc_gps_login = Tienes que iniciar sesión en Google Play Services
+ok_button_gps_login_popup = Login
+cancel_button_gps_login_popup = Cancelar 
 
-fb_invitacion = Ven y juega a Ball Boy conmigo!
+fb_invitation = Ven y juega a Ball Boy conmigo!
 fb_titulo_invitacion = Invita a tus amigos
 btn_invita = Invitar
 seleccionar_todos = Seleccionar todo
 
-nivel = NIVEL
+level = NIVEL
 punt_max = PUNTUACIÓN MÁXIMA
 nivel_completado = NIVEL COMPLETADO
 nivel_no_completado = NIVEL NO SUPERADO

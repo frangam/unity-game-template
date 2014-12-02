@@ -6,8 +6,8 @@ pausa = PAUSE
 records = SCORE
 jugar = PLAY
 reintentar = RETRY
-boton_login = LOGIN
-boton_logout = LOGOUT
+simple_login_button = LOGIN
+simple_logout_button = LOGOUT
 boton_opciones = SETTINGS
 boton_logros = ACHIEVEMENTS
 pronto = COMING SOON
@@ -24,32 +24,32 @@ facil = EASY
 dificil = HARD
 normal = NORMAL
 
-titulo_popup_rate = Rate us!
-mensaje_popup_rate = Rate now! Help us to improve!
-btn_votar_popup_rate = Rate now
-btn_recordar_popup_rate = Ask me later
-btn_rechazar_popup_rate = No thanks
+rate_popup_title = Rate us!
+rate_popup_message = Rate now! Help us to improve!
+rate_popup_vote_button = Rate now
+rate_popup_remember_button = Ask me later
+rate_popup_refuse_button = No thanks
 
 record_acual = CURRENT
 mejor_record = BEST
 tocar_pantalla = TAP THE SCREEN
 
-post_descripcion1 = My current score:
-post_descripcion2 = My best score:
-titulo_popup_fallo = Error
-post_descripcion_fallo = Post failed, something was wrong
-titulo_exito_popup_post_enviado = Success
-post_descripcion_exito_enviado = Score shared successfully
+social_post_current_score = My current score:
+social_post_best_score = My best score:
+popup_title_error = Error
+social_post_description_error = Post failed, something was wrong
+popup_title_social_post_successful_sent = Success
+social_post_desc_sent = Score shared successfully
 
-titulo_popup_min_ver_and_req = Minimum version	
-desc_popup_min_ver_and_req = Mimimum required version to enjoy the Achiviements 4.2.2 
+popup_title_min_vers_android_req = Minimum version	
+popup_desc_min_android_vers_req = Mimimum required version to enjoy the Achiviements 4.2.2 
 
-titulo_popup_login_gps = Login
-desc_popup_login_gps = You have to login on Google Play Services
-boton_ok_login_gps = Login
-boton_cancel_login_gps = Cancel
+popup_title_gps_login = Login
+popup_desc_gps_login = You have to login on Google Play Services
+ok_button_gps_login_popup = Login
+cancel_button_gps_login_popup = Cancel
 
-fb_invitacion = Come and play Ball Boy with me!
+fb_invitation = Come and play Ball Boy with me!
 fb_titulo_invitacion = Invite your friends
 btn_invita = Invite
 seleccionar_todos = Select all
@@ -58,7 +58,7 @@ pregunta_compra = ARE YOU SURE YOU WANT TO BUY THIS CAR?
 comprar = BUY
 cancelar_compra = CANCEL
 
-nivel = LEVEL
+level = LEVEL
 punt_max = MAXIMUM SCORE
 nivel_completado = MISSION COMPLETED
 nivel_no_completado = MISSION FAILED

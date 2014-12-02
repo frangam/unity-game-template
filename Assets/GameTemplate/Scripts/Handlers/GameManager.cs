@@ -195,6 +195,10 @@ public class GameManager : Singleton<GameManager> {
 
 		//manage achievements at the end of the game
 		checkAchievementsWhenGameOver ();
+
+		//record if first play
+		if (PlayerPrefs.GetInt(Configuration.PP_FIRST_PLAY) != 1)
+			PlayerPrefs.SetInt(Configuration.PP_FIRST_PLAY, 1);
 	}
 
 	/// <summary>
@@ -206,7 +210,7 @@ public class GameManager : Singleton<GameManager> {
 			gameoverType = GameoverType.COMPLETED_MISSION;
 
 
-		return !isProps && ( completedMission || forceGameOver);
+		return !isProps && ( completedMission || forcedGameOver);
 	}
 
 	/// <summary>

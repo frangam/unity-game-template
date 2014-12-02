@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
@@ -105,7 +105,7 @@ public class AchievementsHandler : Singleton<AchievementsHandler> {
 	}
 
 	private void comprobarLogrosTotalPartidasJugadas(int puntos){
-		if(PlayerPrefs.GetInt(PARTIDA_1) != 1 && puntos >= ConfigLogros.PROGRESO_GET_1 && puntos < ConfigLogros.PROGRESO_GET_150_PUNTOS){
+		if(PlayerPrefs.GetInt(PARTIDA_1) != 1 && puntos >= ConfigAchievements.PROGRESO_GET_1 && puntos < ConfigAchievements.PROGRESO_GET_150_PUNTOS){
 			desbloquearLogro( PARTIDA_1);
 		}
 	}

@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class ConfigLogros : MonoBehaviour{
+public class ConfigAchievements : MonoBehaviour{
 	//--------------------------------------
 	// Claves PlayerPrefs
 	//--------------------------------------
 	public const string NUM_MONEDAS 					= "pl_lg_num_monedas";
-	public const string NUM_SURVIVAL_COMPLETADO 	= "pl_lg_num_survival_completado";
+	public const string NUM_SURVIVAL_COMPLETADO 		= "pl_lg_num_survival_completado";
 
 
 	//--------------------------------------

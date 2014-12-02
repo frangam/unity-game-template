@@ -26,13 +26,13 @@ public class Configuration : MonoBehaviour{
 	#region Constants
 	//ADS 
 	public const bool 	IS_PRO_VERSION = false; 
-	public const int 	NUM_GAMEOVERS_SHOW_AD_HARD_MODE = 3; //por cada muerte mostramos un pantallazo de publi EN DIFICIL
-	public const int 	NUM_GAMEOVERS_SHOW_AD_EASY_MODE = 1; //por cada muerte mostramos un pantallazo de publi EN FACIL
-	public const int 	NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE = 2; //por cada muerte mostramos un pantallazo de publi EN NORMAL
-	public const int 	NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT = 1; //por cada muerte mostramos un pantallazo de publi EN DEFECTO
+	public const int 	NUM_GAMEOVERS_SHOW_AD_HARD_MODE = 3; //number of gameovers to show an ad in hard mode
+	public const int 	NUM_GAMEOVERS_SHOW_AD_EASY_MODE = 1; 
+	public const int 	NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE = 2;
+	public const int 	NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT = 1;
 
 	//SOCIAL NETWORKS
-	public const bool buildForAmazon 						= false; //if we are building for amazon (only change when the build is only for amazon, change it after building)
+	public const bool BUILD_FOR_AMAZON 						= false; //if we are building for amazon (only change when the build is only for amazon, change it after building)
 	public const bool USE_GOOGLE_PLAY_SERVICES 				= true;
 	public const bool USE_GAMECENTER 						= true;
 	public const bool USE_TWITTER 							= false;

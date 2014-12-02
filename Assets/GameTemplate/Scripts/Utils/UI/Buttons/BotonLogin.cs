@@ -72,7 +72,7 @@ public class BotonLogin : MonoBehaviour {
 //			gameObject.SetActive(false);
 
 			if(cambiarTexto)
-				GetComponentInChildren<UILabel>().text = Localization.Get(ExtraLocalizations.BOTON_LOGOUT);
+				GetComponentInChildren<UILabel>().text = Localization.Get(ExtraLocalizations.SIMPLE_LOGOUT_BUTTON);
 
 			if(spriteDesconectar != "")
 				GetComponent<UISprite>().spriteName = spriteDesconectar;
@@ -81,7 +81,7 @@ public class BotonLogin : MonoBehaviour {
 		}
 		else if(red == SocialNetwork.FACEBOOK && !FB.IsLoggedIn){
 			if(cambiarTexto)
-				GetComponentInChildren<UILabel>().text = Localization.Get(ExtraLocalizations.BOTON_LOGIN);
+				GetComponentInChildren<UILabel>().text = Localization.Get(ExtraLocalizations.SIMPLE_LOGIN_BUTTON);
 
 			if(spriteConectar != "")
 				GetComponent<UISprite>().spriteName = spriteConectar;

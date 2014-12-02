@@ -491,7 +491,7 @@ public class GestorSocial : Singleton<GestorSocial> {
 	}
 	
 	public void AppRequest() {
-		SPFacebook.instance.AppRequest(Localization.Get(ExtraLocalizations.FB_INVITACION));
+		SPFacebook.instance.AppRequest(Localization.Get(ExtraLocalizations.FACEBOOK_INVITATION));
 	}
 	
 	

@@ -144,7 +144,7 @@ public class UIHandler : Singleton<UIHandler> {
 					int n = GameManager.Instance.CurrentLevel.Id;
 
 					if(lbNivelVentanaGameOver)
-						lbNivelVentanaGameOver.text = Localization.Localize (ExtraLocalizations.NIVEL) + " " + n.ToString ();
+						lbNivelVentanaGameOver.text = Localization.Localize (ExtraLocalizations.LEVEL) + " " + n.ToString ();
 				}
 
 				if(lbCurrentScore)
@@ -181,7 +181,7 @@ public class UIHandler : Singleton<UIHandler> {
 
 			if(abre){
 				int nivel = GameManager.Instance.CurrentLevel.Id;
-				lbNivelVentanaMision.text = Localization.Localize (ExtraLocalizations.NIVEL) + " " + nivel.ToString ();
+				lbNivelVentanaMision.text = Localization.Localize (ExtraLocalizations.LEVEL) + " " + nivel.ToString ();
 				lbDescMision.text = GameManager.Instance.CurrentLevel.Mision.Description;
 				lbCantidadMision.text = GameManager.Instance.CurrentLevel.Mision.Cantidad.ToString();
 			}

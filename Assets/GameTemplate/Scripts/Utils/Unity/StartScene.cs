@@ -48,7 +48,7 @@ public class StartScene : Singleton<StartScene> {
 		case Section.LEVEL_SELECTION:
 			if(Configuration.firstTimePlayerInviteFriends && SPFacebook.instance.IsLoggedIn){
 				Configuration.firstTimePlayerInviteFriends = false;
-				SPFacebook.instance.AppRequest (Localization.Get(ExtraLocalizations.FB_INVITACION));
+				SPFacebook.instance.AppRequest (Localization.Get(ExtraLocalizations.FACEBOOK_INVITATION));
 			}
 			break;
 		
