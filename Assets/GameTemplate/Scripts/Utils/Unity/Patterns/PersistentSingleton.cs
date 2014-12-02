@@ -27,7 +27,7 @@ public class PersistentSingleton<T> : MonoBehaviour where T : MonoBehaviour {
 					GameObject container = new GameObject();
 					container.name = typeof(T)+"(PersistentSingleton)";
 					instance = (T)container.AddComponent(typeof(T));
-					DontDestroyOnLoad(instance.gameObject); //dont destroy instant to persist in every scene
+					DontDestroyOnLoad(instance.gameObject); //dont destroy instance to persist in every scene
 				}
 			}
 			return instance;
