@@ -183,7 +183,7 @@ public class GameManager : Singleton<GameManager> {
 
 		GestorSonidos.Instance.stopAllWhenGameOver();
 		GestorSonidos.Instance.play(GestorSonidos.ID_SONIDO.FX_GAME_OVER);
-		RankingHandler.Instance.enviarPuntuacion(score); //send score to server
+		ScoresHandler.Instance.enviarPuntuacion(score); //send score to server
 		UIHandler.Instance.abrir(GameScreen.GAMEOVER); //show Game over screen
 
 		//show Ads at the end

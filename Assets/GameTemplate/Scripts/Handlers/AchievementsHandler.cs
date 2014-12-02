@@ -51,17 +51,17 @@ public class AchievementsHandler : Singleton<AchievementsHandler> {
 		if(GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED){
 			GPSConnect.Instance.init();
 
-			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.TITULO_POPUP_LOGIN_GPS)
-			                                            , Localization.Localize(ExtraLocalizations.DESC_POPUP_LOGIN_GPS)
-			                                            , Localization.Localize(ExtraLocalizations.BOTON_OK_POPUP_LOGIN_GPS)
-			                                            , Localization.Localize(ExtraLocalizations.BOTON_CANCEL_POPUP_LOGIN_GPS));
+			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
+			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
 			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
 		}
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED){
-			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.TITULO_POPUP_LOGIN_GPS)
-			                                            , Localization.Localize(ExtraLocalizations.DESC_POPUP_LOGIN_GPS)
-			                                            , Localization.Localize(ExtraLocalizations.BOTON_OK_POPUP_LOGIN_GPS)
-			                                            , Localization.Localize(ExtraLocalizations.BOTON_CANCEL_POPUP_LOGIN_GPS));
+			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
+			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
 			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
 		}
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){

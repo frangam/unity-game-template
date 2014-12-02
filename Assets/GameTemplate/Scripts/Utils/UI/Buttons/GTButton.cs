@@ -207,12 +207,12 @@ public class GTButton : MonoBehaviour {
 			break;
 			
 		case UIFunction.RANKINGS_SCREEN:
-			RankingHandler.Instance.mostrarClasificacionGeneral();
+			ScoresHandler.Instance.mostrarClasificacionGeneral();
 			break;
 
 		case UIFunction.RANKING_SCREEN_SWITCH_DIFFICULT:
 			GameDifficulty dif = (GameDifficulty) PlayerPrefs.GetInt(Configuration.PP_GAME_DIFFICULTY);
-			RankingHandler.Instance.mostrarClasificacionGeneral(dif);
+			ScoresHandler.Instance.mostrarClasificacionGeneral(dif);
 			break;
 			
 		case UIFunction.ACHIEVEMENTS_SCREEN:

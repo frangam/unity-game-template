@@ -151,7 +151,7 @@ public class UIHandler : Singleton<UIHandler> {
 					lbCurrentScore.text = GameManager.score.ToString();
 
 				if(lbBestScore)
-					lbBestScore.text = RankingHandler.Instance.mejorPuntuacion().ToString();
+					lbBestScore.text = ScoresHandler.Instance.mejorPuntuacion().ToString();
 
 				//el motivo del gameover
 				if(lbMotivoGO){

@@ -530,11 +530,11 @@ public class GestorSocial : Singleton<GestorSocial> {
 			
 			
 			if(red == SocialNetwork.TWITTER){
-				string mensaje = Localization.Localize(ExtraLocalizations.POST_DESCRIPCION1)+" "+RankingHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.POST_DESCRIPCION2)+" "+RankingHandler.Instance.mejorPuntuacion()+hashtag+" "+linkAPP;
+				string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+ScoresHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+hashtag+" "+linkAPP;
 				AndroidTwitterManager.instance.Post(mensaje);
 			}
 			else if(red == SocialNetwork.FACEBOOK){
-				string mensaje = Localization.Localize(ExtraLocalizations.POST_DESCRIPCION1)+" "+RankingHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.POST_DESCRIPCION2)+" "+RankingHandler.Instance.mejorPuntuacion()+" "+linkAPP;
+				string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+ScoresHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+" "+linkAPP;
 				SPFacebook.instance.Post (
 					link: linkAPP,
 					linkName: Configuration.NOMBRE_JUEGO + " (iPhone/iPad & Android)",
@@ -546,7 +546,7 @@ public class GestorSocial : Singleton<GestorSocial> {
 			
 			
 			#elif UNITY_IPHONE
-			string mensaje = Localization.Localize(ExtraLocalizations.POST_DESCRIPCION1)+" "+RankingHandler.Instancia.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.POST_DESCRIPCION2)+" "+RankingHandler.Instancia.mejorPuntuacion();
+			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+ScoresHandler.Instancia.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instancia.mejorPuntuacion();
 			
 			if(red == SocialNetwork.TWITTER)
 				IOSSocialManager.instance.TwitterPost(mensaje+hashtag+" "+Configuration.LINK_CORTO_IOS_APP);
@@ -574,21 +574,21 @@ public class GestorSocial : Singleton<GestorSocial> {
 		string linkAPP = Configuration.LINK_CORTO_ANDROID_APP;
 
 		if(red == SocialNetwork.FACEBOOK){
-			string mensaje = Localization.Localize(ExtraLocalizations.POST_DESCRIPCION1)+" "+RankingHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.POST_DESCRIPCION2)+" "+RankingHandler.Instance.mejorPuntuacion()+" "+linkAPP;
+			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+ScoresHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+" "+linkAPP;
 			SPFacebook.instance.PostImage(mensaje, tex);
 		}
 		else if(red == SocialNetwork.TWITTER){
-			string mensaje = Localization.Localize(ExtraLocalizations.POST_DESCRIPCION1)+" "+RankingHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.POST_DESCRIPCION2)+" "+RankingHandler.Instance.mejorPuntuacion()+hashtag+" "+linkAPP;
+			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+ScoresHandler.Instance.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+hashtag+" "+linkAPP;
 			AndroidTwitterManager.instance.Post(mensaje, tex);
 		}
 
 		#elif UNITY_IPHONE
 		if(red == SocialNetwork.FACEBOOK){
-			string mensaje = Localization.Localize(ExtraLocalizations.POST_DESCRIPCION1)+" "+RankingHandler.Instancia.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.POST_DESCRIPCION2)+" "+RankingHandler.Instancia.mejorPuntuacion() +" "+Configuration.LINK_CORTO_IOS_APP;
+			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+ScoresHandler.Instancia.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instancia.mejorPuntuacion() +" "+Configuration.LINK_CORTO_IOS_APP;
 			IOSSocialManager.instance.FacebookPost(mensaje, tex);
 		}
 		else if(red == SocialNetwork.TWITTER){
-			string mensaje = Localization.Localize(ExtraLocalizations.POST_DESCRIPCION1)+" "+RankingHandler.Instancia.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.POST_DESCRIPCION2)+" "+RankingHandler.Instancia.mejorPuntuacion()+hashtag+" "+Configuration.LINK_CORTO_IOS_APP;
+			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+ScoresHandler.Instancia.ultimaPuntuacion()+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instancia.mejorPuntuacion()+hashtag+" "+Configuration.LINK_CORTO_IOS_APP;
 			IOSSocialManager.instance.TwitterPost(mensaje, tex);
 		}
 		#endif
