@@ -203,7 +203,7 @@
      <None Include="Assets\Plugins\Android\google-play-services_lib\res\values-vi\auth_strings.xml" />
      <None Include="Assets\Plugins\Android\google-play-services_lib\res\values-de\common_strings.xml" />
      <None Include="Assets\Plugins\Android\facebook\res\values\colors.xml" />
-     <None Include="Assets\GameTemplate\Scripts\Utils\Templates\Comments.txt" />
+     <None Include="Assets\GameTemplate\Scripts\Templates\Comments.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 1.shader" />
      <None Include="Assets\Plugins\Android\facebook\res\layout\com_facebook_tooltip_bubble.xml" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 1.shader" />
