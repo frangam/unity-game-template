@@ -17,7 +17,7 @@ public class AdsHandler : Singleton<AdsHandler> {
 	//--------------------------------------
 	// INITIALIZE
 	//--------------------------------------
-	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR)
 
 	void Awake() {
 //		DontDestroyOnLoad (this);
@@ -120,7 +120,7 @@ public class AdsHandler : Singleton<AdsHandler> {
 
 
 	public void mostrarPantallazo(){
-		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
 		if(!Configuration.IS_PRO_VERSION || !Configuration.purchasedForQuitAds){
             //loadin ad:
 			GoogleMobileAd.LoadInterstitialAd ();
@@ -129,7 +129,7 @@ public class AdsHandler : Singleton<AdsHandler> {
                                    }
 
 	public void refrescarBanner(){
-		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
 		if(!Configuration.IS_PRO_VERSION || !Configuration.purchasedForQuitAds)
 			RefreshBanner();
 #endif
