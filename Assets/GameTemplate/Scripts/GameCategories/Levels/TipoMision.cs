@@ -1,5 +1,0 @@
-public enum TipoMision{
-	RECOGE_MONEDAS			= 0,
-	AGUANTAR_TIEMPO			= 1,
-	DISTANCIA_RECORRIDA		= 2
-}
