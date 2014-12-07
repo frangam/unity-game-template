@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -13,7 +13,7 @@ public class Achievement : MonoBehaviour {
 	private string id;
 
 	[SerializeField]
-	private List<AProperty> properties;
+	private List<AAction> actions;
 		
 	//--------------------------------------
 	// Private Attributes
@@ -35,9 +35,9 @@ public class Achievement : MonoBehaviour {
 		}
 	}
 
-	public List<AProperty> Properties {
+	public List<AAction> Actions {
 		get {
-			return this.properties;
+			return this.actions;
 		}
 	}
 

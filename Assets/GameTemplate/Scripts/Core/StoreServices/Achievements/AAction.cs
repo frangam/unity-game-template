@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// A property measures an achievement progress. It is a counter with some special attributes
+/// An action measures an achievement progress. It is a counter with some special attributes
 /// (such as default value and update constraints)
 /// </summary>
 [System.Serializable]
-public class AProperty {
+public class AAction {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,7 +18,7 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private List<AProperty> propertiesList;
+	private List<AAction> actionsList;
 
 	[SerializeField]
 	private List<Achievement> achievementsList;
@@ -26,18 +26,18 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private Dictionary<string, AProperty> properties;
+	private Dictionary<string, AAction> actions;
 	private Dictionary<string, Achievement> achievements;
 
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	private bool hasTag(AProperty property, List<string> tags){
+	private bool hasTag(AAction action, List<string> tags){
 		bool res = false;
 
 		foreach(string tag in tags){
-			if(property.Tags != null){
-				res = property.Tags.Contains(tag);
+			if(action.Tags != null){
+				res = action.Tags.Contains(tag);
 
 				if(res)
 					break;
@@ -47,53 +47,53 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 		return res;
 	}
 
-	private void setValue(AProperty property, int value, bool ignoreActivationConstraint = false){
-		doSetValue(property.Name, value, ignoreActivationConstraint);
+	private void setValue(AAction action, int value, bool ignoreActivationConstraint = false){
+		doSetValue(action.Name, value, ignoreActivationConstraint);
 	}
 
-	private void doSetValue(string propertyName, int value, bool ignoreActivationConstraint = false){
+	private void doSetValue(string actionName, int value, bool ignoreActivationConstraint = false){
 		//TODO Checkpropertyexists
 
 		int finalValue = value;
 
 		if(!ignoreActivationConstraint){
-			int propValue = properties[propertyName].Value;
+			int actionValue = actions[actionName].Value;
 
-			switch(properties[propertyName].Activation){
+			switch(actions[actionName].Activation){
 			case AchieveCondition.ACTIVE_IF_GREATER_THAN:
-				finalValue = value > propValue ? value : propValue;
+				finalValue = value > actionValue ? value : actionValue;
 				break;
 
 			case AchieveCondition.ACTIVE_IF_LESS_THAN:
-				finalValue = value < propValue ? value : propValue;
+				finalValue = value < actionValue ? value : actionValue;
 				break;
 			}
 		}
 
-		properties[propertyName].Value = finalValue;
+		actions[actionName].Value = finalValue;
 	}
 
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public int getValue(string propertyName){
-		return properties[propertyName].Value;
+	public int getValue(string actionName){
+		return actions[actionName].Value;
 	}
 
-	public void addValue(List<AProperty> _properties, int value, bool ignoreActivationConstraint = false){
-		foreach(AProperty p in _properties){
+	public void addValue(List<AAction> _actions, int value, bool ignoreActivationConstraint = false){
+		foreach(AAction p in _actions){
 			doSetValue(p.Name, getValue(p.Name) + value, ignoreActivationConstraint);
 		}
 	}
 
 	/// <summary>
-	/// Resets all properties tagged with tags indicated
+	/// Resets all actions tagged with tags indicated
 	/// </summary>
 	/// <param name="tags">Tags.</param>
 	public void resetProperties(List<string> tags){
-		foreach(AProperty p in propertiesList){
-			if(p.Tags == null || hasTag(p, tags)){
-				p.reset();
+		foreach(AAction a in actionsList){
+			if(a.Tags == null || hasTag(a, tags)){
+				a.reset();
 			}
 		}
 	}
@@ -104,17 +104,17 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 		foreach(Achievement a in achievements){
 			//locked
 			if(!a.Unlocked){
-				int activeProperties = 0;
+				int activeActions = 0;
 
-				//check total active properties
-				foreach(AProperty p in a.Properties){
-					if((tags != null || hasTag(p, tags)) && p.isActive()){
-						activeProperties++;
+				//check total active actions
+				foreach(AAction action in a.Actions){
+					if((tags != null || hasTag(action, tags)) && action.isActive()){
+						activeActions++;
 					}
 				}
 
-				//if all achievement properties are active unlock achievement
-				if(activeProperties == a.Properties.Count){
+				//if all achievement actions are active unlock achievement
+				if(activeActions == a.Actions.Count){
 					a.Unlocked = true;
 					achievements.Add(a);
 				}
