@@ -13,6 +13,9 @@ public class Achievement : MonoBehaviour {
 	private string id;
 
 	[SerializeField]
+	private bool isIncremental = false;
+
+	[SerializeField]
 	private List<AAction> actions;
 		
 	//--------------------------------------
@@ -32,6 +35,12 @@ public class Achievement : MonoBehaviour {
 	public string Id {
 		get {
 			return this.id;
+		}
+	}
+
+	public bool IsIncremental {
+		get {
+			return this.isIncremental;
 		}
 	}
 
@@ -65,5 +74,11 @@ public class Achievement : MonoBehaviour {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	public float getProgress(){
+		float res = 0f;
+
+
+		return res;
+	}
 
 }

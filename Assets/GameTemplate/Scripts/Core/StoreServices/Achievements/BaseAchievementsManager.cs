@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnionAssets.FLE;
 
 /// <summary>
 /// Achievement approach:
@@ -13,7 +14,12 @@ using System.Collections.Generic;
 /// ** Every property has an activation rule - for instance "kills is active if its value is greater than 10".
 /// ** Check activated properties periodically. If all related properties of an achievement are active, then the achievement is unlocked.
 /// </summary>
-public class AchievementsManager : Singleton<AchievementsManager> {
+public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
+	//--------------------------------------
+	// Setting Attributes
+	//--------------------------------------
+	public const string ACTION_CHANGED = "aa_action_changed";
+
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -28,6 +34,15 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 	//--------------------------------------
 	private Dictionary<string, AAction> actions;
 	private Dictionary<string, Achievement> achievements;
+
+	//--------------------------------------
+	// Unity Methods
+	//--------------------------------------
+	#region Unity
+	void Awake(){
+		AAction.dispatcher.addEventListener(ACTION_CHANGED, OnActionChanged); 
+	}
+	#endregion
 
 	//--------------------------------------
 	// Private Methods
@@ -47,44 +62,37 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 		return res;
 	}
 
-	private void setValue(AAction action, int value, bool ignoreActivationConstraint = false){
-		doSetValue(action.Name, value, ignoreActivationConstraint);
-	}
-
-	private void doSetValue(string actionName, int value, bool ignoreActivationConstraint = false){
-		//TODO Checkpropertyexists
-
+	private void doSetValue(AAction action, int value, bool ignoreActivationConstraint = false){
 		int finalValue = value;
 
 		if(!ignoreActivationConstraint){
-			int actionValue = actions[actionName].Value;
+			int actionProgress = action.Progress;
 
-			switch(actions[actionName].Activation){
+			switch(action.ActivationCondition){
 			case AchieveCondition.ACTIVE_IF_GREATER_THAN:
-				finalValue = value > actionValue ? value : actionValue;
+				finalValue = value > actionProgress ? value : actionProgress;
 				break;
 
-			case AchieveCondition.ACTIVE_IF_LESS_THAN:
-				finalValue = value < actionValue ? value : actionValue;
+			case AchieveCondition.ACTIVE_IF_LOWER_THAN:
+				finalValue = value < actionProgress ? value : actionProgress;
 				break;
 			}
 		}
 
-		actions[actionName].Value = finalValue;
+		action.Progress = finalValue;
 	}
 
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public int getValue(string actionName){
-		return actions[actionName].Value;
+	public void addValue(AAction action, int value, bool ignoreActivationConstraint = false){
+		doSetValue(action, action.Progress + value, ignoreActivationConstraint);
 	}
 
-	public void addValue(List<AAction> _actions, int value, bool ignoreActivationConstraint = false){
-		foreach(AAction p in _actions){
-			doSetValue(p.Name, getValue(p.Name) + value, ignoreActivationConstraint);
-		}
+	public void setValue(AAction action, int value, bool ignoreActivationConstraint = false){
+		doSetValue(action, value, ignoreActivationConstraint);
 	}
+
 
 	/// <summary>
 	/// Resets all actions tagged with tags indicated
@@ -108,7 +116,7 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 
 				//check total active actions
 				foreach(AAction action in a.Actions){
-					if((tags != null || hasTag(action, tags)) && action.isActive()){
+					if((tags != null || hasTag(action, tags)) && action.isCompleted()){
 						activeActions++;
 					}
 				}
@@ -122,5 +130,36 @@ public class AchievementsManager : Singleton<AchievementsManager> {
 		}
 
 		return achievements;
+	}
+
+
+	//--------------------------------------
+	//  EVENTS
+	//--------------------------------------
+	/// <summary>
+	/// When an action value changes raise this event
+	/// </summary>
+	/// <param name="e">E.</param>
+	public void OnActionChanged(CEvent e){
+		AActionResult result = e.data as AActionResult;
+
+		if(result.IsSucceeded){
+			foreach(AAction action in actionsList){
+				if(action.Id == result.ActionId){
+					//modify action progress
+					switch(result.ActionOperation){
+					case AActionOperation.ADD:
+						addValue(action, result.GamePropertyValue);
+						break;
+
+					case AActionOperation.SET:
+						setValue(action, result.GamePropertyValue);
+						break;
+					}
+			
+					break;
+				}
+			}
+		}
 	}
 }
