@@ -9,19 +9,6 @@ public class IAP_GameName : CoreIAPManager {
 	{
 		Init(products);
 	}
-	public override void OnProcessingPurchasedProduct (string SKU)
-	{
-		switch(SKU) {
-		case "100_coins":
-			//Consumimos nuestra compra que llamara al evento "OnProductConsumed"
-			Consume("100_coins");
-			break;
-			//		case BONUS_TRACK:
-			//			GameData.UnlockBonusTrack();
-			//			break;
-		}
-	}
-
 	public override void OnProcessingConsumeProduct (string SKU)
 	{
 		switch(SKU) {
@@ -30,11 +17,12 @@ public class IAP_GameName : CoreIAPManager {
 			//GameDataExample.AddCoins(100);
 			AndroidMessage.Create("Añadido al jugador", "100 Monedas de oro");
 			break;
+//		case "Arma1":
+//			//para los objetos no consumibles comprobar si se tiene (armas, logros, boosters, etc) cuando se inicia la
+//			//la tienda de android y wp8 chekean los purchases del usuario y llaman a este metodo para los objetos comprados
+//			//si no lo tiene se lo vuelve a dar (movil reiniciado, movil nuevo, etc) por si ya no lo tiene.
+//			if(!data.active("Arma1"))
+//				data.active("Arma1");
 		}
-	}
-
-	public override void UpdateProducts ()
-	{
-		base.UpdateProducts ();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,18 +19,6 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		get { return _isInited; }
 		private set { _isInited = value; }
 	}
-	public void Consume(string SKU)
-	{
-		#if UNITY_ANDROID
-			AndroidInAppPurchaseManager.instance.consume(SKU);
-		#endif
-		#if UNITY_IPHONE
-
-		#endif
-		#if UNITY_WP8
-
-		#endif
-	}
 	public void Purchase(string SKU)
 	{
 		#if UNITY_ANDROID
@@ -39,7 +28,7 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			IOSInAppPurchaseManager.instance.buyProduct(SKU);
 		#endif
 		#if UNITY_WP8
-		
+			WP8InAppPurchasesManager.instance.purchase(SKU);			
 		#endif
 	}
 	public void IOSRestorePurchase()
@@ -48,7 +37,6 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		{
 			IOSInAppPurchaseManager.instance.restorePurchases();
 		}
-
 	}
 	#endregion
 
@@ -76,9 +64,11 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		IOSInAppPurchaseManager.instance.loadStore();
 	#endif
 	#if UNITY_WP8
-	
+		WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
+		WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.PRODUCT_PURCHASE_FINISHED, OnPurchaseFinished);
+		WP8InAppPurchasesManager.instance.init();	
 	#endif
-		Debug.Log("IAPManger Init finish");
+		Debug.Log("CoreIAPManager - Init finished");
 	}
 	#endregion
 
@@ -88,8 +78,8 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		//if all goes right...
 		if(result.isSuccess)
 		{
-			//este metodo se encargara de activar la compra.
-			OnProcessingPurchasedProduct (result.purchase.SKU);
+			//este metodo se encargara de consumir la compra.
+			AndroidInAppPurchaseManager.instance.consume(result.purchase.SKU);
 		} 
 	}
 	void OnProductConsumed (BillingResult result)
@@ -121,7 +111,14 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			IsInited = true;
 			//es buena practica comprobar que todos los productos adquiridos esta consumidos (por ejemplo pudimos
 			//comprar un prodcutos pero se nos salio del movil y no lo consumimos, o iniciamos desde otro dispositivo)
-			UpdateProducts();
+			foreach(GooglePurchaseTemplate res in AndroidInAppPurchaseManager.instance.inventory.purchases)
+			{
+				if(res.state == GooglePurchaseState.PURCHASED)
+				{
+					OnProcessingConsumeProduct(res.SKU);
+				}
+
+			}
 		}
 	}
 	#endregion
@@ -164,6 +161,8 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			//reflecting the parent's decision or after the 
 			//transaction times out. Avoid blocking your UI 
 			//or gameplay while waiting for the transaction to be updated.
+
+			//wtf? mejor ver en vivo con un iphone.
 			break;
 		case InAppPurchaseState.Failed:
 			//Our purchase flow is failed.
@@ -173,7 +172,7 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			break;
 		}
 		
-		IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
+//		IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
 	}
 	void OnVerificationComplete (IOSStoreKitVerificationResponse responce)
 	{
@@ -193,6 +192,36 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	#endregion
 
 	#region WP8Events
+	private static void OnInitComplete() {
+		IsInited = true;
+		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
+
+		//check if have a durable object but no its assigned yet.
+		foreach(WP8ProductTemplate product in WP8InAppPurchasesManager.instance.products){
+			if(product.Type == WP8PurchaseProductType.Durable) {
+				if(product.isPurchased) {
+					//The Durable product was purchased, we should check here 
+					//if the content is unlocked for our Durable product.
+					OnProcessingConsumeProduct(product.ProductId);
+//					Debug.Log("Product " + product.Name + " is purchased");
+					
+				}
+			}
+		}
+		
+//		WP8Dialog.Create("market Initted", "Total products avaliable: " + WP8InAppPurchasesManager.instance.products.Count);
+	}
+	private static void OnPurchaseFinished(CEvent e) {
+		WP8PurchseResponce responce = e.data as WP8PurchseResponce;
+		
+		if(responce.IsSuccses) {
+			//Unlock logic for product with id recponce.productId should be here
+			OnProcessingConsumeProduct(responce.productId);
+		} else {
+			//Purchase fail logic for product with id recponce.productId should be here
+			WP8Dialog.Create("Purchase Failed", "Error: " + responce.error);
+		}
+	}
 	#endregion
 
 	private void FillProducts(List<Product> products)
@@ -204,22 +233,15 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		products.ForEach(x => IOSInAppPurchaseManager.instance.addProductId(x.IOS_SKU));
 	#endif
 	#if UNITY_WP8
-	
+		//este se rellena desde microsoft.
 	#endif
 	}
 	#region Virtual
-	public virtual void OnProcessingPurchasedProduct (string SKU)
-	{
-//		switch(SKU) {
-//		case "100_coins":
-//			//Consumimos nuestra compra que llamara al evento "OnProductConsumed"
-//			Consume("100_coins");
-//			break;
-//			//		case BONUS_TRACK:
-//			//			GameData.UnlockBonusTrack();
-//			//			break;
-//		}
-	}
+	/// <summary>
+	/// Este metodo se encarga de darle al jugador el objecto comprado. Si es un consumible(100 monedas) o durable 
+	/// (una capa). 
+	/// </summary>
+	/// <param name="SKU">SKU</param>
 	public virtual void OnProcessingConsumeProduct (string SKU)
 	{
 //		switch(SKU) {
@@ -230,15 +252,16 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 //			break;
 //		}
 	}
-	public virtual void UpdateProducts(){}
-
 	#endregion
 }
 [System.Serializable]
 public struct Product
 {
+	public string Name;
+	public string Description;
+	public float price;
+	public Texture2D texture;
 	public string AndroidSKU;
 	public string IOS_SKU;
 	public string WP8_SKU;
-	public Texture2D texture;
 }
