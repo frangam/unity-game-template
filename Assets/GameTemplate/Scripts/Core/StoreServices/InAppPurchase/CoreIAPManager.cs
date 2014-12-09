@@ -192,7 +192,7 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	#endregion
 
 	#region WP8Events
-	private static void OnInitComplete() {
+	void OnInitComplete() {
 		IsInited = true;
 		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
 
@@ -211,7 +211,7 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		
 //		WP8Dialog.Create("market Initted", "Total products avaliable: " + WP8InAppPurchasesManager.instance.products.Count);
 	}
-	private static void OnPurchaseFinished(CEvent e) {
+	void OnPurchaseFinished(CEvent e) {
 		WP8PurchseResponce responce = e.data as WP8PurchseResponce;
 		
 		if(responce.IsSuccses) {
