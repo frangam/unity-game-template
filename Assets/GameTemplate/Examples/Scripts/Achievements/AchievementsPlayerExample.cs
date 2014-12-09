@@ -19,7 +19,7 @@ public class AchievementsPlayerExample : MonoBehaviour {
 
 			//Observer Pattern
 			AActionResult res =  new AActionResult(AActionID.AACTION_1, value);
-			AAction.dispatcher.dispatch(BaseAchievementsManager.ACTION_CHANGED, res);
+			AAction.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
 		}
 	}
 

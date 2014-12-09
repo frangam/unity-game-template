@@ -69,6 +69,12 @@ public class AAction : MonoBehaviour{
 		}
 		set {
 			progress = value;
+
+			//Observer Pattern
+			if(isCompleted()){
+				AActionResult res =  new AActionResult(id, value);
+				AAction.dispatcher.dispatch(BaseAchievementsManager.ACTION_COMPLETED, res);
+			}
 		}
 	}
 

@@ -18,7 +18,8 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
-	public const string ACTION_CHANGED = "aa_action_changed";
+	public const string GAME_PROPERTY_CHANGED = "aa_game_property_changed";
+	public const string ACTION_COMPLETED = "aa_action_completed";
 
 	//--------------------------------------
 	// Setting Attributes
@@ -32,15 +33,15 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private Dictionary<string, AAction> actions;
-	private Dictionary<string, Achievement> achievements;
+
 
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
 	void Awake(){
-		AAction.dispatcher.addEventListener(ACTION_CHANGED, OnActionChanged); 
+		AAction.dispatcher.addEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
+		AAction.dispatcher.addEventListener(ACTION_COMPLETED, OnActionChanged); 
 	}
 	#endregion
 
@@ -82,6 +83,83 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		action.Progress = finalValue;
 	}
 
+	/// <summary>
+	/// Report the progress to the server side
+	/// </summary>
+	/// <param name="achievement">Achievement.</param>
+	private void reportToServer(Achievement achievement){
+		string aID = achievement.Id;
+
+		//si no se habia desbloqueado previamente, lo anotamos en la memoria
+		if(PlayerPrefs.GetInt(aID) != 1)
+			PlayerPrefs.SetInt(aID, 1);
+		
+		#if UNITY_ANDROID
+		//si el logro no se ha conseguido
+		GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(aID);
+		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED && gpAchievement != null && gpAchievement.state != GPAchievementState.STATE_UNLOCKED){
+			if(achievement.IsIncremental){
+				GooglePlayManager.instance.IncrementAchievementById(aID, achievement.getProgressIntegerValue());
+			}
+			else{
+				GooglePlayManager.instance.UnlockAchievementById(aID);
+			}
+		}
+		#elif UNITY_IPHONE
+		if(GameCenterManager.IsPlayerAuthed && GameCenterManager.getAchievementProgress(aID) < 100){ //Menor al 100%
+			GameCenterManager.submitAchievement(achievement.getProgressPercentage(), aID); //Completamos con el 100% del progreso
+		}
+		#elif WP8
+
+		#endif
+	}
+
+	/// <summary>
+	/// Unlock all oh the achievements were unlocked locally
+	/// An this checks if it is needed sending to the server
+	/// </summary>
+	public void intialCheckingInServerSide(){
+		bool lockedInServer = false;
+
+		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
+			foreach(Achievement a in achievementsList){
+				if(PlayerPrefs.GetInt(a.Id) == 1){
+					
+					#if UNITY_ANDROID
+					GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(a.Id);
+					lockedInServer = gpAchievement != null && gpAchievement.state != GPAchievementState.STATE_UNLOCKED;
+					#elif UNITY_IPHONE
+					lockedInServer = GameCenterManager.IsPlayerAuthed && GameCenterManager.getAchievementProgress(id) < 100;
+					#elif WP8
+					#endif
+
+					//report to the server to unlock
+					if(lockedInServer){
+						reportToServer(a);
+					}
+				}
+			}		
+		}		
+	}
+
+	/// <summary>
+	/// Checks all of the achievements have the given action
+	/// </summary>
+	/// <returns>The achievements.</returns>
+	/// <param name="tags">Tags.</param>
+	/// <param name="action">Action.</param>
+	private void checkAchievements(List<string> tags, AAction action){
+		foreach(Achievement a in achievementsList){
+			if(a.Actions.Contains(action) //has given action
+			   && !a.Unlocked){	//locked
+				//if all actions are active unlock achievement
+				if(a.getProgressIntegerValue() == a.Actions.Count){
+					a.Unlocked = true;
+				}
+			}
+		}
+	}
+
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
@@ -106,43 +184,19 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		}
 	}
 
-	public List<Achievement> checkAchievements(List<string> tags){
-		List<Achievement> achievements = new List<Achievement>();
 
-		foreach(Achievement a in achievements){
-			//locked
-			if(!a.Unlocked){
-				int activeActions = 0;
-
-				//check total active actions
-				foreach(AAction action in a.Actions){
-					if((tags != null || hasTag(action, tags)) && action.isCompleted()){
-						activeActions++;
-					}
-				}
-
-				//if all achievement actions are active unlock achievement
-				if(activeActions == a.Actions.Count){
-					a.Unlocked = true;
-					achievements.Add(a);
-				}
-			}
-		}
-
-		return achievements;
-	}
 
 
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
 	/// <summary>
-	/// When an action value changes raise this event
+	/// When an game property value changes raise this event
 	/// </summary>
 	/// <param name="e">E.</param>
-	public void OnActionChanged(CEvent e){
+	public void OnGamePropertyChanged(CEvent e){
 		AActionResult result = e.data as AActionResult;
-
+		
 		if(result.IsSucceeded){
 			foreach(AAction action in actionsList){
 				if(action.Id == result.ActionId){
@@ -151,15 +205,25 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 					case AActionOperation.ADD:
 						addValue(action, result.GamePropertyValue);
 						break;
-
+						
 					case AActionOperation.SET:
 						setValue(action, result.GamePropertyValue);
 						break;
 					}
-			
+					
 					break;
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// When an action value changes raise this event
+	/// </summary>
+	/// <param name="e">E.</param>
+	public void OnActionChanged(CEvent e){
+		AActionResult result = e.data as AActionResult;
+
+
 	}
 }
