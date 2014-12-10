@@ -43,7 +43,7 @@ public static class GOExtensions {
 	/// <returns>All children match with searched component</returns>
 	/// <param name="parent">The parent</param>
 	/// <typeparam name="T">The component</typeparam>
-	public static T[] getComponentsInChildren<T>(this Transform parent) where T: Component{
+	public static T[] getComponentsInChildren<T>(this Transform parent, bool inDeph = true) where T: Component{
 		List<T> list = new List<T> ();
 		T[] res = default(T[]);
 		T aux = default(T);
@@ -67,8 +67,8 @@ public static class GOExtensions {
 	/// <returns>All children match with searched component</returns>
 	/// <param name="parent">The parent</param>
 	/// <typeparam name="T">The component</typeparam>
-	public static T[] getComponentsInChildren<T>(this GameObject parent) where T: Component{
-		return parent.transform.getComponentsInChildren<T>();
+	public static T[] getComponentsInChildren<T>(this GameObject parent, bool inDeph = true) where T: Component{
+		return parent.transform.getComponentsInChildren<T>(inDeph);
 	}
 
 	/// <summary>

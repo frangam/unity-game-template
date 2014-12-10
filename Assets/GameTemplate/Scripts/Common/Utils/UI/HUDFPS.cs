@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
+[RequireComponent(typeof(Text))]
 public class HUDFPS : MonoBehaviour 
 {
 	
@@ -21,14 +23,7 @@ public class HUDFPS : MonoBehaviour
 	private int   frames  = 0; // Frames drawn over the interval
 	private float timeleft; // Left time for current interval
 	
-	void Start()
-	{
-		if( !GetComponent<UILabel>() )
-		{
-			Debug.Log("UtilityFramesPerSecond needs a NGUILabel component!");
-			enabled = false;
-			return;
-		}
+	void Start(){
 		timeleft = updateInterval;  
 	}
 	
@@ -44,15 +39,15 @@ public class HUDFPS : MonoBehaviour
 			// display two fractional digits (f2 format)
 			float fps = accum/frames;
 			string format = System.String.Format("{0:F2} FPS",fps);
-			GetComponent<UILabel>().text = format;
+			GetComponent<Text>().text = format;
 			
 			if(fps < 30)
-				GetComponent<UILabel>().color = Color.yellow;
+				GetComponent<Text>().color = Color.yellow;
 			else 
 				if(fps < 10)
-					GetComponent<UILabel>().color = Color.red;
+					GetComponent<Text>().color = Color.red;
 			else
-				GetComponent<UILabel>().color = Color.green;
+				GetComponent<Text>().color = Color.green;
 			//	DebugConsole.Log(format,level);
 			timeleft = updateInterval;
 			accum = 0.0F;
