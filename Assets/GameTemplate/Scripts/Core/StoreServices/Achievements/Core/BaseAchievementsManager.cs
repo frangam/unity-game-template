@@ -34,15 +34,12 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private List<AAction> actionsList;
-
-	[SerializeField]
 	private List<Achievement> achievementsList;
 
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-
+	private List<AAction> actionsList;
 
 	//--------------------------------------
 	// Getters/Setters
@@ -59,9 +56,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	#region Unity
 	void Awake(){
-		//TODO Add actions that shuld be as children to our list
 		actionsList = new List<AAction>(gameObject.getComponentsInChildren<AAction>());
-
 		initialCheks();
 
 		dispatcher.addEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
