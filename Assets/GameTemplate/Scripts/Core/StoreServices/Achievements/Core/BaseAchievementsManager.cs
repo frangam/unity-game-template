@@ -27,6 +27,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	// Constants
 	//--------------------------------------
 	public const string GAME_PROPERTY_CHANGED = "aa_game_property_changed";
+	public const string GAME_PROPERTY_RESETED = "aa_game_property_reseted";
 	public const string ACTION_COMPLETED = "aa_action_completed";
 	public const string ACHIEVEMENT_UNLOCKED = "aa_achievement_unlocked";
 
@@ -60,7 +61,9 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		initialVerification();
 		intialCheckingInServerSide();
 
+		//listeners
 		dispatcher.addEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
+		dispatcher.addEventListener(GAME_PROPERTY_RESETED, OnGamePropertyReseted); 
 		dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
 	}
 	#endregion
@@ -250,6 +253,25 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 							break;
 						}
 						
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// When an game property value is reseted raise this event
+	/// </summary>
+	/// <param name="e">E.</param>
+	public void OnGamePropertyReseted(CEvent e){
+		AActionResult result = e.data as AActionResult;
+		
+		if(result.IsSucceeded){
+			foreach(AActionID id in result.ActionsIds){
+				foreach(AAction action in actionsList){
+					if(action.Id == id){
+						action.reset();					
 						break;
 					}
 				}
