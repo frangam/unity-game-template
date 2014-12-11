@@ -20,7 +20,7 @@ public class Achievement {
 	private bool isIncremental = false;
 
 	[SerializeField]
-	private List<AAction> actions;
+	private List<GameAction> actions;
 		
 	//--------------------------------------
 	// Private Attributes
@@ -54,7 +54,7 @@ public class Achievement {
 		}
 	}
 
-	public List<AAction> Actions {
+	public List<GameAction> Actions {
 		get {
 			return this.actions;
 		}
@@ -92,7 +92,7 @@ public class Achievement {
 		int activeActions = 0;
 
 		//check total active actions
-		foreach(AAction action in actions){
+		foreach(GameAction action in actions){
 			if(action.isCompleted()){
 				activeActions++;
 			}
@@ -112,7 +112,7 @@ public class Achievement {
 		int res = 0;
 
 		//check total active actions
-		foreach(AAction action in actions){
+		foreach(GameAction action in actions){
 			if(action.isCompleted()){
 				res++;
 			}

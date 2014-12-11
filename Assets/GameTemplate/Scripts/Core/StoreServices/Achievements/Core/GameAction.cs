@@ -7,7 +7,7 @@ using UnionAssets.FLE;
 /// An action measures an achievement activationValue. It is a counter with some special attributes
 /// (such as default value and update constraints)
 /// </summary>
-public class AAction : MonoBehaviour{
+public class GameAction : MonoBehaviour{
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------

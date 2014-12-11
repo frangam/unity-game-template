@@ -40,7 +40,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private List<AAction> actionsList;
+	private List<GameAction> actionsList;
 
 	//--------------------------------------
 	// Getters/Setters
@@ -57,7 +57,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	#region Unity
 	void Awake(){
-		actionsList = new List<AAction>(gameObject.getComponentsInChildren<AAction>());
+		actionsList = new List<GameAction>(gameObject.getComponentsInChildren<GameAction>());
 		initialVerification();
 		intialCheckingInServerSide();
 
@@ -76,7 +76,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 			if(achievement.Actions == null || (achievement.Actions != null && achievement.Actions.Count == 0))
 				Debug.LogWarning("Achievement " + achievement + " has not any actions attached");
 			else{
-				foreach(AAction action in achievement.Actions){
+				foreach(GameAction action in achievement.Actions){
 					if(action == null)
 						Debug.LogWarning("Achievement " + achievement + " has some empty actions attached");
 				}
@@ -84,7 +84,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		}
 	}
 
-	private bool hasTag(AAction action, List<string> tags){
+	private bool hasTag(GameAction action, List<string> tags){
 		bool res = false;
 
 		foreach(string tag in tags){
@@ -99,7 +99,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		return res;
 	}
 
-	private void doSetValue(AAction action, int value, bool ignoreActivationConstraint = false){
+	private void doSetValue(GameAction action, int value, bool ignoreActivationConstraint = false){
 		int finalValue = value;
 
 		if(!ignoreActivationConstraint){
@@ -187,7 +187,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	/// <returns>The achievements.</returns>
 	/// <param name="tags">Tags.</param>
 	/// <param name="action">Action.</param>
-	private void checkAchievements(List<string> tags, AAction action){
+	private void checkAchievements(List<string> tags, GameAction action){
 		foreach(Achievement achievement in achievementsList){
 			if(achievement.Actions.Contains(action) //has given action
 			   && !achievement.Unlocked){	//locked
@@ -204,11 +204,11 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public void addValue(AAction action, int value, bool ignoreActivationConstraint = false){
+	public void addValue(GameAction action, int value, bool ignoreActivationConstraint = false){
 		doSetValue(action, action.Progress + value, ignoreActivationConstraint);
 	}
 
-	public void setValue(AAction action, int value, bool ignoreActivationConstraint = false){
+	public void setValue(GameAction action, int value, bool ignoreActivationConstraint = false){
 		doSetValue(action, value, ignoreActivationConstraint);
 	}
 
@@ -218,7 +218,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	/// </summary>
 	/// <param name="tags">Tags.</param>
 	public void resetProperties(List<string> tags){
-		foreach(AAction a in actionsList){
+		foreach(GameAction a in actionsList){
 			if(a.Tags == null || hasTag(a, tags)){
 				a.reset();
 			}
@@ -240,7 +240,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		
 		if(result.IsSucceeded){
 			foreach(AActionID id in result.ActionsIds){
-				foreach(AAction action in actionsList){
+				foreach(GameAction action in actionsList){
 					if(action.Id == id){
 						//modify action progress
 						switch(result.ActionOperation){
@@ -269,7 +269,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		
 		if(result.IsSucceeded){
 			foreach(AActionID id in result.ActionsIds){
-				foreach(AAction action in actionsList){
+				foreach(GameAction action in actionsList){
 					if(action.Id == id){
 						action.reset();					
 						break;
@@ -287,7 +287,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		AActionResult result = e.data as AActionResult;
 
 		if(result.IsSucceeded){
-			foreach(AAction action in actionsList){
+			foreach(GameAction action in actionsList){
 				if(action.Id == result.CurrentActionId){
 					checkAchievements(null, action);
 					break;
