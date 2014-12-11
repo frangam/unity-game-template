@@ -7,6 +7,7 @@ using UnionAssets.FLE;
 /// An action measures an achievement activationValue. It is a counter with some special attributes
 /// (such as default value and update constraints)
 /// </summary>
+
 public class GameAction : MonoBehaviour{
 	//--------------------------------------
 	// Setting Attributes
@@ -22,6 +23,10 @@ public class GameAction : MonoBehaviour{
 
 	[SerializeField]
 	private int activationValue;
+
+	[SerializeField]
+	[Tooltip("Valid if activation is ACTIVE_IF_BETWEEN")]
+	private IntervalObjectInt activationInterval;
 
 	[SerializeField]
 	private int initialValue;
@@ -115,6 +120,10 @@ public class GameAction : MonoBehaviour{
 
 		case AchieveCondition.ACTIVE_IF_LOWER_THAN:
 			res = progress < activationValue;
+			break;
+
+		case AchieveCondition.ACTIVE_IF_BETWEEN:
+			res = activationInterval.contiene(progress);
 			break;
 		}
 

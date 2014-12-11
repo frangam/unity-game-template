@@ -19,7 +19,7 @@ public class AchievementsPlayerExample : MonoBehaviour {
 			enemiesKills = value;
 
 			//Observer Pattern
-			List<GameActionID> actionsIds = new List<GameActionID>() {GameActionID.GAME_ACTION_2, GameActionID.GAME_ACTION_3};
+			List<GameActionID> actionsIds = new List<GameActionID>() {GameActionID.GAME_ACTION_2, GameActionID.GAME_ACTION_3, GameActionID.GAME_ACTION_7};
 			GameActionResult res =  new GameActionResult(actionsIds, value);
 			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
 		}

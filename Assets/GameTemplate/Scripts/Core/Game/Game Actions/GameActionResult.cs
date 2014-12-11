@@ -6,10 +6,10 @@ public class GameActionResult : ISN_Result {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private GameActionID			currentActionId;
-	private List<GameActionID>		actionsIds;
-	private	GameActionOperation 	actionOperation;
-	private int					gamePropertyValue;
+	private GameActionID				currentActionId;
+	private List<GameActionID>			actionsIds;
+	private	GameActionOperation 		actionOperation;
+	private int	gamePropertyValue;
 
 	//--------------------------------------
 	// Getters/Setters

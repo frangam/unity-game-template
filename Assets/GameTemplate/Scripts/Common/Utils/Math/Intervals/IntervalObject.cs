@@ -3,7 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using ANMiniJSON;
 
-public class IntervalObject<T> : MonoBehaviour {
+
+//-----
+//We need this dummy classes in order to edit attributes of IntervalObject<T> 
+//from Unity Inspector
+//-----
+[System.Serializable]
+public class IntervalObjectInt : IntervalObject<int> {}
+[System.Serializable]
+public class IntervalObjectLong : IntervalObject<long> {}
+[System.Serializable]
+public class IntervalObjectFloat : IntervalObject<float> {}
+[System.Serializable]
+public class IntervalObjectDouble : IntervalObject<double> {}
+[System.Serializable]
+public class IntervalObjectString : IntervalObject<string> {}
+
+
+public class IntervalObject<T> {
 	//--------------------------------------
 	// Constantes privadas
 	//--------------------------------------
@@ -13,12 +30,19 @@ public class IntervalObject<T> : MonoBehaviour {
 	//--------------------------------------
 	// Atributos privados
 	//--------------------------------------
+	[SerializeField]
 	private T from;
+
+	[SerializeField]
 	private T to;
 	
 	//--------------------------------------
 	// Constructores
 	//--------------------------------------
+	public IntervalObject(){
+		from = default(T);
+		to = default(T);
+	}
 	/// <summary>
 	/// Inicializa una nueva instancia de la clase <see cref="IntervalObject`1"/> .
 	/// 
