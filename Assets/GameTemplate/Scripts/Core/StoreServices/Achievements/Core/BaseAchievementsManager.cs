@@ -57,7 +57,8 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	#region Unity
 	void Awake(){
 		actionsList = new List<AAction>(gameObject.getComponentsInChildren<AAction>());
-		initialCheks();
+		initialVerification();
+		intialCheckingInServerSide();
 
 		dispatcher.addEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
 		dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
@@ -67,7 +68,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	private void initialCheks(){
+	private void initialVerification(){
 		foreach(Achievement achievement in achievementsList){
 			if(achievement.Actions == null || (achievement.Actions != null && achievement.Actions.Count == 0))
 				Debug.LogWarning("Achievement " + achievement + " has not any actions attached");
@@ -153,25 +154,28 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	public void intialCheckingInServerSide(){
 		bool lockedInServer = false;
 
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
-			foreach(Achievement a in achievementsList){
-				if(PlayerPrefs.GetInt(a.Id) == 1){
-					
-					#if UNITY_ANDROID
+		foreach(Achievement a in achievementsList){
+			if(PlayerPrefs.GetInt(a.Id) == 1){
+				a.Unlocked = true;
+				
+				#if UNITY_ANDROID
+				if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
 					GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(a.Id);
 					lockedInServer = gpAchievement != null && gpAchievement.state != GPAchievementState.STATE_UNLOCKED;
-					#elif UNITY_IPHONE
-					lockedInServer = GameCenterManager.IsPlayerAuthed && GameCenterManager.getAchievementProgress(id) < 100;
-					#elif WP8
-					#endif
-
-					//report to the server to unlock
-					if(lockedInServer){
-						reportToServer(a);
-					}
 				}
-			}		
-		}		
+				#elif UNITY_IPHONE
+				if(GameCenterManager.IsPlayerAuthed){
+					lockedInServer = GameCenterManager.getAchievementProgress(id) < 100;
+				}
+				#elif WP8
+				#endif
+
+				//report to the server to unlock
+				if(lockedInServer){
+					reportToServer(a);
+				}
+			}
+		}			
 	}
 
 	/// <summary>
