@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -19,8 +19,8 @@ public class AchievementsPlayerExample : MonoBehaviour {
 			enemiesKills = value;
 
 			//Observer Pattern
-			List<AActionID> actionsIds = new List<AActionID>() {AActionID.AACTION_2, AActionID.AACTION_3};
-			AActionResult res =  new AActionResult(actionsIds, value);
+			List<GameActionID> actionsIds = new List<GameActionID>() {GameActionID.GAME_ACTION_2, GameActionID.GAME_ACTION_3};
+			GameActionResult res =  new GameActionResult(actionsIds, value);
 			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
 		}
 	}
@@ -33,8 +33,8 @@ public class AchievementsPlayerExample : MonoBehaviour {
 			gamesPlayed = value;
 
 			//Observer Pattern
-			List<AActionID> actionsIds = new List<AActionID>() {AActionID.AACTION_1, AActionID.AACTION_4, AActionID.AACTION_5};
-			AActionResult res =  new AActionResult(actionsIds, value);
+			List<GameActionID> actionsIds = new List<GameActionID>() {GameActionID.GAME_ACTION_1, GameActionID.GAME_ACTION_4, GameActionID.GAME_ACTION_5};
+			GameActionResult res =  new GameActionResult(actionsIds, value);
 			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
 		}
 	}
@@ -47,8 +47,8 @@ public class AchievementsPlayerExample : MonoBehaviour {
 			coinsCollected = value;
 
 			//Observer Pattern
-			List<AActionID> actionsIds = new List<AActionID>() {AActionID.AACTION_6};
-			AActionResult res =  new AActionResult(actionsIds, value);
+			List<GameActionID> actionsIds = new List<GameActionID>() {GameActionID.GAME_ACTION_6};
+			GameActionResult res =  new GameActionResult(actionsIds, value);
 			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
 		}
 	}

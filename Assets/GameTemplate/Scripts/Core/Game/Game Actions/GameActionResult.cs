@@ -1,26 +1,26 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class AActionResult : ISN_Result {
+public class GameActionResult : ISN_Result {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private AActionID			currentActionId;
-	private List<AActionID>		actionsIds;
-	private	AActionOperation 	actionOperation;
+	private GameActionID			currentActionId;
+	private List<GameActionID>		actionsIds;
+	private	GameActionOperation 	actionOperation;
 	private int					gamePropertyValue;
 
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
-	public AActionID CurrentActionId {
+	public GameActionID CurrentActionId {
 		get {
 			return this.currentActionId;
 		}
 	}
 
-	public List<AActionID> ActionsIds {
+	public List<GameActionID> ActionsIds {
 		get {
 			return this.actionsIds;
 		}
@@ -32,7 +32,7 @@ public class AActionResult : ISN_Result {
 		}
 	}
 
-	public AActionOperation ActionOperation {
+	public GameActionOperation ActionOperation {
 		get {
 			return this.actionOperation;
 		}
@@ -41,12 +41,12 @@ public class AActionResult : ISN_Result {
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
-	public AActionResult(AActionID pCurrentActionId, int pGamePropValue, AActionOperation pActionOp = AActionOperation.SET): base(true){
+	public GameActionResult(GameActionID pCurrentActionId, int pGamePropValue, GameActionOperation pActionOp = GameActionOperation.SET): base(true){
 		currentActionId = pCurrentActionId;
 		actionOperation = pActionOp;
 		gamePropertyValue = pGamePropValue;
 	}
-	public AActionResult(List<AActionID> pActionsIds, int pGamePropValue, AActionOperation pActionOp = AActionOperation.SET): base(true){
+	public GameActionResult(List<GameActionID> pActionsIds, int pGamePropValue, GameActionOperation pActionOp = GameActionOperation.SET): base(true){
 		actionsIds = pActionsIds;
 		actionOperation = pActionOp;
 		gamePropertyValue = pGamePropValue;

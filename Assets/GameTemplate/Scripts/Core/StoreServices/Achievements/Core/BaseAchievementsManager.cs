@@ -236,19 +236,19 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	/// </summary>
 	/// <param name="e">E.</param>
 	public void OnGamePropertyChanged(CEvent e){
-		AActionResult result = e.data as AActionResult;
+		GameActionResult result = e.data as GameActionResult;
 		
 		if(result.IsSucceeded){
-			foreach(AActionID id in result.ActionsIds){
+			foreach(GameActionID id in result.ActionsIds){
 				foreach(GameAction action in actionsList){
 					if(action.Id == id){
 						//modify action progress
 						switch(result.ActionOperation){
-						case AActionOperation.ADD:
+						case GameActionOperation.ADD:
 							addValue(action, result.GamePropertyValue);
 							break;
 							
-						case AActionOperation.SET:
+						case GameActionOperation.SET:
 							setValue(action, result.GamePropertyValue);
 							break;
 						}
@@ -265,10 +265,10 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	/// </summary>
 	/// <param name="e">E.</param>
 	public void OnGamePropertyReseted(CEvent e){
-		AActionResult result = e.data as AActionResult;
+		GameActionResult result = e.data as GameActionResult;
 		
 		if(result.IsSucceeded){
-			foreach(AActionID id in result.ActionsIds){
+			foreach(GameActionID id in result.ActionsIds){
 				foreach(GameAction action in actionsList){
 					if(action.Id == id){
 						action.reset();					
@@ -284,7 +284,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	/// </summary>
 	/// <param name="e">E.</param>
 	public void OnActionCompleted(CEvent e){
-		AActionResult result = e.data as AActionResult;
+		GameActionResult result = e.data as GameActionResult;
 
 		if(result.IsSucceeded){
 			foreach(GameAction action in actionsList){

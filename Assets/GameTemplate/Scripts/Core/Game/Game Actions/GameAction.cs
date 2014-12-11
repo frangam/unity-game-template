@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnionAssets.FLE;
@@ -15,7 +15,7 @@ public class GameAction : MonoBehaviour{
 	private string name;
 
 	[SerializeField]
-	private AActionID id;
+	private GameActionID id;
 
 	[SerializeField]
 	private AchieveCondition activation;
@@ -43,7 +43,7 @@ public class GameAction : MonoBehaviour{
 		}
 	}
 
-	public AActionID Id {
+	public GameActionID Id {
 		get {
 			return this.id;
 		}
@@ -64,7 +64,7 @@ public class GameAction : MonoBehaviour{
 
 			//Observer Pattern
 			if(isCompleted()){
-				AActionResult res =  new AActionResult(id, value);
+				GameActionResult res =  new GameActionResult(id, value);
 				BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.ACTION_COMPLETED, res);
 			}
 		}
