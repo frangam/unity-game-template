@@ -3,24 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
-public class Achievement {
+public class Achievement : BaseQuest{
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private string name;
-
-	[SerializeField]
-	private string description;
-
-	[SerializeField]
-	private string id;
-
-	[SerializeField]
 	private bool isIncremental = false;
-
-	[SerializeField]
-	private List<GameAction> actions;
 		
 	//--------------------------------------
 	// Private Attributes
@@ -30,95 +18,49 @@ public class Achievement {
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
-	public string Name {
-		get {
-			return this.name;
-		}
-	}
-
-	public string Description {
-		get {
-			return this.description;
-		}
-	}
-
-	public string Id {
-		get {
-			return this.id;
-		}
-	}
-
 	public bool IsIncremental {
 		get {
 			return this.isIncremental;
 		}
 	}
 
-	public List<GameAction> Actions {
-		get {
-			return this.actions;
-		}
-	}
+	//--------------------------------------
+	// Constructors
+	//--------------------------------------
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Achievement"/> class.
+	/// 
+	/// Attributes:
+	/// ID, Actions, isIncremental
+	/// 
+	/// Actions: a1.a2.a3.a4.
+	/// isIncremental: 0 (false) or 1 (true)
+	/// 
+	/// </summary>
+	/// <param name="attributes">Attributes.</param>
+	/// <param name="pAllGameActions">P all game actions.</param>
+	public Achievement(string attributes, List<GameAction> pAllGameActions): base(attributes, pAllGameActions){
+		string[] atts = attributes.Split(SEPARATOR_ATTRIBUTES);
+		int aII;
 
-	public bool Unlocked {
-		get {
-			return this.unlocked;
-		}
-		set {
-			unlocked = value;
+		//Is incremental
+		if(int.TryParse(atts[2], out aII)){
+			isIncremental = aII != 0;
 		}
 	}
 
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	public override bool loadedCorrectly (){
+		return base.loadedCorrectly () && isIncremental != null;
+	}
+
+	public override void init (){
+		idPlayerPrefs = "pp_achievement_unlocked_" + Id;
+	}
+
 	public override string ToString (){
-		return string.Format ("[Achievement: id={1}, name={3}, description={0}, unlocked={2}]", description, id, unlocked, name);
+		return string.Format ("[Achievement: id={1}, name={3}, description={0}, isIncremental={4}, unlocked={2}]", Description, Id, unlocked, Name, IsIncremental);
 	}
-
-	//--------------------------------------
-	// Private Methods
-	//--------------------------------------
-
-	//--------------------------------------
-	// Public Methods
-	//--------------------------------------
-	/// <summary>
-	/// Gets the progress percentage.
-	/// </summary>
-	/// <returns>The progress percentage.</returns>
-	public float getProgressPercentage(){
-		float res = 0f;
-		int activeActions = 0;
-
-		//check total active actions
-		foreach(GameAction action in actions){
-			if(action.isCompleted()){
-				activeActions++;
-			}
-		}
-
-		res = (activeActions * 100f) / actions.Count;
-
-		return res;
-	}
-
-	/// <summary>
-	/// Gets the progress integer value.
-	/// The total completed actions
-	/// </summary>
-	/// <returns>The progress integer value.</returns>
-	public int getProgressIntegerValue(){
-		int res = 0;
-
-		//check total active actions
-		foreach(GameAction action in actions){
-			if(action.isCompleted()){
-				res++;
-			}
-		}
-
-		return res;
-	}
-
 }

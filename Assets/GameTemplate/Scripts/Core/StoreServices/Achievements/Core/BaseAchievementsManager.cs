@@ -14,56 +14,23 @@ using UnionAssets.FLE;
 /// ** Every property has an activation rule - for instance "kills is active if its value is greater than 10".
 /// ** Check activated properties periodically. If all related properties of an achievement are active, then the achievement is unlocked.
 /// </summary>
-public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
-	//--------------------------------------
-	// Static Attributes
-	//--------------------------------------
-	/// <summary>
-	/// Observer pattern
-	/// </summary>
-	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
-
+public class BaseAchievementsManager : BaseQuestManager<Achievement> {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
-	public const string GAME_PROPERTY_CHANGED = "aa_game_property_changed";
-	public const string GAME_PROPERTY_RESETED = "aa_game_property_reseted";
-	public const string ACTION_COMPLETED = "aa_action_completed";
 	public const string ACHIEVEMENT_UNLOCKED = "aa_achievement_unlocked";
-
-	//--------------------------------------
-	// Setting Attributes
-	//--------------------------------------
-	[SerializeField]
-	private List<Achievement> achievementsList;
-
-	//--------------------------------------
-	// Private Attributes
-	//--------------------------------------
-	private List<GameAction> actionsList;
-
-	//--------------------------------------
-	// Getters/Setters
-	//--------------------------------------
-	public static EventDispatcherBase dispatcher {
-		get {
-			return _dispatcher;
-		}
-	}
 
 
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	void Awake(){
-		actionsList = new List<GameAction>(gameObject.getComponentsInChildren<GameAction>());
-		initialVerification();
+	public override void Awake(){
+		base.Awake();
+
 		intialCheckingInServerSide();
 
 		//listeners
-		dispatcher.addEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
-		dispatcher.addEventListener(GAME_PROPERTY_RESETED, OnGamePropertyReseted); 
 		dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
 	}
 	#endregion
@@ -71,53 +38,7 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	private void initialVerification(){
-		foreach(Achievement achievement in achievementsList){
-			if(achievement.Actions == null || (achievement.Actions != null && achievement.Actions.Count == 0))
-				Debug.LogWarning("Achievement " + achievement + " has not any actions attached");
-			else{
-				foreach(GameAction action in achievement.Actions){
-					if(action == null)
-						Debug.LogWarning("Achievement " + achievement + " has some empty actions attached");
-				}
-			}
-		}
-	}
 
-	private bool hasTag(GameAction action, List<string> tags){
-		bool res = false;
-
-		foreach(string tag in tags){
-			if(action.Tags != null){
-				res = action.Tags.Contains(tag);
-
-				if(res)
-					break;
-			}
-		}
-
-		return res;
-	}
-
-	private void doSetValue(GameAction action, int value, bool ignoreActivationConstraint = false){
-		int finalValue = value;
-
-		if(!ignoreActivationConstraint){
-			int actionProgress = action.Progress;
-
-			switch(action.ActivationCondition){
-			case AchieveCondition.ACTIVE_IF_GREATER_THAN:
-				finalValue = value > actionProgress ? value : actionProgress;
-				break;
-
-			case AchieveCondition.ACTIVE_IF_LOWER_THAN:
-				finalValue = value < actionProgress ? value : actionProgress;
-				break;
-			}
-		}
-
-		action.Progress = finalValue;
-	}
 
 	/// <summary>
 	/// Report the progress to the server side
@@ -126,10 +47,6 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	private void reportToServer(Achievement achievement){
 		string aID = achievement.Id;
 
-		//si no se habia desbloqueado previamente, lo anotamos en la memoria
-		if(PlayerPrefs.GetInt(aID) != 1)
-			PlayerPrefs.SetInt(aID, 1);
-		
 		#if UNITY_ANDROID
 		//si el logro no se ha conseguido
 		GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(aID);
@@ -157,9 +74,9 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	public void intialCheckingInServerSide(){
 		bool lockedInServer = false;
 
-		foreach(Achievement a in achievementsList){
+		foreach(Achievement a in Quests){
 			if(PlayerPrefs.GetInt(a.Id) == 1){
-				a.Unlocked = true;
+				a.Completed = true;
 				
 				#if UNITY_ANDROID
 				if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
@@ -181,49 +98,32 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 		}			
 	}
 
-	/// <summary>
-	/// Checks all of the achievements have the given action
-	/// </summary>
-	/// <returns>The achievements.</returns>
-	/// <param name="tags">Tags.</param>
-	/// <param name="action">Action.</param>
-	private void checkAchievements(List<string> tags, GameAction action){
-		foreach(Achievement achievement in achievementsList){
-			if(achievement.Actions.Contains(action) //has given action
-			   && !achievement.Unlocked){	//locked
-				//if all actions are active unlock achievement
-				if(achievement.getProgressIntegerValue() == achievement.Actions.Count){
-					achievement.Unlocked = true;
-					reportToServer(achievement);
-					dispatcher.dispatch(ACHIEVEMENT_UNLOCKED, achievement);
-				}
-			}
-		}
-	}
-
-	//--------------------------------------
-	// Public Methods
-	//--------------------------------------
-	public void addValue(GameAction action, int value, bool ignoreActivationConstraint = false){
-		doSetValue(action, action.Progress + value, ignoreActivationConstraint);
-	}
-
-	public void setValue(GameAction action, int value, bool ignoreActivationConstraint = false){
-		doSetValue(action, value, ignoreActivationConstraint);
-	}
+//	/// <summary>
+//	/// Checks all of the achievements have the given action
+//	/// </summary>
+//	/// <returns>The achievements.</returns>
+//	/// <param name="tags">Tags.</param>
+//	/// <param name="action">Action.</param>
+//	protected virtual List<Achievement> checkAchievements(List<string> tags, GameAction action){
+//		List<Achievement> res = new List<Achievement>();
+//
+//		foreach(Achievement achievement in quests){
+//			if(achievement.Actions.Contains(action) //has given action
+//			   && !achievement.Completed){	//locked
+//				//if all actions are active unlock achievement
+//				if(achievement.getProgressIntegerValue() == achievement.Actions.Count){
+//					achievement.Completed = true; //uptade unlocked flag to true
+//					res.Add(achievement); //add it to the result
+//					reportToServer(achievement); //report achiement progress to the server side
+//					dispatcher.dispatch(ACHIEVEMENT_UNLOCKED, achievement); //dispatch the corresponding achievement
+//				}
+//			}
+//		}
+//
+//		return res;
+//	}
 
 
-	/// <summary>
-	/// Resets all actions tagged with tags indicated
-	/// </summary>
-	/// <param name="tags">Tags.</param>
-	public void resetProperties(List<string> tags){
-		foreach(GameAction a in actionsList){
-			if(a.Tags == null || hasTag(a, tags)){
-				a.reset();
-			}
-		}
-	}
 
 
 
@@ -231,68 +131,14 @@ public class BaseAchievementsManager : Singleton<BaseAchievementsManager> {
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
-	/// <summary>
-	/// When an game property value changes raise this event
-	/// </summary>
-	/// <param name="e">E.</param>
-	public void OnGamePropertyChanged(CEvent e){
-		GameActionResult result = e.data as GameActionResult;
+	public override void OnQuestCompleted (CEvent e){
+		Achievement achievement = e.data as Achievement;
 		
-		if(result.IsSucceeded){
-			foreach(GameActionID id in result.ActionsIds){
-				foreach(GameAction action in actionsList){
-					if(action.Id == id){
-						//modify action progress
-						switch(result.ActionOperation){
-						case GameActionOperation.ADD:
-							addValue(action, result.GamePropertyValue);
-							break;
-							
-						case GameActionOperation.SET:
-							setValue(action, result.GamePropertyValue);
-							break;
-						}
-						
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// When an game property value is reseted raise this event
-	/// </summary>
-	/// <param name="e">E.</param>
-	public void OnGamePropertyReseted(CEvent e){
-		GameActionResult result = e.data as GameActionResult;
-		
-		if(result.IsSucceeded){
-			foreach(GameActionID id in result.ActionsIds){
-				foreach(GameAction action in actionsList){
-					if(action.Id == id){
-						action.reset();					
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// When an action value changes raise this event
-	/// </summary>
-	/// <param name="e">E.</param>
-	public void OnActionCompleted(CEvent e){
-		GameActionResult result = e.data as GameActionResult;
-
-		if(result.IsSucceeded){
-			foreach(GameAction action in actionsList){
-				if(action.Id == result.CurrentActionId){
-					checkAchievements(null, action);
-					break;
-				}
-			}
+		if(achievement != null){
+			//TODO Delete Log
+			Debug.Log("Achievement " + achievement + " is completed");
+			reportToServer(achievement); //report achiement progress to the server side
+			dispatcher.dispatch(ACHIEVEMENT_UNLOCKED, achievement);
 		}
 	}
 }

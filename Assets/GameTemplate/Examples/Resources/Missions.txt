@@ -1,0 +1,2 @@
+1,1,1,La ciudad ha sido invadida por una plaga de zombies. Rescata al rehén y acaba con todos los zombies.
+2,2,2,¡No dejes que ningún zombie toque al rehén!

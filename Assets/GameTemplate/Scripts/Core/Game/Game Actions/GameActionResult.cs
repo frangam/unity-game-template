@@ -6,21 +6,21 @@ public class GameActionResult : ISN_Result {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private GameActionID				currentActionId;
-	private List<GameActionID>			actionsIds;
+	private string					currentActionId;
+	private List<string>				actionsIds;
 	private	GameActionOperation 		actionOperation;
 	private int	gamePropertyValue;
 
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
-	public GameActionID CurrentActionId {
+	public string CurrentActionId {
 		get {
 			return this.currentActionId;
 		}
 	}
 
-	public List<GameActionID> ActionsIds {
+	public List<string> ActionsIds {
 		get {
 			return this.actionsIds;
 		}
@@ -41,12 +41,12 @@ public class GameActionResult : ISN_Result {
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
-	public GameActionResult(GameActionID pCurrentActionId, int pGamePropValue, GameActionOperation pActionOp = GameActionOperation.SET): base(true){
+	public GameActionResult(string pCurrentActionId, int pGamePropValue, GameActionOperation pActionOp = GameActionOperation.SET): base(true){
 		currentActionId = pCurrentActionId;
 		actionOperation = pActionOp;
 		gamePropertyValue = pGamePropValue;
 	}
-	public GameActionResult(List<GameActionID> pActionsIds, int pGamePropValue, GameActionOperation pActionOp = GameActionOperation.SET): base(true){
+	public GameActionResult(List<string> pActionsIds, int pGamePropValue, GameActionOperation pActionOp = GameActionOperation.SET): base(true){
 		actionsIds = pActionsIds;
 		actionOperation = pActionOp;
 		gamePropertyValue = pGamePropValue;

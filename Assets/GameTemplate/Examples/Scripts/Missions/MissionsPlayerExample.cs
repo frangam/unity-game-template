@@ -2,7 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class AchievementsPlayerExample : MonoBehaviour {
+public class MissionsPlayerExample : MonoBehaviour {
+	//--------------------------------------
+	// Setting Attributes
+	//--------------------------------------
+	public int selectedLevel = 1;
+
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -19,9 +24,11 @@ public class AchievementsPlayerExample : MonoBehaviour {
 			enemiesKills = value;
 
 			//Observer Pattern
-			List<string> actionsIds = new List<string>() {GameActionID.GAME_ACTION_2, GameActionID.GAME_ACTION_3, GameActionID.GAME_ACTION_7};
+			List<string> actionsIds = new List<string>() 
+			{GameActionID.GAME_ACTION_1, GameActionID.GAME_ACTION_2};
+
 			GameActionResult res =  new GameActionResult(actionsIds, value);
-			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
+			BaseQuestManager.dispatcher.dispatch(BaseQuestManager.GAME_PROPERTY_CHANGED, res);
 		}
 	}
 
@@ -32,10 +39,7 @@ public class AchievementsPlayerExample : MonoBehaviour {
 		set {
 			gamesPlayed = value;
 
-			//Observer Pattern
-			List<string> actionsIds = new List<string>() {GameActionID.GAME_ACTION_1, GameActionID.GAME_ACTION_4, GameActionID.GAME_ACTION_5};
-			GameActionResult res =  new GameActionResult(actionsIds, value);
-			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
+
 		}
 	}
 
@@ -46,12 +50,18 @@ public class AchievementsPlayerExample : MonoBehaviour {
 		set {
 			coinsCollected = value;
 
-			//Observer Pattern
-			List<string> actionsIds = new List<string>() {GameActionID.GAME_ACTION_6};
-			GameActionResult res =  new GameActionResult(actionsIds, value);
-			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
+
 		}
 	}
+
+	//--------------------------------------
+	// Unity Methods
+	//--------------------------------------
+	#region Unity
+	void Start(){
+		BaseQuestManager.Instance.init(selectedLevel);
+	}
+	#endregion
 
 	//--------------------------------------
 	// Public Methods
