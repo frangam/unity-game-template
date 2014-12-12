@@ -13,7 +13,7 @@ public class Achievement : BaseQuest{
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private bool unlocked = false;
+	private string stgActions;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -43,6 +43,8 @@ public class Achievement : BaseQuest{
 		string[] atts = attributes.Split(SEPARATOR_ATTRIBUTES);
 		int aII;
 
+		stgActions = atts[1];
+
 		//Is incremental
 		if(int.TryParse(atts[2], out aII)){
 			isIncremental = aII != 0;
@@ -53,7 +55,7 @@ public class Achievement : BaseQuest{
 	// Overriden Methods
 	//--------------------------------------
 	public override bool loadedCorrectly (){
-		return base.loadedCorrectly () && isIncremental != null;
+		return (Id != null && Actions != null && Actions.Count > 0 && isIncremental != null);
 	}
 
 	public override void init (){
@@ -61,6 +63,6 @@ public class Achievement : BaseQuest{
 	}
 
 	public override string ToString (){
-		return string.Format ("[Achievement: id={1}, name={3}, description={0}, isIncremental={4}, unlocked={2}]", Description, Id, unlocked, Name, IsIncremental);
+		return string.Format ("[Achievement: id={0}, actions={1}, name={2}, description={3}, isIncremental={4}, unlocked={5}]", Id, stgActions, Name, Description, isIncremental, Completed);
 	}
 }

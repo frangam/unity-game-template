@@ -75,9 +75,9 @@ public class BaseAchievementsManager : BaseQuestManager<Achievement> {
 		bool lockedInServer = false;
 
 		foreach(Achievement a in Quests){
-			if(PlayerPrefs.GetInt(a.Id) == 1){
-				a.Completed = true;
-				
+			//if it was completed previously
+			//we check if in the servers has updated it
+			if(a.completedPreviously()){				
 				#if UNITY_ANDROID
 				if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
 					GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(a.Id);
@@ -98,32 +98,6 @@ public class BaseAchievementsManager : BaseQuestManager<Achievement> {
 		}			
 	}
 
-//	/// <summary>
-//	/// Checks all of the achievements have the given action
-//	/// </summary>
-//	/// <returns>The achievements.</returns>
-//	/// <param name="tags">Tags.</param>
-//	/// <param name="action">Action.</param>
-//	protected virtual List<Achievement> checkAchievements(List<string> tags, GameAction action){
-//		List<Achievement> res = new List<Achievement>();
-//
-//		foreach(Achievement achievement in quests){
-//			if(achievement.Actions.Contains(action) //has given action
-//			   && !achievement.Completed){	//locked
-//				//if all actions are active unlock achievement
-//				if(achievement.getProgressIntegerValue() == achievement.Actions.Count){
-//					achievement.Completed = true; //uptade unlocked flag to true
-//					res.Add(achievement); //add it to the result
-//					reportToServer(achievement); //report achiement progress to the server side
-//					dispatcher.dispatch(ACHIEVEMENT_UNLOCKED, achievement); //dispatch the corresponding achievement
-//				}
-//			}
-//		}
-//
-//		return res;
-//	}
-
-
 
 
 
@@ -132,6 +106,8 @@ public class BaseAchievementsManager : BaseQuestManager<Achievement> {
 	//  EVENTS
 	//--------------------------------------
 	public override void OnQuestCompleted (CEvent e){
+		base.OnQuestCompleted(e);
+
 		Achievement achievement = e.data as Achievement;
 		
 		if(achievement != null){

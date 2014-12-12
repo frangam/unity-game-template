@@ -35,13 +35,17 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 	private string actionsFile = "Actions";
 
 	[SerializeField]
-	private List<BaseQuest> quests;
+	private bool saveOnPlayerPrefs = true;
+
+	[SerializeField]
+	private bool updateCompletedFlagOfPreviousCompletedQuests = true;
 
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	protected List<GameAction> actions;
 	private int levelSelected;
+	private List<BaseQuest> quests;
 
 	//--------------------------------------
 	// Getters/Setters
@@ -66,12 +70,28 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 	public virtual void Awake(){
 		levelSelected = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL);
 		init(levelSelected);
+
+
 	}
 	#endregion
 	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
+	private void initialUpdateOfPreviousCompletedQuests(){
+		if(quests != null && quests.Count > 0){
+			//update to completed all quest were completed previously
+			foreach(BaseQuest q in quests){
+				if(q.completedPreviously()){
+					q.Completed = true;
+				}
+			}
+		}
+		else{
+			Debug.LogWarning("First it is required to load quests");
+		}
+	}
+
 	private void initialVerification(){
 		if(quests != null){
 			foreach(BaseQuest quest in quests){
@@ -130,9 +150,16 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 	// Public Methods
 	//--------------------------------------
 	public virtual void init(int pSelectedLevel){
-		if(pSelectedLevel > 0){
+		if((typeof(T) != typeof(Achievement) && pSelectedLevel > 0)
+		   || (typeof(T) == typeof(Achievement))){
 			levelSelected = pSelectedLevel;
 			if(loadGameActionsContentFromTextFile() && loadQuestsContentFromTextFile()) { //load quest from text file resource
+				//update completed flag of all of the previous completed quests
+				if(updateCompletedFlagOfPreviousCompletedQuests){
+					initialUpdateOfPreviousCompletedQuests();
+				}
+
+
 				showActionsAndQuests(); //TODO only for test
 				initialVerification();
 				
@@ -142,6 +169,8 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 				dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
 				dispatcher.addEventListener(QUEST_COMPLETED, OnQuestCompleted); 
 				dispatcher.addEventListener(ALL_QUESTS_COMPLETED, OnAllQuestsCompleted); 
+
+
 			}
 		}
 		else{
@@ -215,8 +244,8 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 						//we add only BaseQuests its level is the selected
 						//or if BaseQuest is an Achievement
 						if(quest != null && quest.loadedCorrectly() 
-						   && ((quest.GetType() != typeof(Achievement) && quest.Level == levelSelected)
-						    || (quest.GetType() == typeof(Achievement)))){
+						   && ((typeof(T) != typeof(Achievement) && quest.Level == levelSelected)
+						    || (typeof(T) == typeof(Achievement)))){
 							quests.Add(quest);
 						}
 					}
@@ -253,8 +282,8 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 		}
 	}
 
-	public virtual List<BaseQuest> checkGoalsProgresses(List<string> tags, GameAction action){
-		List<BaseQuest> res = new List<BaseQuest>();
+	public virtual void checkGoalsProgresses(List<string> tags, GameAction action){
+//		List<BaseQuest> res = new List<BaseQuest>();
 		
 		foreach(BaseQuest quest in quests){
 			if(quest.Actions.Contains(action) //has given action
@@ -262,14 +291,14 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 				//if all actions are active unlock achievement
 				if(quest.getProgressIntegerValue() == quest.Actions.Count){
 					quest.Completed = true; //uptade unlocked flag to true
-					res.Add(quest); //add it to the result
+//					res.Add(quest); //add it to the result
 					dispatcher.dispatch(QUEST_COMPLETED, quest); //dispatch event quest completation
 				}
 			}
 		}
 
 
-		return res;
+//		return res;
 	}
 
 	public virtual void showActionsAndQuests(){
@@ -355,7 +384,8 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 	/// <param name="e">E.</param>
 	public void OnActionCompleted(CEvent e){
 		GameActionResult result = e.data as GameActionResult;
-		
+//		List<BaseQuest> completedQuests = null;
+
 		if(result.IsSucceeded){
 			foreach(GameAction action in actions){
 				if(action.Id == result.CurrentActionId){
@@ -363,6 +393,20 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 					break;
 				}
 			}
+
+			//---
+			//All quests completed
+			int completed = 0;
+			foreach(BaseQuest q in Quests){
+				if(q.Completed){
+					completed++;
+				}
+			}
+
+			if(completed == Quests.Count){
+				dispatcher.dispatch(ALL_QUESTS_COMPLETED);
+			}
+			//---
 		}
 	}
 
@@ -371,12 +415,16 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 
 		if(quest != null){
 			//TODO Delete Log
-			Debug.Log("Quest " + quest + " is completed");
+			Debug.Log(quest + " is completed");
+
+			if(saveOnPlayerPrefs){
+				saveCompletedQuestsInPlayerPrefs(quest);
+			}
 		}
 	}
 
 	public virtual void OnAllQuestsCompleted(CEvent e){
 		//TODO Delete Log
-		Debug.Log("All of the quest are completed");
+		Debug.Log("All of the quests are completed");
 	}
 }

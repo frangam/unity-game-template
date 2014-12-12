@@ -178,6 +178,10 @@ public class BaseQuest {
 		return (id != null && actions != null && actions.Count > 0 && level != null && level > 0 && description != null && description != "" && description.Length > 0);
 	}
 
+	public bool completedPreviously(){
+		return PlayerPrefs.GetInt(idPlayerPrefs) == 1;
+	}
+
 	public virtual void init(){
 		
 	}

@@ -77,6 +77,9 @@ public class GameAction {
 			//Observer Pattern
 			if(isCompleted()){
 				GameActionResult res =  new GameActionResult(id, value);
+
+				//TODO mejorar llamada a un unigo manager
+				BaseQuestManager<BaseQuest>.dispatcher.dispatch(BaseQuestManager<BaseQuest>.ACTION_COMPLETED, res);
 				BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.ACTION_COMPLETED, res);
 			}
 		}
@@ -196,7 +199,7 @@ public class GameAction {
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
-		return string.Format ("[AAction: name={0}, id={1}, activation={2}, activationValue={3}, initialValue={4}, progress={5}]", name, id, activation, activationValue, initialValue, progress);
+		return string.Format ("[AAction: name={0}, id={1}, activation={2}, activationValue={3}, activationIntervalValue={4}, initialValue={5}, progress={6}]", name, id, activation, activationValue, activationInterval, initialValue, progress);
 	}
 
 	//--------------------------------------

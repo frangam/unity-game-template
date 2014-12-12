@@ -33,7 +33,7 @@ public class AchievementsPlayerExample : MonoBehaviour {
 			gamesPlayed = value;
 
 			//Observer Pattern
-			List<string> actionsIds = new List<string>() {GameActionID.GAME_ACTION_1, GameActionID.GAME_ACTION_4, GameActionID.GAME_ACTION_5};
+			List<string> actionsIds = new List<string>() {GameActionID.GAME_ACTION_1, GameActionID.GAME_ACTION_4, GameActionID.GAME_ACTION_5, GameActionID.GAME_ACTION_8};
 			GameActionResult res =  new GameActionResult(actionsIds, value);
 			BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.GAME_PROPERTY_CHANGED, res);
 		}
