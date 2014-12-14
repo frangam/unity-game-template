@@ -3,7 +3,10 @@ using System.Collections;
 
 public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator> {
 
-	public IEnumerator Load(string escena){
+	public IEnumerator Load(string escena, bool showLoadingPanel = true){
+		if(showLoadingPanel)
+			UILoadingPanel.Instance.show();
+
 		#if UNITY_IPHONE
 		Handheld.SetActivityIndicatorStyle(iOSActivityIndicatorStyle.WhiteLarge);
 		Handheld.StartActivityIndicator();
@@ -17,7 +20,10 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 //		finCarga ();
 	}
 
-	public IEnumerator Load(int escena){
+	public IEnumerator Load(int escena, bool showLoadingPanel = true){
+		if(showLoadingPanel)
+			UILoadingPanel.Instance.show();
+
 		#if UNITY_IPHONE
 		Handheld.SetActivityIndicatorStyle(iOSActivityIndicatorStyle.WhiteLarge);
 		Handheld.StartActivityIndicator();
@@ -44,7 +50,7 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 //		finCarga ();
 	}
 
-	public void finCarga(){
+	public void finishLoad(){
 		#if UNITY_IPHONE || UNITY_ANDROID
 		Handheld.StopActivityIndicator();
 		#endif

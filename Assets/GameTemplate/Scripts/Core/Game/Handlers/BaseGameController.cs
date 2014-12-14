@@ -21,6 +21,9 @@ public class BaseGameController : Singleton<BaseGameController>{
 	// Private Attributes
 	//--------------------------------------
 	private bool paused;
+	private bool started;
+	private bool inited;
+	private bool finished;
 	private GameDifficulty difficulty;
 	private int currentScore;
 
@@ -43,6 +46,24 @@ public class BaseGameController : Singleton<BaseGameController>{
 		}
 	}
 
+	public bool Started {
+		get {
+			return this.started;
+		}
+	}
+
+	public bool Inited {
+		get {
+			return this.inited;
+		}
+	}
+
+	public bool Finished {
+		get {
+			return this.finished;
+		}
+	}
+
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
@@ -58,12 +79,16 @@ public class BaseGameController : Singleton<BaseGameController>{
 	public virtual void initGame(){
 		difficulty = (GameDifficulty) PlayerPrefs.GetInt(GameSettings.PP_GAME_DIFFICULTY); //get the selected game difficulty
 		currentScore = 0;
+		inited = true;
+		paused = false;
+		finished = false;
+		started = false;
 	}
 	/// <summary>
 	/// Do start game functions
 	/// </summary>
 	public virtual void startGame(){
-
+		started = true;
 	}
 	
 	/// <summary>
@@ -83,6 +108,8 @@ public class BaseGameController : Singleton<BaseGameController>{
 
 		//show gameover windows
 		UIBaseController.Instance.open(gameoverWin);
+
+		finished = true;
 	}
 
 	public virtual void PlayerLostLife (){

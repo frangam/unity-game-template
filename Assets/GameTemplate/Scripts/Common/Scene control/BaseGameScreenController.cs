@@ -35,7 +35,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 		AdsHandler.Instance.refrescarBanner();
 #endif
 		//stop visual loader indicator
-		ScreenLoaderVisualIndicator.Instance.finCarga ();
+		ScreenLoaderVisualIndicator.Instance.finishLoad ();
 
 		//reset time scale to 1 en all sections except Game Scene
 		if(currentSection != GameSection.GAME)
