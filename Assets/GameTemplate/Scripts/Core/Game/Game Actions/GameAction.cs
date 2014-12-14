@@ -79,7 +79,7 @@ public class GameAction {
 				GameActionResult res =  new GameActionResult(id, value);
 
 				//TODO mejorar llamada a un unigo manager
-				BaseQuestManager<BaseQuest>.dispatcher.dispatch(BaseQuestManager<BaseQuest>.ACTION_COMPLETED, res);
+				BaseQuestManager<BaseQuestManager, BaseQuest>.dispatcher.dispatch(BaseQuestManager<BaseQuestManager, BaseQuest>.ACTION_COMPLETED, res);
 				BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.ACTION_COMPLETED, res);
 			}
 		}

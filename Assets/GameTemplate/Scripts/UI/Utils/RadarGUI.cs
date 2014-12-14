@@ -3,6 +3,7 @@
 using UnityEngine;
 using System.Collections;
  
+[AddComponentMenu("Game Template/UI/Radar")]
 public class RadarGUI : MonoBehaviour 
 {
 	public Transform centerObject;

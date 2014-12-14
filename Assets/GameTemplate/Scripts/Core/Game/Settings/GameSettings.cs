@@ -17,7 +17,8 @@ public class GameSettings : MonoBehaviour {
 	
 	//SETTINGS
 	public static float	musicVolume						= 1f;
-	public static float 	soundVolume 				= 1f;
+	public static float soundVolume 					= 1f;
+	public static float graphicsDetails					= 1f;
 	
 	
 	//--------------------------------------
@@ -58,7 +59,7 @@ public class GameSettings : MonoBehaviour {
 	//SCENES
 	public const string SCENE_MOREGAMES 		= "MoreGames";
 	public const string SCENE_SETTINGS 			= "Settings";
-	public const string SCENE_INFO 				= "Info";
+	public const string SCENE_CREDITS 			= "Credits";
 	public const string SCENE_GAME 				= "Game";
 	public const string SCENE_MAINMENU 			= "MainMenu";
 	public const string SCENE_LOADER 			= "Loader";
@@ -66,29 +67,30 @@ public class GameSettings : MonoBehaviour {
 	public const string SCENE_LEVEL_SELECTION 	= "LevelSelection";
 	
 	//PlayerPrefs KEYS
-	public const string PP_FIRST_PLAY 									= "first_play";
-	public const string PP_MUSIC 										= "music";
-	public const string PP_SOUND 										= "sound";
-	public const string PP_LANGUAGE_CHANGED 							= "language_changed";
-	public const string PP_LAST_SCORE 									= "last_score_"; //followed by game difficulty
-	public const string PP_BEST_SCORE 									= "best_score_"; //followed by game difficulty
-	public const string PP_LAST_LEVEL_UNLOCKED 							= "last_level_unlocked"; //id of last level unlocked
-	public const string PP_SELECTED_LEVEL 								= "selected_level"; //id of selected level
-	public const string PP_MISION_POPUP_SHOWN 							= "mision_popup_shown_"; //followed by level id
-	public const string PP_GAME_MODE 									= "game_mode";
-	public const string PP_GAME_DIFFICULTY 								= "game_difficulty";
-	public const string PP_SELECTED_WORLD 								= "selected_world";
-	public const string PP_SELECTED_CHARACTER 							= "selected_character";
-	public const string PP_COMPLETED_TUTORIAL 							= "completed_tutorial";
-	public const string PP_LEVEL_STARS 									= "level_stars_"; //followed by level id
-	public const string PP_LEVEL_SCORE	 								= "level_score_"; //followed by level id
-	public const string PP_IS_SPRITE_CURRENT_LEVEL_INDICATOR_MOVED 		= "is_sprite_level_indicator_moved_";  //followed by level id
-	public const string PP_TOTAL_COINS 									= "total_coins"; //total of coins player has
-	public const string PP_PURCHASED_ITEM 								= "purchased_item_";  //followed by item id
-	public const string PP_TOTAL_GAMES 									= "total_games"; //total games played
-	public const string PP_TOTAL_SHOPPING 								= "total_shopping"; //total items purchased
-	public const string PP_TOTAL_COLLECTED_COINS 						= "total_coins_collected";
-	public const string PP_TOTAL_GEMS_COLLECTED 						= "total_gems_collected";
+	public const string PP_FIRST_PLAY 									= "pp_first_play";
+	public const string PP_MUSIC 										= "pp_music";
+	public const string PP_SOUND 										= "pp_sound";
+	public const string PP_GRAPHICS_DETAILS								= "pp_graphics_details";
+	public const string PP_LANGUAGE_CHANGED 							= "pp_language_changed";
+	public const string PP_LAST_SCORE 									= "pp_last_score_"; //followed by game difficulty
+	public const string PP_BEST_SCORE 									= "pp_best_score_"; //followed by game difficulty
+	public const string PP_LAST_LEVEL_UNLOCKED 							= "pp_last_level_unlocked"; //id of last level unlocked
+	public const string PP_SELECTED_LEVEL 								= "pp_selected_level"; //id of selected level
+	public const string PP_MISION_POPUP_SHOWN 							= "pp_mision_popup_shown_"; //followed by level id
+	public const string PP_GAME_MODE 									= "pp_game_mode";
+	public const string PP_GAME_DIFFICULTY 								= "pp_game_difficulty";
+	public const string PP_SELECTED_WORLD 								= "pp_selected_world";
+	public const string PP_SELECTED_CHARACTER 							= "pp_selected_character";
+	public const string PP_COMPLETED_TUTORIAL 							= "pp_completed_tutorial";
+	public const string PP_LEVEL_STARS 									= "pp_level_stars_"; //followed by level id
+	public const string PP_LEVEL_SCORE	 								= "pp_level_score_"; //followed by level id
+	public const string PP_IS_SPRITE_CURRENT_LEVEL_INDICATOR_MOVED 		= "pp_is_sprite_level_indicator_moved_";  //followed by level id
+	public const string PP_TOTAL_COINS 									= "pp_total_coins"; //total of coins player has
+	public const string PP_PURCHASED_ITEM 								= "pp_purchased_item_";  //followed by item id
+	public const string PP_TOTAL_GAMES 									= "pp_total_games"; //total games played
+	public const string PP_TOTAL_SHOPPING 								= "pp_total_shopping"; //total items purchased
+	public const string PP_TOTAL_COLLECTED_COINS 						= "pp_total_coins_collected";
+	public const string PP_TOTAL_GEMS_COLLECTED 						= "pp_total_gems_collected";
 	
 	//GooglePlay Services
 	public const string ID_RANKING_FACIL 		= "";

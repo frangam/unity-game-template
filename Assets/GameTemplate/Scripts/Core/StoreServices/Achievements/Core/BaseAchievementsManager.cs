@@ -14,11 +14,18 @@ using UnionAssets.FLE;
 /// ** Every property has an activation rule - for instance "kills is active if its value is greater than 10".
 /// ** Check activated properties periodically. If all related properties of an achievement are active, then the achievement is unlocked.
 /// </summary>
-public class BaseAchievementsManager : BaseQuestManager<Achievement> {
+public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,Achievement> {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
+	public const string ACHIEVEMENTS_INITIAL_CHEKING = "aa_achievement_initial_checking";
 	public const string ACHIEVEMENT_UNLOCKED = "aa_achievement_unlocked";
+
+	//--------------------------------------
+	// Setting Attributes
+	//--------------------------------------
+	[SerializeField]
+	private bool initialCheckOnServer = false;
 
 
 	//--------------------------------------
@@ -28,7 +35,8 @@ public class BaseAchievementsManager : BaseQuestManager<Achievement> {
 	public override void Awake(){
 		base.Awake();
 
-		intialCheckingInServerSide();
+		if(initialCheckOnServer)
+			initialCheckingInServerSide();
 
 		//listeners
 		dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
@@ -71,7 +79,7 @@ public class BaseAchievementsManager : BaseQuestManager<Achievement> {
 	/// Unlock all oh the achievements were unlocked locally
 	/// An this checks if it is needed sending to the server
 	/// </summary>
-	public void intialCheckingInServerSide(){
+	public void initialCheckingInServerSide(){
 		bool lockedInServer = false;
 
 		foreach(Achievement a in Quests){
@@ -95,7 +103,9 @@ public class BaseAchievementsManager : BaseQuestManager<Achievement> {
 					reportToServer(a);
 				}
 			}
-		}			
+		}	
+
+		dispatcher.dispatch(ACHIEVEMENTS_INITIAL_CHEKING);
 	}
 
 

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnionAssets.FLE;
 
-public class BaseQuestManager : BaseQuestManager<BaseQuest>{
+public class BaseQuestManager : BaseQuestManager<BaseQuestManager, BaseQuest>{
 
 }
 
-public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
+public class BaseQuestManager<S, T> : PersistentSingleton<S> where S : MonoBehaviour {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
@@ -70,8 +70,6 @@ public class BaseQuestManager<T> : Singleton<BaseQuestManager<T>>  {
 	public virtual void Awake(){
 		levelSelected = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL);
 		init(levelSelected);
-
-
 	}
 	#endregion
 	

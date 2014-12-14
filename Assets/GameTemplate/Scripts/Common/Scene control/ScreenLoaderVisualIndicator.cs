@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ScreenLoaderIndicator : Singleton<ScreenLoaderIndicator> {
+public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator> {
 
 	public IEnumerator Load(string escena){
 		#if UNITY_IPHONE

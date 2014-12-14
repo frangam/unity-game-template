@@ -182,7 +182,7 @@ public class GameController_TB : BaseGameController
 		didInit=true;
     }
 	
-    void StartGame ()
+    void startGame ()
     {
 		// the SetPlayerLocks function tells all players to unlock
         SetPlayerLocks( false );
