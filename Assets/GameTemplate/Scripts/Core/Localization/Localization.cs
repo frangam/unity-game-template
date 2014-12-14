@@ -145,7 +145,7 @@ public static class Localization
 		// Not a referenced asset -- try to load it dynamically
 		if (loadFunction == null)
 		{
-			TextAsset asset = Resources.Load<TextAsset>("Localizacion/"+ value);
+			TextAsset asset = Resources.Load<TextAsset>("Localization/"+ value);
 			if (asset != null) bytes = asset.bytes;
 		}
 		else bytes = loadFunction(value);

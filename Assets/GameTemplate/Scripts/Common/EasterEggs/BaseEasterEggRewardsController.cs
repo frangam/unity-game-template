@@ -63,7 +63,7 @@ public class BaseEasterEggRewardsController : PersistentSingleton<BaseEasterEggR
 		}
 
 		if(reloadScene)
-			StartCoroutine(ScreenLoaderVisualIndicator.Instance.Load(Application.loadedLevelName));
+			ScreenLoaderVisualIndicator.Instance.LoadScene(Application.loadedLevelName);
 
 
 	}

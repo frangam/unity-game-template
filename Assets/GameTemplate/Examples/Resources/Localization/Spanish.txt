@@ -23,6 +23,9 @@ loading_friends_scores = Cargando puntuaciones de tus amigos...
 easy = FACIL
 hard = DIFICIL
 normal = NORMAL
+quickgame = PARTIDA RAPIDA
+campaign = CAMPAÑA
+survival = SUPERVIVENCIA
 
 rate_popup_title = Valóranos!
 rate_popup_message = Vota ahora y ayúdanos a mejorar!

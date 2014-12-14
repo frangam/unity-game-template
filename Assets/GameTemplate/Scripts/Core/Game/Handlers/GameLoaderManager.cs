@@ -12,10 +12,14 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private bool musicaIgualFX = true;
 
 	[SerializeField]
+	private bool hasInitialTutorial = false;
+
+	[SerializeField]
 	/// <summary>
 	/// Las dificultades del juego
 	/// </summary>
 	private GameDifficulty[] dificultades;
+
 
 	//--------------------------------------
 	// Private Attributes
@@ -73,6 +77,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
 	#region Unity
 	void Awake () {
+		//TEST
+		PlayerPrefs.DeleteAll();
+//				Localization.language = GameSettings.LOC_SPANISH;
+
 		if(!GameSettings.USE_FACEBOOK)
 			fbInited = true;
 		if(!GameSettings.USE_TWITTER)
@@ -83,12 +91,11 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			PlayerPrefs.SetInt(GameSettings.PP_GAME_DIFFICULTY, (int) GameDifficulty.EASY);
 		}
 
-		StartCoroutine( ScreenLoaderVisualIndicator.Instance.Load ());
+		ScreenLoaderVisualIndicator.Instance.LoadScene ();
 
 		cargarIdioma (); //idioma
-
-		//TEST
 //		Localization.language = GameSettings.LOC_ENGLISH;
+
 
 		loadSettings();
 		cargarAudio (); //musica y sonido
@@ -106,7 +113,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if((!GameSettings.USE_GOOGLE_PLAY_SERVICES && twInited && fbInited && !GameSettings.mandatoryTutorial)
 		   || (GameSettings.USE_GOOGLE_PLAY_SERVICES && gpsPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
 			AdsHandler.Instance.mostrarPantallazo();
-			StartCoroutine( ScreenLoaderVisualIndicator.Instance.Load (GameSettings.SCENE_MAINMENU));
+			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 		else if(gpsPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
@@ -114,7 +121,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if((!GameSettings.USAR_GAMECENTER && twIniciado && fbIniciado && !GameSettings.mandatoryTutorial)
 		   || (GameSettings.USAR_GAMECENTER && gcConectado && twIniciado && fbIniciado && !GameSettings.mandatoryTutorial)){
 			AdsHandler.Instance.mostrarPantallazo();
-			StartCoroutine( ScreenLoaderVisualIndicator.Instancia.Load (GameSettings.SCENE_MAINMENU));
+			ScreenLoaderVisualIndicator.Instancia.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 		else if(gpsConectado && twIniciado && fbIniciado && GameSettings.mandatoryTutorial)
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
@@ -130,12 +137,15 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 -------------------------------*/
 	private IEnumerator LoadTutorialOrMenu(){ 
 		//tutorial
-		if(!PlayerPrefs.HasKey(GameSettings.PP_COMPLETED_TUTORIAL)){
-			PlayerPrefs.SetInt(GameSettings.PP_COMPLETED_TUTORIAL, 0);
-			GameSettings.mandatoryTutorial = true;
-		}
-		else{
-			GameSettings.mandatoryTutorial = PlayerPrefs.GetInt(GameSettings.PP_COMPLETED_TUTORIAL) == 0;	
+		GameSettings.mandatoryTutorial = hasInitialTutorial;
+		if(hasInitialTutorial){
+			if(!PlayerPrefs.HasKey(GameSettings.PP_COMPLETED_TUTORIAL)){
+				PlayerPrefs.SetInt(GameSettings.PP_COMPLETED_TUTORIAL, 0);
+				GameSettings.mandatoryTutorial = true;
+			}
+			else{
+				GameSettings.mandatoryTutorial = PlayerPrefs.GetInt(GameSettings.PP_COMPLETED_TUTORIAL) == 0;	
+			}
 		}
 
 		#if UNITY_ANDROID
@@ -158,7 +168,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		else{
 			AdsHandler.Instance.mostrarPantallazo();
-			StartCoroutine( ScreenLoaderVisualIndicator.Instance.Load (GameSettings.SCENE_MAINMENU));
+			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 	}
 
@@ -179,8 +189,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 * Idioma seleccionado
 	 -------------------------------*/
 	private void cargarIdioma(){
-		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_SCORE)){
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_SCORE, 0);
+		if(!PlayerPrefs.HasKey(GameSettings.PP_LANGUAGE_CHANGED)){
+			PlayerPrefs.SetInt(GameSettings.PP_LANGUAGE_CHANGED, 0);
 			
 			//si no se ha cambiado el idioma, indicamos el idioma por defecto al del dispositivo
 			Languages.seleccionarIdiomaSegunIdiomaDispositivo();

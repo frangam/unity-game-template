@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AdsHandler : Singleton<AdsHandler> {
+public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	public GADBannerSize size = GADBannerSize.SMART_BANNER;
-	public TextAnchor anchor = TextAnchor.UpperCenter;
+	public TextAnchor anchor = TextAnchor.LowerCenter;
 	public bool test = true;
 
 	//--------------------------------------

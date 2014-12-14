@@ -75,6 +75,9 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		#endif
 	}
 
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
 	/// <summary>
 	/// Unlock all oh the achievements were unlocked locally
 	/// An this checks if it is needed sending to the server
@@ -108,7 +111,48 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		dispatcher.dispatch(ACHIEVEMENTS_INITIAL_CHEKING);
 	}
 
-
+	public void showAchievementsFromServer(){
+		#if UNITY_ANDROID
+		if(GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED){
+			GPSConnect.Instance.init();
+			
+			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
+			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
+			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
+		}
+		else if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED){
+			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
+			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
+			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
+			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
+		}
+		else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
+			GooglePlayManager.instance.showAchievementsUI();
+		}
+		#elif UNITY_IPHONE
+		if(Configuracion.USAR_GAMECENTER && GameCenterManager.IsPlayerAuthed)
+			GameCenterManager.showAchievements();
+		#endif
+	}
+	
+	private void OnDialogClose(CEvent e) {
+		//removing listner
+		(e.dispatcher as AndroidDialog).removeEventListener(BaseEvent.COMPLETE, OnDialogClose);
+		
+		//parsing result
+		switch((AndroidDialogResult)e.data) {
+		case AndroidDialogResult.YES:
+			GooglePlayConnection.instance.connect();
+			GooglePlayManager.instance.showAchievementsUI();
+			break;
+		case AndroidDialogResult.NO:
+			break;
+			
+		}
+	}
 
 
 

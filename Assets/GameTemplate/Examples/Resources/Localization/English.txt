@@ -23,6 +23,9 @@ loading_friends_scores = Loading scores of your friends...
 easy = EASY
 hard = HARD
 normal = NORMAL
+quickgame = QUICKGAME
+campaign = CAMPAIGN
+survival = SURVIVAL
 
 rate_popup_title = Rate us!
 rate_popup_message = Rate now! Help us to improve!

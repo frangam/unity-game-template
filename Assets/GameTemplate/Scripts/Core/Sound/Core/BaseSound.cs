@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [System.Serializable]
@@ -13,7 +13,7 @@ public class BaseSound {
 	private AudioClip clip;
 
 	[SerializeField]
-	private TipoSonido tipo;
+	private SoundType tipo;
 
 	[SerializeField]
 	private bool enBackground = true;
@@ -43,7 +43,7 @@ public class BaseSound {
 		}
 	}
 
-	public TipoSonido Tipo {
+	public SoundType Tipo {
 		get {
 			return this.tipo;
 		}

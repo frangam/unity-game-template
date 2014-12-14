@@ -34,7 +34,7 @@ public class InputBackButton : MonoBehaviour {
 				break;
 				
 			case Action.GAME_SCREEN:
-				StartCoroutine( ScreenLoaderVisualIndicator.Instance.Load (GameSettings.SCENE_GAME));
+				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_GAME);
 				break;
 				
 				
@@ -46,14 +46,14 @@ public class InputBackButton : MonoBehaviour {
 					BaseGameController.Instance.Paused = true;
 				}
 				else if(BaseGameController.Instance.Finished){
-					StartCoroutine( ScreenLoaderVisualIndicator.Instance.Load (GameSettings.SCENE_MAINMENU));
+					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 				}
 				
 				break;
 				
 				
 			case Action.MAIN_MENU_WITHOUT_CONFIRMATION:
-				StartCoroutine( ScreenLoaderVisualIndicator.Instance.Load (GameSettings.SCENE_MAINMENU));
+				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 				break;
 				
 //			case Action.MAIN_MENU_WITH_CONFIRMATION:
@@ -65,7 +65,7 @@ public class InputBackButton : MonoBehaviour {
 //				}
 //				else if(BaseGameController.Instance.Finished){
 //					((PanelCargando) GameObject.FindObjectOfType(typeof(PanelCargando))).mostrar();
-//					StartCoroutine( ScreenLoaderIndicator.Instance.Load (GameSettings.SCENE_LEVEL_SELECTION));
+				//			ScreenLoaderIndicator.Instance.LoadScene (GameSettings.SCENE_LEVEL_SELECTION);
 //				}
 //				break;
 			}				

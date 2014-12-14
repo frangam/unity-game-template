@@ -1,12 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
-public class PlaySoundButton : MonoBehaviour {
+public class PlaySoundButton : UIBaseButton {
 	public enum Trigger{
 		TOUCH_UP,
 		TOUCH_DOWN,
 	}
 
+	//--------------------------------------
+	// Setting Attributes
+	//--------------------------------------
 	[SerializeField]
 	private Trigger trigger;
 
@@ -14,6 +18,9 @@ public class PlaySoundButton : MonoBehaviour {
 	[Tooltip("Use BaseSoundIDs class or inherited to set this value")]
 	private string soundId = BaseSoundIDs.UI_BUTTON_CLICK_FX;
 
+	//--------------------------------------
+	// Private Attributes
+	//--------------------------------------
 	private bool movingFinger;
 
 	public void OnPress (bool pressed = false){

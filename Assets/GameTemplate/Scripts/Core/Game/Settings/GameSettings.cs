@@ -11,7 +11,7 @@ public class GameSettings : MonoBehaviour {
 	public static int 	contInterstitialAdsNORMALMODE 	= 0;
 	public static int 	contInterstitialAdsEASYMODE 	= 0;
 	public static int 	lastLevelUnlocked 				= 1;
-	public static bool 	mandatoryTutorial 				= true; //if it is mandatory to do tutorial before to play
+	public static bool 	mandatoryTutorial 				= false; //if it is mandatory to do tutorial before to play
 	public static bool 	firstTimePlayerInviteFriends 	= false; //show invite friends screen if it is the firs time
 	public static int 	maxLevels 						= 10;
 	
@@ -57,14 +57,17 @@ public class GameSettings : MonoBehaviour {
 	public const string TAG_ENEMY 				= "Enemy";
 	
 	//SCENES
-	public const string SCENE_MOREGAMES 		= "MoreGames";
-	public const string SCENE_SETTINGS 			= "Settings";
-	public const string SCENE_CREDITS 			= "Credits";
-	public const string SCENE_GAME 				= "Game";
-	public const string SCENE_MAINMENU 			= "MainMenu";
-	public const string SCENE_LOADER 			= "Loader";
-	public const string SCENE_TUTORIAL 			= "Tutorial";
-	public const string SCENE_LEVEL_SELECTION 	= "LevelSelection";
+	public const string SCENE_MOREGAMES 				= "MoreGames";
+	public const string SCENE_SETTINGS 					= "Settings";
+	public const string SCENE_CREDITS 					= "Credits";
+	public const string SCENE_GAME 						= "Game";
+	public const string SCENE_MAINMENU 					= "MainMenu";
+	public const string SCENE_LOADER 					= "Loader";
+	public const string SCENE_TUTORIAL 					= "Tutorial";
+	public const string SCENE_LEVEL_SELECTION 			= "LevelSelection";
+	public const string SCENE_CHARACTER_SELECTION 		= "CharacterSelection";
+	public const string SCENE_ENVIRONMENT_SELECTION 	= "EnvironmentSelection";
+	public const string SCENE_ITEMS_SELECTION 			= "ItemsSelection";
 	
 	//PlayerPrefs KEYS
 	public const string PP_FIRST_PLAY 									= "pp_first_play";

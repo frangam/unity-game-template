@@ -15,5 +15,6 @@ public enum GameSection{
 	MORE_GAMES								= 9,
 	ENVIRONMENT_SELECTION					= 10,
 	CHARACTER_SELECTION						= 11,
-	TUTORIAL								= 12,
+	ITEMS_SELECTION							= 12,
+	TUTORIAL								= 13,
 }

@@ -71,8 +71,8 @@ public class BaseSoundManager : Singleton<BaseSoundManager> {
 //		if((sonido.Tipo == TipoSonido.FX && !Configuracion.sonidoActivo) || (sonido.Tipo == TipoSonido.MUSIC && !Configuracion.musicaActiva)) return;
 
 		if(sonidosReproduciendo != null
-		   && ((sonido.Tipo == TipoSonido.FX && GameSettings.soundVolume > 0f) || (sonido.Tipo == TipoSonido.MUSIC && GameSettings.musicVolume > 0f))){
-			if(sonido.Tipo != TipoSonido.MUSIC && sonidosReproduciendo != null 
+		   && ((sonido.Tipo == SoundType.FX && GameSettings.soundVolume > 0f) || (sonido.Tipo == SoundType.MUSIC && GameSettings.musicVolume > 0f))){
+			if(sonido.Tipo != SoundType.MUSIC && sonidosReproduciendo != null 
 			   && ( !sonidosReproduciendo.ContainsKey(id)  || (sonidosReproduciendo.ContainsKey(id) && sonidosReproduciendo[id] != null &&  !sonidosReproduciendo[id].isPlaying))){
 				stop (sonido.Id);
 				play (sonido);
@@ -80,7 +80,7 @@ public class BaseSoundManager : Singleton<BaseSoundManager> {
 //				Debug.Log("reproduciendo: "+sonido.Id);
 			}
 			//se mantiene la musica en reproduccion
-			else if(sonido.Tipo == TipoSonido.MUSIC && sonidosReproduciendo != null 
+			else if(sonido.Tipo == SoundType.MUSIC && sonidosReproduciendo != null 
 			        && ( (sonidosReproduciendo.ContainsKey(id) && sonidosReproduciendo[id].isPlaying))){
 
 //				Debug.Log("ya se esta reproduciendo");
@@ -126,7 +126,7 @@ public class BaseSoundManager : Singleton<BaseSoundManager> {
 
 				//mantenemos sonido en background
 				if(sonido.EnBackground)
-					go.AddComponent<SonidoEnBackground>();
+					go.AddComponent<BackgroundSound>();
 
 				AudioSource source = go.AddComponent<AudioSource>();
 				source.clip = sonido.Clip;

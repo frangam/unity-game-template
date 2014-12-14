@@ -99,7 +99,7 @@
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowConeTap.shader" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\values-iw\strings.xml" />
      <None Include="Assets\Plugins\Android\google-play-services_lib\res\values-ka-rGE\auth_strings.xml" />
-     <None Include="Assets\GameTemplate\Examples\Resources\Spanish.txt" />
+     <None Include="Assets\GameTemplate\Examples\Resources\Localization\Spanish.txt" />
      <None Include="Assets\Plugins\Android\facebook\res\drawable\com_facebook_picker_list_selector_background_transition.xml" />
      <None Include="Assets\Plugins\Android\google-play-services_lib\res\values-ca\common_strings.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\drawable\com_facebook_picker_top_button.xml" />
@@ -364,7 +364,7 @@
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\values-he\strings.xml" />
      <None Include="Assets\Plugins\Android\google-play-services_lib\res\values-nb\auth_strings.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SimpleClear.shader" />
-     <None Include="Assets\GameTemplate\Examples\Resources\English.txt" />
+     <None Include="Assets\GameTemplate\Examples\Resources\Localization\English.txt" />
      <None Include="Assets\Plugins\Android\google-play-services_lib\res\values-sl\auth_strings.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\AndroidManifest.xml" />
      <None Include="Assets\Plugins\Android\res\values\version.xml" />

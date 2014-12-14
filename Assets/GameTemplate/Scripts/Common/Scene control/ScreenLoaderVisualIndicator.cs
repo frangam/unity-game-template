@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator> {
 
-	public IEnumerator Load(string escena, bool showLoadingPanel = true){
+	private IEnumerator Load(string escena, bool showLoadingPanel = true){
 		if(showLoadingPanel)
 			UILoadingPanel.Instance.show();
 
@@ -20,7 +20,7 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 //		finCarga ();
 	}
 
-	public IEnumerator Load(int escena, bool showLoadingPanel = true){
+	private IEnumerator Load(int escena, bool showLoadingPanel = true){
 		if(showLoadingPanel)
 			UILoadingPanel.Instance.show();
 
@@ -37,7 +37,7 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		Application.LoadLevel (escena);
 	}
 
-	public IEnumerator Load(){
+	private IEnumerator Load(){
 		#if UNITY_IPHONE
 		Handheld.SetActivityIndicatorStyle(iOSActivityIndicatorStyle.WhiteLarge);
 		Handheld.StartActivityIndicator();
@@ -49,6 +49,18 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		yield return new WaitForSeconds(0);
 //		finCarga ();
 	}
+
+	public void LoadScene(){
+		StartCoroutine(Load());
+	}
+
+	public void LoadScene(string scene, bool showLoadingPanel = true){
+		StartCoroutine(Load(scene, showLoadingPanel));
+	}
+
+	public void LoadScene(int scene, bool showLoadingPanel = true){
+		StartCoroutine(Load(scene, showLoadingPanel));
+}
 
 	public void finishLoad(){
 		#if UNITY_IPHONE || UNITY_ANDROID
