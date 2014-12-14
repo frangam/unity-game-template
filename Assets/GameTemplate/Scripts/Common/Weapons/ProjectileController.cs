@@ -65,7 +65,8 @@ public class ProjectileController : MonoBehaviour
 	{		
 		// if we have assigned a particle effect, we will instantiate one when a collision happens.
 		if(doProjectileHitParticle)
-			Instantiate(particleEffectPrefab, transform.position, Quaternion.identity);
+//			Instantiate(particleEffectPrefab, transform.position, Quaternion.identity);
+			particleEffectPrefab.Spawn(transform.position,  Quaternion.identity);
 		
 		// destroy this game object after a collision
 		Destroy(gameObject);

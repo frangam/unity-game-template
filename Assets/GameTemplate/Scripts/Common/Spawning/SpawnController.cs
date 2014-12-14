@@ -107,7 +107,8 @@ public class SpawnController : ScriptableObject
 	public Transform Spawn(GameObject anObject, Vector3 aPosition, Quaternion aRotation)
 	{
 		// instantiate the object
-		tempGO=(GameObject)Instantiate(anObject, aPosition, aRotation);
+//		tempGO=(GameObject)Instantiate(anObject, aPosition, aRotation);
+		tempGO = anObject.Spawn(aPosition, aRotation);
 		tempTrans= tempGO.transform;
 
 		// return the object to whatever was calling
@@ -118,7 +119,8 @@ public class SpawnController : ScriptableObject
 	public GameObject SpawnGO(GameObject anObject, Vector3 aPosition, Quaternion aRotation)
 	{
 		// instantiate the object
-		tempGO=(GameObject)Instantiate(anObject, aPosition, aRotation);
+//		tempGO=(GameObject)Instantiate(anObject, aPosition, aRotation);
+		tempGO = anObject.Spawn(aPosition, aRotation);
 		tempTrans= tempGO.transform;
 		
 		// return the object to whatever was calling
