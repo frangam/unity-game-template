@@ -16,14 +16,12 @@ public class UIBaseWindow : MonoBehaviour {
 	private string id;
 
 	[SerializeField]
-	private Image window;
-
-	[SerializeField]
 	private bool startClosed = true;
 		
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	private Image window;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -39,6 +37,8 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
+		window = GetComponent<Image>();
+
 		if(window){
 			window.gameObject.SetActive(!startClosed);
 		}

@@ -431,25 +431,24 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 
 
 
-//	public void post(SocialNetwork red, bool captura = false){
-//		#if UNITY_ANDROID || UNITY_EDITOR
-//		bool logeado = login (red); //logeamos si fuese necesario
-//		posteando = true;
-//		hacerCaptura = captura;
-//
-//		if(logeado){
-//			if(posteando){
-//				postear(red, hacerCaptura);
-//				posteando = false;
-//			}
-//		}
-//		#elif UNITY_IPHONE
-//				posteando = true;
-//				hacerCaptura = captura;
-//				postear(red, hacerCaptura);
-//				posteando = false;
-//		#endif
-//	}
+	public void post(SocialNetwork red, bool captura = false){
+		#if UNITY_ANDROID || UNITY_EDITOR
+		login (red); //logeamos si fuese necesario
+		posteando = true;
+		hacerCaptura = captura;
+
+
+		if(posteando){
+			postear(red, hacerCaptura);
+			posteando = false;
+		}
+		#elif UNITY_IPHONE
+				posteando = true;
+				hacerCaptura = captura;
+				postear(red, hacerCaptura);
+				posteando = false;
+		#endif
+	}
 
 
 	public void LoadFriends(int limit = 0) {

@@ -26,6 +26,9 @@ normal = NORMAL
 quickgame = QUICKGAME
 campaign = CAMPAIGN
 survival = SURVIVAL
+gameover = GAME OVER
+share_fb = SHARE ON FACEBOOK
+share_tw = SHARE ON TWITTER
 
 rate_popup_title = Rate us!
 rate_popup_message = Rate now! Help us to improve!

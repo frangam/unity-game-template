@@ -26,6 +26,9 @@ normal = NORMAL
 quickgame = PARTIDA RAPIDA
 campaign = CAMPAÑA
 survival = SUPERVIVENCIA
+gameover = GAME OVER
+share_fb = COMPARTIR EN FACEBOOK
+share_tw = COMPARTIR EN TWITTER
 
 rate_popup_title = Valóranos!
 rate_popup_message = Vota ahora y ayúdanos a mejorar!
