@@ -3,7 +3,11 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UIBaseController : Singleton<UIBaseController> {
+public class UIBaseController : UIBaseController<UIBaseController>{
+
+}
+
+public class UIBaseController<T> : Singleton<T> where T: MonoBehaviour {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------

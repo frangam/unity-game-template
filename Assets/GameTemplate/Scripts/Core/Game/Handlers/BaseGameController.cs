@@ -3,7 +3,9 @@ using System.Collections;
 
 [AddComponentMenu("Base/GameController")]
 
-public class BaseGameController : Singleton<BaseGameController>{
+public class BaseGameController: BaseGameController<BaseGameController>{}
+
+public class BaseGameController<T> : Singleton<T> where T: MonoBehaviour{
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -11,7 +13,7 @@ public class BaseGameController : Singleton<BaseGameController>{
 	private bool sendScoresToServer = true;
 
 	[SerializeField]
-	private string gameoverWin = UIBaseWindowIDs.GAMEOVER;
+	private string gameoverWindow = UIBaseWindowIDs.GAMEOVER;
 
 
 	public GameObject explosionPrefab;
@@ -107,7 +109,7 @@ public class BaseGameController : Singleton<BaseGameController>{
 		}
 
 		//show gameover windows
-		UIBaseController.Instance.open(gameoverWin);
+		UIBaseController.Instance.open(gameoverWindow);
 
 		finished = true;
 	}

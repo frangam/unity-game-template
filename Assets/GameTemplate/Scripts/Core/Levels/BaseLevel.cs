@@ -63,7 +63,7 @@ public class BaseLevel {
 	/// Initializes a new instance of the <see cref="BaseLevel"/> class.
 	/// 
 	/// Attributes:
-	/// ID, Player life
+	/// ID, Player life, Game Lifes
 	/// </summary>
 	/// <param name="attributes">Attributes.</param>
 	public BaseLevel(string attributes){
@@ -91,11 +91,17 @@ public class BaseLevel {
 		else{
 			initialGameLifes = INITIAL_GAME_LIFES;
 		}
+
+		//reset to set all attributes to initial values
+		reset();
 	}
 
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	public override string ToString (){
+		return string.Format ("[BaseLevel: Id={0}, InitialPlayerLife={1}, InitialGameLifes={2}, PlayerLife={3}, GameLifes={4}]", Id, InitialPlayerLife, InitialGameLifes, PlayerLife, GameLifes);
+	}
 
 	//--------------------------------------
 	// Public Methods
