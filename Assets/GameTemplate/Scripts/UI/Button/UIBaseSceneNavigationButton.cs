@@ -25,6 +25,15 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 		case GameSection.ENVIRONMENT_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_ENVIRONMENT_SELECTION); break;
 		case GameSection.ITEMS_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_ITEMS_SELECTION); break;
 		case GameSection.TUTORIAL: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL); break;
+		case GameSection.QUICKGAME_MODE: 
+			PlayerPrefs.SetInt(GameSettings.PP_GAME_MODE, (int) GameMode.QUICKGAME);
+			break;
+		case GameSection.CAMPAIGN_MODE: 
+			PlayerPrefs.SetInt(GameSettings.PP_GAME_MODE, (int) GameMode.CAMPAIGN);
+			break;
+		case GameSection.SURVIVAL_MODE: 
+			PlayerPrefs.SetInt(GameSettings.PP_GAME_MODE, (int) GameMode.SURVIVAL);
+			break;
 		}
 	}
 }
