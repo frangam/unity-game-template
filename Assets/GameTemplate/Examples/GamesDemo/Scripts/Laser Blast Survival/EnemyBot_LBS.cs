@@ -8,7 +8,7 @@ public class EnemyBot_LBS : BaseArmedEnemy
 	private bool isRespawning;
 	
 	// here we add respawning and collision to the base armed enemy script
-	public void Start ()
+	public override void Start ()
 	{
 		base.Start ();
 		

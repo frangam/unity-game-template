@@ -112,13 +112,25 @@ public class iAdBannerController : EventDispatcher {
 
 
 	public void StartInterstitialAd() {
+
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
+				Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");
+				interstitialdidFailWithError("");
+				return;
+			}
 			_IADStartInterstitialAd();
 		#endif
 	}
 	
 	public void LoadInterstitialAd() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+
+			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
+				Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");
+				interstitialdidFailWithError("");
+				return;
+			}
 			_IADLoadInterstitialAd();
 		#endif
 	}

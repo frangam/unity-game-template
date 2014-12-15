@@ -3,7 +3,7 @@ using System.Collections;
 
 [AddComponentMenu("Sample Game Glue Code/Laser Blast Survival/Game Controller")]
 
-public class GameController_LBS : BaseGameController
+public class GameController_LBS : BaseGameController<GameController_LBS>
 {
 	public string mainMenuSceneName = "menu_LBS";
 	public GameObject[] playerPrefabList;
@@ -33,16 +33,16 @@ public class GameController_LBS : BaseGameController
 	public UI_LBS UIControl;
 	
 	[System.NonSerialized]
-	public static GameController_LBS Instance;
+//	public static GameController_LBS Instance;
 	
 	public float gameSpeed=1;
 	
 	public RadarGUI theRadarControlScript;
 	
-	public GameController_LBS()
-	{
-		Instance=this;
-	}
+//	public GameController_LBS()
+//	{
+//		Instance=this;
+//	}
 	
 	public void Start()
 	{

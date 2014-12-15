@@ -44,9 +44,9 @@ public class BaseEasterEggRewardsController : PersistentSingleton<BaseEasterEggR
 	}
 
 	public void showNotificationPanel(){
-		if(easterEgg != null && easterEgg.Id != null && EasterEggUIController.Instance.NotificationsPanels != null && EasterEggUIController.Instance.NotificationsPanels.Length > 0){
+		if(easterEgg != null && easterEgg.Id != EasterEggID.EASTER_EGG_NONE && EasterEggUIController.Instance.NotificationsPanels != null && EasterEggUIController.Instance.NotificationsPanels.Length > 0){
 			foreach(EasterEggUINotificationPanel n in EasterEggUIController.Instance.NotificationsPanels){
-				if(n.Id == easterEgg.Id){
+				if(n!= null && n.Id == easterEgg.Id){
 					n.show();
 					StartCoroutine(reloadSceneProcess(n));
 					break;

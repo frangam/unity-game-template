@@ -15,7 +15,7 @@ public class StopScrollingScript : MonoBehaviour {
 		
 		// the camera may be set in the editor, or we'll just use the main camera
 		if(theCamera==null)
-			theCamera=Camera.mainCamera;
+			theCamera=Camera.main;
 	}
 	
 	void Update()

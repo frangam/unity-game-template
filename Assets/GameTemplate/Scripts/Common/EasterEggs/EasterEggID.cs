@@ -1,4 +1,5 @@
 public enum EasterEggID{
+	EASTER_EGG_NONE		= -1,
 	EASTER_EGG_0		= 0,
 	EASTER_EGG_1		= 1,
 	EASTER_EGG_2		= 2,

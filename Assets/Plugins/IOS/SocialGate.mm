@@ -308,10 +308,15 @@ static SocialGate *_sharedInstance;
     [emailBody appendString:@"</p>"];
     
     
+    /*
     if(media.length > 0) {
        // NSLog(@"media: %@",media);
+      
+        
+        
         [emailBody appendString:[NSString stringWithFormat:@"<p><b><img src='data:image/png;base64,%@'></b></p>",media]];
     }
+     */
    
     
     //close the HTML formatting
@@ -331,6 +336,12 @@ static SocialGate *_sharedInstance;
     emailDialog.mailComposeDelegate = self;
     [emailDialog setSubject:subject];
     [emailDialog setMessageBody:emailBody isHTML:YES];
+    
+    if(media.length > 0) {
+        NSData *imageData = [[NSData alloc] initWithBase64Encoding:media];
+        [emailDialog addAttachmentData:imageData mimeType:@"application/png" fileName:@"Attachment"];
+    }
+    
     
     NSArray *emails = [recipients componentsSeparatedByString:@","];
 

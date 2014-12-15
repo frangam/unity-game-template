@@ -6,7 +6,7 @@ using System.Collections;
 
 [AddComponentMenu( "Sample Game Glue Code/Tank Battle/Game Controller" )]
 
-public class GameController_TB : BaseGameController
+public class GameController_TB : BaseGameController<GameController_TB>
 {
 	public string mainMenuSceneName = "menu_TB";
     public int numberOfBattlers = 4;
@@ -43,7 +43,7 @@ public class GameController_TB : BaseGameController
     public GameObject [] playerPrefabList;
 
     [System.NonSerialized]
-    public static GameController_TB Instance;
+//    public static GameController_TB Instance;
 	
 	public Waypoints_Controller WaypointControllerForAI;
 	
@@ -53,10 +53,10 @@ public class GameController_TB : BaseGameController
 		
 	private TimerClass theTimer;
 	
-    public GameController_TB ()
-    {
-        Instance = this;
-    }
+//    public GameController_TB ()
+//    {
+//        Instance = this;
+//    }
 
     void Start ()
     {
@@ -182,7 +182,7 @@ public class GameController_TB : BaseGameController
 		didInit=true;
     }
 	
-    void startGame ()
+    public override void startGame ()
     {
 		// the SetPlayerLocks function tells all players to unlock
         SetPlayerLocks( false );
@@ -317,7 +317,7 @@ public class GameController_TB : BaseGameController
 		Explode( whichPlayer.position );
 	}
 	
-	public void Explode ( Vector3 aPosition )
+	public override void Explode ( Vector3 aPosition )
 	{		
 		// instantiate an explosion at the position passed into this function
 		Instantiate( explosionPrefab,aPosition, Quaternion.identity );

@@ -19,7 +19,8 @@ public class Wave_Spawner : MonoBehaviour
 	void Start ()
 	{
 		// count how many objects we have lined up in the spawn object list
-		foreach( GameObject go in spawnObjectPrefabs )
+		for(int i=0; i< spawnObjectPrefabs.Length; i++)
+//		foreach( GameObject go in spawnObjectPrefabs )
 		{
 			totalSpawnObjects++;
 		}

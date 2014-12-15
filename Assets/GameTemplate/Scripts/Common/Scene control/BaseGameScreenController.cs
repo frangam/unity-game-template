@@ -60,7 +60,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	public virtual void OnApplicationPause(bool paused){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
 		if(!paused){ //resume
-			ScreenLoaderVisualIndicator.Instance.finCarga();
+			ScreenLoaderVisualIndicator.Instance.finishLoad();
 		}
 		#endif
 	}

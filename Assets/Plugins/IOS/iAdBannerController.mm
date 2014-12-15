@@ -28,12 +28,11 @@ static BOOL IsShowIntersticialsOnLoad = false;
 }
 
 - (void) StartInterstitialAd {
+
      if(interstitial == nil) {
-         [self LoadInterstitialAd];
-          IsShowIntersticialsOnLoad = true;
-         
-         
-             }
+        [self LoadInterstitialAd];
+        IsShowIntersticialsOnLoad = true;
+    }
 }
 
 -(void) LoadInterstitialAd {

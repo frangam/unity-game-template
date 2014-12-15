@@ -38,7 +38,7 @@ public class BaseArmedEnemy : ExtendedCustomMonoBehaviour
 	
 	public string tagOfTargetsToShootAt;
 	
-	public void Start ()
+	public virtual void Start ()
 	{
 		// now call our script-specific init function
 		Init ();
@@ -123,7 +123,7 @@ public class BaseArmedEnemy : ExtendedCustomMonoBehaviour
 			if( doFire )
 			{
 				// we only want to fire if we are on-screen, visible on the main camera
-				if(onlyFireWhenOnscreen && !rendererToTestAgainst.IsVisibleFrom( Camera.mainCamera ))
+				if(onlyFireWhenOnscreen && !rendererToTestAgainst.IsVisibleFrom( Camera.main ))
 				{
 					doFire=false;
 					return;

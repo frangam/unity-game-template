@@ -130,7 +130,7 @@ public class BaseGameController<T> : Singleton<T> where T: MonoBehaviour{
 	
 
 
-	public void Explode ( Vector3 aPosition )
+	public virtual void Explode ( Vector3 aPosition )
 	{		
 		// instantiate an explosion at the position passed into this function
 		Instantiate( explosionPrefab,aPosition, Quaternion.identity );

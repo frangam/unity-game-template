@@ -3,7 +3,7 @@ using System.Collections;
 
 [AddComponentMenu("Sample Game Glue Code/Interstellar Paranoids/Game Controller")]
 
-public class GameController_IP : BaseGameController 
+public class GameController_IP : BaseGameController<GameController_IP> 
 {
 	public string mainMenuSceneName = "menu_IP";
 
@@ -41,7 +41,7 @@ public class GameController_IP : BaseGameController
 	private bool isStopped;
 	
 	[System.NonSerialized]
-	public static GameController_IP Instance;
+//	public static GameController_IP Instance;
 	
 	public float gameSpeed=8;
 	
@@ -54,10 +54,10 @@ public class GameController_IP : BaseGameController
 	
 	public float CameraStartPositionZ= -11;
 	
-	public GameController_IP()
-	{
-		Instance=this;
-	}
+//	public GameController_IP()
+//	{
+//		Instance=this;
+//	}
 	
 	public void Start()
 	{
@@ -183,7 +183,7 @@ public class GameController_IP : BaseGameController
 		isStopped=false;
 	}
 	
-	public void BossDestroyed()
+	public override void BossDestroyed()
 	{
 		ContinueForward();
 		
@@ -250,7 +250,7 @@ public class GameController_IP : BaseGameController
 		}
 	}
 	
-	public void Explode ( Vector3 aPosition )
+	public override void Explode ( Vector3 aPosition )
 	{		
 		// instantiate an explosion at the position passed into this function
 		Instantiate( explosionPrefab,aPosition, Quaternion.identity );

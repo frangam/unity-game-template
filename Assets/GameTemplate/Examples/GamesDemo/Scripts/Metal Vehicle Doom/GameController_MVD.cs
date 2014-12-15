@@ -6,7 +6,7 @@ using System.Collections;
 
 [AddComponentMenu( "Sample Game Glue Code/Metal Vehicle Destruction/Game Controller" )]
 
-public class GameController_MVD : BaseGameController
+public class GameController_MVD : BaseGameController<GameController_MVD>
 {
     public string mainMenuSceneName = "menu_MVD";
 	public int totalLaps = 3;
@@ -47,7 +47,7 @@ public class GameController_MVD : BaseGameController
     public GameObject [] playerPrefabList;
 
     [System.NonSerialized]
-    public static GameController_MVD Instance;
+//    public static GameController_MVD Instance;
 	
 	public Waypoints_Controller WaypointControllerForAI;
 	
@@ -58,10 +58,10 @@ public class GameController_MVD : BaseGameController
 	public GameObject wrongWaySign;
 	private bool oldIsWrongWay;
 	
-    public GameController_MVD ()
-    {
-        Instance = this;
-    }
+//    public GameController_MVD ()
+//    {
+//        Instance = this;
+//    }
 
     void Start ()
     {
@@ -313,7 +313,7 @@ public class GameController_MVD : BaseGameController
 		Explode( whichPlayer.position );
 	}
 	
-	public void Explode ( Vector3 aPosition )
+	public override void Explode ( Vector3 aPosition )
 	{		
 		// instantiate an explosion at the position passed into this function
 		Instantiate( explosionPrefab,aPosition, Quaternion.identity );
