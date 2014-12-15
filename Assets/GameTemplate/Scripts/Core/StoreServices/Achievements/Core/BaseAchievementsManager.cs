@@ -96,7 +96,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 				}
 				#elif UNITY_IPHONE
 				if(GameCenterManager.IsPlayerAuthed){
-					lockedInServer = GameCenterManager.getAchievementProgress(id) < 100;
+					lockedInServer = GameCenterManager.getAchievementProgress(a.Id) < 100;
 				}
 				#elif WP8
 				#endif
@@ -133,7 +133,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			GooglePlayManager.instance.showAchievementsUI();
 		}
 		#elif UNITY_IPHONE
-		if(Configuracion.USAR_GAMECENTER && GameCenterManager.IsPlayerAuthed)
+		if(GameSettings.USE_GAMECENTER && GameCenterManager.IsPlayerAuthed)
 			GameCenterManager.showAchievements();
 		#endif
 	}

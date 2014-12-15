@@ -118,12 +118,12 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		else if(gpsPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
 #elif UNITY_IPHONE
-		if((!GameSettings.USAR_GAMECENTER && twIniciado && fbIniciado && !GameSettings.mandatoryTutorial)
-		   || (GameSettings.USAR_GAMECENTER && gcConectado && twIniciado && fbIniciado && !GameSettings.mandatoryTutorial)){
+		if((!GameSettings.USE_GAMECENTER && twInited && fbInited && !GameSettings.mandatoryTutorial)
+		   || (GameSettings.USE_GAMECENTER && gcPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
 			AdsHandler.Instance.mostrarPantallazo();
-			ScreenLoaderVisualIndicator.Instancia.LoadScene (GameSettings.SCENE_MAINMENU);
+			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
-		else if(gpsConectado && twIniciado && fbIniciado && GameSettings.mandatoryTutorial)
+		else if(gcPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
 #endif
 
@@ -152,7 +152,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if(GameSettings.USE_GOOGLE_PLAY_SERVICES)
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
 		#elif UNITY_IPHONE
-		if(GameSettings.USAR_GAMECENTER)
+		if(GameSettings.USE_GAMECENTER)
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GC_CONEXION);
 		#else
         yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
@@ -180,7 +180,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if(GameSettings.USE_GOOGLE_PLAY_SERVICES)
 			GPSConnect.Instance.init();
 	#elif UNITY_IPHONE
-		if(GameSettings.USAR_GAMECENTER)
+		if(GameSettings.USE_GAMECENTER)
 			GCConnect.Instance.init();
 	#endif
 	}

@@ -116,7 +116,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				if(scoreServidor < puntosEnviar)
 					GameCenterManager.reportScore(puntosEnviar, id);
 				else
-					guardarMejorPuntuacion(scoreServidor);
+					saveBestScore(scoreServidor);
 			}
 			#endif
 		}
