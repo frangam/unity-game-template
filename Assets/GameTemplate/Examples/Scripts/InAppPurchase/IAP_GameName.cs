@@ -15,7 +15,15 @@ public class IAP_GameName : CoreIAPManager {
 		case "100_coins":
 			//Le damos al jugador su producto.
 			//GameDataExample.AddCoins(100);
+#if UNITY_ANDROID
 			AndroidMessage.Create("Añadido al jugador", "100 Monedas de oro");
+#endif
+#if UNITY_IPHONE
+			IOSMessage.Create("Añadido al jugador", "100 Monedas de oro");
+#endif
+#if Unity_WP8
+			WP8Message.Create("Añadido al jugador", "100 Monedas de oro");
+#endif
 			break;
 //		case "Arma1":
 //			//para los objetos no consumibles comprobar si se tiene (armas, logros, boosters, etc) cuando se inicia la

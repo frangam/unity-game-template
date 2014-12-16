@@ -176,7 +176,8 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	}
 	void OnVerificationComplete (IOSStoreKitVerificationResponse responce)
 	{
-		IOSNativePopUpManager.showMessage("Verification", "Transaction verification status: " + responce.status.ToString());
+//		IOSNativePopUpManager.showMessage("Verification", "Transaction verification status: " + responce.status.ToString());
+		Debug.Log("Transaction verification status: " + responce.status.ToString());
 	}
 	void OnRestoreComplete (ISN_Result responce)
 	{

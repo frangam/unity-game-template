@@ -5,7 +5,14 @@ using System.Collections;
 public class HUDManager : MonoBehaviour {
 	public Button Coins;
 	public Text loaded;
-	
+	public Button IosRestore;
+
+	void Awake()
+	{
+#if UNITY_IPHONE
+		IosRestore.gameObject.SetActive(true);
+#endif
+	}
 	public void Consume(string SKU)
 	{
 		if(IAP_GameName.Instance.IsInited)
