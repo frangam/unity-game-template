@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using System.Collections;
 
 [AddComponentMenu("Game Template/UI")]
-[RequireComponent(typeof(Button))]
 public class UIBaseButton : MonoBehaviour {
 	//Button Event When sound will play
 	public enum SoundTrigger{

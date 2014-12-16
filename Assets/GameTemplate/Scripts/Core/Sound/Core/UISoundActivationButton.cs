@@ -8,15 +8,21 @@ public class UISoundActivationButton : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private SoundType type;
+	
+	[SerializeField]
+	private Image imgActive;
+	
+	[SerializeField]
+	private Image imgInactive;
 
 	[SerializeField]
-	private Image imgForbidden;
-
+	private bool hideActive = false;
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	private bool activo = true;
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -31,29 +37,38 @@ public class UISoundActivationButton : UIBaseButton {
 			break;
 		}
 
-		imgForbidden.gameObject.SetActive(!activo);
-	}
+		if(hideActive)
+			imgActive.gameObject.SetActive(activo);
+		else{
+			imgActive.gameObject.SetActive(true);
+		}
 
+		imgInactive.gameObject.SetActive(!activo);
+	}
+	
 	public override void press (){
 		base.press ();
-
+		
 		switch(type){
 		case SoundType.FX:
-			float soundVolume = GameSettings.soundVolume > 0f ? 0f : GameSettings.soundVolume; //change to mute or previous sound saved
+			float soundVolume = GameSettings.soundVolume == 0f ? 1f : 0f; //change to mute or previous sound saved
 			GameSettings.soundVolume = soundVolume; //update volume
 			activo = GameSettings.soundVolume > 0;
 			PlayerPrefs.SetFloat(GameSettings.PP_SOUND, soundVolume);
 			break;
 			
 		case SoundType.MUSIC:
-			float musicVolume = GameSettings.musicVolume > 0f ? 0f : GameSettings.musicVolume; //change to mute or previous sound saved
+			float musicVolume = GameSettings.musicVolume == 0f ? 1f : 0f; //change to mute or previous sound saved
 			GameSettings.musicVolume = musicVolume; //update volume
 			activo = GameSettings.musicVolume > 0;
 			PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, musicVolume);
 			break;
 		}
-		
-		imgForbidden.gameObject.SetActive(!activo);
+
+		if(hideActive)
+			imgActive.gameObject.SetActive(activo);
+
+		imgInactive.gameObject.SetActive(!activo);
 		
 		if(activo)
 			BaseSoundManager.Instance.play(BaseSoundIDs.MENU_MUSIC);
