@@ -8,6 +8,7 @@ public class ExtendedCustomMonoBehaviour : MonoBehaviour
 	
 	public Transform myTransform;
 	public GameObject myGO;
+	public GameObject myAnimatedGO;
 	public Rigidbody myBody;
 	
 	public bool didInit;
