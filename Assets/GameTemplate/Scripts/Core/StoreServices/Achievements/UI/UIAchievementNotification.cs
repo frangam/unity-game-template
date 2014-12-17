@@ -8,6 +8,10 @@ public class UIAchievementNotification : MonoBehaviour {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	[Tooltip("If true, only valid for test purposes")]
+	private bool onlyForTest = true;
+
+	[SerializeField]
 	private string triggerShowAnimation = "show";
 
 	[SerializeField]
@@ -40,7 +44,10 @@ public class UIAchievementNotification : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public void showUnlockedAchievement(Achievement achievement){
-		txAchievementTitle.text = achievement.Name;
-		anim.SetTrigger(triggerShowAnimation);
+		if((onlyForTest && RuntimePlatformUtils.IsEditor()) 
+		   || (!onlyForTest)){
+			txAchievementTitle.text = achievement.Name;
+			anim.SetTrigger(triggerShowAnimation);
+		}
 	}
 }
