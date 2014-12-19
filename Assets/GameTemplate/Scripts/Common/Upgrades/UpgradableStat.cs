@@ -3,14 +3,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UpgradableStat<S, MyGenericType> : BaseStat<MyGenericType>{
+public class UpgradableStat<S, T> : BaseStat<T> where T: MyGenericType{
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	private S price;
-	private MyGenericType valueIncrement;
-
-
+	private T valueIncrement;
+	
+	
 	//--------------------------------------
 	// Getters/MyGenericTypeetters
 	//--------------------------------------
@@ -22,8 +22,8 @@ public class UpgradableStat<S, MyGenericType> : BaseStat<MyGenericType>{
 			price = value;
 		}
 	}
-
-	public MyGenericType ValueIncrement {
+	
+	public T ValueIncrement {
 		get {
 			return this.valueIncrement;
 		}
@@ -31,7 +31,7 @@ public class UpgradableStat<S, MyGenericType> : BaseStat<MyGenericType>{
 			valueIncrement = value;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -43,26 +43,26 @@ public class UpgradableStat<S, MyGenericType> : BaseStat<MyGenericType>{
 	/// <param name="attributes">Attributes.</param>
 	public UpgradableStat(string attributes): base(attributes){
 		string[] att = attributes.Split(ATTRIBUTES_SEPARATOR);
-
+		
 		if(att.Length > 4){
 			S p = default(S);
-			MyGenericType i = default(MyGenericType);
-
+			T i = default(T);
+			
 			if(Casting.TryCast(att[3], out p))
-			   price = p;
-
+				price = p;
+			
 			if(Casting.TryCast(att[4], out i))
 				valueIncrement = i;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
 		return string.Format ("[UpgradableStat: price={0}, valueIncrement={1}, {2}]", price, valueIncrement,base.ToString());
 	}
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
@@ -72,15 +72,15 @@ public class UpgradableStat<S, MyGenericType> : BaseStat<MyGenericType>{
 	/// <param name="totalMoney">Total money.</param>
 	public S apply(S totalMoney){
 		S finalMoney = totalMoney;
-		MyGenericType finalValue = (MyGenericType)(Value+valueIncrement);
-
-
+		T finalValue = (T)(Value+valueIncrement);
+		
+		
 		if((finalValue <= MaxValue)
 		   && (totalMoney >= price)){
 			finalMoney = (S)(finalMoney-price);
-			Value = (MyGenericType)(Value + valueIncrement);
+			Value = (T)(Value + valueIncrement);
 		}
-
+		
 		return finalMoney;
 	}
 }
@@ -88,6 +88,8 @@ public class UpgradableStat<S, MyGenericType> : BaseStat<MyGenericType>{
 #region GENERIC EXPANMyGenericTypeION
 
 public class UpgradableStat_Int_Int : UpgradableStat<int, int>{
-	
+	public UpgradableStat_Int_Int(string attributes): base(attributes){
+		
+	}
 }
 #endregion

@@ -13,20 +13,20 @@ using System.Collections.Generic;
 //public class BaseStatListString : BaseStat<List<string>>{}
 //public class BaseStatListBool : BaseStat<List<bool>>{}
 
-public class BaseStat<MyGenericType> {
+public class BaseStat<T> where T: MyGenericType{
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
 	public const char ATTRIBUTES_SEPARATOR = ',';
-
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	private string id;
-	private MyGenericType initialValue;
-	private MyGenericType maxValue;
-	private MyGenericType value;
-
+	private T initialValue;
+	private T maxValue;
+	private T value;
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -35,8 +35,8 @@ public class BaseStat<MyGenericType> {
 			return this.id;
 		}
 	}
-
-	public MyGenericType Value {
+	
+	public T Value {
 		get {
 			return this.value;
 		}
@@ -44,14 +44,14 @@ public class BaseStat<MyGenericType> {
 			this.value = value;
 		}
 	}
-
-	public MyGenericType InitialValue {
+	
+	public T InitialValue {
 		get {
 			return this.initialValue;
 		}
 	}
-
-	public MyGenericType MaxValue {
+	
+	public T MaxValue {
 		get {
 			return this.maxValue;
 		}
@@ -59,7 +59,7 @@ public class BaseStat<MyGenericType> {
 			maxValue = value;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -71,18 +71,18 @@ public class BaseStat<MyGenericType> {
 	/// <param name="attributes">Attributes.</param>
 	public BaseStat(string attributes){
 		string[] att = attributes.Split(ATTRIBUTES_SEPARATOR);
-
+		
 		if(att.Length > 0){
 			id = att[0];
-
+			
 			if(att.Length > 1){
-				MyGenericType v = default(MyGenericType);
-
+				T v = default(T);
+				
 				if(Casting.TryCast(att[1], out v)){
 					value = v;
 					initialValue = v;
 				}
-
+				
 				if(att.Length > 2){
 					if(Casting.TryCast(att[2], out v)){
 						maxValue = v;
@@ -91,12 +91,7 @@ public class BaseStat<MyGenericType> {
 			}
 		}
 	}
-
-	public BaseStat(string pId, MyGenericType pValue){
-		id = pId;
-		value = pValue;
-	}
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
