@@ -3,17 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-//public class BaseStatInt : BaseStat<int>{}
-//public class BaseStatFloat : BaseStat<float>{}
-//public class BaseStatString : BaseStat<string>{}
-//public class BaseStatBool : BaseStat<bool>{}
-//
-//public class BaseStatListInt : BaseStat<List<int>>{}
-//public class BaseStatListFloat : BaseStat<List<float>>{}
-//public class BaseStatListString : BaseStat<List<string>>{}
-//public class BaseStatListBool : BaseStat<List<bool>>{}
 
-public class BaseStat<T> where T: MyGenericType{
+[System.Serializable]
+public class BaseStat{
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
@@ -22,10 +14,22 @@ public class BaseStat<T> where T: MyGenericType{
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	[SerializeField]
+	private string name;
+
+	[SerializeField]
 	private string id;
-	private T initialValue;
-	private T maxValue;
-	private T value;
+
+	[SerializeField]
+	private float initialValue;
+
+	[SerializeField]
+	private float currentValue;
+
+	[SerializeField]
+	private float maxValue;
+
+
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -35,23 +39,29 @@ public class BaseStat<T> where T: MyGenericType{
 			return this.id;
 		}
 	}
-	
-	public T Value {
+
+	public string Name {
 		get {
-			return this.value;
-		}
-		set{
-			this.value = value;
+			return this.name;
 		}
 	}
 	
-	public T InitialValue {
+	public float CurrentValue {
+		get {
+			return this.currentValue;
+		}
+		set{
+			this.currentValue = value;
+		}
+	}
+	
+	public float InitialValue {
 		get {
 			return this.initialValue;
 		}
 	}
 	
-	public T MaxValue {
+	public float MaxValue {
 		get {
 			return this.maxValue;
 		}
@@ -66,7 +76,7 @@ public class BaseStat<T> where T: MyGenericType{
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BaseStat`1"/> class.
 	/// 
-	/// ID,VALUE, MAX VALUE
+	/// ID, NAME, VALUE, MAX VALUE
 	/// </summary>
 	/// <param name="attributes">Attributes.</param>
 	public BaseStat(string attributes){
@@ -75,16 +85,20 @@ public class BaseStat<T> where T: MyGenericType{
 		if(att.Length > 0){
 			id = att[0];
 			
-			if(att.Length > 1){
-				T v = default(T);
-				
-				if(Casting.TryCast(att[1], out v)){
-					value = v;
+			if(att.Length > 2){
+				float v;
+
+				if(att.Length > 3){
+					name = att[3];
+				}
+
+				if(Casting.TryCast(att[2], out v)){
+					currentValue = v;
 					initialValue = v;
 				}
 				
-				if(att.Length > 2){
-					if(Casting.TryCast(att[2], out v)){
+				if(att.Length > 3){
+					if(Casting.TryCast(att[3], out v)){
 						maxValue = v;
 					}
 				}
@@ -96,7 +110,14 @@ public class BaseStat<T> where T: MyGenericType{
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
-		return string.Format ("[BaseStat: Id={0}, Value={1}]", Id, Value);
+		return string.Format ("[BaseStat: id={0}, name={1}, initialValue={2}, maxValue={3}, currentValue={4}]", id, name, initialValue, maxValue, currentValue);
 	}
 	
+	
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public bool loadedCorrectly(){
+		return !string.IsNullOrEmpty(id) && initialValue != null && maxValue != null && currentValue != null;
+	}
 }
