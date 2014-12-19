@@ -9,29 +9,29 @@ public class UpgradableStat : BaseStat{
 	// Private Attributes
 	//--------------------------------------
 	[SerializeField]
-	private float 	price;
+	private List<float> 	prices;
 
 	[SerializeField]
-	private int 	upgradeIndex;
+	private int 			currentUpgradeIndex;
 
 	[SerializeField]
-	private int 	maxUpgrades;
+	private int 			maxUpgrades;
 	
 	//--------------------------------------
 	// Getters/MyGenericTypeetters
 	//--------------------------------------
-	public float Price {
+	public List<float> Prices {
 		get {
-			return this.price;
+			return this.prices;
 		}
 		set {
-			price = value;
+			prices = value;
 		}
 	}
 	
-	public int UpgradeIndex {
+	public int CurrentUpgradeIndex {
 		get {
-			return this.upgradeIndex;
+			return this.currentUpgradeIndex;
 		}
 	}
 
@@ -52,12 +52,17 @@ public class UpgradableStat : BaseStat{
 	/// <param name="attributes">Attributes.</param>
 	public UpgradableStat(string attributes): base(attributes){
 		string[] att = attributes.Split(ATTRIBUTES_SEPARATOR);
-		
+		prices = new List<float>();
+
 		if(att.Length > 4){
+			string[] pPrices = att[4].Split(':');
 			float p;
 		
-			if(Casting.TryCast(att[4], out p))
-				price = p;
+			foreach(string pP in pPrices){
+				if(Casting.TryCast(pP, out p)){
+					prices.Add(p);
+				}
+			}
 		}
 	}
 	
@@ -65,7 +70,7 @@ public class UpgradableStat : BaseStat{
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
-		return string.Format ("[UpgradableStat: price={0}, {1}, upgradeIndex={2}, maxUpgrades={3}]", price,base.ToString(), upgradeIndex, maxUpgrades);
+		return string.Format ("[UpgradableStat: price={0}, {1}, currentUpgradeIndex={2}, maxUpgrades={3}]", prices,base.ToString(), currentUpgradeIndex, maxUpgrades);
 	}
 	
 
@@ -77,10 +82,8 @@ public class UpgradableStat : BaseStat{
 	/// </summary>
 	/// <returns><c>true</c>, if it was upgraded, <c>false</c> otherwise.</returns>
 	private void LevelUp(){
-		bool doUpgrade = UpgradeIndex < MaxUpgrades;
-		
-		if(doUpgrade){
-			upgradeIndex++;
+		if(!completed()){
+			currentUpgradeIndex++;
 			CurrentValue += (MaxValue-InitialValue)/maxUpgrades; //(Level*1f/MaxLevel) * MaxValue;
 		}
 	}
@@ -88,6 +91,28 @@ public class UpgradableStat : BaseStat{
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	public float currentPrice(){
+		float res = -1f;
+		
+		if(!completed())
+			res = prices[currentUpgradeIndex];
+		
+		return res;
+	}
+
+	public float nextPrice(){
+		float res = -1f;
+
+		if(currentUpgradeIndex<maxUpgrades-1)
+			res = prices[currentUpgradeIndex+1];
+
+		return res;
+	}
+
+	public bool completed(){
+		return CurrentUpgradeIndex >= MaxUpgrades;
+	}
+
 	/// <summary>
 	/// Apply the upgrade and return de final money
 	/// </summary>
@@ -95,9 +120,9 @@ public class UpgradableStat : BaseStat{
 	public float apply(float totalMoney){
 		float finalMoney = totalMoney;
 		
-		if(UpgradeIndex < MaxUpgrades
-		   && (totalMoney >= price)){
-			finalMoney -= price;
+		if(!completed()
+		   && (totalMoney >= prices[currentUpgradeIndex])){
+			finalMoney -= prices[currentUpgradeIndex];
 			LevelUp();
 		}
 		

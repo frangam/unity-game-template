@@ -11,9 +11,13 @@ public class WeaponUpgradesExample : MonoBehaviour {
 	public int totalMoney = 10000;
 	public Text lbTotalMoney;
 	public Text lbPower;
+	public Text lbPowerPrice;
 	public Text lbStability;
+	public Text lbStabilityPrice;
 	public Text lbZoom;
+	public Text lbZoomPrice;
 	public Text lbCapacity;
+	public Text lbCapacityPrice;
 	public List<UpgradableStat> stats;
 
 	//--------------------------------------
@@ -53,12 +57,13 @@ public class WeaponUpgradesExample : MonoBehaviour {
 	//--------------------------------------
 	private void changeLabelStatText(UpgradableStat stat){
 		string value = stat.CurrentValue.ToString();
+		string price = stat.currentPrice() != -1f ? stat.currentPrice().ToString() : "";
 
 		switch(stat.Id){
-		case "s_0": lbPower.text = value; break;
-		case "s_1": lbStability.text = value; break;
-		case "s_2": lbZoom.text = value; break;
-		case "s_3": lbCapacity.text = value; break;
+		case "s_0": lbPower.text = value; lbPowerPrice.text = price; break;
+		case "s_1": lbStability.text = value; lbStabilityPrice.text = price; break;
+		case "s_2": lbZoom.text = value; lbZoomPrice.text = price; break;
+		case "s_3": lbCapacity.text = value; lbCapacityPrice.text = price; break;
 		}
 	}
 }
