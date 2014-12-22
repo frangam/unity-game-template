@@ -57,10 +57,10 @@ public class UIBaseWindow : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public virtual void open(){
-		window.gameObject.SetActive(true);
+//		window.gameObject.SetActive(true);
 	}
 	public virtual void close(){
-		window.gameObject.SetActive(false);
+//		window.gameObject.SetActive(false);
 	}
 	
 	//--------------------------------------

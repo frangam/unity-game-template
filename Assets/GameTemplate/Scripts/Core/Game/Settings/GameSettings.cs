@@ -25,6 +25,14 @@ public class GameSettings : MonoBehaviour {
 	// Constants
 	//--------------------------------------
 	#region Constants
+	//MONEY
+	/// <summary>
+	/// 1 gem is equals to 100 or less coins
+	/// </summary>
+	public const int ONE_GEM_VALUE_IN_COINS = 100;
+	public const int INITIAL_MONEY = 0;
+	public const int INITIAL_GEMS = 30;
+
 	//ADS 
 	public const bool 	IS_PRO_VERSION = false; 
 	public const int 	NUM_GAMEOVERS_SHOW_AD_HARD_MODE 	= 5; //number of gameovers to show an ad in hard mode
@@ -88,7 +96,8 @@ public class GameSettings : MonoBehaviour {
 	public const string PP_LEVEL_STARS 									= "pp_level_stars_"; //followed by level id
 	public const string PP_LEVEL_SCORE	 								= "pp_level_score_"; //followed by level id
 	public const string PP_IS_SPRITE_CURRENT_LEVEL_INDICATOR_MOVED 		= "pp_is_sprite_level_indicator_moved_";  //followed by level id
-	public const string PP_TOTAL_COINS 									= "pp_total_coins"; //total of coins player has
+	public const string PP_TOTAL_MONEY 									= "pp_total_money"; //total of the money player has
+	public const string PP_TOTAL_GEMS									= "pp_total_money"; //total of the gems player has
 	public const string PP_PURCHASED_ITEM 								= "pp_purchased_item_";  //followed by item id
 	public const string PP_TOTAL_GAMES 									= "pp_total_games"; //total games played
 	public const string PP_TOTAL_SHOPPING 								= "pp_total_shopping"; //total items purchased
@@ -115,7 +124,7 @@ public class GameSettings : MonoBehaviour {
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	void Start(){
+	public virtual void Start(){
 		DontDestroyOnLoad(this); //para que no se destruyan los atributos al cargar escenas	
 	}
 	#endregion

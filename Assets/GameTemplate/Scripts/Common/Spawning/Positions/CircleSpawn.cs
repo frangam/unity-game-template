@@ -8,15 +8,18 @@ public class CircleSpawn : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private float radius = 2.5f;
-
+	
 	[SerializeField]
 	private bool freezeY = true;
-
+	
 	[SerializeField]
 	private float yFrozen = 1.05f;
-
+	
 	[SerializeField]
 	private Color gizmoColor = Color.red;
+	
+	[SerializeField]
+	private bool ShowOnSelected = false;
 	
 	//--------------------------------------
 	// Private Methods
@@ -30,6 +33,11 @@ public class CircleSpawn : MonoBehaviour {
 		return pos;
 	}
 	
+	private void showGizmos(){
+		Gizmos.color = gizmoColor;
+		Gizmos.DrawSphere(transform.position, radius);
+	}
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
@@ -37,15 +45,22 @@ public class CircleSpawn : MonoBehaviour {
 		GameObject res = null;
 		Vector3 center = transform.position;
 		Vector3 pos = RandomCircle(center, radius);
-//		Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center-pos);
-
-
+		//		Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center-pos);
+		
+		
 		return pos;
 	}
-
-
+	
+	
+	void OnDrawGizmos() {
+		if(!ShowOnSelected){
+			showGizmos();
+		}
+	}
+	
 	void OnDrawGizmosSelected() {
-		Gizmos.color = gizmoColor;
-		Gizmos.DrawSphere(transform.position, radius);
+		if(ShowOnSelected){
+			showGizmos();
+		}
 	}
 }

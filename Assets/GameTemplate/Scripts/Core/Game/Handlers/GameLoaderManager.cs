@@ -20,6 +20,9 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	/// </summary>
 	private GameDifficulty[] dificultades;
 
+	[SerializeField]
+	private bool deletePlayerPrefs = false;
+
 
 	//--------------------------------------
 	// Private Attributes
@@ -76,9 +79,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	void Awake () {
+	public virtual void Awake () {
 		//TEST
-		PlayerPrefs.DeleteAll();
+		if(deletePlayerPrefs)
+			PlayerPrefs.DeleteAll();
 //				Localization.language = GameSettings.LOC_SPANISH;
 
 		if(!GameSettings.USE_FACEBOOK)
@@ -96,7 +100,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		cargarIdioma (); //idioma
 //		Localization.language = GameSettings.LOC_ENGLISH;
 
-
+		loadInitialMoneyOnlyFirstTime();
 		loadSettings();
 		cargarAudio (); //musica y sonido
 		cargarPuntosYNivelInicial (); //puntos
@@ -106,7 +110,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		StartCoroutine (LoadTutorialOrMenu ()); //se carga el tutorial o el menu del juego
 	}
 
-	void LateUpdate(){
+	public virtual void LateUpdate(){
 		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN) return;
 
 #if UNITY_ANDROID
@@ -314,5 +318,15 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 	}
 
-
+	/*--------------------------------
+	 * Money
+	 -------------------------------*/
+	private void loadInitialMoneyOnlyFirstTime(){
+		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_MONEY)){
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_MONEY, GameSettings.INITIAL_MONEY);
+		}
+		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_GEMS)){
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GEMS, GameSettings.INITIAL_GEMS);
+		}
+	}
 }
