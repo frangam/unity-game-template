@@ -4,34 +4,36 @@ using System.Collections;
 /// <summary>
 /// Singleton pattern for object we want to exist only in the current Scene
 /// </summary>
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
-    protected static T instance;
- 
-    /// <summary>
-    /// Returns instance of this class
-    /// </summary>
-    /// <value>
-    /// The instance.
-    /// </value>
-    public static T Instance {
-        get {
-			if (FindObjectsOfType(typeof(T)).Length > 1 ){
-				Debug.LogError("[Singleton] Something went really wrong " +
-				               " - there should never be more than 1 singleton!" +
-				               " Reopenning the scene might fix it.");
-				return instance;
+public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
+	
+	private static T _instance = null;
+	
+	
+	
+	public static T Instance {
+		
+		get {
+			if (_instance == null) {
+				_instance = GameObject.FindObjectOfType(typeof(T)) as T;
+				if (_instance == null) {
+					_instance = new GameObject ().AddComponent<T> ();
+					_instance.gameObject.name = _instance.GetType ().Name+" (Singleton)";
+				}
 			}
-
-            if (instance == null) {
-                instance = (T)FindObjectOfType(typeof(T));
-
-                if (instance == null) {
-                    GameObject container = new GameObject();
-                    container.name = typeof(T)+"(Singleton)";
-                    instance = (T)container.AddComponent(typeof(T));
-                }
-            }
-            return instance;
-        }
-    }
+			
+			return _instance;
+			
+		}
+		
+	}
+	
+	public static bool IsDestroyed {
+		get {
+			if(_instance == null) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 }

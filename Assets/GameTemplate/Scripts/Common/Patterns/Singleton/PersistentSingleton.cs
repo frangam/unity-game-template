@@ -4,36 +4,40 @@ using System.Collections;
 /// <summary>
 /// Singleton pattern for object we want to exist in all of the Scenes
 /// </summary>
-public class PersistentSingleton<T> : MonoBehaviour where T : MonoBehaviour {
-	protected static T instance;
+public abstract class PersistentSingleton<T> : MonoBehaviour where T : MonoBehaviour {
 	
-	/// <summary>
-	/// Returns instance of this class
-	/// </summary>
-	/// <value>
-	/// The instance.
-	/// </value>
+	private static T _instance = null;
+	
+	
+	
 	public static T Instance {
+		
 		get {
-			if (FindObjectsOfType(typeof(T)).Length > 1 ){
-				Debug.LogError("[PersistentSingleton] Something went really wrong " +
-				               " - there should never be more than 1 singleton!" +
-				               " Reopenning the scene might fix it.");
-			}
-			else if (instance == null) {
-				instance = (T)FindObjectOfType(typeof(T));
-				
-				if (instance == null) {
-					GameObject container = new GameObject();
-					container.name = typeof(T)+"(PersistentSingleton)";
-					instance = (T)container.AddComponent(typeof(T));
+			if (_instance == null) {
+				_instance = GameObject.FindObjectOfType(typeof(T)) as T;
+				if (_instance == null) {
+					_instance = new GameObject ().AddComponent<T> ();
+					_instance.gameObject.name = _instance.GetType ().Name+" (PersistentSingleton)";
 				}
 			}
-			return instance;
+			
+			return _instance;
+			
+		}
+		
+	}
+	
+	public static bool IsDestroyed {
+		get {
+			if(_instance == null) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
 	public virtual void Start(){
-		DontDestroyOnLoad(Instance.gameObject); //dont destroy instance to persist in every scene
+		DontDestroyOnLoad(_instance.gameObject); //dont destroy instance to persist in every scene
 	}
 }
