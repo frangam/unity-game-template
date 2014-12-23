@@ -17,7 +17,7 @@ public class UI_GameOver : MonoBehaviour {
 		if(GUI.Button(new Rect ((Screen.width/2)-80,(Screen.height/2)+20,100,25),"PLAY AGAIN"))
 		{
 			// when the button is pressed, we tell game controller about it
-			GameController_TB.Instance.RestartGameButtonPressed();
+			 GameController.Instance.Manager.RestartGameButtonPressed();
 		}
 	}
 }

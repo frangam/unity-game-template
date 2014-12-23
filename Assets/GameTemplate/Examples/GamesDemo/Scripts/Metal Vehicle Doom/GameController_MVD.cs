@@ -4,9 +4,9 @@
 using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu( "Sample Game Glue Code/Metal Vehicle Destruction/Game Controller" )]
+[AddComponentMenu( "Sample Game Glue Code/Metal Vehicle Destruction/Game Controller MVD" )]
 
-public class GameController_MVD : BaseGameController<GameController_MVD>
+public class GameController_MVD : BaseGameManager
 {
     public string mainMenuSceneName = "menu_MVD";
 	public int totalLaps = 3;

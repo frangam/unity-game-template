@@ -50,7 +50,7 @@ public class Player_LBS : BaseTopDown
 		isFinished= false;
 		
 		// get a ref to the player manager
-		GameController_LBS.Instance.UpdateLivesP1(myDataManager.GetHealth());
+		((GameController_LBS)GameController.Instance.Manager).UpdateLivesP1(myDataManager.GetHealth());
 	}
 	
 	public override void GetInput()
@@ -89,13 +89,13 @@ public class Player_LBS : BaseTopDown
 		isRespawning=true;
 				
 		// blow us up!
-		GameController_LBS.Instance.PlayerHit( myTransform );
+		((GameController_LBS)GameController.Instance.Manager).PlayerHit( myTransform );
 			
 		// reduce lives by one
 		myDataManager.ReduceHealth(1);
 		
 		// as our ID is 1, we must be player 1
-		GameController_LBS.Instance.UpdateLivesP1( myDataManager.GetHealth() );
+		((GameController_LBS)GameController.Instance.Manager).UpdateLivesP1( myDataManager.GetHealth() );
 		
 		if(myDataManager.GetHealth()<1) // <- game over
 		{
@@ -171,7 +171,7 @@ public class Player_LBS : BaseTopDown
 	public void PlayerFinished()
 	{
 		// tell the player controller that we have finished
-		GameController_LBS.Instance.PlayerDied( id );
+		((GameController_LBS)GameController.Instance.Manager).PlayerDied( id );
 		
 		isFinished=true;
 	}

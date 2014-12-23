@@ -381,7 +381,7 @@ public class CarController_TB : BaseVehicle
 			myBody.angularVelocity=new Vector3( Random.Range (-100,100), Random.Range (-100,100), Random.Range (-100,100) );
 			
 			// tell game controller to do a nice big explosion
-			GameController_TB.Instance.PlayerBigHit( myTransform );
+			((GameController_TB)GameController.Instance.Manager).PlayerBigHit( myTransform );
 			
 			// respawn 
 			Invoke("Respawn",4f);
@@ -392,7 +392,7 @@ public class CarController_TB : BaseVehicle
 		} else {
 			
 			// tell game controller to do small scale hit if we still have some health left
-			GameController_TB.Instance.PlayerHit( myTransform );
+			((GameController_TB)GameController.Instance.Manager).PlayerHit( myTransform );
 		}
 	}
 		

@@ -67,10 +67,10 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 		if(ownerID==1)
 		{
 			// if our owner ID is 1, we must be player 1
-			GameController_IP.Instance.UpdateLivesP1(myDataManager.GetHealth());
+			((GameController_IP)GameController.Instance.Manager).UpdateLivesP1(myDataManager.GetHealth());
 		} else {
 			// we are player 2, so set that UI instead
-			GameController_IP.Instance.UpdateLivesP2(myDataManager.GetHealth());
+			((GameController_IP)GameController.Instance.Manager).UpdateLivesP2(myDataManager.GetHealth());
 		}
 		
 		if(isMouseControlled)
@@ -156,7 +156,7 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 		isRespawning=true;
 			
 		// blow us up!
-		GameController_IP.Instance.PlayerHit( myTransform );
+		((GameController_IP)GameController.Instance.Manager).PlayerHit( myTransform );
 			
 		// reduce lives by one
 		myDataManager.ReduceHealth(1);
@@ -165,10 +165,10 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 		if( ownerID==1 )
 		{
 			// as our ID is 1, we must be player 1
-			GameController_IP.Instance.UpdateLivesP1( myDataManager.GetHealth() );
+			((GameController_IP)GameController.Instance.Manager).UpdateLivesP1( myDataManager.GetHealth() );
 		} else {
 			// as our ID is 2, we must be player 2
-			GameController_IP.Instance.UpdateLivesP2( myDataManager.GetHealth() );
+			((GameController_IP)GameController.Instance.Manager).UpdateLivesP2( myDataManager.GetHealth() );
 		}
 		
 		if(myDataManager.GetHealth()<1) // <- game over
@@ -227,7 +227,7 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 	public void PlayerFinished()
 	{
 		// tell the player controller that we have finished
-		GameController_IP.Instance.PlayerDied( ownerID );
+		((GameController_IP)GameController.Instance.Manager).PlayerDied( ownerID );
 	}
 }
 

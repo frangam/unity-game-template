@@ -16,14 +16,14 @@ public class EnemyBot_LBS : BaseArmedEnemy
 		BaseAIController aControl= (BaseAIController) gameObject.GetComponent<BaseAIController>();
 
 		// and tell it to chase our player around the screen (we get the player transform from game controller)
-		aControl.SetChaseTarget( GameController_LBS.Instance.GetMainPlayerTransform() );
+		aControl.SetChaseTarget( ((GameController_LBS)GameController.Instance.Manager).GetMainPlayerTransform() );
 		
 		// now get on and chase it!
 		aControl.SetAIState( AIStates.AIState.chasing_target );
 		
 		// we also need to add this enemy to the radar, so we will tell game controller about it and 
 		// some code in game controller will do this for us
-		GameController_LBS.Instance.AddEnemyToRadar( myTransform );
+		((GameController_LBS)GameController.Instance.Manager).AddEnemyToRadar( myTransform );
 	}
 	
 	public void OnCollisionEnter(Collision collider) 
@@ -57,19 +57,19 @@ public class EnemyBot_LBS : BaseArmedEnemy
 	public void TellGCEnemyDestroyed()
 	{
 		// tell the game controller we have been destroyed
-		GameController_LBS.Instance.EnemyDestroyed( myTransform.position, pointsValue, tempINT );
+		((GameController_LBS)GameController.Instance.Manager).EnemyDestroyed( myTransform.position, pointsValue, tempINT );
 		
 		// remove this enemy from the radar
-		GameController_LBS.Instance.RemoveEnemyFromRadar( myTransform );
+		((GameController_LBS)GameController.Instance.Manager).RemoveEnemyFromRadar( myTransform );
 	}
 	
 	public void TellGCBossDestroyed()
 	{
 		// tell the game controller we have been destroyed (and that we are a boss!)
-		GameController_LBS.Instance.BossDestroyed();
+		GameController.Instance.Manager.BossDestroyed();
 		
 		// remove this enemy from the radar
-		GameController_LBS.Instance.RemoveEnemyFromRadar( myTransform );
+		((GameController_LBS)GameController.Instance.Manager).RemoveEnemyFromRadar( myTransform );
 	}
 	
 	// ------------------------------------------------------------------------------------------

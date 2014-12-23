@@ -62,13 +62,13 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
        
         //pausing the game
 		if(BaseGameScreenController.Instance.Section == GameSection.GAME)
-			BaseGameController.Instance.Paused = true;
+			GameController.Instance.Manager.Paused = true;
 	}
 
     private void OnInterstisialsClosed(){
         //un-pausing the game
 		if (BaseGameScreenController.Instance.Section == GameSection.GAME)
-			BaseGameController.Instance.Paused = false;
+			GameController.Instance.Manager.Paused = false;
     }
 	
 //	private void OnInAppRequest(CEvent e) {

@@ -39,13 +39,13 @@ public class InputBackButton : MonoBehaviour {
 				
 				
 			case Action.POPUP_PAUSE:
-				if(BaseGameController.Instance.Paused && !BaseGameController.Instance.Finished){
-					BaseGameController.Instance.Paused = false;
+				if(GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
+					GameController.Instance.Manager.Paused = false;
 				}
-				else if(!BaseGameController.Instance.Paused && !BaseGameController.Instance.Finished){
-					BaseGameController.Instance.Paused = true;
+				else if(!GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
+					GameController.Instance.Manager.Paused = true;
 				}
-				else if(BaseGameController.Instance.Finished){
+				else if(GameController.Instance.Manager.Finished){
 					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 				}
 				
@@ -57,13 +57,13 @@ public class InputBackButton : MonoBehaviour {
 				break;
 				
 //			case Action.MAIN_MENU_WITH_CONFIRMATION:
-//				if(BaseGameController.gameStart && BaseGameController.Instance.InPause && !BaseGameController.Instance.Finished){
+//				if(GameController.gameStart && GameController.Instance.InPause && !GameController.Instance.Finished){
 //					UIHandler.Instance.abrir(GameScreen.EXIT, false);
 //				}
-//				else if(BaseGameController.gameStart && !BaseGameController.Instance.InPause && !BaseGameController.Instance.Finished){
+//				else if(GameController.gameStart && !GameController.Instance.InPause && !GameController.Instance.Finished){
 //					UIHandler.Instance.abrir(GameScreen.EXIT);
 //				}
-//				else if(BaseGameController.Instance.Finished){
+//				else if(GameController.Instance.Finished){
 //					((PanelCargando) GameObject.FindObjectOfType(typeof(PanelCargando))).mostrar();
 				//			ScreenLoaderIndicator.Instance.LoadScene (GameSettings.SCENE_LEVEL_SELECTION);
 //				}

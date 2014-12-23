@@ -14,7 +14,7 @@ public class UIBasePauseWindow : UIBaseWindow {
 	//--------------------------------------
 	public override void open (){
 		if(lbCurrentScore){
-			lbCurrentScore.text = BaseGameController.Instance.CurrentScore.ToString();
+			lbCurrentScore.text = GameController.Instance.Manager.CurrentScore.ToString();
 		}
 
 		base.open ();
@@ -24,10 +24,10 @@ public class UIBasePauseWindow : UIBaseWindow {
 	// Public Methods
 	//--------------------------------------
 	public virtual void pause(){
-		BaseGameController.Instance.Paused = true;
+		GameController.Instance.Manager.Paused = true;
 	}
 
 	public virtual void resume(){
-		BaseGameController.Instance.Paused = false;
+		GameController.Instance.Manager.Paused = false;
 	}
 }

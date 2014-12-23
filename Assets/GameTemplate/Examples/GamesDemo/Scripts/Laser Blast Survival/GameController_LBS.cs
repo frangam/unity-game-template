@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu("Sample Game Glue Code/Laser Blast Survival/Game Controller")]
+[AddComponentMenu("Sample Game Glue Code/Laser Blast Survival/Game Controller LBS")]
 
-public class GameController_LBS : BaseGameController<GameController_LBS>
+public class GameController_LBS : BaseGameManager
 {
 	public string mainMenuSceneName = "menu_LBS";
 	public GameObject[] playerPrefabList;

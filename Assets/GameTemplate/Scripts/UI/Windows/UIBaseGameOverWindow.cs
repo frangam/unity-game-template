@@ -18,7 +18,7 @@ public class UIBaseGameOverWindow : UIBaseWindow {
 	//--------------------------------------
 	public override void open (){
 		if(lbCurrentScore){
-			lbCurrentScore.text = BaseGameController.Instance.CurrentScore.ToString();
+			lbCurrentScore.text = GameController.Instance.Manager.CurrentScore.ToString();
 		}
 
 		if(lbBestScore){

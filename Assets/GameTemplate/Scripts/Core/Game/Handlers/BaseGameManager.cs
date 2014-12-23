@@ -1,11 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu("Base/GameController")]
-
-public class BaseGameController: BaseGameController<BaseGameController>{}
-
-public class BaseGameController<T> : Singleton<T> where T: MonoBehaviour{
+public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -84,7 +80,7 @@ public class BaseGameController<T> : Singleton<T> where T: MonoBehaviour{
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	public virtual void Awake(){
+	protected virtual void Awake(){
 		initGame();
 	}
 	#endregion
@@ -194,5 +190,4 @@ public class BaseGameController<T> : Singleton<T> where T: MonoBehaviour{
 			}
 		}
 	}
-	
 }

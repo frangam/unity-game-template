@@ -39,12 +39,12 @@ public class Enemy_IP : BaseArmedEnemy {
 	
 	public virtual void TellGCEnemyDestroyed()
 	{
-		GameController_IP.Instance.EnemyDestroyed( myTransform.position, pointsValue, tempINT );
+		GameController.Instance.Manager.EnemyDestroyed( myTransform.position, pointsValue, tempINT );
 	}
 	
 	public virtual void TellGCBossDestroyed()
 	{
-		GameController_IP.Instance.BossDestroyed();
+		GameController.Instance.Manager.BossDestroyed();
 	}
 	
 	// ------------------------------------------------------------------------------------------

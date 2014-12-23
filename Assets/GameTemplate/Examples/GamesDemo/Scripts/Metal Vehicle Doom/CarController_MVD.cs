@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu("Sample Game Glue Code/Metal Vehicle Destruction/Car Controller")]
+[AddComponentMenu("Sample Game Glue Code/Metal Vehicle Destruction/Car Controller MVD")]
 
 public class CarController_MVD : BaseVehicle
 {
@@ -221,7 +221,7 @@ public class CarController_MVD : BaseVehicle
 		if(raceControl.goingWrongWay)
 		{
 			if (!isAIControlled)
-				GameController_MVD.Instance.UpdateWrongWay(true);
+				((GameController_MVD)GameController.Instance.Manager).UpdateWrongWay(true);
 			
 			// if going the wrong way, compare time since wrong way started to see if we need to respawn
 			if(raceControl.timeWrongWayStarted!=-1)
@@ -233,7 +233,7 @@ public class CarController_MVD : BaseVehicle
 				Respawn();
 			}	
 		} else if (!isAIControlled){
-			GameController_MVD.Instance.UpdateWrongWay(false);
+			((GameController_MVD)GameController.Instance.Manager).UpdateWrongWay(false);
 		}
 		
 		accelMax= originalAccelMax;
@@ -417,7 +417,7 @@ public class CarController_MVD : BaseVehicle
 			myBody.angularVelocity=new Vector3( Random.Range (-100,100), Random.Range (-100,100), Random.Range (-100,100) );
 			
 			// tell game controller to do a nice big explosion
-			GameController_MVD.Instance.PlayerBigHit( myTransform );
+			((GameController_MVD)GameController.Instance.Manager).PlayerBigHit( myTransform );
 			
 			// respawn 
 			Invoke("Respawn",4f); 
@@ -428,7 +428,7 @@ public class CarController_MVD : BaseVehicle
 		} else {
 			
 			// tell game controller to do small scale hit
-			GameController_MVD.Instance.PlayerHit( myTransform );
+			((GameController_MVD)GameController.Instance.Manager).PlayerHit( myTransform );
 				
 			// disable and hide weapon
 			//weaponControl.DisableCurrentWeapon();
@@ -510,7 +510,7 @@ public class CarController_MVD : BaseVehicle
 		if( !isAIControlled )
 		{
 			// tell game controller that the game is finished	
-			GameController_MVD.Instance.RaceComplete( whichPositionDidFinish );
+			((GameController_MVD)GameController.Instance.Manager).RaceComplete( whichPositionDidFinish );
 			
 			// take over the car with AI control
 			isAIControlled=true;

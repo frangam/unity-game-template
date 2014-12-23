@@ -16,11 +16,11 @@ public class UIBaseGameLogicButton : UIBaseButton {
 
 		switch(action){
 		case GameLogicAction.PAUSE:
-			BaseGameController.Instance.Paused = true;
+			GameController.Instance.Manager.Paused = true;
 			break;
 
 		case GameLogicAction.RESUME:
-			BaseGameController.Instance.Paused = false;
+			GameController.Instance.Manager.Paused = false;
 			break;
 
 		case GameLogicAction.RETRY:

@@ -85,11 +85,11 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	public void sendScoreToServer(int puntos, bool gpsOGC = true){
 		int mejor = getBestScore ();
 		int puntosEnviar = puntos >= mejor ? puntos : mejor;
-		string id = idRanking (BaseGameController.Instance.Difficulty);
+		string id = idRanking (GameController.Instance.Manager.Difficulty);
 
 //		Debug.Log ("Enviando puntuacion: " + puntosEnviar + " a ranking: " + id);
 
-		if(BaseGameController.Instance.Difficulty != GameDifficulty.NONE){
+		if(GameController.Instance.Manager.Difficulty != GameDifficulty.NONE){
 
 			#if UNITY_ANDROID
 			if(gpsOGC){

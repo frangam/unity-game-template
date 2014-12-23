@@ -90,4 +90,18 @@ public static class GOExtensions {
 			GameObject.Destroy(childTransform.gameObject);
 		}
 	}
+
+	public static void GetComponentsInChildrenRecursive<T> (this GameObject parent, List<T> buffer) where T : Component{
+		parent.transform.GetComponentsInChildrenRecursive<T>(buffer);
+	}
+
+	public static void GetComponentsInChildrenRecursive<T> (this Transform parent, List<T> buffer) where T : Component{
+		foreach (Transform t in parent) {
+			var c = t.GetComponent<T> ();
+			if (c) {
+				buffer.Add (c);
+			}
+			GetComponentsInChildrenRecursive (t, buffer);
+		}
+	}
 }

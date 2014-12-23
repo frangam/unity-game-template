@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu("Sample Game Glue Code/Interstellar Paranoids/Game Controller")]
+[AddComponentMenu("Sample Game Glue Code/Interstellar Paranoids/Game Controller IP")]
 
-public class GameController_IP : BaseGameController<GameController_IP> 
+public class GameController_IP : BaseGameManager 
 {
 	public string mainMenuSceneName = "menu_IP";
 

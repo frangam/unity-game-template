@@ -4,9 +4,9 @@
 using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu( "Sample Game Glue Code/Tank Battle/Game Controller" )]
+[AddComponentMenu( "Sample Game Glue Code/Tank Battle/Game Controller TB" )]
 
-public class GameController_TB : BaseGameController<GameController_TB>
+public class GameController_TB : BaseGameManager
 {
 	public string mainMenuSceneName = "menu_TB";
     public int numberOfBattlers = 4;

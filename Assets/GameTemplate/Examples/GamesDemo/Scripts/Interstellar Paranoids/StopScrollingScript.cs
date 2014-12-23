@@ -23,6 +23,6 @@ public class StopScrollingScript : MonoBehaviour {
 		// tell game controller to stop the player moving forward through the level any more
 		// if our renderer is on-screen
 		if(myRenderer.IsVisibleFrom(theCamera))
-			GameController_IP.Instance.StopMovingForward();
+			((GameController_IP)GameController.Instance.Manager).StopMovingForward();
 	}
 }
