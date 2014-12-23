@@ -91,7 +91,7 @@
      <None Include="Assets\Plugins\Android\facebook\res\drawable\com_facebook_picker_list_selector_background_transition.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\drawable\com_facebook_picker_top_button.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\layout\com_facebook_picker_search_box.xml" />
-     <None Include="Assets\Plugins\Android\ChartboostSDK\AndroidManifest.xml" />
+     <None Include="Assets\PlayMaker\Readme.txt" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SunShaftsComposite.shader" />
      <None Include="Assets\Plugins\Android\facebook\res\values\styles.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurves.shader" />
@@ -198,6 +198,7 @@
      <None Include="Assets\Plugins\StansAssets\Android\billing\an_billing.txt" />
      <None Include="Assets\Extensions\GoogleMobileAd\Documentation\GMA_VersionNotes.txt" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BrightPassFilter2.shader" />
+     <None Include="Assets\PlayMaker\Resources\PlayMakerAssemblies.txt" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\SeparableBlur.shader" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\MotionBlurClear.shader" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionEffect.shader" />
@@ -253,6 +254,7 @@
      <None Include="Assets\Plugins\Android\facebook\res\layout\com_facebook_picker_activity_circle_row.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />
      <None Include="Assets\codeandweb.com\Readme.txt" />
+     <None Include="Assets\PlayMaker\Versions\readme.txt" />
      <None Include="Assets\Plugins\StansAssets\Android\androidnative.txt" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\values\styles.xml" />
      <None Include="Assets\Plugins\Android\res\xml\file_paths.xml" />
@@ -275,6 +277,9 @@
  </Reference>
  <Reference Include="WP8PopUps">
  <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/Plugins/WP8PopUps.dll</HintPath>
+ </Reference>
+ <Reference Include="PlayMaker">
+ <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/PlayMaker/PlayMaker.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
