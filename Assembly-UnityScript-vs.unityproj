@@ -269,6 +269,9 @@
  <Reference Include="IFacebook">
  <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/Facebook/Scripts/IFacebook.dll</HintPath>
  </Reference>
+ <Reference Include="PlayMaker">
+ <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/PlayMaker/PlayMaker.dll</HintPath>
+ </Reference>
  <Reference Include="GoogleAdsWP8">
  <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/Plugins/GoogleAdsWP8.dll</HintPath>
  </Reference>
@@ -277,9 +280,6 @@
  </Reference>
  <Reference Include="WP8PopUps">
  <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/Plugins/WP8PopUps.dll</HintPath>
- </Reference>
- <Reference Include="PlayMaker">
- <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/PlayMaker/PlayMaker.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

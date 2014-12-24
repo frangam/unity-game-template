@@ -68,8 +68,8 @@ public class BaseQuestManager<S, T> : PersistentSingleton<S> where S : MonoBehav
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		levelSelected = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL);
-		init(levelSelected);
+//		levelSelected = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL);
+//		init(levelSelected);
 	}
 	#endregion
 	
