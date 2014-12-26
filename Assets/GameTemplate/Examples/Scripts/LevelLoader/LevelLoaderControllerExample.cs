@@ -24,7 +24,7 @@ public class LevelLoaderControllerExample : BaseLevelLoaderController<LevelLoade
 
 		if(!string.IsNullOrEmpty(currentLevelContent)){
 			LevelExample currentLevel = new LevelExample(currentLevelContent);
-			UILevelLoaderExample.Instance.setLevelView(currentLevel);
+			((UILevelLoaderExample)UIController.Instance.Manager).setLevelView(currentLevel);
 		}
 	}
 }

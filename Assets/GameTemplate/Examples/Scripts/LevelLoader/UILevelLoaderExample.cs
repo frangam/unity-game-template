@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class UILevelLoaderExample : UIBaseController<UILevelLoaderExample> {
+public class UILevelLoaderExample : UIBaseManager{
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------

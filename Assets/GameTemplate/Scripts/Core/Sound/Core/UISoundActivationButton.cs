@@ -14,7 +14,7 @@ public class UISoundActivationButton : UIBaseButton {
 	
 	[SerializeField]
 	private Image imgInactive;
-
+	
 	[SerializeField]
 	private bool hideActive = false;
 	
@@ -36,13 +36,13 @@ public class UISoundActivationButton : UIBaseButton {
 			activo = GameSettings.musicVolume > 0;
 			break;
 		}
-
+		
 		if(hideActive)
 			imgActive.gameObject.SetActive(activo);
 		else{
 			imgActive.gameObject.SetActive(true);
 		}
-
+		
 		imgInactive.gameObject.SetActive(!activo);
 	}
 	
@@ -64,15 +64,17 @@ public class UISoundActivationButton : UIBaseButton {
 			PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, musicVolume);
 			break;
 		}
-
+		
 		if(hideActive)
 			imgActive.gameObject.SetActive(activo);
-
+		
 		imgInactive.gameObject.SetActive(!activo);
 		
-		if(activo)
-			BaseSoundManager.Instance.play(BaseSoundIDs.MENU_MUSIC);
-		else
-			BaseSoundManager.Instance.stop(BaseSoundIDs.MENU_MUSIC);
+		if(type == SoundType.MUSIC){
+			if(activo)
+				BaseSoundManager.Instance.play(BaseSoundIDs.MENU_MUSIC);
+			else
+				BaseSoundManager.Instance.stop(BaseSoundIDs.MENU_MUSIC);
+		}
 	}
 }

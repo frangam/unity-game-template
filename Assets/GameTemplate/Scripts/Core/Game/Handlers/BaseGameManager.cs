@@ -125,7 +125,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 		
 		//show gameover windows
-		UIBaseController.Instance.open(gameoverWindow);
+		UIController.Instance.Manager.open(gameoverWindow);
 		
 		finished = true;
 	}
@@ -182,9 +182,11 @@ public class BaseGameManager : MonoBehaviour {
 			
 			if (paused)
 			{
+				UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
 				// pause time
 				Time.timeScale= 0f;
 			} else {
+				UIController.Instance.Manager.close(UIBaseWindowIDs.PAUSE);
 				// unpause Unity
 				Time.timeScale = 1f;
 			}

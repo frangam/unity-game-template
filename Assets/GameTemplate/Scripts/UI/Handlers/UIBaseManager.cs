@@ -1,14 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UIBaseController : UIBaseController<UIBaseController>{
-	
-}
-
-public class UIBaseController<T> : Singleton<T> where T: MonoBehaviour {
+public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
