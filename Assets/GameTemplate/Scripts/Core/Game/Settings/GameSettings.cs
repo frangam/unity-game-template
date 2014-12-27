@@ -103,6 +103,9 @@ public class GameSettings : MonoBehaviour {
 	public const string PP_TOTAL_SHOPPING 								= "pp_total_shopping"; //total items purchased
 	public const string PP_TOTAL_COLLECTED_COINS 						= "pp_total_coins_collected";
 	public const string PP_TOTAL_GEMS_COLLECTED 						= "pp_total_gems_collected";
+	public const string PP_CHARACTER_CONTROL_SENSITIVITY 				= "pp_character_control_sensitivity";
+	public const string PP_CHARACTER_CONTROL_MIN_SENSITIVITY 			= "pp_character_control_min_sensitivity";
+	public const string PP_CHARACTER_CONTROL_MAX_SENSITIVITY 			= "pp_character_control_max_sensitivity";
 	
 	//GooglePlay Services
 	public const string ID_RANKING_FACIL 		= "";
