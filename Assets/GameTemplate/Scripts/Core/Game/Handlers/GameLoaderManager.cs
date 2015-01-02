@@ -24,14 +24,20 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private bool deletePlayerPrefs = false;
 	
 	[SerializeField]
+	private int initialMoney = 0;
+	
+	[SerializeField]
+	private int initialGems = 5;
+	
+	[SerializeField]
 	private float initialCharControlSensitivity = 2.5f;
 	[SerializeField]
 	private float maxCharControlSensitivity = 5f;
 	
 	[SerializeField]
 	private float minCharControlSensitivity = 0.25f;
-		
-		
+	
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -343,10 +349,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 -------------------------------*/
 	private void loadInitialMoneyOnlyFirstTime(){
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_MONEY)){
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_MONEY, GameSettings.INITIAL_MONEY);
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_MONEY, initialMoney);
 		}
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_GEMS)){
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GEMS, GameSettings.INITIAL_GEMS);
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GEMS, initialGems);
 		}
 	}
 }

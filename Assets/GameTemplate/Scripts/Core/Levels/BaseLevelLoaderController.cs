@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BaseLevelLoaderController<T> : Singleton<T> where T: MonoBehaviour {
+public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
@@ -24,10 +24,16 @@ public class BaseLevelLoaderController<T> : Singleton<T> where T: MonoBehaviour 
 	[SerializeField]
 	private bool loadAllLevels = false;
 	
+	[SerializeField]
+	private bool loadTestLevel = false;
+	[SerializeField]
+	private int levelToLoadTEST = 1;
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	protected List<BaseLevel> levels;
+	protected BaseLevel currentLevel;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -47,6 +53,24 @@ public class BaseLevelLoaderController<T> : Singleton<T> where T: MonoBehaviour 
 		}
 	}
 	
+	public BaseLevel CurrentLevel {
+		get {
+			return this.currentLevel;
+		}
+	}
+	
+	public bool LoadTestLevel {
+		get {
+			return this.loadTestLevel;
+		}
+	}
+	
+	public int LevelToLoadTEST {
+		get {
+			return this.levelToLoadTEST;
+		}
+	}
+	
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -57,7 +81,9 @@ public class BaseLevelLoaderController<T> : Singleton<T> where T: MonoBehaviour 
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		if(loadCurrentLevelAtStart)
+		if(loadTestLevel)
+			loadLevel(levelToLoadTEST);
+		else if(loadCurrentLevelAtStart)
 			loadCurrentLevel();
 		if(loadAllLevels)
 			loadAllOfLevels();

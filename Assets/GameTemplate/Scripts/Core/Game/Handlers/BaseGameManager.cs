@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnionAssets.FLE;
 
 public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
@@ -11,6 +12,11 @@ public class BaseGameManager : MonoBehaviour {
 	[SerializeField]
 	private string 		gameoverWindow = UIBaseWindowIDs.GAMEOVER;
 	
+	[SerializeField]
+	private float 		gameOverDelay = 1.5f;
+	
+	[SerializeField]
+	private float 		missionCompletedDelay = 2.5f;
 	
 	public GameObject 	explosionPrefab;
 	
@@ -26,7 +32,7 @@ public class BaseGameManager : MonoBehaviour {
 	private GameMode 		gameMode;
 	private int 			currentScore;
 	private int				currentLevelSelected;
-	
+	private bool			isGameOver;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -76,14 +82,60 @@ public class BaseGameManager : MonoBehaviour {
 		}
 	}
 	
+	public bool IsGameOver {
+		get {
+			return this.isGameOver;
+		}
+		set {
+			isGameOver = value;
+		}
+	}
+	
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
 	protected virtual void Awake(){
 		initGame();
+		
+		if(gameMode == GameMode.CAMPAIGN){
+			BaseQuestManager.dispatcher.addEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
+			BaseQuestManager.Instance.resetProperties();
+		}
+	}
+	protected virtual void OnDestroy(){
+		if(gameMode == GameMode.CAMPAIGN){
+			BaseQuestManager.dispatcher.removeEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
+		}
 	}
 	#endregion
+	
+	//--------------------------------------
+	// Private Methods
+	//--------------------------------------
+	private IEnumerator finishGameWithDelay(){
+		float delay = isGameOver ? gameOverDelay : missionCompletedDelay;
+		
+		yield return new WaitForSeconds(delay);
+		
+		
+		//show gameover windows
+		switch(gameMode){
+		case GameMode.CAMPAIGN:
+			if(isGameOver)
+				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_FAILED);
+			else
+				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_COMPLETED);
+			break;
+			
+		case GameMode.SURVIVAL:
+		case GameMode.QUICKGAME:
+			UIController.Instance.Manager.open(gameoverWindow);
+			break;
+			
+		}
+	}
 	
 	//--------------------------------------
 	// Public Methods
@@ -93,12 +145,13 @@ public class BaseGameManager : MonoBehaviour {
 		gameMode = (GameMode) PlayerPrefs.GetInt(GameSettings.PP_GAME_MODE); //get the selected game mode
 		currentScore = 0;
 		inited = true;
-		paused = false;
+		Paused = false;
 		finished = false;
 		started = false;
 		
 		if(gameMode == GameMode.CAMPAIGN){
-			currentLevelSelected = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); //get the current level selected
+			currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
+				: PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); //get the current level selected
 			BaseQuestManager.Instance.init(currentLevelSelected);
 		}
 	}
@@ -123,11 +176,9 @@ public class BaseGameManager : MonoBehaviour {
 		else{
 			ScoresHandler.Instance.saveScoreOnlyLocally(currentScore);
 		}
-		
-		//show gameover windows
-		UIController.Instance.Manager.open(gameoverWindow);
-		
 		finished = true;
+		
+		StartCoroutine(finishGameWithDelay());
 	}
 	
 	public virtual void PlayerLostLife (){
@@ -191,5 +242,18 @@ public class BaseGameManager : MonoBehaviour {
 				Time.timeScale = 1f;
 			}
 		}
+	}
+	
+	//--------------------------------------
+	//  EVENTS
+	//--------------------------------------
+	public virtual void OnQuestsCompleted(CEvent e){
+		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+		
+		//unlock the next level
+		if(currentLevelSelected == lastUnlockedLevel)
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, currentLevelSelected+1);
+		
+		finishGame();
 	}
 }

@@ -76,6 +76,19 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	public virtual UIBaseWindow getWindow(string id){
+		UIBaseWindow win = null;
+		
+		foreach(UIBaseWindow w in windows){
+			if(w.Id == id){
+				win = w;
+				break;
+			}
+		}
+		
+		return win;
+	}
+	
 	public virtual void close(string id){
 		openWin(id, false);
 	}

@@ -51,4 +51,6 @@ public class ExtraLocalizations{
 	public const string FACEBOOK_INVITATION 						= "fb_invitation";
 	public const string ME 											= "me";
 	public const string LOADING			 							= "loading";
+	
+	public const string SHARE_LEVEL_COMPLETED						= "share_level_completed";
 }

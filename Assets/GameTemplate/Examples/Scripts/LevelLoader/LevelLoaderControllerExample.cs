@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LevelLoaderControllerExample : BaseLevelLoaderController<LevelLoaderControllerExample> {
+public class LevelLoaderControllerExample : BaseLevelLoaderController{
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -15,7 +15,7 @@ public class LevelLoaderControllerExample : BaseLevelLoaderController<LevelLoade
 		base.Awake ();
 
 		if(!LoadCurrentLevelAtStart)
-			loadLevel(1);
+			loadLevel(levelToLoad);
 
 	}
 
