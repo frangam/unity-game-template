@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnionAssets.FLE;
 
 public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
+	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
 	
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
+	public const string LEVEL_LOADED = "gt_game_level_loaded";
 	public const char 	SEPARATOR_ATTRIBUTES 		= ',';
 	
 	//--------------------------------------
@@ -38,6 +41,12 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
+	public static EventDispatcherBase dispatcher {
+		get {
+			return _dispatcher;
+		}
+	}
+	
 	public bool LoadCurrentLevelAtStart {
 		get {
 			return this.loadCurrentLevelAtStart;
@@ -195,6 +204,8 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	public virtual void loadLevel(int levelId){
 		if(levelId <= 0)
 			Debug.LogError("Level id "+ levelId + " is invalid. Level did not load.");
+		
+		dispatcher.dispatch(LEVEL_LOADED);
 	}
 	
 	/// <summary>

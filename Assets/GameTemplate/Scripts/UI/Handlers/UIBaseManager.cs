@@ -13,6 +13,10 @@ public class UIBaseManager : MonoBehaviour {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	private bool locateAllWindows = true;
+	
+	[SerializeField]
+	[Tooltip("If locateAllWindows is true does not must fill this because automatically it will be filled")]
 	private List<UIBaseWindow> windows;
 	
 	[SerializeField]
@@ -51,6 +55,11 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
+		if(locateAllWindows){
+			UIBaseWindow[] windowsArr = FindObjectsOfType<UIBaseWindow>() as UIBaseWindow[];
+			windows = new List<UIBaseWindow>(windowsArr);
+		}
+		
 		if(eventSystm == null){
 			eventSystm = FindObjectOfType<EventSystem>() as EventSystem;
 			
@@ -65,6 +74,8 @@ public class UIBaseManager : MonoBehaviour {
 			
 			StartCoroutine(setAlphaGuiBlended());
 		}
+		
+		
 	}
 	public virtual void Start(){}
 	#endregion
