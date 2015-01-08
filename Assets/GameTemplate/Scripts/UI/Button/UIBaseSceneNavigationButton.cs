@@ -9,17 +9,29 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	[SerializeField]
 	[Tooltip("Game Section represented")]
 	private GameSection section;
-
+	
 	[SerializeField]
 	[Tooltip("Leave empty if do navigate with Section. If we go to an specific scene represented by another game section fill it")]
 	private string sceneToGo = "";
-
+	
+	//--------------------------------------
+	// GETTERS && SETTERS
+	//--------------------------------------
+	public string SceneToGo {
+		get {
+			return this.sceneToGo;
+		}
+		set {
+			sceneToGo = value;
+		}
+	}
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override void press (){
 		base.press ();
-
+		
 		//select game mode
 		switch(section){
 		case GameSection.QUICKGAME_MODE: 
@@ -32,7 +44,7 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 			PlayerPrefs.SetInt(GameSettings.PP_GAME_MODE, (int) GameMode.SURVIVAL);
 			break;
 		}
-
+		
 		//Load scene
 		if(string.IsNullOrEmpty(sceneToGo)){
 			switch(section){
@@ -50,11 +62,11 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 		else{
 			ScreenLoaderVisualIndicator.Instance.LoadScene(sceneToGo);
 		}
-
-
+		
+		
 	}
-
+	
 	private void goTo(){
-
+		
 	}
 }

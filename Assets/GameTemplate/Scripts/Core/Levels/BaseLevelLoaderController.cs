@@ -13,11 +13,15 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	// Constants
 	//--------------------------------------
 	public const string LEVEL_LOADED = "gt_game_level_loaded";
+	public const string ALL_LEVELS_LOADED = "gt_all_game_levels_loaded";
 	public const char 	SEPARATOR_ATTRIBUTES 		= ',';
 	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
+	[SerializeField]
+	private List<GameMode> validIn = new List<GameMode>(){GameMode.CAMPAIGN};
+	
 	[SerializeField]
 	private string levelsFile = "Levels";
 	
@@ -90,6 +94,24 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
+		if(validIn != null && validIn.Count > 0){
+			bool active = validIn.Contains(GameController.Instance.Manager.GameMode);
+			gameObject.SetActive(active);
+			
+			if(active){
+				initialize();
+			}
+		}
+		else{
+			initialize();
+		}
+	}
+	#endregion
+	
+	//--------------------------------------
+	// Private Methods
+	//--------------------------------------
+	private void initialize(){
 		if(loadTestLevel)
 			loadLevel(levelToLoadTEST);
 		else if(loadCurrentLevelAtStart)
@@ -97,11 +119,6 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 		if(loadAllLevels)
 			loadAllOfLevels();
 	}
-	#endregion
-	
-	//--------------------------------------
-	// Private Methods
-	//--------------------------------------
 	
 	/// <summary>
 	/// Gets all of the content levels file, that is, all of the text in levels file
@@ -205,14 +222,16 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 		if(levelId <= 0)
 			Debug.LogError("Level id "+ levelId + " is invalid. Level did not load.");
 		
-		dispatcher.dispatch(LEVEL_LOADED);
+		if(currentLevel != null)
+			dispatcher.dispatch(LEVEL_LOADED, currentLevel);
 	}
 	
 	/// <summary>
 	/// Loads all of the levels.
 	/// </summary>
 	public virtual void loadAllOfLevels(){
-		
+		if(levels != null && levels.Count > 0)
+			dispatcher.dispatch(ALL_LEVELS_LOADED);
 	}
 	
 	

@@ -46,7 +46,7 @@ public class GameSettings : MonoBehaviour {
 	public const bool USE_GOOGLE_PLAY_SERVICES 				= true;
 	public const bool USE_GAMECENTER 						= true;
 	public const bool USE_TWITTER 							= false;
-	public const bool USE_FACEBOOK 							= false;
+	public const bool USE_FACEBOOK 							= true;
 	
 	//APP LINKS
 	public const string GAME_NAME	 				= "Game Template";
@@ -76,6 +76,7 @@ public class GameSettings : MonoBehaviour {
 	public const string SCENE_CHARACTER_SELECTION 		= "CharacterSelection";
 	public const string SCENE_ENVIRONMENT_SELECTION 	= "EnvironmentSelection";
 	public const string SCENE_ITEMS_SELECTION 			= "ItemsSelection";
+	public const string SCENE_SURVIVAL_MENU_SELECTION	= "SurvivalMenu";
 	
 	//PlayerPrefs KEYS
 	public const string PP_FIRST_PLAY 									= "pp_first_play";

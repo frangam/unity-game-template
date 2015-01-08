@@ -29,6 +29,9 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	private List<GameMode> validIn = new List<GameMode>(){GameMode.CAMPAIGN};
+	
+	[SerializeField]
 	private string questsFile = "Quests";
 	
 	[SerializeField]
@@ -71,8 +74,17 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		//		levelSelected = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL);
-		//		init(levelSelected);
+		if(validIn != null && validIn.Count > 0){
+			bool active = validIn.Contains(GameController.Instance.Manager.GameMode);
+			gameObject.SetActive(active);
+			
+			if(active){
+				//do some stuff if it is active
+			}
+		}
+		else{
+			//do some stuff if it is active
+		}
 	}
 	public virtual void OnDestroy(){
 		dispatcher.removeEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 

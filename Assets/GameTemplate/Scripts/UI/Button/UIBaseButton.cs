@@ -14,6 +14,9 @@ public class UIBaseButton : MonoBehaviour {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	private bool playSoundWhenPress = true;
+	
+	[SerializeField]
 	private SoundTrigger trigger;
 	
 	[SerializeField]
@@ -27,7 +30,7 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private Button button;
+	protected Button button;
 	private float initialPressingTime = 0;
 	private float pressingTime = 0;
 	private float currentTime;
@@ -49,6 +52,9 @@ public class UIBaseButton : MonoBehaviour {
 		pressingTime = 0;
 		pressing = false;
 	}
+	public virtual void OnDestroy(){
+		
+	}
 	public virtual void Update(){
 		if(timeToStopPressing > 0 && pressing && !pressingStoped){
 			currentTime = Time.time;
@@ -69,7 +75,7 @@ public class UIBaseButton : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public virtual void press(){
-		if(!pressingStoped){
+		if(playSoundWhenPress && !pressingStoped){
 			pressing = true;
 			initialPressingTime = Time.time;
 			

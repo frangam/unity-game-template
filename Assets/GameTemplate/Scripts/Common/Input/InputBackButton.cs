@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InputBackButton : MonoBehaviour {
+public class InputBackButton : Singleton<InputBackButton> {
 	public enum Action{
 		QUIT
 		,MAIN_MENU_WITHOUT_CONFIRMATION
@@ -9,8 +9,10 @@ public class InputBackButton : MonoBehaviour {
 		,RESUME_GAME
 		,GAME_SCREEN
 		,WORLD_SELECTION_SCREEN
-		,ELEGIR_JUGADOR
+		,CHARACTER_SELECTION
 		,MAIN_MENU_WITH_CONFIRMATION
+		,SURVIVAL_MENU_SELECTION
+		,HANDLED_BY_UICONTROLLER //SET BY THE UICONTROLLER
 	}
 	
 	//--------------------------------------
@@ -18,6 +20,31 @@ public class InputBackButton : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private Action action;
+	
+	[SerializeField]
+	[Tooltip("Leave empty if do navigate with Action. If we go to an specific scene represented by another game section fill it")]
+	private string specificScreenToGO;
+	
+	//--------------------------------------
+	// GETTERS && SETTERS
+	//--------------------------------------
+	public Action CurrentAction {
+		get {
+			return this.action;
+		}
+		set {
+			action = value;
+		}
+	}
+	
+	public string SpecificScreenToGO {
+		get {
+			return this.specificScreenToGO;
+		}
+		set {
+			specificScreenToGO = value;
+		}
+	}
 	
 	//--------------------------------------
 	// Unity Methods
@@ -28,47 +55,52 @@ public class InputBackButton : MonoBehaviour {
 		#if UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			
-			switch(action){
-			case Action.QUIT:
-				Application.Quit(); 
-				break;
-				
-			case Action.GAME_SCREEN:
-				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_GAME);
-				break;
-				
-				
-			case Action.POPUP_PAUSE:
-				if(GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
-					GameController.Instance.Manager.Paused = false;
-				}
-				else if(!GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
-					GameController.Instance.Manager.Paused = true;
-				}
-				else if(GameController.Instance.Manager.Finished){
+			if(!string.IsNullOrEmpty(specificScreenToGO)){
+				ScreenLoaderVisualIndicator.Instance.LoadScene (specificScreenToGO);
+			}
+			else{
+				switch(action){
+				case Action.QUIT:
+					Application.Quit(); 
+					break;
+					
+				case Action.GAME_SCREEN:
+					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_GAME);
+					break;
+					
+					
+				case Action.POPUP_PAUSE:
+					if(GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
+						GameController.Instance.Manager.Paused = false;
+					}
+					else if(!GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
+						GameController.Instance.Manager.Paused = true;
+					}
+					else if(GameController.Instance.Manager.Finished){
+						ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
+					}
+					
+					break;
+					
+					
+				case Action.MAIN_MENU_WITHOUT_CONFIRMATION:
 					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
-				}
-				
-				break;
-				
-				
-			case Action.MAIN_MENU_WITHOUT_CONFIRMATION:
-				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
-				break;
-				
-//			case Action.MAIN_MENU_WITH_CONFIRMATION:
-//				if(GameController.gameStart && GameController.Instance.InPause && !GameController.Instance.Finished){
-//					UIHandler.Instance.abrir(GameScreen.EXIT, false);
-//				}
-//				else if(GameController.gameStart && !GameController.Instance.InPause && !GameController.Instance.Finished){
-//					UIHandler.Instance.abrir(GameScreen.EXIT);
-//				}
-//				else if(GameController.Instance.Finished){
-//					((PanelCargando) GameObject.FindObjectOfType(typeof(PanelCargando))).mostrar();
-				//			ScreenLoaderIndicator.Instance.LoadScene (GameSettings.SCENE_LEVEL_SELECTION);
-//				}
-//				break;
-			}				
+					break;
+					
+					//			case Action.MAIN_MENU_WITH_CONFIRMATION:
+					//				if(GameController.gameStart && GameController.Instance.InPause && !GameController.Instance.Finished){
+					//					UIHandler.Instance.abrir(GameScreen.EXIT, false);
+					//				}
+					//				else if(GameController.gameStart && !GameController.Instance.InPause && !GameController.Instance.Finished){
+					//					UIHandler.Instance.abrir(GameScreen.EXIT);
+					//				}
+					//				else if(GameController.Instance.Finished){
+					//					((PanelCargando) GameObject.FindObjectOfType(typeof(PanelCargando))).mostrar();
+					//			ScreenLoaderIndicator.Instance.LoadScene (GameSettings.SCENE_LEVEL_SELECTION);
+					//				}
+					//				break;
+				}		
+			}
 		}
 		#endif
 	}
