@@ -1,10 +1,33 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.IO;
+using System.Collections.Generic;
 
-public class GameSettings : MonoBehaviour {
+
+#if UNITY_EDITOR
+using UnityEditor;
+[InitializeOnLoad]
+#endif
+
+public class GameSettings : ScriptableObject {
+	//--------------------------------------
+	// Flags to control showing in editor
+	//--------------------------------------
+	public bool showGameDifficulties			 		= false;
+	public bool showMoneySettings 						= false;
+	public bool showAdsSettings 						= false;
+	public bool showSocialNetworksSettings 				= false;
+	public bool showAppLinksSettings 					= false;
+	public bool showCharacterControlSettings 			= false;
+	public bool showRankingSettings 					= false;
+	public bool showWorldRankingSettings 				= false;
+	public bool showSurvivalLevelsRankingSettings 		= false;
+	public bool showDifficultiesRankingSettings 		= false;
+	
+	
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
+	public const string VERSION_NUMBER 					= "1.0";
 	public static bool 	purchasedForQuitAds 			= false; //if player has purchased for quit all of the ads
 	public static int 	contInterstitialAdsDEFAULT 		= 0;
 	public static int 	contInterstitialAdsHARDMODE 	= 0;
@@ -19,7 +42,9 @@ public class GameSettings : MonoBehaviour {
 	public static float	musicVolume						= 1f;
 	public static float soundVolume 					= 1f;
 	public static float graphicsDetails					= 1f;
-	
+	public List<GameDifficulty> gameDifficulties 		= new List<GameDifficulty>(){GameDifficulty.NONE};
+	public bool FX_AND_MUSIC_ARE_THE_SAME 				= true;
+	public bool HAS_INITIAL_TUTORIAL 					= false;
 	
 	//--------------------------------------
 	// Constants
@@ -29,40 +54,49 @@ public class GameSettings : MonoBehaviour {
 	/// <summary>
 	/// 1 gem is equals to 100 or less coins
 	/// </summary>
-	public const int ONE_GEM_VALUE_IN_COINS = 100;
-	public const int INITIAL_MONEY = 0;
-	public const int INITIAL_GEMS = 30;
+	public int 		ONE_GEM_VALUE_IN_COINS = 100;
+	public int 		INITIAL_MONEY = 0;
+	public int 		INITIAL_GEMS = 5;
+	public float	PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED 		= 0.3f;
+	public float	PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED 		= 0f;
 	
 	//ADS 
-	public const bool 	IS_PRO_VERSION = false; 
-	public const int 	NUM_GAMEOVERS_SHOW_AD_HARD_MODE 	= 5; //number of gameovers to show an ad in hard mode
-	public const int 	NUM_GAMEOVERS_SHOW_AD_EASY_MODE 	= 3; 
-	public const int 	NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE 	= 2;
-	public const int 	NUM_GAMEOVERS_SHOW_AD_NONE_MODE 	= 1;
-	public const int 	NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT 	= 5;
+	public bool 	IS_PRO_VERSION = false; 
+	public int		TIMES_START_GAME_TO_SHOW_AD_AT_START 			= 1; //1: we show an interstisial ad every time user inits the game		
+	public int 		NUM_GAMEOVERS_SHOW_AD_HARD_MODE 	= 5; //number of gameovers to show an ad in hard mode
+	public int 		NUM_GAMEOVERS_SHOW_AD_EASY_MODE 	= 3; 
+	public int 		NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE 	= 2;
+	public int 		NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE	= 1;
+	public int 		NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT 	= 5;
 	
 	//SOCIAL NETWORKS
-	public const bool BUILD_FOR_AMAZON 						= false; //if we are building for amazon (only change when the build is only for amazon, change it after building)
-	public const bool USE_GOOGLE_PLAY_SERVICES 				= true;
-	public const bool USE_GAMECENTER 						= true;
-	public const bool USE_TWITTER 							= false;
-	public const bool USE_FACEBOOK 							= true;
+	public bool BUILD_FOR_AMAZON 						= false; //if we are building for amazon (only change when the build is only for amazon, change it after building)
+	public bool USE_GOOGLE_PLAY_SERVICES 				= true;
+	public bool USE_GAMECENTER 							= true;
+	public bool USE_TWITTER 							= false;
+	public bool USE_FACEBOOK 							= true;
 	
 	//APP LINKS
-	public const string GAME_NAME	 				= "Game Template";
-	public const string LINK_ANDROID_APP 			= "https://play.google.com/store/apps/details?id=com.pukepixel.";
-	public const string SHORT_LINK_ANDROID_APP 		= "";
-	public const string LINK_AMAZON_APP 			= "";
-	public const string LINK_IOS_APP				= "";
-	public const string SHORT_LINK_IOS_APP			= "";
+	public string GAME_NAME	 						= "Game Template";
+	public string LINK_ANDROID_APP 					= "https://play.google.com/store/apps/details?id=com.pukepixel.";
+	public string SHORT_LINK_ANDROID_APP 			= "";
+	public string LINK_AMAZON_APP 					= "http://www.amazon.com/gp/mas/dl/android?p=com.pukepixel.";
+	public string SHORT_LINK_AMAZON_APP				= "";
+	public string LINK_IOS_APP						= "https://itunes.apple.com/app/id";
+	public string SHORT_LINK_IOS_APP				= "";
+	
+	//CHARACTER CONTROL
+	public float INITIAL_CHAR_CONTROL_SENSITIVITY 		= 2f;
+	public float MAX_CHAR_CONTROL_SENSITIVITY 			= 5f;
+	public float MIN_CHAR_CONTROL_SENSITIVITY 			= 0.25f;
 	
 	//LOCALIZATION
-	public const string LOC_ENGLISH 			= "English";
-	public const string LOC_SPANISH 			= "Spanish";
+	public const string LOC_ENGLISH 				= "English";
+	public const string LOC_SPANISH 				= "Spanish";
 	
 	//TAGS
-	public const string TAG_PLAYER 				= "Player";
-	public const string TAG_ENEMY 				= "Enemy";
+	public const string TAG_PLAYER 					= "Player";
+	public const string TAG_ENEMY 					= "Enemy";
 	
 	//SCENES
 	public const string SCENE_MOREGAMES 				= "MoreGames";
@@ -77,6 +111,7 @@ public class GameSettings : MonoBehaviour {
 	public const string SCENE_ENVIRONMENT_SELECTION 	= "EnvironmentSelection";
 	public const string SCENE_ITEMS_SELECTION 			= "ItemsSelection";
 	public const string SCENE_SURVIVAL_MENU_SELECTION	= "SurvivalMenu";
+	public const string SCENE_INAPP			 			= "InApp";
 	
 	//PlayerPrefs KEYS
 	public const string PP_FIRST_PLAY 									= "pp_first_play";
@@ -107,19 +142,44 @@ public class GameSettings : MonoBehaviour {
 	public const string PP_CHARACTER_CONTROL_SENSITIVITY 				= "pp_character_control_sensitivity";
 	public const string PP_CHARACTER_CONTROL_MIN_SENSITIVITY 			= "pp_character_control_min_sensitivity";
 	public const string PP_CHARACTER_CONTROL_MAX_SENSITIVITY 			= "pp_character_control_max_sensitivity";
+	public const string PP_SHOW_MISSIONS_WINDOW	 						= "pp_show_mission_window";
+	public const string	PP_LAST_UNLOCKED_SURVIVAL_LEVEL	 				= "pp_last_unlocked_survival_level";
 	
 	//GooglePlay Services
-	public const string ID_RANKING_FACIL 		= "";
-	public const string ID_RANKING_NORMAL 		= "";
-	public const string ID_RANKING_DIFICIL 		= "";
-	public const string ID_RANKING_PRO 			= "";
-	public const string ID_RANKING_GOD 			= "";
+	public string ID_UNIQUE_RANKING 				= "";
+	public string ID_RANKING_SURVIVAL				= "";
+	public string ID_RANKING_EASY 					= "";
+	public string ID_RANKING_NORMAL 				= "";
+	public string ID_RANKING_HARD 					= "";
+	public string ID_RANKING_PRO 					= "";
+	public string ID_RANKING_GOD 					= "";
+	public string ID_RANKING_IMPOSSIBLE 			= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_1		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_2		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_3		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_4		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_5		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_6		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_7		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_8		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_9		= "";
+	public string ID_RANKING_SURVIVAL_LEVEL_10		= "";
+	public string ID_RANKING_WORLD_1				= "";
+	public string ID_RANKING_WORLD_2				= "";
+	public string ID_RANKING_WORLD_3				= "";
+	public string ID_RANKING_WORLD_4				= "";
+	public string ID_RANKING_WORLD_5				= "";
+	public string ID_RANKING_WORLD_6				= "";
+	public string ID_RANKING_WORLD_7				= "";
+	public string ID_RANKING_WORLD_8				= "";
+	public string ID_RANKING_WORLD_9				= "";
+	public string ID_RANKING_WORLD_10				= "";
 	
 	//Facebook
-	public const string LOGO_APP_LINK 	= "";
+	public string LOGO_APP_LINK 	= "";
 	
 	//Twitter
-	public const string HASHTAG 		= "#GAME";
+	public string HASHTAG 		= "#GAME";
 	
 	#endregion
 	
@@ -132,4 +192,47 @@ public class GameSettings : MonoBehaviour {
 		DontDestroyOnLoad(this); //para que no se destruyan los atributos al cargar escenas	
 	}
 	#endregion
+	
+	
+	public const string assetName = "GameSettings";
+	public const string path = "GameTemplate/Resources";
+	public const string extension = ".asset";
+	
+	private static GameSettings instance = null;
+	
+	
+	public static GameSettings Instance {
+		
+		get {
+			if (instance == null) {
+				instance = Resources.Load(assetName) as GameSettings;
+				
+				if (instance == null) {
+					
+					// If not found, autocreate the asset object.
+					instance = CreateInstance<GameSettings>();
+					#if UNITY_EDITOR
+					//string properPath = Path.Combine(Application.dataPath, ANSettingsPath);
+					
+					FileStaticAPI.CreateFolder(path);
+					
+					/*
+					if (!Directory.Exists(properPath)) {
+						AssetDatabase.CreateFolder("Extensions/", "AndroidNative");
+						AssetDatabase.CreateFolder("Extensions/AndroidNative", "Resources");
+					}
+					*/
+					
+					string fullPath = Path.Combine(Path.Combine("Assets", path),
+					                               assetName + extension
+					                               );
+					
+					AssetDatabase.CreateAsset(instance, fullPath);
+					#endif
+				}
+			}
+			return instance;
+		}
+	}
+	
 }

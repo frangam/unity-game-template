@@ -40,13 +40,13 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		hashtag = GameSettings.HASHTAG;
-		urlIcono = GameSettings.LOGO_APP_LINK;
+		hashtag = GameSettings.Instance.HASHTAG;
+		urlIcono = GameSettings.Instance.LOGO_APP_LINK;
 		
 		if(panelCaptura)
 			panelCaptura.gameObject.SetActive (false);
 		
-		if(GameSettings.USE_FACEBOOK){
+		if(GameSettings.Instance.USE_FACEBOOK){
 			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	 OnAuthFB);
 			SPFacebook.instance.addEventListener(FacebookEvents.USER_DATA_LOADED,  			OnUserDataLoaded);
 			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_FAILED,  	 OnAuthFailedFB);
@@ -61,7 +61,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		#region Twitter
 		
 		#if UNITY_ANDROID || UNITY_EDITOR
-		if(GameSettings.USE_TWITTER){
+		if(GameSettings.Instance.USE_TWITTER){
 			AndroidTwitterManager.instance.addEventListener(TwitterEvents.POST_SUCCEEDED,  OnPost);
 			AndroidTwitterManager.instance.addEventListener(TwitterEvents.POST_FAILED,  OnPostFailed);
 			AndroidTwitterManager.instance.addEventListener(TwitterEvents.AUTHENTICATION_SUCCEEDED,  OnAuthTwitter);
@@ -76,7 +76,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		//FB
 		//---
 		#region 
-		if(GameSettings.USE_FACEBOOK){
+		if(GameSettings.Instance.USE_FACEBOOK){
 			SPFacebook.instance.addEventListener(FacebookEvents.POST_FAILED,  			OnPostFailed);
 			SPFacebook.instance.addEventListener(FacebookEvents.POST_SUCCEEDED,   		OnPost);
 			
@@ -90,7 +90,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	//
 	public virtual void Start(){
 		// Check for a Facebook logged in user
-		if (GameSettings.USE_FACEBOOK && FB.IsLoggedIn) {
+		if (GameSettings.Instance.USE_FACEBOOK && FB.IsLoggedIn) {
 			
 			//// Check if we're logged in to Parse
 			//if (ParseUser.CurrentUser == null) {
@@ -490,11 +490,11 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	// Metodos privados
 	// --------------------------------------
 	private void postear(SocialNetwork red, bool shareLevelCompleted = false, bool captura = false){
-		string linkAPP = GameSettings.SHORT_LINK_ANDROID_APP;
+		string linkAPP = GameSettings.Instance.SHORT_LINK_ANDROID_APP;
 		#if UNITY_ANDROID
-		linkAPP = GameSettings.SHORT_LINK_ANDROID_APP;
+		linkAPP = GameSettings.Instance.SHORT_LINK_ANDROID_APP;
 		#elif UNITY_IPHONE
-		linkAPP = GameSettings.SHORT_LINK_IOS_APP;
+		linkAPP = GameSettings.Instance.SHORT_LINK_IOS_APP;
 		#endif
 		
 		string mensajeTwitter = shareLevelCompleted ? Localization.Localize(ExtraLocalizations.SHARE_LEVEL_COMPLETED)+" "+PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED)
@@ -523,7 +523,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 				
 				SPFacebook.instance.Post (
 					link: linkAPP,
-					linkName: GameSettings.GAME_NAME + " (iPhone/iPad & Android & WP8)",
+					linkName: GameSettings.Instance.GAME_NAME + " (iPhone/iPad & Android & WP8)",
 					linkCaption: "Ranking",
 					linkDescription: mensajeFB,
 					picture: urlIcono
@@ -555,7 +555,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		//Publicacion del mensaje con imagen
 		
 		#if UNITY_ANDROID
-		string linkAPP = GameSettings.SHORT_LINK_ANDROID_APP;
+		string linkAPP = GameSettings.Instance.SHORT_LINK_ANDROID_APP;
 		
 		if(red == SocialNetwork.FACEBOOK){
 			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+linkAPP;
@@ -568,11 +568,11 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		
 		#elif UNITY_IPHONE
 		if(red == SocialNetwork.FACEBOOK){
-			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion() +" "+GameSettings.SHORT_LINK_IOS_APP;
+			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion() +" "+GameSettings.Instance.SHORT_LINK_IOS_APP;
 			IOSSocialManager.instance.FacebookPost(mensaje, tex);
 		}
 		else if(red == SocialNetwork.TWITTER){
-			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+hashtag+" "+GameSettings.SHORT_LINK_IOS_APP;
+			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+hashtag+" "+GameSettings.Instance.SHORT_LINK_IOS_APP;
 			IOSSocialManager.instance.TwitterPost(mensaje, tex);
 		}
 		#endif

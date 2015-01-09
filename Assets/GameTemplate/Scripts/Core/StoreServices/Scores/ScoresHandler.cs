@@ -16,11 +16,11 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		if(!GameSettings.USE_GAMECENTER)
 			return;
 		#elif UNITY_ANDROID
-		if(!GameSettings.USE_GOOGLE_PLAY_SERVICES)
+		if(!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
 			return;
 		#endif
-
-
+		
+		
 		#if UNITY_ANDROID
 		if(GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED){
 			GPSConnect.Instance.init();
@@ -43,12 +43,12 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				GooglePlayManager.instance.showLeaderBoardsUI();
 			else
 				GooglePlayManager.instance.showLeaderBoardById(idRanking(dif));
-
+			
 		}
-
+		
 		#elif UNITY_IPHONE
 		string id = idRanking(dif).Replace("-","_");
-
+		
 		if(dif == GameDifficulty.NONE)
 			GameCenterManager.showLeaderBoards();
 		else
@@ -73,7 +73,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	public void saveScoreOnlyLocally(int puntos){
 		int mejor = getBestScore ();
 		int puntosEnviar = puntos >= mejor ? puntos : mejor;
-
+		
 		//guardamos la mejor puntuacion
 		if(puntos > mejor)
 			saveBestScore(puntos);
@@ -81,22 +81,22 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		//guardamos la puntuacion ultima
 		saveLastScore (puntos);
 	}
-
+	
 	public void sendScoreToServer(int puntos, bool gpsOGC = true){
 		int mejor = getBestScore ();
 		int puntosEnviar = puntos >= mejor ? puntos : mejor;
 		string id = idRanking (GameController.Instance.Manager.Difficulty);
-
-//		Debug.Log ("Enviando puntuacion: " + puntosEnviar + " a ranking: " + id);
-
+		
+		//		Debug.Log ("Enviando puntuacion: " + puntosEnviar + " a ranking: " + id);
+		
 		if(GameController.Instance.Manager.Difficulty != GameDifficulty.NONE){
-
+			
 			#if UNITY_ANDROID
 			if(gpsOGC){
 				if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
 					if(GooglePlayManager.instance.GetLeaderBoard (id) != null){
 						int scoreServidor = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).rank;
-
+						
 						if(scoreServidor < puntosEnviar)
 							GooglePlayManager.instance.submitScoreById (id, puntosEnviar);
 						else
@@ -106,8 +106,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 						GooglePlayManager.instance.submitScoreById (id, puntosEnviar);
 					}
 				}
-
-
+				
+				
 			}
 			#elif UNITY_IPHONE
 			if(gpsOGC && GameCenterManager.IsPlayerAuthed){
@@ -120,21 +120,21 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			}
 			#endif
 		}
-
-//		string nivel = PlayerPrefs.GetInt (Configuracion.CLAVE_NIVEL_SELECCIONADO).ToString();
-
+		
+		//		string nivel = PlayerPrefs.GetInt (Configuracion.CLAVE_NIVEL_SELECCIONADO).ToString();
+		
 		//guardamos la mejor puntuacion
 		if(puntos > mejor)
 			saveBestScore(puntos);
-
+		
 		//guardamos la puntuacion ultima
 		saveLastScore (puntos);
 	}
 	public int getLastScore(){
 		string difString = ((int) PlayerPrefs.GetInt(GameSettings.PP_GAME_DIFFICULTY)).ToString();
 		string key = GameSettings.PP_LAST_SCORE + difString; //ultima_puntuacion_0 (en facil) , _1 (normal)...
-
-
+		
+		
 		return PlayerPrefs.GetInt(key);
 	}
 	public int getBestScore(){
@@ -142,71 +142,109 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		string key = GameSettings.PP_BEST_SCORE + difString; //ultima_puntuacion_0 (en facil) , _1 (normal)...
 		return PlayerPrefs.GetInt(key);
 	}
-
+	
 	public void saveLastScore(int puntos){
 		string difString = ((int) PlayerPrefs.GetInt(GameSettings.PP_GAME_DIFFICULTY)).ToString();
 		string key = GameSettings.PP_LAST_SCORE + difString; //ultima_puntuacion_0 (en facil) , _1 (normal)...
 		PlayerPrefs.SetInt(key, puntos); 
 	}
-
+	
 	public void saveBestScore(int puntos){
 		string difString = ((int) PlayerPrefs.GetInt(GameSettings.PP_GAME_DIFFICULTY)).ToString();
 		string key = GameSettings.PP_BEST_SCORE + difString; //ultima_puntuacion_0 (en facil) , _1 (normal)...
 		PlayerPrefs.SetInt(key, puntos); 
 	}
-
-//	private string nombreRanking(){
-//		GameDifficulty dif = (GameDifficulty) PlayerPrefs.GetInt (Configuracion.CLAVE_DIFICULTAD_JUEGO);
-//		string res = Configuracion.RANKING_EASY;
-//
-//		switch(dif){
-//		case GameDifficulty.EASY:
-//			res = Configuracion.RANKING_EASY;
-//			break;
-//
-//		case GameDifficulty.NORMAL:
-//			res = Configuracion.RANKING_NORMAL;
-//			break;
-//
-//		case GameDifficulty.HARD:
-//			res = Configuracion.RANKING_HARD;
-//			break;
-//
-//		case GameDifficulty.PRO:
-//			res = Configuracion.RANKING_PRO;
-//			break;
-//
-//		case GameDifficulty.GOD:
-//			res = Configuracion.RANKING_GOD;
-//			break;
-//		}
-//
-//		return res;
-//	}
-
+	
+	//	private string nombreRanking(){
+	//		GameDifficulty dif = (GameDifficulty) PlayerPrefs.GetInt (Configuracion.CLAVE_DIFICULTAD_JUEGO);
+	//		string res = Configuracion.RANKING_EASY;
+	//
+	//		switch(dif){
+	//		case GameDifficulty.EASY:
+	//			res = Configuracion.RANKING_EASY;
+	//			break;
+	//
+	//		case GameDifficulty.NORMAL:
+	//			res = Configuracion.RANKING_NORMAL;
+	//			break;
+	//
+	//		case GameDifficulty.HARD:
+	//			res = Configuracion.RANKING_HARD;
+	//			break;
+	//
+	//		case GameDifficulty.PRO:
+	//			res = Configuracion.RANKING_PRO;
+	//			break;
+	//
+	//		case GameDifficulty.GOD:
+	//			res = Configuracion.RANKING_GOD;
+	//			break;
+	//		}
+	//
+	//		return res;
+	//	}
+	
 	private string idRanking(GameDifficulty dif){
-		string res = GameSettings.ID_RANKING_FACIL;
+		string res = GameSettings.Instance.ID_RANKING_EASY;
 		
 		switch(dif){
 		case GameDifficulty.EASY:
-			res = GameSettings.ID_RANKING_FACIL;
+			res = GameSettings.Instance.ID_RANKING_EASY;
 			break;
 			
 		case GameDifficulty.NORMAL:
-			res = GameSettings.ID_RANKING_NORMAL;
+			res = GameSettings.Instance.ID_RANKING_NORMAL;
 			break;
 			
 		case GameDifficulty.HARD:
-			res = GameSettings.ID_RANKING_DIFICIL;
+			res = GameSettings.Instance.ID_RANKING_HARD;
 			break;
 			
 		case GameDifficulty.PRO:
-			res = GameSettings.ID_RANKING_PRO;
+			res = GameSettings.Instance.ID_RANKING_PRO;
 			break;
 			
 		case GameDifficulty.GOD:
-			res = GameSettings.ID_RANKING_GOD;
+			res = GameSettings.Instance.ID_RANKING_GOD;
 			break;
+		}
+		
+		return res;
+	}
+	
+	private string idRankingByGameWorld(int world){
+		string res = GameSettings.Instance.ID_RANKING_WORLD_1;
+		
+		switch(world){
+		case 1: res = GameSettings.Instance.ID_RANKING_WORLD_1; break;
+		case 2: res = GameSettings.Instance.ID_RANKING_WORLD_2; break;
+		case 3: res = GameSettings.Instance.ID_RANKING_WORLD_3; break;
+		case 4: res = GameSettings.Instance.ID_RANKING_WORLD_4; break;
+		case 5: res = GameSettings.Instance.ID_RANKING_WORLD_5; break;
+		case 6: res = GameSettings.Instance.ID_RANKING_WORLD_6; break;
+		case 7: res = GameSettings.Instance.ID_RANKING_WORLD_7; break;
+		case 8: res = GameSettings.Instance.ID_RANKING_WORLD_8; break;
+		case 9: res = GameSettings.Instance.ID_RANKING_WORLD_9; break;
+		case 10: res = GameSettings.Instance.ID_RANKING_WORLD_10; break;
+		}
+		
+		return res;
+	}
+	
+	private string idRankingBySurvivalLevels(int level){
+		string res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1;
+		
+		switch(level){
+		case 1: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1; break;
+		case 2: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2; break;
+		case 3: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3; break;
+		case 4: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4; break;
+		case 5: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5; break;
+		case 6: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6; break;
+		case 7: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7; break;
+		case 8: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8; break;
+		case 9: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9; break;
+		case 10: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10; break;
 		}
 		
 		return res;

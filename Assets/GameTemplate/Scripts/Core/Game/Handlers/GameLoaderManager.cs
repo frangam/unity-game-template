@@ -6,36 +6,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	/// <summary>
-	/// La musica y los fx se controlan con un mismo boton, se mutean o se activan
-	/// </summary>
-	private bool musicaIgualFX = true;
-	
-	[SerializeField]
-	private bool hasInitialTutorial = false;
-	
-	[SerializeField]
-	/// <summary>
-	/// Las dificultades del juego
-	/// </summary>
-	private GameDifficulty[] dificultades;
-	
-	[SerializeField]
 	private bool deletePlayerPrefs = false;
 	
-	[SerializeField]
-	private int initialMoney = 0;
-	
-	[SerializeField]
-	private int initialGems = 5;
-	
-	[SerializeField]
-	private float initialCharControlSensitivity = 2.5f;
-	[SerializeField]
-	private float maxCharControlSensitivity = 5f;
-	
-	[SerializeField]
-	private float minCharControlSensitivity = 0.25f;
 	
 	
 	//--------------------------------------
@@ -99,9 +71,9 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			PlayerPrefs.DeleteAll();
 		//				Localization.language = GameSettings.LOC_SPANISH;
 		
-		if(!GameSettings.USE_FACEBOOK)
+		if(!GameSettings.Instance.USE_FACEBOOK)
 			fbInited = true;
-		if(!GameSettings.USE_TWITTER)
+		if(!GameSettings.Instance.USE_TWITTER)
 			twInited = true;
 		
 		//Easy game difficulty by default
@@ -128,16 +100,16 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN) return;
 		
 		#if UNITY_ANDROID
-		if((!GameSettings.USE_GOOGLE_PLAY_SERVICES && twInited && fbInited && !GameSettings.mandatoryTutorial)
-		   || (GameSettings.USE_GOOGLE_PLAY_SERVICES && gpsPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
+		if((!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && twInited && fbInited && !GameSettings.mandatoryTutorial)
+		   || (GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
 			AdsHandler.Instance.mostrarPantallazo();
 			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 		else if(gpsPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
 		#elif UNITY_IPHONE
-		if((!GameSettings.USE_GAMECENTER && twInited && fbInited && !GameSettings.mandatoryTutorial)
-		   || (GameSettings.USE_GAMECENTER && gcPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
+		if((!GameSettings.Instance.USE_GAMECENTER && twInited && fbInited && !GameSettings.mandatoryTutorial)
+		   || (GameSettings.Instance.USE_GAMECENTER && gcPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
 			AdsHandler.Instance.mostrarPantallazo();
 			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
@@ -155,8 +127,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 -------------------------------*/
 	private IEnumerator LoadTutorialOrMenu(){ 
 		//tutorial
-		GameSettings.mandatoryTutorial = hasInitialTutorial;
-		if(hasInitialTutorial){
+		GameSettings.mandatoryTutorial = GameSettings.Instance.HAS_INITIAL_TUTORIAL;
+		if(GameSettings.Instance.HAS_INITIAL_TUTORIAL){
 			if(!PlayerPrefs.HasKey(GameSettings.PP_COMPLETED_TUTORIAL)){
 				PlayerPrefs.SetInt(GameSettings.PP_COMPLETED_TUTORIAL, 0);
 				GameSettings.mandatoryTutorial = true;
@@ -167,10 +139,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		
 		#if UNITY_ANDROID
-		if(GameSettings.USE_GOOGLE_PLAY_SERVICES)
+		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
 		#elif UNITY_IPHONE
-		if(GameSettings.USE_GAMECENTER)
+		if(GameSettings.Instance.USE_GAMECENTER)
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GC_CONEXION);
 		#else
 		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
@@ -195,10 +167,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 -------------------------------*/
 	private void LoadGPSandGC(){
 		#if UNITY_ANDROID
-		if(GameSettings.USE_GOOGLE_PLAY_SERVICES)
+		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
 			GPSConnect.Instance.init();
 		#elif UNITY_IPHONE
-		if(GameSettings.USE_GAMECENTER)
+		if(GameSettings.Instance.USE_GAMECENTER)
 			GCConnect.Instance.init();
 		#endif
 	}
@@ -222,7 +194,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		//Musica activa
 		if(!PlayerPrefs.HasKey(GameSettings.PP_MUSIC)){
 			//inicializacion de sonido y musica activos
-			if (musicaIgualFX) {
+			if (GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME) {
 				PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, 1f);
 				PlayerPrefs.SetFloat(GameSettings.PP_SOUND, 1f);	
 				GameSettings.musicVolume = 1f;
@@ -236,7 +208,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		else{
 			//carga de valores de sonido y musica activos
-			if (musicaIgualFX) {
+			if (GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME) {
 				GameSettings.musicVolume = PlayerPrefs.GetFloat(GameSettings.PP_MUSIC);
 				GameSettings.soundVolume = PlayerPrefs.GetFloat(GameSettings.PP_SOUND);
 			}
@@ -250,7 +222,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		//sonidoActivo
 		if(!PlayerPrefs.HasKey(GameSettings.PP_SOUND)){
 			//inicializacion de sonido y musica activos
-			if (musicaIgualFX) {
+			if (GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME) {
 				PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, 1f);
 				PlayerPrefs.SetFloat(GameSettings.PP_SOUND, 1f);	
 				GameSettings.musicVolume = 1f;
@@ -264,12 +236,12 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		else{
 			//inicializacion solo de valor del sonido activo
-			if(!musicaIgualFX && !PlayerPrefs.HasKey(GameSettings.PP_SOUND)){
+			if(!GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME && !PlayerPrefs.HasKey(GameSettings.PP_SOUND)){
 				PlayerPrefs.SetFloat(GameSettings.PP_SOUND, 1f);	
 				GameSettings.soundVolume = 1f;
 			}
 			//carga de valor del sonido activo
-			else if(!musicaIgualFX){
+			else if(!GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME){
 				GameSettings.soundVolume = PlayerPrefs.GetFloat(GameSettings.PP_SOUND);	
 			}
 		}
@@ -291,22 +263,29 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		//character control sensitivity
 		if(!PlayerPrefs.HasKey(GameSettings.PP_CHARACTER_CONTROL_SENSITIVITY)){
-			PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_SENSITIVITY, initialCharControlSensitivity);
+			PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_SENSITIVITY, GameSettings.Instance.INITIAL_CHAR_CONTROL_SENSITIVITY);
 		}
 		if(!PlayerPrefs.HasKey(GameSettings.PP_CHARACTER_CONTROL_MAX_SENSITIVITY)){
-			PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_MAX_SENSITIVITY, maxCharControlSensitivity);
+			PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_MAX_SENSITIVITY, GameSettings.Instance.MAX_CHAR_CONTROL_SENSITIVITY);
 		}
 		if(!PlayerPrefs.HasKey(GameSettings.PP_CHARACTER_CONTROL_MIN_SENSITIVITY)){
-			PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_MIN_SENSITIVITY, minCharControlSensitivity);
+			PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_MIN_SENSITIVITY, GameSettings.Instance.MIN_CHAR_CONTROL_SENSITIVITY);
 		}
+		
+		//Show missions window
+		PlayerPrefs.SetInt(GameSettings.PP_SHOW_MISSIONS_WINDOW, 0);
+		
+		//last unlocked survival level
+		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL))
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL, 1);
 	}
 	
 	/*--------------------------------
 	 * Scores
 	 -------------------------------*/
 	private void cargarScores(){
-		if(dificultades != null){
-			foreach(GameDifficulty dif in dificultades){
+		if(GameSettings.Instance.gameDifficulties != null){
+			foreach(GameDifficulty dif in GameSettings.Instance.gameDifficulties){
 				string difString = ((int) dif).ToString();
 				string key = GameSettings.PP_LAST_SCORE + difString; //ultima_puntuacion_0 (en facil) , _1 (normal)...
 				string key2 = GameSettings.PP_BEST_SCORE + difString;
@@ -349,10 +328,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 -------------------------------*/
 	private void loadInitialMoneyOnlyFirstTime(){
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_MONEY)){
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_MONEY, initialMoney);
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_MONEY, GameSettings.Instance.INITIAL_MONEY);
 		}
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_GEMS)){
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GEMS, initialGems);
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GEMS, GameSettings.Instance.INITIAL_GEMS);
 		}
 	}
 }

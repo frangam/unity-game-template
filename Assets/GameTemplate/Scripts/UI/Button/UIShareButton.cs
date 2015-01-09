@@ -14,6 +14,9 @@ public class UIShareButton : UIBaseButton {
 	[SerializeField]
 	private bool doSnapshot = false;
 	
+	[SerializeField]
+	private bool activeIfLoggedIn = false;
+	
 	
 	
 	//--------------------------------------
@@ -28,7 +31,8 @@ public class UIShareButton : UIBaseButton {
 		#else
 		switch(network){
 		case SocialNetwork.FACEBOOK:
-			gameObject.SetActive(FB.IsLoggedIn);
+			if(activeIfLoggedIn)
+				gameObject.SetActive(FB.IsLoggedIn);
 			break;
 			
 		case SocialNetwork.TWITTER:

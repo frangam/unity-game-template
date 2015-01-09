@@ -4,17 +4,17 @@ using System.Collections;
 
 
 public class SocialInitializer : Singleton<SocialInitializer> {
-
-
+	
+	
 	void Awake () {
-
+		
 		#if UNITY_ANDROID 
 		
 		//---
 		//TWITTER
 		//---
 		#region Twitter
-		if(GameSettings.USE_TWITTER){
+		if(GameSettings.Instance.USE_TWITTER){
 			AndroidTwitterManager.instance.addEventListener(TwitterEvents.TWITTER_INITED,  OnInitTwitter);
 			AndroidTwitterManager.instance.addEventListener(TwitterEvents.AUTHENTICATION_SUCCEEDED,  OnAuthTwitter);
 			
@@ -24,27 +24,27 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 			AndroidTwitterManager.instance.addEventListener(TwitterEvents.USER_DATA_LOADED,  OnUserDataLoaded);
 			AndroidTwitterManager.instance.addEventListener(TwitterEvents.USER_DATA_FAILED_TO_LOAD,  OnUserDataLoadFailed);
 			
-//			AndroidTwitterManager.instance.Init(GameSettings.API_KEY, GameSettings.API_SECRET);
+			//			AndroidTwitterManager.instance.Init(GameSettings.API_KEY, GameSettings.API_SECRET);
 		}
 		#endregion
 		
-
-
-//		
+		
+		
+		//		
 		#endif
-
-
-
-
-
-
+		
+		
+		
+		
+		
+		
 		//---
 		//FB
 		//---
 		#region
-
-		if(GameSettings.USE_FACEBOOK){
-
+		
+		if(GameSettings.Instance.USE_FACEBOOK){
+			
 			SPFacebook.instance.addEventListener(FacebookEvents.FACEBOOK_INITED, 			 OnInitFB);
 			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	 OnAuthFB);
 			
@@ -54,8 +54,8 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 			SPFacebook.instance.addEventListener(FacebookEvents.FRIENDS_DATA_LOADED,  			OnFriendsDataLoaded);
 			SPFacebook.instance.addEventListener(FacebookEvents.FRIENDS_FAILED_TO_LOAD,   		OnFriendDataLoadFailed);
 			
-	//		SPFacebook.instance.addEventListener(FacebookEvents.POST_FAILED,  			OnPostFailed);
-	//		SPFacebook.instance.addEventListener(FacebookEvents.POST_SUCCEEDED,   		OnPost);
+			//		SPFacebook.instance.addEventListener(FacebookEvents.POST_FAILED,  			OnPostFailed);
+			//		SPFacebook.instance.addEventListener(FacebookEvents.POST_SUCCEEDED,   		OnPost);
 			
 			SPFacebook.instance.addEventListener(FacebookEvents.GAME_FOCUS_CHANGED,   OnFocusChanged);
 			
@@ -63,36 +63,36 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 		}
 		#endregion
 	}
-
-
+	
+	
 	void Start(){
 		// Check for a Facebook logged in user
-		if (GameSettings.USE_FACEBOOK && FB.IsLoggedIn) {
+		if (GameSettings.Instance.USE_FACEBOOK && FB.IsLoggedIn) {
 			
-            //// Check if we're logged in to Parse
-            //if (ParseUser.CurrentUser == null) {
-            //    // If not, log in with Parse
-            //    GestorParse.instance.login();
-            //} else {
-				// Show any user cached profile info
-				OnAuthFB();
-            //}
+			//// Check if we're logged in to Parse
+			//if (ParseUser.CurrentUser == null) {
+			//    // If not, log in with Parse
+			//    GestorParse.instance.login();
+			//} else {
+			// Show any user cached profile info
+			OnAuthFB();
+			//}
 		}
 	}
-
+	
 	public void LoadFriends(int limit = 0) {
-//		if(limit == 0)
-//			SPFacebook.instance.LoadFriendsInfo ();
-//		else if(limit > 0){
-			SPFacebook.instance.LoadFrientdsInfo(limit);
-//		}
-
+		//		if(limit == 0)
+		//			SPFacebook.instance.LoadFriendsInfo ();
+		//		else if(limit > 0){
+		SPFacebook.instance.LoadFrientdsInfo(limit);
+		//		}
+		
 	}
-
+	
 	// --------------------------------------
 	// Eventos 
 	// --------------------------------------	
-
+	
 	private void OnUserDataLoadFailed() {
 		//			AndroidNative.showMessage("Error", "Opps, user data load failed, something was wrong");
 	}
@@ -129,7 +129,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 	
 	private void OnInitTwitter() {
 		GameLoaderManager.Instance.TwInited = true;
-
+		
 		if(AndroidTwitterManager.instance.IsAuthed) {
 			OnAuthTwitter();
 		}
@@ -137,7 +137,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 	
 	private void OnInitFB() {
 		GameLoaderManager.Instance.FbInited = true;
-
+		
 		if(SPFacebook.instance.IsLoggedIn) {
 			OnAuthFB();
 		}
@@ -158,10 +158,10 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 			SPFacebook.instance.LoadUserData();
 			LoadFriends();
 			
-            //if(ParseUser.CurrentUser == null)
-            //    GestorParse.instance.login(); //logear en Parse
+			//if(ParseUser.CurrentUser == null)
+			//    GestorParse.instance.login(); //logear en Parse
 		} else {
-//			UIHandler.Instance.abrir(GameScreen.FACEBOOK_FAILED_CONNECTION);
+			//			UIHandler.Instance.abrir(GameScreen.FACEBOOK_FAILED_CONNECTION);
 			//			Debug.Log ("FBLoginCallback: User canceled login");
 		}
 	}
@@ -182,11 +182,11 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 	// Eventos IOS
 	// --------------------------------------	
 	#if UNITY_IPHONE
-
+	
 	
 	private void OnPostSuccses() {
 		//			IOSNative.showMessage("Positng example", "Posy Succses!");
 	}
-
+	
 	#endif
 }
