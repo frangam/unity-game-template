@@ -8,25 +8,31 @@ public class UIStoreServicesButton : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private StoreService service;
-
+	
 	[SerializeField]
 	[Tooltip("Leave empty if you want to show all items. Don't leave empty if you want to show an specific item")]
 	private string id;
-
+	
 	[SerializeField]
-	private GameDifficulty difficulty = GameDifficulty.NONE;
-
+	[Tooltip("True if we want to get the ranking id from de GameManager")]
+	private bool handledByGameManager = false;
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override void press (){
 		base.press ();
-
+		
 		switch(service){
 		case StoreService.SCORES:
-			ScoresHandler.Instance.showRanking(difficulty);
+			string rankId = id;
+			
+			if(handledByGameManager)
+				rankId = GameController.Instance.Manager.getRankingID();
+			
+			ScoresHandler.Instance.showRanking(rankId);
 			break;
-
+			
 		case StoreService.ACHIEVEMENTS:
 			BaseAchievementsManager.Instance.showAchievementsFromServer();
 			break;

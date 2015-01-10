@@ -8,11 +8,11 @@ public class UIBaseGameOverWindow : UIBaseWindow {
 	//--------------------------------------
 	[SerializeField]
 	private Text lbCurrentScore;
-
+	
 	[SerializeField]
 	private Text lbBestScore;
-
-
+	
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -20,14 +20,14 @@ public class UIBaseGameOverWindow : UIBaseWindow {
 		if(lbCurrentScore){
 			lbCurrentScore.text = GameController.Instance.Manager.CurrentScore.ToString();
 		}
-
+		
 		if(lbBestScore){
-			lbBestScore.text = ScoresHandler.Instance.getBestScore().ToString();
+			lbBestScore.text = ScoresHandler.Instance.getBestScore(GameController.Instance.Manager.getRankingID()).ToString();
 		}
 		
 		base.open ();
 	}
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------

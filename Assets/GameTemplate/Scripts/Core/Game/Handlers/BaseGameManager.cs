@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnionAssets.FLE;
+using System;
 
 public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
@@ -11,6 +12,13 @@ public class BaseGameManager : MonoBehaviour {
 	
 	[SerializeField]
 	private bool 		pauseTimeWhenFinishedGame = true;
+	
+	[SerializeField]
+	/// <summary>
+	/// True if we are going to handle scores in the current game mode
+	/// </summary>
+	[Tooltip("True if we are going to handle scores in the current game mode. Recommended to its value in a child class.")]
+	protected bool 		handleScores = true;
 	
 	[SerializeField]
 	private bool 		sendScoresToServer = true;
@@ -133,10 +141,16 @@ public class BaseGameManager : MonoBehaviour {
 		//show gameover windows
 		switch(gameMode){
 		case GameMode.CAMPAIGN:
-			if(isGameOver)
+			if(isGameOver){
+				int prevTries = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_TRIES_TIMES+currentLevelSelected.ToString()); //get the previous tries
+				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_TRIES_TIMES+currentLevelSelected.ToString(), prevTries+1); //update tries
 				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_FAILED);
-			else
+			}
+			else{
+				int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString()); //get the previous completed times
+				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted+1); //update completed times
 				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_COMPLETED);
+			}
 			break;
 			
 		case GameMode.SURVIVAL:
@@ -180,19 +194,28 @@ public class BaseGameManager : MonoBehaviour {
 	/// Do finish game functions
 	/// </summary>
 	public virtual void finishGame(){
-		//save current score
-		PlayerPrefs.SetInt(GameSettings.PP_LAST_SCORE, currentScore);
-		
-		//send score
-		if(sendScoresToServer){
-			ScoresHandler.Instance.sendScoreToServer(currentScore);
-		}
-		else{
-			ScoresHandler.Instance.saveScoreOnlyLocally(currentScore);
-		}
 		finished = true;
 		
+		if(handleScores)
+			manageScores();
+		
 		StartCoroutine(finishGameWithDelay());
+	}
+	
+	public virtual void manageScores(){
+		//send score to the server
+		if(sendScoresToServer){
+			ScoresHandler.Instance.sendScoreToServer(getRankingID(), currentScore);
+		}
+		//save only locally
+		else{
+			ScoresHandler.Instance.saveScoreOnlyLocally(getRankingID(), currentScore);
+		}
+	}
+	
+	public virtual string getRankingID(){
+		//implement in child
+		throw new NotImplementedException();
 	}
 	
 	public virtual void PlayerLostLife (){

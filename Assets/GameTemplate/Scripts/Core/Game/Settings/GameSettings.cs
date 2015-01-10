@@ -122,6 +122,8 @@ public class GameSettings : ScriptableObject {
 	public const string PP_LAST_SCORE 									= "pp_last_score_"; //followed by game difficulty
 	public const string PP_BEST_SCORE 									= "pp_best_score_"; //followed by game difficulty
 	public const string PP_LAST_LEVEL_UNLOCKED 							= "pp_last_level_unlocked"; //id of last level unlocked
+	public const string PP_LEVEL_COMPLETED_TIMES						= "pp_level_completed_times_"; //+ level id
+	public const string PP_LEVEL_TRIES_TIMES							= "pp_level_tries_times_"; //+ level id
 	public const string PP_SELECTED_LEVEL 								= "pp_selected_level"; //id of selected level
 	public const string PP_MISION_POPUP_SHOWN 							= "pp_mision_popup_shown_"; //followed by level id
 	public const string PP_GAME_MODE 									= "pp_game_mode";
