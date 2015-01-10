@@ -20,6 +20,9 @@ public class UICharacterControlSensitivity : MonoBehaviour {
 	[SerializeField]
 	private Slider slider;
 	
+	[SerializeField]
+	private Text lbValue;
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -78,15 +81,18 @@ public class UICharacterControlSensitivity : MonoBehaviour {
 	//--------------------------------------
 	public void init(){
 		initialValue = PlayerPrefs.GetFloat(GameSettings.PP_CHARACTER_CONTROL_SENSITIVITY);
-		maxValue = PlayerPrefs.GetFloat(GameSettings.PP_CHARACTER_CONTROL_MAX_SENSITIVITY);
-		minValue = PlayerPrefs.GetFloat(GameSettings.PP_CHARACTER_CONTROL_MIN_SENSITIVITY);
+		maxValue = GameSettings.Instance.MAX_CHAR_CONTROL_SENSITIVITY;
+		minValue = GameSettings.Instance.MIN_CHAR_CONTROL_SENSITIVITY;
 		
 		slider.value = initialValue/maxValue;
+		lbValue.text = initialValue.ToString("#.##");
 		inited = true;
 	}
 	
 	public void changeValue(){
 		float valueResult = Mathf.Clamp(slider.value*maxValue, minValue, maxValue);
+		PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_SENSITIVITY, valueResult); //save it
+		lbValue.text = valueResult.ToString("#.##");
 		dispatcher.dispatch(ON_CHANGED_VALUE, valueResult);
 	}
 }
