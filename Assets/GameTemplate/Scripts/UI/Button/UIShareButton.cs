@@ -41,9 +41,11 @@ public class UIShareButton : UIBaseButton {
 		}
 		#endif
 	}
-	public override void press (){
-		base.press ();
+	protected override void doPress ()
+	{
+		base.doPress ();
 		
 		BaseSocialController.Instance.post(network, shareLevelCompleted, doSnapshot);
 	}
+	
 }

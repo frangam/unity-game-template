@@ -46,8 +46,9 @@ public class UISoundActivationButton : UIBaseButton {
 		imgInactive.gameObject.SetActive(!activo);
 	}
 	
-	public override void press (){
-		base.press ();
+	protected override void doPress ()
+	{
+		base.doPress ();
 		
 		switch(type){
 		case SoundType.FX:

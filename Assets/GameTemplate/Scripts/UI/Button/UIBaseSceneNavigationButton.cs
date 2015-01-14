@@ -29,8 +29,9 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
-	public override void press (){
-		base.press ();
+	protected override void doPress ()
+	{
+		base.doPress ();
 		
 		//select game mode
 		switch(section){
@@ -62,9 +63,9 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 		else{
 			ScreenLoaderVisualIndicator.Instance.LoadScene(sceneToGo);
 		}
-		
-		
 	}
+	
+	
 	
 	private void goTo(){
 		

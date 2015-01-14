@@ -5,9 +5,9 @@ using System.Collections;
 public class UICloseButton : UIBaseButton {
 	public Image panel;
 	
-	public override void press (){
-		base.press ();
-		
+	protected override void doPress ()
+	{
+		base.doPress ();
 		
 		if(!panel){
 			panel = GetComponent<Image>();

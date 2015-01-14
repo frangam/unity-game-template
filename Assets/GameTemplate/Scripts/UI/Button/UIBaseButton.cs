@@ -27,15 +27,21 @@ public class UIBaseButton : MonoBehaviour {
 	[Tooltip("Time to stop the button pressing. 0 if not stopd")]
 	private float timeToStopPressing = 0;
 	
+	[SerializeField]
+	[Tooltip("Time to wait before press the button again. 0 if not wait.")]
+	private float timeToWaitBeforePressAgain = 0;
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	protected Button button;
 	private float initialPressingTime = 0;
+	private float lastSuccesfulPressingTime = 0;
 	private float pressingTime = 0;
 	private float currentTime;
 	private bool pressingStoped = false;
 	private bool pressing = false;
+	private bool firstPress = true;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -49,6 +55,7 @@ public class UIBaseButton : MonoBehaviour {
 		button = GetComponent<Button>();
 		pressingStoped = false;
 		initialPressingTime = 0;
+		lastSuccesfulPressingTime = 0;
 		pressingTime = 0;
 		pressing = false;
 	}
@@ -56,11 +63,24 @@ public class UIBaseButton : MonoBehaviour {
 		
 	}
 	public virtual void Update(){
+		//stop the pressing proccess during maintaining press the button
 		if(timeToStopPressing > 0 && pressing && !pressingStoped){
 			currentTime = Time.time;
 			
 			if((currentTime - initialPressingTime) >= timeToStopPressing){
 				stopPressing();
+			}
+		}
+		
+		//stop pressing when user wants to press again
+		if(timeToWaitBeforePressAgain > 0 && !firstPress){
+			currentTime = Time.time;
+			
+			if((currentTime - lastSuccesfulPressingTime) <= timeToWaitBeforePressAgain){
+				pressingStoped = true;
+			}
+			else{
+				pressingStoped = false;
 			}
 		}
 	}
@@ -74,11 +94,19 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public virtual void press(){
+	public void press(){
+		firstPress = false;
+		pressing = true;
+		initialPressingTime = Time.time;
+		
+		if(canPress()){
+			lastSuccesfulPressingTime = Time.time;
+			doPress();
+		}
+	}
+	
+	protected virtual void doPress(){
 		if(playSoundWhenPress && !pressingStoped){
-			pressing = true;
-			initialPressingTime = Time.time;
-			
 			//touch up
 			if(trigger == SoundTrigger.TOUCH_UP){
 				BaseSoundManager.Instance.play(soundId);
@@ -88,6 +116,15 @@ public class UIBaseButton : MonoBehaviour {
 				BaseSoundManager.Instance.play(soundId);
 			}
 		}
+		
+		
+	}
+	
+	/// <summary>
+	/// Press a button
+	/// </summary>
+	protected virtual bool canPress(){
+		return !pressingStoped;
 	}
 	
 	public virtual void release(){

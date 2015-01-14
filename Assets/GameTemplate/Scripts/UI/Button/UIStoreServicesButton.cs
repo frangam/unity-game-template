@@ -20,8 +20,9 @@ public class UIStoreServicesButton : UIBaseButton {
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
-	public override void press (){
-		base.press ();
+	protected override void doPress ()
+	{
+		base.doPress ();
 		
 		switch(service){
 		case StoreService.SCORES:

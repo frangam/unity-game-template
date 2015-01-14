@@ -86,12 +86,13 @@ public class AutoType : UIBaseButton {
 		}
 	}
 	
-	public override void press (){
-		if(!allowStop)
-			return;
-		
-		base.press ();
-		
+	protected override bool canPress (){
+		return allowStop && base.canPress ();;
+	}
+	
+	protected override void doPress ()
+	{
+		base.doPress ();
 		stop();
 	}
 }
