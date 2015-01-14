@@ -18,15 +18,17 @@ public static class UIBaseWindowIDs {
 	public const string MISSION_DESCRIPTION				= "bwi_000008";
 	public const string LEVEL_UP 						= "bwi_000009";
 	public const string ALL_MISSIONS_COMPLETED			= "bwi_000010";
-															 
+	
+	public const string UNIQUE_LIST_WINDOW				= "bwi_000020";
+	
 	public const string LOGIN			 				= "bwi_000050";
 	public const string LOGIN_SUCCESS	 				= "bwi_000051";
 	public const string LOGIN_FAILED			 		= "bwi_000052";
-															 
+	
 	public const string SOCIAL_SHARE	 				= "bwi_000080";
 	public const string SOCIAL_SHARE_SUCCESS			= "bwi_000081";
 	public const string SOCIAL_SHARE_FAIL	 			= "bwi_000082";
-															 
+	
 	public const string BUY_ITEM_CONFIRMATION			= "bwi_000100";
 	public const string SHOP 							= "bwi_000101";
 	public const string SPECIFIC_ITEM_FOR_PURCHASE		= "bwi_000102";

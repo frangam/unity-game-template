@@ -5,6 +5,16 @@ using System;
 
 public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
+	// Constants
+	//--------------------------------------
+	public const string GAME_FINISHED = "gt_game_finished";
+	
+	//--------------------------------------
+	// Static Attributes
+	//--------------------------------------
+	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
+	
+	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
@@ -12,13 +22,6 @@ public class BaseGameManager : MonoBehaviour {
 	
 	[SerializeField]
 	private bool 		pauseTimeWhenFinishedGame = true;
-	
-	[SerializeField]
-	/// <summary>
-	/// True if we are going to handle scores in the current game mode
-	/// </summary>
-	[Tooltip("True if we are going to handle scores in the current game mode. Recommended to its value in a child class.")]
-	protected bool 		handleScores = true;
 	
 	[SerializeField]
 	private bool 		sendScoresToServer = true;
@@ -48,9 +51,20 @@ public class BaseGameManager : MonoBehaviour {
 	private int				currentLevelSelected;
 	private bool			isGameOver;
 	
+	/// <summary>
+	/// True if we are going to handle scores in the current game mode. Recommended to its value in a child class.
+	/// </summary>
+	protected bool 		handleScores = true;
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
+	public static EventDispatcherBase dispatcher {
+		get {
+			return _dispatcher;
+		}
+	}
+	
 	public GameDifficulty Difficulty {
 		get {
 			return this.difficulty;
@@ -194,12 +208,14 @@ public class BaseGameManager : MonoBehaviour {
 	/// Do finish game functions
 	/// </summary>
 	public virtual void finishGame(){
-		finished = true;
-		
-		if(handleScores)
-			manageScores();
-		
-		StartCoroutine(finishGameWithDelay());
+		if(!finished){
+			finished = true;
+			
+			if(handleScores)
+				manageScores();
+			
+			StartCoroutine(finishGameWithDelay());
+		}
 	}
 	
 	public virtual void manageScores(){

@@ -70,6 +70,7 @@ public class AutoType : UIBaseButton {
 	}
 	
 	public virtual void initType(){
+		stopType = false;
 		StartCoroutine(TypeText ());
 	}
 	
