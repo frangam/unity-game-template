@@ -286,7 +286,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		
 		
 		if(red == SocialNetwork.FACEBOOK && !SPFacebook.instance.IsLoggedIn){
-			SPFacebook.instance.Login("email,publish_actions");
+			SPFacebook.instance.Login();
 		}
 		
 	}
@@ -445,7 +445,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		#elif UNITY_IPHONE
 		posteando = true;
 		hacerCaptura = captura;
-		postear(red, hacerCaptura);
+		postear(red, shareLevelCompleted, hacerCaptura);
 		posteando = false;
 		#endif
 	}
@@ -497,9 +497,9 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		linkAPP = GameSettings.Instance.SHORT_LINK_IOS_APP;
 		#endif
 		
-		string mensajeTwitter = shareLevelCompleted ? Localization.Localize(ExtraLocalizations.SHARE_LEVEL_COMPLETED)+" "+PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED)
+		string mensajeTwitter = shareLevelCompleted ? Localization.Localize(ExtraLocalizations.SHARE_LEVEL_COMPLETED)+" "+PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_PLAYED)
 			: Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+hashtag+" "+linkAPP;
-		string mensajeFB = shareLevelCompleted ? Localization.Localize(ExtraLocalizations.SHARE_LEVEL_COMPLETED)+" "+PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED)
+		string mensajeFB = shareLevelCompleted ? Localization.Localize(ExtraLocalizations.SHARE_LEVEL_COMPLETED)+" "+PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_PLAYED)
 			: Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+linkAPP;
 		
 		if(captura){

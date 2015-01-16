@@ -20,7 +20,7 @@ public class GameSettingsEditor : Editor {
 	
 	GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is Plugin version.  If you have problems or compliments please include this so we know exactly what version to look out for.");
 	GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical quastion, feel free to drop an e-mail");
-	
+	GUIContent showMissionsWinLabel   = new GUIContent("Show missions win [?]:", "True for showing missions window at start.");
 	
 	private GameSettings settings;
 	
@@ -186,13 +186,29 @@ public class GameSettingsEditor : Editor {
 		EditorGUILayout.Space();
 		
 		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("Show Test Logs");
+		GameSettings.Instance.showTestLogs	= EditorGUILayout.Toggle(GameSettings.Instance.showTestLogs);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.Space();
+		
+		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField(musicFXLabel);
 		GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME	= EditorGUILayout.Toggle(GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME);
 		EditorGUILayout.EndHorizontal();
 		
 		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("Show Load Indicator in Loading scene");
+		GameSettings.Instance.showLoadIndicatorInLoadingScene	= EditorGUILayout.Toggle(GameSettings.Instance.showLoadIndicatorInLoadingScene);
+		EditorGUILayout.EndHorizontal();
+		
+		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Has Initial Tutorial");
 		GameSettings.Instance.HAS_INITIAL_TUTORIAL	= EditorGUILayout.Toggle(GameSettings.Instance.HAS_INITIAL_TUTORIAL);
+		EditorGUILayout.EndHorizontal();
+		
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField(showMissionsWinLabel);
+		GameSettings.Instance.showMissionsWinAtStart = EditorGUILayout.Toggle(GameSettings.Instance.showMissionsWinAtStart);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.Space();
 		

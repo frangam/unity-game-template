@@ -20,41 +20,44 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 	//--------------------------------------
 	public const string ACHIEVEMENTS_INITIAL_CHEKING = "aa_achievement_initial_checking";
 	public const string ACHIEVEMENT_UNLOCKED = "aa_achievement_unlocked";
-
+	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
 	private bool initialCheckOnServer = false;
-
-
+	
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
 	public override void Awake(){
 		base.Awake();
-
+		
+		if(Quests == null || (Quests != null && Quests.Count == 0))
+			init(PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED));
+		
 		if(initialCheckOnServer)
 			initialCheckingInServerSide();
-
+		
 		//listeners
 		dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
 	}
 	#endregion
-
+	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-
-
+	
+	
 	/// <summary>
 	/// Report the progress to the server side
 	/// </summary>
 	/// <param name="achievement">Achievement.</param>
 	private void reportToServer(Achievement achievement){
 		string aID = achievement.Id;
-
+		
 		#if UNITY_ANDROID
 		//si el logro no se ha conseguido
 		GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(aID);
@@ -71,10 +74,10 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			GameCenterManager.submitAchievement(achievement.getProgressPercentage(), aID); //Completamos con el 100% del progreso
 		}
 		#elif WP8
-
+		
 		#endif
 	}
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
@@ -84,8 +87,13 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 	/// </summary>
 	public void initialCheckingInServerSide(){
 		bool lockedInServer = false;
-
+		
+		Debug.Log("Doing initial checking in server");
+		Debug.Log("Achievements: "+Quests);
+		
+		
 		foreach(Achievement a in Quests){
+			Debug.Log("Achievement: "+a);
 			//if it was completed previously
 			//we check if in the servers has updated it
 			if(a.completedPreviously()){				
@@ -100,17 +108,17 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 				}
 				#elif WP8
 				#endif
-
+				
 				//report to the server to unlock
 				if(lockedInServer){
 					reportToServer(a);
 				}
 			}
 		}	
-
+		
 		dispatcher.dispatch(ACHIEVEMENTS_INITIAL_CHEKING);
 	}
-
+	
 	public void showAchievementsFromServer(){
 		#if UNITY_ANDROID
 		if(GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED){
@@ -133,7 +141,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			GooglePlayManager.instance.showAchievementsUI();
 		}
 		#elif UNITY_IPHONE
-		if(GameSettings.USE_GAMECENTER && GameCenterManager.IsPlayerAuthed)
+		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthed)
 			GameCenterManager.showAchievements();
 		#endif
 	}
@@ -153,15 +161,15 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			
 		}
 	}
-
-
-
+	
+	
+	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
 	public override void OnQuestCompleted (CEvent e){
 		base.OnQuestCompleted(e);
-
+		
 		Achievement achievement = e.data as Achievement;
 		
 		if(achievement != null){

@@ -16,7 +16,7 @@ public class UIBaseManager : MonoBehaviour {
 	private bool locateAllWindows = true;
 	
 	[SerializeField]
-	[Tooltip("If locateAllWindows is true does not must fill this because automatically it will be filled")]
+	[Tooltip("If locateAllWindows is true does not must fill this because automatically it will be filled. Be care with started closed windows.")]
 	private List<UIBaseWindow> windows;
 	
 	[SerializeField]
@@ -55,10 +55,8 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		if(locateAllWindows){
-			UIBaseWindow[] windowsArr = FindObjectsOfType<UIBaseWindow>() as UIBaseWindow[];
-			windows = new List<UIBaseWindow>(windowsArr);
-		}
+		//first load windows
+		loadWindows();
 		
 		if(eventSystm == null){
 			eventSystm = FindObjectOfType<EventSystem>() as EventSystem;
@@ -87,6 +85,19 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	public virtual void loadWindows(){
+		if(locateAllWindows){
+			UIBaseWindow[] windowsArr = FindObjectsOfType<UIBaseWindow>() as UIBaseWindow[];
+			windows = new List<UIBaseWindow>(windowsArr);
+		}
+		
+		if(windows != null && windows.Count > 0){
+			foreach(UIBaseWindow w in windows){
+				open(w, !w.StartClosed);
+			}
+		}
+	}
+	
 	public virtual UIBaseWindow getWindow(string id){
 		UIBaseWindow win = null;
 		
@@ -137,6 +148,10 @@ public class UIBaseManager : MonoBehaviour {
 			else
 				window.close();
 		}
+	}
+	
+	public virtual void close(UIBaseWindow window){
+		open(window, false);
 	}
 	
 	public virtual IEnumerator setAlphaGuiBlended(bool blended = true){

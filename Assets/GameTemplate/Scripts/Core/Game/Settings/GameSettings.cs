@@ -38,6 +38,7 @@ public class GameSettings : ScriptableObject {
 	public static bool 	firstTimePlayerInviteFriends 	= false; //show invite friends screen if it is the firs time
 	public static int 	maxLevels 						= 10;
 	
+	
 	//SETTINGS
 	public static float	musicVolume						= 1f;
 	public static float soundVolume 					= 1f;
@@ -45,6 +46,9 @@ public class GameSettings : ScriptableObject {
 	public List<GameDifficulty> gameDifficulties 		= new List<GameDifficulty>(){GameDifficulty.NONE};
 	public bool FX_AND_MUSIC_ARE_THE_SAME 				= true;
 	public bool HAS_INITIAL_TUTORIAL 					= false;
+	public bool 	showMissionsWinAtStart				= false;
+	public bool 	showLoadIndicatorInLoadingScene		= true;
+	public bool 	showTestLogs						= false; //show debug log for test or not
 	
 	//--------------------------------------
 	// Constants
@@ -122,6 +126,7 @@ public class GameSettings : ScriptableObject {
 	public const string PP_LAST_SCORE 									= "pp_last_score_"; //followed by game difficulty
 	public const string PP_BEST_SCORE 									= "pp_best_score_"; //followed by game difficulty
 	public const string PP_LAST_LEVEL_UNLOCKED 							= "pp_last_level_unlocked"; //id of last level unlocked
+	public const string PP_LAST_LEVEL_PLAYED							= "pp_last_level_played"; //id of last level played
 	public const string PP_LEVEL_COMPLETED_TIMES						= "pp_level_completed_times_"; //+ level id
 	public const string PP_LEVEL_TRIES_TIMES							= "pp_level_tries_times_"; //+ level id
 	public const string PP_SELECTED_LEVEL 								= "pp_selected_level"; //id of selected level
@@ -146,6 +151,11 @@ public class GameSettings : ScriptableObject {
 	public const string PP_CHARACTER_CONTROL_MAX_SENSITIVITY 			= "pp_character_control_max_sensitivity";
 	public const string PP_SHOW_MISSIONS_WINDOW	 						= "pp_show_mission_window";
 	public const string	PP_LAST_UNLOCKED_SURVIVAL_LEVEL	 				= "pp_last_unlocked_survival_level";
+	public const string	PP_TOTAL_GAME_OPENINGS				 			= "pp_total_game_openings"; //number of the game is open
+	public const string	PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY	 			= "pp_num_gameovers_without_difficulty";
+	public const string	PP_NUM_GAMEOVERS_WITH_DIFFICULTY				= "pp_num_gameovers_with_difficulty_"; //+ (int) GameDifficulty(enum)
+	public const string	PP_NUM_GAMEOVERS_IN_LEVEL						= "pp_num_gameovers_in_level_"; //+ (int) level id
+	public const string	PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL				= "pp_num_gameovers_in_survival_level_"; //+ (int) survival level id
 	
 	//GooglePlay Services
 	public string ID_UNIQUE_RANKING 				= "";

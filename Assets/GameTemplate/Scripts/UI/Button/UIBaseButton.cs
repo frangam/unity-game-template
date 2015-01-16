@@ -31,6 +31,7 @@ public class UIBaseButton : MonoBehaviour {
 	[Tooltip("Time to wait before press the button again. 0 if not wait.")]
 	private float timeToWaitBeforePressAgain = 0;
 	
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -52,12 +53,10 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		button = GetComponent<Button>();
-		pressingStoped = false;
-		initialPressingTime = 0;
-		lastSuccesfulPressingTime = 0;
-		pressingTime = 0;
-		pressing = false;
+		init();
+	}
+	public virtual void Start(){
+		init();
 	}
 	public virtual void OnDestroy(){
 		
@@ -103,6 +102,15 @@ public class UIBaseButton : MonoBehaviour {
 			lastSuccesfulPressingTime = Time.time;
 			doPress();
 		}
+	}
+	
+	protected virtual void init(){
+		button = GetComponent<Button>();
+		pressingStoped = false;
+		initialPressingTime = 0;
+		lastSuccesfulPressingTime = 0;
+		pressingTime = 0;
+		pressing = false;
 	}
 	
 	protected virtual void doPress(){

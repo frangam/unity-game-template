@@ -146,11 +146,57 @@ public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
+	private void handleGameOverAdShowing(){
+		int numGameovers = 0;
+		int numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT;
+		
+		switch(gameMode){
+		case GameMode.CAMPAIGN:
+			numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString());
+			numGameovers++;
+			PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString(), numGameovers);
+			break;
+		case GameMode.QUICKGAME:
+			if(difficulty != GameDifficulty.NONE){
+				int dif = ((int) difficulty);
+				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString());
+				numGameovers++;
+				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString(), numGameovers);
+			}
+			else{
+				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY);
+				numGameovers++;
+				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY, numGameovers);
+				
+				switch(difficulty){
+				case GameDifficulty.EASY: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE; break;
+				case GameDifficulty.NORMAL: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE; break;
+				case GameDifficulty.HARD: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE; break;
+				}
+			}
+			break;
+		case GameMode.SURVIVAL:
+			numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE;
+			numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
+			numGameovers++;
+			PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), numGameovers);
+			break;
+		}
+		
+		//refresh banner ad
+		AdsHandler.Instance.refrescarBanner();
+		
+		//show interstitial ad
+		if(numGameovers % numGameoversToChek == 0)
+			AdsHandler.Instance.mostrarPantallazo();
+	}
+	
 	private IEnumerator finishGameWithDelay(){
 		float delay = isGameOver ? gameOverDelay : missionCompletedDelay;
 		
 		yield return new WaitForSeconds(delay);
 		
+		PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_PLAYED, currentLevelSelected); //for analytics
 		
 		//show gameover windows
 		switch(gameMode){
@@ -162,8 +208,8 @@ public class BaseGameManager : MonoBehaviour {
 			}
 			else{
 				int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString()); //get the previous completed times
+				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_COMPLETED); //first show window
 				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted+1); //update completed times
-				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_COMPLETED);
 			}
 			break;
 			
@@ -174,6 +220,10 @@ public class BaseGameManager : MonoBehaviour {
 			
 		}
 		
+		//handle ad showing
+		handleGameOverAdShowing();
+		
+		//pause game if needed
 		if(pauseTimeWhenFinishedGame){
 			Time.timeScale = 0f;
 		}
@@ -209,6 +259,7 @@ public class BaseGameManager : MonoBehaviour {
 	/// </summary>
 	public virtual void finishGame(){
 		if(!finished){
+			dispatcher.dispatch(GAME_FINISHED);
 			finished = true;
 			
 			if(handleScores)

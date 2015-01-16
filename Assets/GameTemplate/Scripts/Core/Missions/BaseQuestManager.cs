@@ -297,9 +297,11 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	/// </summary>
 	/// <param name="tags">Tags.</param>
 	public void resetProperties(List<string> tags = null){
-		foreach(GameAction a in actions){
-			if(a.Tags == null || hasTag(a, tags)){
-				a.reset();
+		if(actions != null){
+			foreach(GameAction a in actions){
+				if(a.Tags == null || hasTag(a, tags)){
+					a.reset();
+				}
 			}
 		}
 	}

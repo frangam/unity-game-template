@@ -11,7 +11,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		if(Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor) return;
 		
 		#if UNITY_IPHONE
-		if(!GameSettings.USE_GAMECENTER)
+		if(!GameSettings.Instance.USE_GAMECENTER)
 			return;
 		#elif UNITY_ANDROID
 		if(!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
@@ -118,8 +118,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthed){
 			id = id.Replace("-","_"); //replace because in iOS it is not supported ids with "-"
 			int scoreServidor = GameCenterManager.GetLeaderBoard(id).GetCurrentPlayerScore(GCBoardTimeSpan.ALL_TIME, GCCollectionType.GLOBAL).rank;
-			if(scoreServidor < puntosEnviar)
-				GameCenterManager.reportScore(puntosEnviar, id);
+			if(scoreServidor < scoreToSend)
+				GameCenterManager.reportScore(scoreToSend, id);
 			else
 				saveBestScore(id, scoreServidor);
 		}

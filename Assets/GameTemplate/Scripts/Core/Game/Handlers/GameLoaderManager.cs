@@ -66,32 +66,18 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake () {
-		//TEST
 		if(deletePlayerPrefs)
 			PlayerPrefs.DeleteAll();
-		//				Localization.language = GameSettings.LOC_SPANISH;
 		
-		if(!GameSettings.Instance.USE_FACEBOOK)
-			fbInited = true;
-		if(!GameSettings.Instance.USE_TWITTER)
-			twInited = true;
-		
-		//Easy game difficulty by default
-		if(!PlayerPrefs.HasKey(GameSettings.PP_GAME_DIFFICULTY)){
-			PlayerPrefs.SetInt(GameSettings.PP_GAME_DIFFICULTY, (int) GameDifficulty.EASY);
-		}
-		
-		ScreenLoaderVisualIndicator.Instance.LoadScene ();
-		
-		cargarIdioma (); //idioma
+		loadLanguage (); //idioma
 		//		Localization.language = GameSettings.LOC_ENGLISH;
 		
 		loadInitialMoneyOnlyFirstTime();
 		loadSettings();
-		cargarAudio (); //musica y sonido
-		cargarPuntosYNivelInicial (); //puntos
+		loadAudio (); //musica y sonido
+		loadScoresAndInitialLevel (); //puntos
 		LoadGPSandGC (); //google play services y game center
-		cargarScores ();
+		loadScoresWithDifficulty ();
 		
 		StartCoroutine (LoadTutorialOrMenu ()); //se carga el tutorial o el menu del juego
 	}
@@ -102,7 +88,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		#if UNITY_ANDROID
 		if((!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && twInited && fbInited && !GameSettings.mandatoryTutorial)
 		   || (GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
-			AdsHandler.Instance.mostrarPantallazo();
+			handleInitialAdShowing();
 			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 		else if(gpsPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
@@ -110,7 +96,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		#elif UNITY_IPHONE
 		if((!GameSettings.Instance.USE_GAMECENTER && twInited && fbInited && !GameSettings.mandatoryTutorial)
 		   || (GameSettings.Instance.USE_GAMECENTER && gcPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
-			AdsHandler.Instance.mostrarPantallazo();
+			handleInitialAdShowing();
 			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 		else if(gcPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
@@ -125,7 +111,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	/*--------------------------------
 	 * Load tutorial or menu
 	 -------------------------------*/
-	private IEnumerator LoadTutorialOrMenu(){ 
+	public virtual IEnumerator LoadTutorialOrMenu(){ 
 		//tutorial
 		GameSettings.mandatoryTutorial = GameSettings.Instance.HAS_INITIAL_TUTORIAL;
 		if(GameSettings.Instance.HAS_INITIAL_TUTORIAL){
@@ -157,7 +143,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
 		}
 		else{
-			AdsHandler.Instance.mostrarPantallazo();
+			handleInitialAdShowing();
 			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 	}
@@ -165,7 +151,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	/*--------------------------------
 	 * Google play
 	 -------------------------------*/
-	private void LoadGPSandGC(){
+	public virtual void LoadGPSandGC(){
 		#if UNITY_ANDROID
 		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
 			GPSConnect.Instance.init();
@@ -178,7 +164,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	/*--------------------------------
 	 * Idioma seleccionado
 	 -------------------------------*/
-	private void cargarIdioma(){
+	public virtual void loadLanguage(){
 		if(!PlayerPrefs.HasKey(GameSettings.PP_LANGUAGE_CHANGED)){
 			PlayerPrefs.SetInt(GameSettings.PP_LANGUAGE_CHANGED, 0);
 			
@@ -190,7 +176,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	/*--------------------------------
 	 * Audio activo
 	 -------------------------------*/
-	private void cargarAudio(){
+	public virtual void loadAudio(){
 		//Musica activa
 		if(!PlayerPrefs.HasKey(GameSettings.PP_MUSIC)){
 			//inicializacion de sonido y musica activos
@@ -251,7 +237,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	/*--------------------------------
 	 * Settings
 	 -------------------------------*/
-	private void loadSettings(){
+	public virtual void loadSettings(){
 		//graphics details
 		if(!PlayerPrefs.HasKey(GameSettings.PP_GRAPHICS_DETAILS)){
 			PlayerPrefs.SetFloat(GameSettings.PP_GRAPHICS_DETAILS, 1f);
@@ -272,18 +258,36 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			PlayerPrefs.SetFloat(GameSettings.PP_CHARACTER_CONTROL_MIN_SENSITIVITY, GameSettings.Instance.MIN_CHAR_CONTROL_SENSITIVITY);
 		}
 		
-		//Show missions window
-		PlayerPrefs.SetInt(GameSettings.PP_SHOW_MISSIONS_WINDOW, 0);
+		//Show missions window at start
+		if(GameSettings.Instance.showMissionsWinAtStart)
+			PlayerPrefs.SetInt(GameSettings.PP_SHOW_MISSIONS_WINDOW, 1);
+		else
+			PlayerPrefs.SetInt(GameSettings.PP_SHOW_MISSIONS_WINDOW, 0);
 		
-		//last unlocked survival level
-		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL))
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL, 1);
+		//game opening + 1 
+		int totalOpenings = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAME_OPENINGS);
+		PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAME_OPENINGS, totalOpenings+1);
+		
+		//Social Networks use
+		if(!GameSettings.Instance.USE_FACEBOOK)
+			fbInited = true;
+		if(!GameSettings.Instance.USE_TWITTER)
+			twInited = true;
+		
+		//Easy game difficulty by default
+		if(!PlayerPrefs.HasKey(GameSettings.PP_GAME_DIFFICULTY)){
+			PlayerPrefs.SetInt(GameSettings.PP_GAME_DIFFICULTY, (int) GameDifficulty.EASY);
+		}
+		
+		//loading indicator
+		if(GameSettings.Instance.showLoadIndicatorInLoadingScene)
+			ScreenLoaderVisualIndicator.Instance.LoadScene ();
 	}
 	
 	/*--------------------------------
 	 * Scores
 	 -------------------------------*/
-	private void cargarScores(){
+	public virtual void loadScoresWithDifficulty(){
 		if(GameSettings.Instance.gameDifficulties != null){
 			foreach(GameDifficulty dif in GameSettings.Instance.gameDifficulties){
 				string difString = ((int) dif).ToString();
@@ -306,7 +310,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	/*--------------------------------
 	 * Puntos
 	 -------------------------------*/
-	public void cargarPuntosYNivelInicial(){
+	public virtual void loadScoresAndInitialLevel(){
+		//scores
 		if(!PlayerPrefs.HasKey(GameSettings.PP_BEST_SCORE)){
 			PlayerPrefs.SetInt(GameSettings.PP_BEST_SCORE, 0);
 		}
@@ -314,6 +319,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_SCORE, 0);
 		}
 		
+		//initial unlocked level
 		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_LEVEL_UNLOCKED)){
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, 1);
 			GameSettings.lastLevelUnlocked = 1;
@@ -321,17 +327,42 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		else{
 			GameSettings.lastLevelUnlocked = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
 		}
+		
+		//last unlocked survival level
+		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL))
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL, 1);
+		
+		//select level 1 at start
+		if(!PlayerPrefs.HasKey(GameSettings.PP_SELECTED_LEVEL))
+			PlayerPrefs.SetInt(GameSettings.PP_SELECTED_LEVEL, 1);
 	}
 	
 	/*--------------------------------
 	 * Money
 	 -------------------------------*/
-	private void loadInitialMoneyOnlyFirstTime(){
+	public virtual void loadInitialMoneyOnlyFirstTime(){
+		//money
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_MONEY)){
 			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_MONEY, GameSettings.Instance.INITIAL_MONEY);
 		}
+		
+		//gems
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_GEMS)){
 			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GEMS, GameSettings.Instance.INITIAL_GEMS);
+		}
+	}
+	
+	
+	/*--------------------------------
+	 * Initial Ad
+	 -------------------------------*/
+	public virtual void handleInitialAdShowing(){
+		int totalOpenings = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAME_OPENINGS);
+		int openingsForShowInitialAd = GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START;
+		
+		//show initial Add
+		if(totalOpenings % openingsForShowInitialAd == 0){
+			AdsHandler.Instance.mostrarPantallazo();
 		}
 	}
 }

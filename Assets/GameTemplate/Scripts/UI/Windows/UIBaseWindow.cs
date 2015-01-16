@@ -14,10 +14,10 @@ public class UIBaseWindow : MonoBehaviour {
 	[SerializeField]
 	[Tooltip("Use UIBaseWindowIDs class or inherited to set this value")]
 	private string id;
-
+	
 	[SerializeField]
 	private bool startClosed = true;
-		
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -31,24 +31,26 @@ public class UIBaseWindow : MonoBehaviour {
 			return this.id;
 		}
 	}
-
+	public bool StartClosed {
+		get {
+			return this.startClosed;
+		}
+	}
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
 		window = GetComponent<Image>();
-
-		if(window){
-			window.gameObject.SetActive(!startClosed);
-		}
-		else{
+		
+		if(!window){
 			Debug.LogWarning("No window attached");
 		}
 	}
 	public virtual void Start(){}
 	#endregion
-
+	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
@@ -57,10 +59,14 @@ public class UIBaseWindow : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public virtual void open(){
-//		window.gameObject.SetActive(true);
+		//		window.gameObject.SetActive(true);
 	}
 	public virtual void close(){
-//		window.gameObject.SetActive(false);
+		//		window.gameObject.SetActive(false);
+	}
+	
+	public virtual void init(bool pStartClosed){
+		startClosed = pStartClosed;
 	}
 	
 	//--------------------------------------
