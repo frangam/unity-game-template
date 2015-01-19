@@ -230,8 +230,17 @@ public class BaseStat{
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	/// <summary>
+	/// Returns a <see cref="System.String"/> that represents the current <see cref="BaseStat"/>.
+	/// 
+	/// ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE
+	/// </summary>
+	/// <returns>A <see cref="System.String"/> that represents the current <see cref="BaseStat"/>.</returns>
 	public override string ToString (){
-		return string.Format ("[BaseStat: id={0}, name={1}, initialValue={2}, maxValue={3}, currentValue={4}]", id, name, initialValue, maxValue, currentValue);
+		int invert = invertMinMax ? 1: 0;
+		
+		return id + ATTRIBUTES_SEPARATOR + name + ATTRIBUTES_SEPARATOR + invert + ATTRIBUTES_SEPARATOR + 
+			minValue + ":" + maxValue + ATTRIBUTES_SEPARATOR + minSimValue + ":" + maxSimValue;
 	}
 	
 	

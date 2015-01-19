@@ -19,29 +19,28 @@ public class WeaponUpgradesExample : MonoBehaviour {
 	public Text lbCapacity;
 	public Text lbCapacityPrice;
 	public List<UpgradableStat> stats;
-
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	public void Start(){
 		lbTotalMoney.text = "Money: "+ totalMoney.ToString();
-
+		
 		foreach(UpgradableStat s in stats){
 			changeLabelStatText(s);
 		}
 	}
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	public void upgrade(string id){
 		foreach(UpgradableStat s in stats){
 			if(s.Id == id){
-				int finalMoney = (int) s.apply(totalMoney);
-
-				if(finalMoney != totalMoney){
-					totalMoney = finalMoney;
-					lbTotalMoney.text = "Money: "+ finalMoney.ToString();
+				bool applied = s.apply();
+				
+				if(applied){
+					lbTotalMoney.text = "Money: "+ GameMoneyManager.Instance.getTotalMoney().ToString();
 					changeLabelStatText(s);
 				}
 				else{
@@ -51,14 +50,14 @@ public class WeaponUpgradesExample : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
 	private void changeLabelStatText(UpgradableStat stat){
 		string value = stat.CurrentValue.ToString();
 		string price = stat.currentPrice() != -1f ? stat.currentPrice().ToString() : "";
-
+		
 		switch(stat.Id){
 		case "s_0": lbPower.text = value; lbPowerPrice.text = price; break;
 		case "s_1": lbStability.text = value; lbStabilityPrice.text = price; break;

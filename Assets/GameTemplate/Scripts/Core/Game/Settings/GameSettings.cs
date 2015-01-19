@@ -156,6 +156,7 @@ public class GameSettings : ScriptableObject {
 	public const string	PP_NUM_GAMEOVERS_WITH_DIFFICULTY				= "pp_num_gameovers_with_difficulty_"; //+ (int) GameDifficulty(enum)
 	public const string	PP_NUM_GAMEOVERS_IN_LEVEL						= "pp_num_gameovers_in_level_"; //+ (int) level id
 	public const string	PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL				= "pp_num_gameovers_in_survival_level_"; //+ (int) survival level id
+	public const string PP_UNIQUE_LIST_CURRENT_ITEM_SELECTED_ID			= "pp_unique_list_current_item_selected_id";
 	
 	//GooglePlay Services
 	public string ID_UNIQUE_RANKING 				= "";

@@ -47,7 +47,7 @@ public class UpgradableStat : BaseStat{
 	/// <summary>
 	/// Initializes a new instance of the <see cref="UpgradableMyGenericTypetat`2"/> class.
 	/// 
-	/// ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE | UPGRADE PRICES 
+	/// ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE | CURRENT UPGRADE (0: INITIAL) |UPGRADE PRICES 
 	/// 
 	/// UPGRADE PRICES: u1:u2:u3 The number of prices indicate the max upgrades number
 	/// 
@@ -55,13 +55,32 @@ public class UpgradableStat : BaseStat{
 	/// <param name="attributes">Attributes.</param>
 	public UpgradableStat(string attributes): base(attributes){
 		string[] att = attributes.Split(ATTRIBUTES_SEPARATOR);
+		string[] pPrices = null;
+		float p;
+		int pI;
+		bool valid = att.Length > 6 || att.Length == 6; 
+		
 		prices = new List<float>();
 		
-		if(att.Length > 5){
-			string[] pPrices = att[5].Split(LIST_SEPARATOR);
-			float p;
-			int pI;
+		if(att.Length > 6){
+			int ci;
+			pPrices = att[6].Split(LIST_SEPARATOR);
 			
+			if(int.TryParse(att[5], out ci))
+				currentUpgradeIndex = ci;
+		}
+		else if(att.Length == 6){
+			int ci;
+			pPrices = att[5].Split(LIST_SEPARATOR);
+			
+			if(int.TryParse(att[4], out ci))
+				currentUpgradeIndex = ci;
+		}
+		else{
+			Debug.LogError("The format of the stat is not valid. A valid format is: ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE| CURRENT UPGRADE (0: INITIAL) | UPGRADE PRICES");
+		}
+		
+		if(valid){
 			//prices for each upgrade
 			foreach(string pP in pPrices){
 				//float price
@@ -77,20 +96,55 @@ public class UpgradableStat : BaseStat{
 			
 			//total upgrades
 			maxUpgrades = prices.Count;
+			
+			
+			//init the current value depending of the current update index
+			initCurrentValue();
 		}
+		
 	}
 	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	/// <summary>
+	/// Returns a <see cref="System.String"/> that represents the current <see cref="UpgradableStat"/>.
+	/// ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE | UPGRADE PRICES 
+	/// </summary>
+	/// <returns>A <see cref="System.String"/> that represents the current <see cref="UpgradableStat"/>.</returns>
 	public override string ToString (){
-		return string.Format ("[UpgradableStat: price={0}, {1}, currentUpgradeIndex={2}, maxUpgrades={3}]", prices,base.ToString(), currentUpgradeIndex, maxUpgrades);
+		return base.ToString() + ATTRIBUTES_SEPARATOR + currentUpgradeIndex + ATTRIBUTES_SEPARATOR + getPricesToString();
 	}
 	
 	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
+	private string getPricesToString(){
+		string res = "";
+		
+		for(int i=0; i<prices.Count; i++){
+			res += prices[i];
+			
+			if(i<prices.Count-1){
+				res += ":";
+			}
+		}
+		
+		return res;
+	}
+	
+	private void updateCurrentValue(){
+		CurrentValue += (MaxValue-InitialValue)/maxUpgrades; //(Level*1f/MaxLevel) * MaxValue;
+		CurrentSimValue += (MaxSimValue-InitialSimValue)/maxUpgrades; //(Level*1f/MaxLevel) * MaxValue;
+	}
+	
+	private void initCurrentValue(){
+		for(int i=0; i<currentUpgradeIndex; i++){
+			updateCurrentValue();
+		}
+	}
+	
 	/// <summary>
 	/// Do the upgrade
 	/// </summary>
@@ -98,9 +152,11 @@ public class UpgradableStat : BaseStat{
 	private void LevelUp(){
 		if(!completed()){
 			currentUpgradeIndex++;
-			CurrentValue += (MaxValue-InitialValue)/maxUpgrades; //(Level*1f/MaxLevel) * MaxValue;
+			updateCurrentValue();
 		}
 	}
+	
+	
 	
 	//--------------------------------------
 	// Public Methods
@@ -130,17 +186,20 @@ public class UpgradableStat : BaseStat{
 	/// <summary>
 	/// Apply the upgrade and return de final money
 	/// </summary>
-	/// <param name="totalMoney">Total money.</param>
-	public float apply(float totalMoney){
-		float finalMoney = totalMoney;
+	public bool apply(bool payWithMoney = true){
+		bool applied = false;
 		
 		if(!completed()
-		   && (totalMoney >= prices[currentUpgradeIndex])){
-			finalMoney -= prices[currentUpgradeIndex];
+		   && (
+			(payWithMoney && GameMoneyManager.Instance.payWithMoney((int)prices[currentUpgradeIndex]))
+			|| (!payWithMoney && GameMoneyManager.Instance.payWithGems((int)prices[currentUpgradeIndex], true))
+			) 
+		   ){
+			applied = true;
 			LevelUp();
 		}
 		
-		return finalMoney;
+		return applied;
 	}
 	
 	public float[] getAllValuesFromActualToInitial(){

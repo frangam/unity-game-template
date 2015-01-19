@@ -25,6 +25,12 @@ public class InputBackButton : Singleton<InputBackButton> {
 	[Tooltip("Leave empty if do navigate with Action. If we go to an specific scene represented by another game section fill it")]
 	private string specificScreenToGO;
 	
+	[SerializeField]
+	private UIBaseWindow openWindow;
+	
+	[SerializeField]
+	private UIBaseWindow closeWindow;
+	
 	//--------------------------------------
 	// GETTERS && SETTERS
 	//--------------------------------------
@@ -46,6 +52,24 @@ public class InputBackButton : Singleton<InputBackButton> {
 		}
 	}
 	
+	public UIBaseWindow OpenWindow {
+		get {
+			return this.openWindow;
+		}
+		set {
+			openWindow = value;
+		}
+	}
+	
+	public UIBaseWindow CloseWindow {
+		get {
+			return this.closeWindow;
+		}
+		set {
+			closeWindow = value;
+		}
+	}
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
@@ -55,7 +79,16 @@ public class InputBackButton : Singleton<InputBackButton> {
 		#if UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			
-			if(!string.IsNullOrEmpty(specificScreenToGO)){
+			if(openWindow){
+				UIController.Instance.Manager.open(openWindow);
+				
+				if(closeWindow)
+					UIController.Instance.Manager.close(closeWindow);
+			}
+			else if(closeWindow){
+				UIController.Instance.Manager.close(closeWindow);
+			}
+			else if(!string.IsNullOrEmpty(specificScreenToGO)){
 				ScreenLoaderVisualIndicator.Instance.LoadScene (specificScreenToGO);
 			}
 			else{

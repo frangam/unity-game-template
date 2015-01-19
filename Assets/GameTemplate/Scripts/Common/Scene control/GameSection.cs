@@ -2,7 +2,7 @@ public enum GameSection{
 	NONE									= -3,
 	SOME									= -2,
 	ALL										= -1,
-
+	
 	CORPORATIVE_LOGO_SPLASH 				= 0,
 	LOAD_SCREEN 							= 1,
 	MAIN_MENU 								= 2,
@@ -20,4 +20,5 @@ public enum GameSection{
 	CHARACTER_SELECTION						= 14,
 	ITEMS_SELECTION							= 15,
 	TUTORIAL								= 16,
+	IN_APP									= 17,
 }
