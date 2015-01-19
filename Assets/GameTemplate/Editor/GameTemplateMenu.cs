@@ -10,7 +10,7 @@ public class GameTemplateMenu : EditorWindow {
 	
 	#if UNITY_EDITOR
 	
-	[MenuItem("Window/Game Template/Game Settings", false, 0)]
+	[MenuItem("Window/Game Template/Game Settings", false, 1)]
 	public static void Edit() {
 		Selection.activeObject = GameSettings.Instance;
 	}
@@ -19,7 +19,13 @@ public class GameTemplateMenu : EditorWindow {
 	//  Documentation
 	//--------------------------------------
 	
-	[MenuItem("Window/Game Template/Documentation/All Docs", false, 0)]
+	[MenuItem("Window/Game Template/Pukepixel GDrive", false)]
+	public static void PukepixelGDrive() {
+		string url = "https://drive.google.com/drive/u/0/#folders/0B9SJ925Use_uT2hBUzhBcnBIbUE";
+		Application.OpenURL(url);
+	}
+	
+	[MenuItem("Window/Game Template/Documentation/All Docs", false)]
 	public static void AllDocs() {
 		string url = "https://drive.google.com/drive/u/0/#folders/0B9SJ925Use_uT2hBUzhBcnBIbUE/0B9SJ925Use_uVlJQel93WHRzYU0/0B9SJ925Use_uSjlXZFU2d2ZfODQ";
 		Application.OpenURL(url);

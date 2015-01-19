@@ -116,7 +116,7 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 			loadLevel(levelToLoadTEST);
 		else if(loadCurrentLevelAtStart)
 			loadCurrentLevel();
-		if(loadAllLevels)
+		else if(loadAllLevels)
 			loadAllOfLevels();
 	}
 	

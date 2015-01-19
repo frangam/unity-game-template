@@ -229,7 +229,7 @@ public class GameSettingsEditor : Editor {
 				GameSettings.Instance.gameDifficulties[i] = (GameDifficulty) EditorGUILayout.EnumPopup(GameSettings.Instance.gameDifficulties[i]);
 				
 				
-				if(GUILayout.Button("Remove",  GUILayout.Width(80))) {
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
 					GameSettings.Instance.gameDifficulties.Remove(d);
 					break;
 				}
@@ -240,8 +240,74 @@ public class GameSettingsEditor : Editor {
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if(GUILayout.Button("Add",  GUILayout.Width(80))) {
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
 				GameSettings.Instance.gameDifficulties.Add(GameDifficulty.NONE);
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+		}
+	}
+	
+	private void handleWorldLevelRankings(){
+		GameSettings.Instance.showWorldRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showWorldRankingSettings, "Rankings by World Levels");
+		if (GameSettings.Instance.showWorldRankingSettings) {
+			if(GameSettings.Instance.worldLevelRankingIDS.Count == 0) {
+				EditorGUILayout.HelpBox("No World Level Ranking IDs Registred",MessageType.None);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.worldLevelRankingIDS) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Level " + (i+1), GUILayout.Width(60));
+				GameSettings.Instance.worldLevelRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.worldLevelRankingIDS[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.worldLevelRankingIDS.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.worldLevelRankingIDS.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+		}
+	}
+	
+	private void handleSurvivalLevelRankings(){
+		GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, "Rankings by Survival Levels");
+		if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
+			if(GameSettings.Instance.survivalLevelRankingIDS.Count == 0) {
+				EditorGUILayout.HelpBox("No Survival Level Ranking IDs Registred",MessageType.None);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.survivalLevelRankingIDS) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Level " + (i+1), GUILayout.Width(60));
+				GameSettings.Instance.survivalLevelRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.survivalLevelRankingIDS[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.survivalLevelRankingIDS.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.survivalLevelRankingIDS.Add("");
 			}
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.Space();
@@ -382,7 +448,7 @@ public class GameSettingsEditor : Editor {
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("#Hashtag:");
-			GameSettings.Instance.HASHTAG	= EditorGUILayout.TextField(GameSettings.Instance.HASHTAG);
+			GameSettings.Instance.HASHTAG	= EditorGUILayout.TextField(GameSettings.Instance.HASHTAG).Trim();
 			EditorGUILayout.EndHorizontal();
 		}
 	}
@@ -392,37 +458,37 @@ public class GameSettingsEditor : Editor {
 		if (GameSettings.Instance.showAppLinksSettings) {
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Android Link:");
-			GameSettings.Instance.LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_ANDROID_APP);
+			GameSettings.Instance.LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_ANDROID_APP).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Android Short Link:");
-			GameSettings.Instance.SHORT_LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_ANDROID_APP);
+			GameSettings.Instance.SHORT_LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_ANDROID_APP).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("iOS Link:");
-			GameSettings.Instance.LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_IOS_APP);
+			GameSettings.Instance.LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_IOS_APP).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("iOS Short Link:");
-			GameSettings.Instance.SHORT_LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_IOS_APP);
+			GameSettings.Instance.SHORT_LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_IOS_APP).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Amazon Link:");
-			GameSettings.Instance.LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_AMAZON_APP);
+			GameSettings.Instance.LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_AMAZON_APP).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Amazon Short Link:");
-			GameSettings.Instance.SHORT_LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_AMAZON_APP);
+			GameSettings.Instance.SHORT_LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_AMAZON_APP).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Game Logo Link:");
-			GameSettings.Instance.LOGO_APP_LINK	= EditorGUILayout.TextField(GameSettings.Instance.LOGO_APP_LINK);
+			GameSettings.Instance.LOGO_APP_LINK	= EditorGUILayout.TextField(GameSettings.Instance.LOGO_APP_LINK).Trim();
 			EditorGUILayout.EndHorizontal();
 		}
 	}
@@ -432,152 +498,155 @@ public class GameSettingsEditor : Editor {
 		if (GameSettings.Instance.showRankingSettings) {
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Unique Ranking");
-			GameSettings.Instance.ID_UNIQUE_RANKING	= EditorGUILayout.TextField(GameSettings.Instance.ID_UNIQUE_RANKING);
+			GameSettings.Instance.ID_UNIQUE_RANKING	= EditorGUILayout.TextField(GameSettings.Instance.ID_UNIQUE_RANKING).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Survival Ranking");
-			GameSettings.Instance.ID_RANKING_SURVIVAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL);
+			GameSettings.Instance.ID_RANKING_SURVIVAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL).Trim();
 			EditorGUILayout.EndHorizontal();
 			
 			GameSettings.Instance.showDifficultiesRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showDifficultiesRankingSettings, "Rankings by Difficulty");
 			if (GameSettings.Instance.showDifficultiesRankingSettings) {
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Easy Mode Ranking");
-				GameSettings.Instance.ID_RANKING_EASY	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_EASY);
+				GameSettings.Instance.ID_RANKING_EASY	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_EASY).Trim();
 				EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Normal Mode Ranking");
-				GameSettings.Instance.ID_RANKING_NORMAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_NORMAL);
+				GameSettings.Instance.ID_RANKING_NORMAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_NORMAL).Trim();
 				EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Hard Mode Ranking");
-				GameSettings.Instance.ID_RANKING_HARD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_HARD);
+				GameSettings.Instance.ID_RANKING_HARD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_HARD).Trim();
 				EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("PRO Mode Ranking");
-				GameSettings.Instance.ID_RANKING_PRO	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_PRO);
+				GameSettings.Instance.ID_RANKING_PRO	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_PRO).Trim();
 				EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("God Mode Ranking");
-				GameSettings.Instance.ID_RANKING_GOD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_GOD);
+				GameSettings.Instance.ID_RANKING_GOD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_GOD).Trim();
 				EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Impossible Ranking");
-				GameSettings.Instance.ID_RANKING_IMPOSSIBLE	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_IMPOSSIBLE);
+				GameSettings.Instance.ID_RANKING_IMPOSSIBLE	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_IMPOSSIBLE).Trim();
 				EditorGUILayout.EndHorizontal();
 			}
 			
-			GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, "Rankings by Survival Levels");
-			if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 1 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 2 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 3 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 4 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 5 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 6 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 7 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 8 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 9 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level 10 Survival Ranking");
-				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10);
-				EditorGUILayout.EndHorizontal();
-			}
+			handleWorldLevelRankings();
+			handleSurvivalLevelRankings();
 			
-			GameSettings.Instance.showWorldRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showWorldRankingSettings, "Rankings by Game Worlds");
-			if (GameSettings.Instance.showWorldRankingSettings) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 1 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_1	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_1);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 2 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_2	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_2);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 3 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_3	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_3);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 4 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_4	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_4);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 5 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_5	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_5);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 6 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_6	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_6);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 7 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_7	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_7);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 8 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_8	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_8);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 9 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_9	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_9);
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("World 10 Ranking");
-				GameSettings.Instance.ID_RANKING_WORLD_10	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_10);
-				EditorGUILayout.EndHorizontal();
-			}
+			//			GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, "Rankings by Survival Levels");
+			//			if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 1 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 2 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 3 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 4 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 5 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 6 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 7 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 8 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 9 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Level 10 Survival Ranking");
+			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10);
+			//				EditorGUILayout.EndHorizontal();
+			//			}
+			
+			//			GameSettings.Instance.showWorldRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showWorldRankingSettings, "Rankings by Game Worlds");
+			//			if (GameSettings.Instance.showWorldRankingSettings) {
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 1 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_1	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_1);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 2 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_2	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_2);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 3 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_3	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_3);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 4 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_4	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_4);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 5 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_5	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_5);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 6 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_6	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_6);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 7 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_7	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_7);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 8 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_8	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_8);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 9 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_9	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_9);
+			//				EditorGUILayout.EndHorizontal();
+			//
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("World 10 Ranking");
+			//				GameSettings.Instance.ID_RANKING_WORLD_10	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_10);
+			//				EditorGUILayout.EndHorizontal();
+			//			}
 		}
 	}
 	

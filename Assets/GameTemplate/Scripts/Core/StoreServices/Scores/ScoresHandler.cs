@@ -208,20 +208,24 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	/// <returns>The ranking by game world.</returns>
 	/// <param name="world">World.</param>
 	public string idRankingByGameWorld(int world){
-		string res = GameSettings.Instance.ID_RANKING_WORLD_1;
+		string res = "";//GameSettings.Instance.ID_RANKING_WORLD_1;
 		
-		switch(world){
-		case 1: res = GameSettings.Instance.ID_RANKING_WORLD_1; break;
-		case 2: res = GameSettings.Instance.ID_RANKING_WORLD_2; break;
-		case 3: res = GameSettings.Instance.ID_RANKING_WORLD_3; break;
-		case 4: res = GameSettings.Instance.ID_RANKING_WORLD_4; break;
-		case 5: res = GameSettings.Instance.ID_RANKING_WORLD_5; break;
-		case 6: res = GameSettings.Instance.ID_RANKING_WORLD_6; break;
-		case 7: res = GameSettings.Instance.ID_RANKING_WORLD_7; break;
-		case 8: res = GameSettings.Instance.ID_RANKING_WORLD_8; break;
-		case 9: res = GameSettings.Instance.ID_RANKING_WORLD_9; break;
-		case 10: res = GameSettings.Instance.ID_RANKING_WORLD_10; break;
+		if(world > 0 && GameSettings.Instance.worldLevelRankingIDS != null && GameSettings.Instance.worldLevelRankingIDS.Count > world-1){
+			res = GameSettings.Instance.worldLevelRankingIDS[world-1];
 		}
+		
+		//		switch(world){
+		//		case 1: res = GameSettings.Instance.ID_RANKING_WORLD_1; break;
+		//		case 2: res = GameSettings.Instance.ID_RANKING_WORLD_2; break;
+		//		case 3: res = GameSettings.Instance.ID_RANKING_WORLD_3; break;
+		//		case 4: res = GameSettings.Instance.ID_RANKING_WORLD_4; break;
+		//		case 5: res = GameSettings.Instance.ID_RANKING_WORLD_5; break;
+		//		case 6: res = GameSettings.Instance.ID_RANKING_WORLD_6; break;
+		//		case 7: res = GameSettings.Instance.ID_RANKING_WORLD_7; break;
+		//		case 8: res = GameSettings.Instance.ID_RANKING_WORLD_8; break;
+		//		case 9: res = GameSettings.Instance.ID_RANKING_WORLD_9; break;
+		//		case 10: res = GameSettings.Instance.ID_RANKING_WORLD_10; break;
+		//		}
 		
 		return res;
 	}
@@ -232,20 +236,24 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	/// <returns>The ranking by game world.</returns>
 	/// <param name="world">World.</param>
 	public string idRankingBySurvivalLevels(int level){
-		string res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1;
+		string res = "";//GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1;
 		
-		switch(level){
-		case 1: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1; break;
-		case 2: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2; break;
-		case 3: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3; break;
-		case 4: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4; break;
-		case 5: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5; break;
-		case 6: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6; break;
-		case 7: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7; break;
-		case 8: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8; break;
-		case 9: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9; break;
-		case 10: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10; break;
+		if(level > 0 && GameSettings.Instance.survivalLevelRankingIDS != null && GameSettings.Instance.survivalLevelRankingIDS.Count > level-1){
+			res = GameSettings.Instance.worldLevelRankingIDS[level-1];
 		}
+		
+		//		switch(level){
+		//		case 1: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1; break;
+		//		case 2: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2; break;
+		//		case 3: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3; break;
+		//		case 4: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4; break;
+		//		case 5: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5; break;
+		//		case 6: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6; break;
+		//		case 7: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7; break;
+		//		case 8: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8; break;
+		//		case 9: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9; break;
+		//		case 10: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10; break;
+		//		}
 		
 		return res;
 	}
