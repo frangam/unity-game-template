@@ -2,16 +2,35 @@
 using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
+using UnionAssets.FLE;
 
 public class CoreIAPManager : Singleton<CoreIAPManager>{
-
+	//--------------------------------------
+	// Constants
+	//--------------------------------------
+	public const string PURCHASE_COMPLETED = "gt_inapp_purchase_completed";
+	
+	//--------------------------------------
+	// Static Attributes
+	//--------------------------------------
+	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
+	
+	//--------------------------------------
+	// Private Attributes
+	//--------------------------------------
 	private List<Product> _products;
 	private bool _isInited;
-	public string AndroidCode;
-
+	
+	//--------------------------------------
+	// Getters/Setters
+	//--------------------------------------
 	#region Getters & Setters
-	public List<Product> Products
-	{ 
+	public static EventDispatcherBase dispatcher {
+		get {
+			return _dispatcher;
+		}
+	}
+	public List<Product> Products{ 
 		get { return _products; }
 		set { _products = value; }
 	}
@@ -19,32 +38,69 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		get { return _isInited; }
 		private set { _isInited = value; }
 	}
-	public void Purchase(string SKU)
-	{
-		#if UNITY_ANDROID
-			AndroidInAppPurchaseManager.instance.purchase(SKU);
-		#endif
-		#if UNITY_IPHONE
-			IOSInAppPurchaseManager.instance.buyProduct(SKU);
-		#endif
-		#if UNITY_WP8
-			WP8InAppPurchasesManager.instance.purchase(SKU);			
-		#endif
-	}
-	public void IOSRestorePurchase()
-	{
-		if(IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled)
-		{
-			IOSInAppPurchaseManager.instance.restorePurchases();
+	#endregion
+	
+	
+	//--------------------------------------
+	// Unity Methods
+	//--------------------------------------
+	#region Unity
+	public virtual void Awake(){
+		if(GameSettings.Instance.inAppBillingIDS != null && GameSettings.Instance.inAppBillingIDS.Count > 0){
+			Init(GameSettings.Instance.inAppBillingIDS);
 		}
+		else
+			Debug.LogError("Not found any In App Billing ID");
+	}
+	
+	public virtual void Start(){
+		
+	}
+	
+	public virtual void Update(){
+		
 	}
 	#endregion
-
+	
+	
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public void Purchase(string SKU){
+		#if UNITY_ANDROID
+		AndroidInAppPurchaseManager.instance.purchase(SKU);
+		#elif UNITY_IPHONE
+		IOSInAppPurchaseManager.instance.buyProduct(SKU);
+		#elif UNITY_WP8
+		WP8InAppPurchasesManager.instance.purchase(SKU);			
+		#endif
+	}
+	public void IOSRestorePurchase(){
+		#if UNITY_IPHONE
+		if(IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
+			IOSInAppPurchaseManager.instance.restorePurchases();
+		}
+		#endif
+	}
+	
+	
 	#region Init
-	public void Init(List<Product> products)
-	{
+	/// <summary>
+	/// Init loading productIDs that are the same in all platforms
+	/// </summary>
+	/// <param name="productIDs">Product I ds.</param>
+	public void Init(List<string> productIDs){
+		FillProducts(productIDs);
+		endInit();
+	}
+	
+	public void Init(List<Product> products){
 		FillProducts(products);//1. Fill the list of purchase into the AndroidInAppPurchaseManager products list.
-	#if UNITY_ANDROID
+		endInit();
+	}
+	
+	private void endInit(){
+		#if UNITY_ANDROID
 		//2. Subscription to the important events.
 		//When product is bought.
 		AndroidInAppPurchaseManager.ActionProductPurchased += OnProductPurchased; 
@@ -54,42 +110,43 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		AndroidInAppPurchaseManager.ActionBillingSetupFinished += OnBillingConnected;
 		//3. Request of the shop starup with our Auth key 
 		//poner asi el codigo no es seguro, mejor hacerlo por composicion de string o ponerlo en el editor.
-		AndroidInAppPurchaseManager.instance.loadStore(AndroidCode);
-	#endif
-	#if UNITY_IPHONE
+		
+		AndroidInAppPurchaseManager.instance.loadStore();
+		
+		#elif UNITY_IPHONE
 		IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
 		IOSInAppPurchaseManager.instance.OnTransactionComplete += OnTransactionComplete;
 		IOSInAppPurchaseManager.instance.OnVerificationComplete += OnVerificationComplete;
 		IOSInAppPurchaseManager.instance.OnRestoreComplete += OnRestoreComplete;
 		IOSInAppPurchaseManager.instance.loadStore();
-	#endif
-	#if UNITY_WP8
+		#elif UNITY_WP8
 		WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
 		WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.PRODUCT_PURCHASE_FINISHED, OnPurchaseFinished);
 		WP8InAppPurchasesManager.instance.init();	
-	#endif
-		Debug.Log("CoreIAPManager - Init finished");
+		#endif
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("CoreIAPManager - Init finished");
 	}
 	#endregion
-
+	
+	//--------------------------------------
+	//  EVENTS
+	//--------------------------------------
 	#region AndroidEvents
-	void OnProductPurchased (BillingResult result)
-	{
+	void OnProductPurchased (BillingResult result){
 		//if all goes right...
-		if(result.isSuccess)
-		{
+		if(result.isSuccess){
 			//este metodo se encargara de consumir la compra.
 			AndroidInAppPurchaseManager.instance.consume(result.purchase.SKU);
 		} 
 	}
-	void OnProductConsumed (BillingResult result)
-	{
+	void OnProductConsumed (BillingResult result){
 		if(result.isSuccess) {
 			OnProcessingConsumeProduct (result.purchase.SKU);
 		}
 	}
-	void OnBillingConnected (BillingResult result)
-	{
+	void OnBillingConnected (BillingResult result){
 		//Como ya se ha iniciado la tienda no nos hace falta estar suscritos al evento que nos
 		//avise cuando se inicia la tienda.
 		AndroidInAppPurchaseManager.ActionBillingSetupFinished -= OnBillingConnected;
@@ -101,8 +158,8 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			AndroidInAppPurchaseManager.ActionRetrieveProducsFinished += OnRetriveProductsFinised;
 		} 
 	}
-	void OnRetriveProductsFinised (BillingResult result)
-	{
+	
+	void OnRetriveProductsFinised (BillingResult result){
 		//igual que antes ya no nos hace falta estar suscritos al evento.
 		AndroidInAppPurchaseManager.ActionRetrieveProducsFinished -= OnRetriveProductsFinised;
 		//si todo fue bien...
@@ -117,28 +174,31 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 				{
 					OnProcessingConsumeProduct(res.SKU);
 				}
-
+				
 			}
 		}
 	}
 	#endregion
-
+	
+	
 	#region IOSEvents
-	void OnStoreKitInitComplete (ISN_Result result)
-	{
+	void OnStoreKitInitComplete (ISN_Result result){
 		IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
 		
 		if(result.IsSucceeded) {
-			Debug.Log("Inited successfully, Avaliable products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Inited successfully, Avaliable products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
 		} else {
-			Debug.Log("Failed in init Stoke Kit :(");
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Failed in init Stoke Kit :(");
 		}
 	}
-	void OnTransactionComplete (IOSStoreKitResponse responce)
-	{
-		Debug.Log("OnTransactionComplete: " + responce.productIdentifier);
-		Debug.Log("OnTransactionComplete: state: " + responce.state);
+	void OnTransactionComplete (IOSStoreKitResponse responce){
+		if(GameSettings.Instance.showTestLogs){
+			Debug.Log("OnTransactionComplete: " + responce.productIdentifier);
+			Debug.Log("OnTransactionComplete: state: " + responce.state);
+		}
 		
 		switch(responce.state) {
 		case InAppPurchaseState.Purchased:
@@ -150,7 +210,8 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			//Warning: Use 
 			//SANDBOX_VERIFICATION_SERVER url (https://sandbox.itunes.apple.com/verifyReceipt) during app testing  and 
 			//APPLE_VERIFICATION_SERVER url  (https://buy.itunes.apple.com/verifyReceipt) on production.
-			IOSInAppPurchaseManager.instance.verifyLastPurchase(IOSInAppPurchaseManager.SANDBOX_VERIFICATION_SERVER);
+			string verifURL = GameSettings.Instance.IS_A_DEV_VERSION ? IOSInAppPurchaseManager.SANDBOX_VERIFICATION_SERVER : IOSInAppPurchaseManager.APPLE_VERIFICATION_SERVER;
+			IOSInAppPurchaseManager.instance.verifyLastPurchase(verifURL);
 			break;
 		case InAppPurchaseState.Deferred:
 			//iOS 8 introduces Ask to Buy, which lets 
@@ -161,42 +222,42 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			//reflecting the parent's decision or after the 
 			//transaction times out. Avoid blocking your UI 
 			//or gameplay while waiting for the transaction to be updated.
-
+			
 			//wtf? mejor ver en vivo con un iphone.
 			break;
 		case InAppPurchaseState.Failed:
 			//Our purchase flow is failed.
 			//We can unlock interface and report user that the purchase is failed. 
-			Debug.Log("Transaction failed with error, code: " + responce.error.code);
-			Debug.Log("Transaction failed with error, description: " + responce.error.description);
+			if(GameSettings.Instance.showTestLogs){
+				Debug.Log("Transaction failed with error, code: " + responce.error.code);
+				Debug.Log("Transaction failed with error, description: " + responce.error.description);
+			}
 			break;
 		}
 		
-//		IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
+		//		IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
 	}
-	void OnVerificationComplete (IOSStoreKitVerificationResponse responce)
-	{
-//		IOSNativePopUpManager.showMessage("Verification", "Transaction verification status: " + responce.status.ToString());
-		Debug.Log("Transaction verification status: " + responce.status.ToString());
+	void OnVerificationComplete (IOSStoreKitVerificationResponse responce){
+		//		IOSNativePopUpManager.showMessage("Verification", "Transaction verification status: " + responce.status.ToString());
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("Transaction verification status: " + responce.status.ToString());
 	}
-	void OnRestoreComplete (ISN_Result responce)
-	{
-		if(responce.IsSucceeded)
-		{
+	void OnRestoreComplete (ISN_Result responce){
+		if(responce.IsSucceeded){
 			IOSNativePopUpManager.showMessage("Restore Purchase", "All purchases has been restored.");
 		}
-		else
-		{
+		else{
 			IOSNativePopUpManager.showMessage("Restore Purchase", "Restore failed: "+ responce.error.description);
 		}
 	}
 	#endregion
-
+	
 	#region WP8Events
 	void OnInitComplete() {
 		IsInited = true;
 		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
-
+		
 		//check if have a durable object but no its assigned yet.
 		foreach(WP8ProductTemplate product in WP8InAppPurchasesManager.instance.products){
 			if(product.Type == WP8PurchaseProductType.Durable) {
@@ -204,13 +265,13 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 					//The Durable product was purchased, we should check here 
 					//if the content is unlocked for our Durable product.
 					OnProcessingConsumeProduct(product.ProductId);
-//					Debug.Log("Product " + product.Name + " is purchased");
+					//					Debug.Log("Product " + product.Name + " is purchased");
 					
 				}
 			}
 		}
 		
-//		WP8Dialog.Create("market Initted", "Total products avaliable: " + WP8InAppPurchasesManager.instance.products.Count);
+		//		WP8Dialog.Create("market Initted", "Total products avaliable: " + WP8InAppPurchasesManager.instance.products.Count);
 	}
 	void OnPurchaseFinished(CEvent e) {
 		WP8PurchseResponce responce = e.data as WP8PurchseResponce;
@@ -224,19 +285,33 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		}
 	}
 	#endregion
-
+	
+	/// <summary>
+	/// Load the products ids that are the same in all platforms
+	/// </summary>
+	/// <param name="productsIDs">Products I ds.</param>
+	private void FillProducts(List<string> productsIDs){
+		#if UNITY_ANDROID
+		productsIDs.ForEach(x => AndroidInAppPurchaseManager.instance.addProduct(x));
+		#elif UNITY_IPHONE
+		productsIDs.ForEach(x => IOSInAppPurchaseManager.instance.addProductId(x));
+		#elif UNITY_WP8
+		//este se rellena desde microsoft.
+		#endif
+	}
+	
 	private void FillProducts(List<Product> products)
 	{
-	#if UNITY_ANDROID
+		#if UNITY_ANDROID
 		products.ForEach(x => AndroidInAppPurchaseManager.instance.addProduct(x.AndroidSKU));
-	#endif
-	#if UNITY_IPHONE
+		#elif UNITY_IPHONE
 		products.ForEach(x => IOSInAppPurchaseManager.instance.addProductId(x.IOS_SKU));
-	#endif
-	#if UNITY_WP8
+		#elif UNITY_WP8
 		//este se rellena desde microsoft.
-	#endif
+		#endif
 	}
+	
+	
 	#region Virtual
 	/// <summary>
 	/// Este metodo se encarga de darle al jugador el objecto comprado. Si es un consumible(100 monedas) o durable 
@@ -245,13 +320,15 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	/// <param name="SKU">SKU</param>
 	public virtual void OnProcessingConsumeProduct (string SKU)
 	{
-//		switch(SKU) {
-//		case "100_coins":
-//			//Le damos al jugador su producto.
-//			//GameDataExample.AddCoins(100);
-//			AndroidMessage.Create("Añadido al jugador", "100 Monedas de oro");
-//			break;
-//		}
+		dispatcher.dispatch(PURCHASE_COMPLETED, SKU);
+		
+		//		switch(SKU) {
+		//		case "100_coins":
+		//			//Le damos al jugador su producto.
+		//			//GameDataExample.AddCoins(100);
+		//			AndroidMessage.Create("Añadido al jugador", "100 Monedas de oro");
+		//			break;
+		//		}
 	}
 	#endregion
 }

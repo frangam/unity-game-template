@@ -47,6 +47,10 @@ public class RateApp : Singleton<RateApp>{
 				}
 			}
 		}
+		else
+		{
+			PlayerPrefs.SetInt(GameSettings.PP_FIRST_PLAY, 1);
+		}
 	}
 	#endregion
 	

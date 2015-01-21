@@ -22,6 +22,7 @@ public class GameSettings : ScriptableObject {
 	public bool showWorldRankingSettings 				= false;
 	public bool showSurvivalLevelsRankingSettings 		= false;
 	public bool showDifficultiesRankingSettings 		= false;
+	public bool showInAppBillingSettings 				= false;
 	
 	
 	//--------------------------------------
@@ -44,8 +45,9 @@ public class GameSettings : ScriptableObject {
 	public static float soundVolume 					= 1f;
 	public static float graphicsDetails					= 1f;
 	public List<GameDifficulty> gameDifficulties 		= new List<GameDifficulty>(){GameDifficulty.NONE};
-	public List<string> survivalLevelRankingIDS 		= new List<string>(){};
-	public List<string> worldLevelRankingIDS 			= new List<string>(){};
+	public List<string> survivalLevelRankingIDS 		= new List<string>();
+	public List<string> worldLevelRankingIDS 			= new List<string>();
+	public List<string> inAppBillingIDS 				= new List<string>();
 	public bool FX_AND_MUSIC_ARE_THE_SAME 				= true;
 	public bool HAS_INITIAL_TUTORIAL 					= false;
 	public bool 	showMissionsWinAtStart				= false;
@@ -67,6 +69,7 @@ public class GameSettings : ScriptableObject {
 	public float	PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED 		= 0f;
 	
 	//ADS 
+	public bool 	IS_A_DEV_VERSION = true; 
 	public bool 	IS_PRO_VERSION = false; 
 	public int		TIMES_START_GAME_TO_SHOW_AD_AT_START 			= 1; //1: we show an interstisial ad every time user inits the game		
 	public int 		NUM_GAMEOVERS_SHOW_AD_HARD_MODE 	= 5; //number of gameovers to show an ad in hard mode

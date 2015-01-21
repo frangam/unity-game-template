@@ -76,6 +76,8 @@ public class UIBaseManager : MonoBehaviour {
 		
 	}
 	public virtual void Start(){}
+	public virtual void OnDestroy(){}
+	public virtual void Update(){}
 	#endregion
 	
 	//--------------------------------------
@@ -88,7 +90,12 @@ public class UIBaseManager : MonoBehaviour {
 	public virtual void loadWindows(){
 		if(locateAllWindows){
 			UIBaseWindow[] windowsArr = FindObjectsOfType<UIBaseWindow>() as UIBaseWindow[];
-			windows = new List<UIBaseWindow>(windowsArr);
+			windows = new List<UIBaseWindow>();
+			
+			foreach(UIBaseWindow w in windowsArr){
+				if(!windows.Contains(w))
+					windows.Add(w);
+			}
 		}
 		
 		if(windows != null && windows.Count > 0){

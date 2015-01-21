@@ -78,6 +78,8 @@ public class GameSettingsEditor : Editor {
 		EditorGUILayout.Space();
 		appLinks();
 		EditorGUILayout.Space();
+		inAppBilling();
+		EditorGUILayout.Space();
 		rankingIdsSettings();
 		
 		
@@ -186,6 +188,12 @@ public class GameSettingsEditor : Editor {
 		EditorGUILayout.Space();
 		
 		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("Is a Dev version");
+		GameSettings.Instance.IS_A_DEV_VERSION	= EditorGUILayout.Toggle(GameSettings.Instance.IS_A_DEV_VERSION);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.Space();
+		
+		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Show Test Logs");
 		GameSettings.Instance.showTestLogs	= EditorGUILayout.Toggle(GameSettings.Instance.showTestLogs);
 		EditorGUILayout.EndHorizontal();
@@ -213,6 +221,38 @@ public class GameSettingsEditor : Editor {
 		EditorGUILayout.Space();
 		
 		handleDifficulties();
+	}
+	
+	protected virtual void inAppBilling(){
+		GameSettings.Instance.showInAppBillingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showInAppBillingSettings, "In App Billing");
+		if (GameSettings.Instance.showInAppBillingSettings) {
+			if(GameSettings.Instance.inAppBillingIDS.Count == 0) {
+				EditorGUILayout.HelpBox("No In App Billing IDs Registred",MessageType.None);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.inAppBillingIDS) {
+				EditorGUILayout.BeginHorizontal();
+				GameSettings.Instance.inAppBillingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.inAppBillingIDS[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.inAppBillingIDS.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.inAppBillingIDS.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+		}
 	}
 	
 	private void handleDifficulties(){
