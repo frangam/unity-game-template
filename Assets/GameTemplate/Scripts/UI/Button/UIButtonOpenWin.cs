@@ -7,20 +7,20 @@ public class UIButtonOpenWin : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private UIBaseWindow window;
-
+	
 	[SerializeField]
 	private UIBaseWindow closeWindow;
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	protected override void doPress ()
 	{
 		base.doPress ();
-
+		
 		if(closeWindow)
 			UIController.Instance.Manager.close(closeWindow);
-
+		
 		if(window)
 			UIController.Instance.Manager.open(window);
 		else

@@ -139,6 +139,10 @@ public class UIBaseButton : MonoBehaviour {
 		pressing = false;
 		pressingTime = Time.time;
 		pressingStoped = false;
+		
+		if(button != null && button.animator != null)
+			button.animator.ResetTrigger(button.animationTriggers.pressedTrigger);
+		
 	}
 	
 	public virtual void stopPressing(){

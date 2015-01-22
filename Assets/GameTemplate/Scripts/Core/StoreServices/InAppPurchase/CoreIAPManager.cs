@@ -8,7 +8,13 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
+	public const string NOT_RETRIEVED_PRODUCTS = "gt_inapp_not_retrieved_product";
+	public const string RETRIEVED_PRODUCTS = "gt_inapp_retrieved_product";
 	public const string PURCHASE_COMPLETED = "gt_inapp_purchase_completed";
+	public const string PURCHASE_FAILED = "gt_inapp_purchase_failed";
+	public const string DEFERRED_PURCHASE_COMPLETED = "gt_inapp_deferred_purchase_completed";
+	public const string RESTORE_PURCHASE_COMPLETED = "gt_inapp_restore_purchase_completed";
+	public const string RESTORE_PURCHASE_FAILED = "gt_inapp_restore_purchase_failed";
 	
 	//--------------------------------------
 	// Static Attributes
@@ -60,6 +66,23 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	public virtual void Update(){
 		
 	}
+	public virtual void OnDestroy(){
+		if(_isInited){
+			#if UNITY_ANDROID
+			AndroidInAppPurchaseManager.ActionProductPurchased -= OnProductPurchased; 
+			AndroidInAppPurchaseManager.ActionProductConsumed  -= OnProductConsumed;
+			AndroidInAppPurchaseManager.ActionBillingSetupFinished -= OnBillingConnected;
+			#elif UNITY_IPHONE
+			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
+			IOSInAppPurchaseManager.instance.OnTransactionComplete -= OnTransactionComplete;
+			IOSInAppPurchaseManager.instance.OnVerificationComplete -= OnVerificationComplete;
+			IOSInAppPurchaseManager.instance.OnRestoreComplete -= OnRestoreComplete;
+			#elif WP8
+			WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
+			WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.PRODUCT_PURCHASE_FINISHED, OnPurchaseFinished);
+			#endif
+		}
+	}
 	#endregion
 	
 	
@@ -109,8 +132,6 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		//When shop is inicialized.
 		AndroidInAppPurchaseManager.ActionBillingSetupFinished += OnBillingConnected;
 		//3. Request of the shop starup with our Auth key 
-		//poner asi el codigo no es seguro, mejor hacerlo por composicion de string o ponerlo en el editor.
-		
 		AndroidInAppPurchaseManager.instance.loadStore();
 		
 		#elif UNITY_IPHONE
@@ -152,11 +173,20 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		AndroidInAppPurchaseManager.ActionBillingSetupFinished -= OnBillingConnected;
 		//si todo fue bien...
 		if(result.isSuccess) {
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("In App Service connected");
+			
 			//ahora que estamos conectados en la tienda podemos pedir la lista de productos.
 			AndroidInAppPurchaseManager.instance.retrieveProducDetails();
 			//nos vamos a suscribir a este evento que nos avisara cuando este cargada.
 			AndroidInAppPurchaseManager.ActionRetrieveProducsFinished += OnRetriveProductsFinised;
-		} 
+		}
+		else{
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Failed in init Stoke Kit :(");
+			
+			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
+		}
 	}
 	
 	void OnRetriveProductsFinised (BillingResult result){
@@ -166,16 +196,17 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		if(result.isSuccess) {
 			//cambiamos la bandera para avisar que la tienda esta lista
 			IsInited = true;
+			
 			//es buena practica comprobar que todos los productos adquiridos esta consumidos (por ejemplo pudimos
 			//comprar un prodcutos pero se nos salio del movil y no lo consumimos, o iniciamos desde otro dispositivo)
-			foreach(GooglePurchaseTemplate res in AndroidInAppPurchaseManager.instance.inventory.purchases)
-			{
-				if(res.state == GooglePurchaseState.PURCHASED)
-				{
-					OnProcessingConsumeProduct(res.SKU);
-				}
-				
-			}
+			dispatcher.dispatch(RETRIEVED_PRODUCTS, AndroidInAppPurchaseManager.instance.inventory.products);
+			
+			Debug.Log("Inited successfully, Avaliable products cound: " + AndroidInAppPurchaseManager.instance.inventory.products.Count.ToString());
+		}
+		else{
+			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Failed in init Stoke Kit :(");
 		}
 	}
 	#endregion
@@ -189,7 +220,11 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			if(GameSettings.Instance.showTestLogs)
 				Debug.Log("Inited successfully, Avaliable products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
+			
+			dispatcher.dispatch(RETRIEVED_PRODUCTS, IOSInAppPurchaseManager.instance.products);
 		} else {
+			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
+			
 			if(GameSettings.Instance.showTestLogs)
 				Debug.Log("Failed in init Stoke Kit :(");
 		}
@@ -224,8 +259,11 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			//or gameplay while waiting for the transaction to be updated.
 			
 			//wtf? mejor ver en vivo con un iphone.
+			OnProcessingConsumeProduct(responce.productIdentifier, false, true);
 			break;
 		case InAppPurchaseState.Failed:
+			OnProcessingConsumeProduct(responce.productIdentifier, false);
+			
 			//Our purchase flow is failed.
 			//We can unlock interface and report user that the purchase is failed. 
 			if(GameSettings.Instance.showTestLogs){
@@ -245,10 +283,12 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	}
 	void OnRestoreComplete (ISN_Result responce){
 		if(responce.IsSucceeded){
-			IOSNativePopUpManager.showMessage("Restore Purchase", "All purchases has been restored.");
+			OnProcessingRestorePurchases();
+			//			IOSNativePopUpManager.showMessage("Restore Purchase", "All purchases has been restored.");
 		}
 		else{
-			IOSNativePopUpManager.showMessage("Restore Purchase", "Restore failed: "+ responce.error.description);
+			OnProcessingRestorePurchases(false);
+			//			IOSNativePopUpManager.showMessage("Restore Purchase", "Restore failed: "+ responce.error.description);
 		}
 	}
 	#endregion
@@ -257,6 +297,16 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	void OnInitComplete() {
 		IsInited = true;
 		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
+		
+		if(WP8InAppPurchasesManager.instance.products != null){
+			dispatcher.dispatch(RETRIEVED_PRODUCTS, WP8InAppPurchasesManager.instance.products);
+			Debug.Log("Inited successfully, Avaliable products cound: " + WP8InAppPurchasesManager.instance.products.Count.ToString());
+		}
+		else{
+			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Failed in init Stoke Kit :(");
+		}
 		
 		//check if have a durable object but no its assigned yet.
 		foreach(WP8ProductTemplate product in WP8InAppPurchasesManager.instance.products){
@@ -280,8 +330,9 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 			//Unlock logic for product with id recponce.productId should be here
 			OnProcessingConsumeProduct(responce.productId);
 		} else {
+			OnProcessingConsumeProduct(responce.productId, false);
 			//Purchase fail logic for product with id recponce.productId should be here
-			WP8Dialog.Create("Purchase Failed", "Error: " + responce.error);
+			//			WP8Dialog.Create("Purchase Failed", "Error: " + responce.error);
 		}
 	}
 	#endregion
@@ -292,6 +343,10 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	/// <param name="productsIDs">Products I ds.</param>
 	private void FillProducts(List<string> productsIDs){
 		#if UNITY_ANDROID
+		if(GameSettings.Instance.showTestLogs && productsIDs != null){
+			Debug.Log("Filling products. count: " + productsIDs.Count);
+			productsIDs.ForEach(x => Debug.Log("product id: " + x));
+		}
 		productsIDs.ForEach(x => AndroidInAppPurchaseManager.instance.addProduct(x));
 		#elif UNITY_IPHONE
 		productsIDs.ForEach(x => IOSInAppPurchaseManager.instance.addProductId(x));
@@ -318,17 +373,22 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	/// (una capa). 
 	/// </summary>
 	/// <param name="SKU">SKU</param>
-	public virtual void OnProcessingConsumeProduct (string SKU)
+	public virtual void OnProcessingConsumeProduct (string SKU, bool success = true, bool deferred = false)
 	{
-		dispatcher.dispatch(PURCHASE_COMPLETED, SKU);
-		
-		//		switch(SKU) {
-		//		case "100_coins":
-		//			//Le damos al jugador su producto.
-		//			//GameDataExample.AddCoins(100);
-		//			AndroidMessage.Create("Añadido al jugador", "100 Monedas de oro");
-		//			break;
-		//		}
+		if(success && !deferred)
+			dispatcher.dispatch(PURCHASE_COMPLETED, SKU);
+		else if(!success && !deferred)
+			dispatcher.dispatch(PURCHASE_FAILED, SKU);
+		else if(deferred)
+			dispatcher.dispatch(DEFERRED_PURCHASE_COMPLETED, SKU);
+	}
+	
+	public virtual void OnProcessingRestorePurchases (bool success = true)
+	{
+		if(success)
+			dispatcher.dispatch(RESTORE_PURCHASE_COMPLETED);
+		else
+			dispatcher.dispatch(RESTORE_PURCHASE_FAILED);
 	}
 	#endregion
 }

@@ -18,10 +18,20 @@ public class UIBaseWindow : MonoBehaviour {
 	[SerializeField]
 	private bool startClosed = true;
 	
+	[SerializeField]
+	[Tooltip("This window attribute is open when the current window is closed")]
+	private UIBaseWindow openNewWinWhenClose;
+	
+	[SerializeField]
+	[Tooltip("Change Input Back Button behaviour")]
+	private	ChangeInputBackButtonBehaviour changeIpBB;
+	
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	private Image window;
+	private bool isOpen = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -34,6 +44,30 @@ public class UIBaseWindow : MonoBehaviour {
 	public bool StartClosed {
 		get {
 			return this.startClosed;
+		}
+	}
+	
+	public bool IsOpen {
+		get {
+			return this.isOpen;
+		}
+	}
+	
+	public ChangeInputBackButtonBehaviour ChangeIpBB {
+		get {
+			return this.changeIpBB;
+		}
+		set {
+			changeIpBB = value;
+		}
+	}
+	
+	public UIBaseWindow OpenNewWinWhenClose {
+		get {
+			return this.openNewWinWhenClose;
+		}
+		set{
+			this.openNewWinWhenClose = value;
 		}
 	}
 	
@@ -61,10 +95,21 @@ public class UIBaseWindow : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public virtual void open(){
-		//		window.gameObject.SetActive(true);
+		if(changeIpBB != null)
+			changeIpBB.change();
+		
+		isOpen = true;
 	}
+	
+	/// <summary>
+	/// Forces close this window
+	/// </summary>
+	public virtual void forceClose(){
+		close();
+	}
+	
 	public virtual void close(){
-		//		window.gameObject.SetActive(false);
+		isOpen = false;
 	}
 	
 	public virtual void init(bool pStartClosed){

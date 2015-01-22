@@ -27,8 +27,8 @@ public class AutoType : UIBaseButton {
 	// Use this for initialization
 	void Awake () {
 		lbMessage = GetComponent<Text>();
-		message = Localization.Get(localizationMessageKey);
-		stoppedMessage = Localization.Get(localForStopped);;
+		message = !string.IsNullOrEmpty(localizationMessageKey) ? Localization.Get(localizationMessageKey): lbMessage.text;
+		stoppedMessage = !string.IsNullOrEmpty(localForStopped) ? Localization.Get(localForStopped) : "";
 		lbMessage.text = "";
 		stopType = false;
 	}

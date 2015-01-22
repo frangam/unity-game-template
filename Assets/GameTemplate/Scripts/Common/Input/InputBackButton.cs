@@ -80,10 +80,11 @@ public class InputBackButton : Singleton<InputBackButton> {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			
 			if(openWindow){
-				UIController.Instance.Manager.open(openWindow);
-				
+				//first need close
 				if(closeWindow)
 					UIController.Instance.Manager.close(closeWindow);
+				
+				UIController.Instance.Manager.open(openWindow);
 			}
 			else if(closeWindow){
 				UIController.Instance.Manager.close(closeWindow);

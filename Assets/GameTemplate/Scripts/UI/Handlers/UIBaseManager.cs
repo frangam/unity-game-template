@@ -83,6 +83,14 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
+	private IEnumerator waitForCloseWin(UIBaseWindow win, float wait, bool willClose = true){
+		yield return new WaitForSeconds(wait);
+		
+		if(willClose)
+			close(win);
+		else
+			open(win);
+	}
 	
 	//--------------------------------------
 	// Public Methods
@@ -118,15 +126,53 @@ public class UIBaseManager : MonoBehaviour {
 		return win;
 	}
 	
+	public virtual void waitForOpen(string id, float wait){
+		UIBaseWindow win = getWindow(id);
+		
+		if(win != null)
+			StartCoroutine(waitForCloseWin(win, wait, false));
+	}
+	
+	public virtual void waitForOpen(UIBaseWindow win, float wait){
+		if(windows.Contains(win)){
+			StartCoroutine(waitForCloseWin(win, wait, false));
+		}
+	}
+	
+	public virtual void waitForClose(string id, float wait){
+		UIBaseWindow win = getWindow(id);
+		
+		if(win != null)
+			StartCoroutine(waitForCloseWin(win, wait));
+	}
+	
+	public virtual void waitForClose(UIBaseWindow win, float wait){
+		if(windows.Contains(win)){
+			StartCoroutine(waitForCloseWin(win, wait));
+		}
+	}
+	
 	public virtual void close(string id){
 		openWin(id, false);
+	}
+	
+	public virtual void close(UIBaseWindow window){
+		open(window, false);
+	}
+	
+	public virtual void forceClose(string id){
+		openWin(id, false, true);
+	}
+	
+	public virtual void forceClose(UIBaseWindow window){
+		openWin(window.Id, false, true);
 	}
 	
 	public virtual void open(string id){
 		openWin(id);
 	}
 	
-	public virtual void openWin(string id, bool show = true){
+	public virtual void openWin(string id, bool show = true, bool forceCloseWin = false){
 		UIBaseWindow win = null;
 		
 		foreach(UIBaseWindow w in windows){
@@ -145,21 +191,30 @@ public class UIBaseManager : MonoBehaviour {
 	}
 	
 	
-	public virtual void open(UIBaseWindow window, bool show = true){
-		if(windows.Contains(window)){
-			window.gameObject.SetActive(show);
-			
-			if(show){
+	public virtual void open(UIBaseWindow window, bool show = true, bool forceCloseWin = false){
+		if(windows.Contains(window)){			
+			if(show)
 				window.open();
+			else{
+				if(!forceCloseWin)
+					window.close();
+				else
+					window.forceClose();
+				
+				//open new window when close
+				if(window.OpenNewWinWhenClose != null){
+					window.OpenNewWinWhenClose.open();
+					window.OpenNewWinWhenClose.gameObject.SetActive(true);
+				}
 			}
-			else
-				window.close();
+			
+			
+			//finally do it visible or not
+			window.gameObject.SetActive(show);
 		}
 	}
 	
-	public virtual void close(UIBaseWindow window){
-		open(window, false);
-	}
+	
 	
 	public virtual IEnumerator setAlphaGuiBlended(bool blended = true){
 		yield return new WaitForSeconds(delayForGuiBlended);
