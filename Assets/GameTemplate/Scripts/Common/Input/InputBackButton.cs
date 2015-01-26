@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class InputBackButton : Singleton<InputBackButton> {
 	public enum Action{
@@ -26,10 +27,10 @@ public class InputBackButton : Singleton<InputBackButton> {
 	private string specificScreenToGO;
 	
 	[SerializeField]
-	private UIBaseWindow openWindow;
+	private List<UIBaseWindow> openWindows;
 	
 	[SerializeField]
-	private UIBaseWindow closeWindow;
+	private List<UIBaseWindow> closeWindows;
 	
 	//--------------------------------------
 	// GETTERS && SETTERS
@@ -52,21 +53,21 @@ public class InputBackButton : Singleton<InputBackButton> {
 		}
 	}
 	
-	public UIBaseWindow OpenWindow {
+	public List<UIBaseWindow> OpenWindows {
 		get {
-			return this.openWindow;
+			return this.openWindows;
 		}
 		set {
-			openWindow = value;
+			openWindows = value;
 		}
 	}
 	
-	public UIBaseWindow CloseWindow {
+	public List<UIBaseWindow> CloseWindows {
 		get {
-			return this.closeWindow;
+			return this.closeWindows;
 		}
 		set {
-			closeWindow = value;
+			closeWindows = value;
 		}
 	}
 	
@@ -79,15 +80,19 @@ public class InputBackButton : Singleton<InputBackButton> {
 		#if UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			
-			if(openWindow){
+			if(openWindows != null && openWindows.Count > 0){
 				//first need close
-				if(closeWindow)
-					UIController.Instance.Manager.close(closeWindow);
+				if(closeWindows != null && closeWindows.Count > 0){
+					foreach(UIBaseWindow w in closeWindows)
+						UIController.Instance.Manager.close(w);
+				}
 				
-				UIController.Instance.Manager.open(openWindow);
+				foreach(UIBaseWindow w in openWindows)
+					UIController.Instance.Manager.open(w);
 			}
-			else if(closeWindow){
-				UIController.Instance.Manager.close(closeWindow);
+			else if(closeWindows != null && closeWindows.Count > 0){
+				foreach(UIBaseWindow w in closeWindows)
+					UIController.Instance.Manager.close(w);
 			}
 			else if(!string.IsNullOrEmpty(specificScreenToGO)){
 				ScreenLoaderVisualIndicator.Instance.LoadScene (specificScreenToGO);

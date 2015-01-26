@@ -192,7 +192,10 @@ public class UIBaseManager : MonoBehaviour {
 	
 	
 	public virtual void open(UIBaseWindow window, bool show = true, bool forceCloseWin = false){
-		if(windows.Contains(window)){			
+		if(windows.Contains(window)){
+			//first do it visible or not
+			window.gameObject.SetActive(show);
+			
 			if(show)
 				window.open();
 			else{
@@ -203,14 +206,13 @@ public class UIBaseManager : MonoBehaviour {
 				
 				//open new window when close
 				if(window.OpenNewWinWhenClose != null){
-					window.OpenNewWinWhenClose.open();
 					window.OpenNewWinWhenClose.gameObject.SetActive(true);
+					window.OpenNewWinWhenClose.open();
 				}
 			}
 			
 			
-			//finally do it visible or not
-			window.gameObject.SetActive(show);
+			
 		}
 	}
 	

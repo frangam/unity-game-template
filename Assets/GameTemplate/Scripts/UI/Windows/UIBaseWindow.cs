@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
+
 
 [RequireComponent(typeof(Image))]
 public class UIBaseWindow : MonoBehaviour {
@@ -21,6 +23,15 @@ public class UIBaseWindow : MonoBehaviour {
 	[SerializeField]
 	[Tooltip("This window attribute is open when the current window is closed")]
 	private UIBaseWindow openNewWinWhenClose;
+	
+	[SerializeField]
+	private List<string> soundIdsPlayWhenOpen;
+	
+	[SerializeField]
+	private List<AutoType> autotypeEffects;
+	
+	[SerializeField]
+	private List<string> soundIdsStopWhenOpen;
 	
 	[SerializeField]
 	[Tooltip("Change Input Back Button behaviour")]
@@ -97,6 +108,18 @@ public class UIBaseWindow : MonoBehaviour {
 	public virtual void open(){
 		if(changeIpBB != null)
 			changeIpBB.change();
+		
+		if(soundIdsStopWhenOpen != null && soundIdsStopWhenOpen.Count > 0)
+			foreach(string id in soundIdsStopWhenOpen)
+				BaseSoundManager.Instance.stop(id);
+		
+		if(soundIdsPlayWhenOpen != null && soundIdsPlayWhenOpen.Count > 0)
+			foreach(string id in soundIdsPlayWhenOpen)
+				BaseSoundManager.Instance.play(id);
+		
+		if(autotypeEffects != null && autotypeEffects.Count > 0)
+			foreach(AutoType at in autotypeEffects)
+				at.initType();
 		
 		isOpen = true;
 	}

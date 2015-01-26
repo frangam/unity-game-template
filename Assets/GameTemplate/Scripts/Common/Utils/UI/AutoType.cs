@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// Typewriter effect
@@ -8,12 +9,14 @@ using System.Collections;
 [RequireComponent(typeof(Text))]
 [RequireComponent(typeof(Button))]
 public class AutoType : UIBaseButton {
+	[Tooltip("True if a window handle the typing initialization")]
+	public bool managedByWindow = true;
 	public bool initStoped = false;
 	public bool allowStop = true;
 	public bool whenStopPutMessageForStopped = true;
 	public string localForStopped;
 	public float letterPause = 0.2f;
-	//	public string[] soundIDs;
+	public List<string> soundIDs;
 	public AudioClip[] sounds;
 	public bool loopMessage = false;
 	public bool emptyWhenLoop = true;
@@ -31,15 +34,15 @@ public class AutoType : UIBaseButton {
 		stoppedMessage = !string.IsNullOrEmpty(localForStopped) ? Localization.Get(localForStopped) : "";
 		lbMessage.text = "";
 		stopType = false;
+		
+		if(initStoped){
+			lbMessage.text = stoppedMessage;
+		}
 	}
 	
 	void Start(){
-		if(initStoped){
-			lbMessage.text = stoppedMessage;
-			return;
-		}
-		
-		initType();
+		if(!initStoped && !managedByWindow)
+			initType();
 	}
 	
 	IEnumerator TypeText () {
@@ -49,11 +52,12 @@ public class AutoType : UIBaseButton {
 		foreach (char letter in message.ToCharArray()) {
 			lbMessage.text += letter;
 			
-			//			if (soundIDs != null && soundIDs.Length > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
-			if (sounds != null && sounds.Length > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
-				//				int soundIndex = Random.Range(0, soundIDs.Length);
-				//				string id = soundIDs[soundIndex];
-				//				BaseSoundManager.Instance.play(id);
+			if (soundIDs != null && soundIDs.Count > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
+				int soundIndex = Random.Range(0, soundIDs.Count);
+				string id = soundIDs[soundIndex];
+				BaseSoundManager.Instance.play(id);
+			}
+			else if (sounds != null && sounds.Length > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
 				audio.PlayOneShot(sounds[Random.Range(0, sounds.Length)]);
 			}
 			

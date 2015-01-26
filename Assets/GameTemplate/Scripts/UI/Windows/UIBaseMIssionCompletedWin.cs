@@ -13,12 +13,29 @@ public class UIBaseMIssionCompletedWin : UIBaseWindow {
 	private Text lbGemsReward;
 	
 	[SerializeField]
+	private Transform pnlMoneyRewards;
+	
+	[SerializeField]
 	private Transform pnlGemsReward;
+	
+	[SerializeField]
+	protected Text lbTotalMoneyRewards;
+	
+	[SerializeField]
+	protected Text lbTotalGemsRewards;
+	
+	[SerializeField]
+	private Transform pnlTotalMoneyRewards; 
+	
+	[SerializeField]
+	private Transform pnlTotalGemsRewards;
 	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	protected BaseLevel level;
+	protected int totalMoneyRw;
+	protected int totalGemsRw;
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -38,9 +55,35 @@ public class UIBaseMIssionCompletedWin : UIBaseWindow {
 		level = pLevel;
 	}
 	
+	public virtual void setTotalMoneyRw(int val){
+		totalMoneyRw = val;
+	}
+	
+	public virtual void setTotalGemsRw(int val){
+		totalGemsRw = val;
+	}
+	
 	public virtual void showInfo(){
 		lbMoneyReward.text = level.RealMoneyReward.ToString();
 		lbGemsReward.text = level.RealGemsReward.ToString();
 		pnlGemsReward.gameObject.SetActive(level.RealGemsReward > 0);
+		showTotalMoneyReward();
+		showTotalGemsReward();
+	}
+	
+	public virtual void showTotalMoneyReward(){
+		bool show = totalMoneyRw > 0;
+		pnlTotalMoneyRewards.gameObject.SetActive(show);
+		
+		if(show)
+			lbTotalMoneyRewards.text = totalMoneyRw.ToString();
+	}
+	
+	public virtual void showTotalGemsReward(){
+		bool show = totalGemsRw > 0;
+		pnlTotalGemsRewards.gameObject.SetActive(show);
+		
+		if(show)
+			lbTotalGemsRewards.text = totalGemsRw.ToString();
 	}
 }

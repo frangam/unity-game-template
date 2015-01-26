@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UIButtonOpenWin : UIBaseButton {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private UIBaseWindow window;
+	private List<UIBaseWindow> openWindows;
 	
 	[SerializeField]
-	private UIBaseWindow closeWindow;
+	private List<UIBaseWindow> closeWindows;
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -18,12 +19,16 @@ public class UIButtonOpenWin : UIBaseButton {
 	{
 		base.doPress ();
 		
-		if(closeWindow)
-			UIController.Instance.Manager.close(closeWindow);
+		if(closeWindows != null && closeWindows.Count > 0){
+			foreach(UIBaseWindow w in closeWindows)
+				UIController.Instance.Manager.close(w);
+		}
 		
-		if(window)
-			UIController.Instance.Manager.open(window);
+		if(openWindows != null && openWindows.Count > 0){
+			foreach(UIBaseWindow w in openWindows)
+				UIController.Instance.Manager.open(w);
+		}
 		else
-			Debug.Log("Not found window to open");
+			Debug.Log("Not found any window to open");
 	}
 }
