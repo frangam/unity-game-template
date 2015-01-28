@@ -173,8 +173,8 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		Achievement achievement = e.data as Achievement;
 		
 		if(achievement != null){
-			//TODO Delete Log
-			Debug.Log("Achievement " + achievement + " is completed");
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Achievement " + achievement + " is completed");
 			reportToServer(achievement); //report achiement progress to the server side
 			dispatcher.dispatch(ACHIEVEMENT_UNLOCKED, achievement);
 		}

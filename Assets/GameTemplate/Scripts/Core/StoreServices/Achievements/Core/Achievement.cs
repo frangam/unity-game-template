@@ -9,7 +9,7 @@ public class Achievement : BaseQuest{
 	//--------------------------------------
 	[SerializeField]
 	private bool isIncremental = false;
-		
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -23,7 +23,7 @@ public class Achievement : BaseQuest{
 			return this.isIncremental;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -42,26 +42,26 @@ public class Achievement : BaseQuest{
 	public Achievement(string attributes, List<GameAction> pAllGameActions): base(attributes, pAllGameActions){
 		string[] atts = attributes.Split(SEPARATOR_ATTRIBUTES);
 		int aII;
-
+		
 		stgActions = atts[1];
-
+		
 		//Is incremental
 		if(int.TryParse(atts[2], out aII)){
 			isIncremental = aII != 0;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override bool loadedCorrectly (){
 		return (Id != null && Actions != null && Actions.Count > 0 && isIncremental != null);
 	}
-
+	
 	public override void init (){
 		idPlayerPrefs = "pp_achievement_unlocked_" + Id;
 	}
-
+	
 	public override string ToString (){
 		return string.Format ("[Achievement: id={0}, actions={1}, name={2}, description={3}, isIncremental={4}, unlocked={5}]", Id, stgActions, Name, Description, isIncremental, Completed);
 	}

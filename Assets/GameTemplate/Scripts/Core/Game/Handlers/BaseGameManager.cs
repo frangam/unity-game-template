@@ -241,9 +241,11 @@ public class BaseGameManager : MonoBehaviour {
 		finished = false;
 		started = false;
 		
+		
+		currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
+			: PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); //get the current level selected
+		
 		if(gameMode == GameMode.CAMPAIGN){
-			currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
-				: PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); //get the current level selected
 			BaseQuestManager.Instance.init(currentLevelSelected);
 		}
 	}

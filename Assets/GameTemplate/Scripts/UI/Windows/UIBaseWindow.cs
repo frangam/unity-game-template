@@ -21,6 +21,10 @@ public class UIBaseWindow : MonoBehaviour {
 	private bool startClosed = true;
 	
 	[SerializeField]
+	[Tooltip("True if we not want to start this window with the UIBaseManager in the loadWindows method. This is useful when we want to open or close a window in other window open or close method")]
+	private bool notStartWithManager = false;
+	
+	[SerializeField]
 	[Tooltip("This window attribute is open when the current window is closed")]
 	private UIBaseWindow openNewWinWhenClose;
 	
@@ -43,6 +47,8 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	private Image window;
 	private bool isOpen = false;
+	private bool firstOpen = true;
+	private bool firstClose = true;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -55,6 +61,12 @@ public class UIBaseWindow : MonoBehaviour {
 	public bool StartClosed {
 		get {
 			return this.startClosed;
+		}
+	}
+	
+	public bool NotStartWithManager {
+		get {
+			return this.notStartWithManager;
 		}
 	}
 	
@@ -82,6 +94,18 @@ public class UIBaseWindow : MonoBehaviour {
 		}
 	}
 	
+	public bool FirstOpen {
+		get {
+			return this.firstOpen;
+		}
+	}
+	
+	public bool FirstClose {
+		get {
+			return this.firstClose;
+		}
+	}
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
@@ -106,6 +130,9 @@ public class UIBaseWindow : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public virtual void open(){
+		if(firstOpen)
+			firstOpen = false;
+		
 		if(changeIpBB != null)
 			changeIpBB.change();
 		
@@ -132,6 +159,9 @@ public class UIBaseWindow : MonoBehaviour {
 	}
 	
 	public virtual void close(){
+		if(firstClose)
+			firstClose = false;
+		
 		isOpen = false;
 	}
 	

@@ -19,7 +19,11 @@ public class BaseStat{
 	private string name;
 	
 	[SerializeField]
-	private string id;
+	[Tooltip("Who is the id of the owner of this stat")]
+	private string statOwnerID;
+	
+	[SerializeField]
+	private string statID;
 	
 	[SerializeField]
 	private float initialValue;
@@ -53,9 +57,14 @@ public class BaseStat{
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
-	public string Id {
+	public string StatOwnerID {
 		get {
-			return this.id;
+			return this.statOwnerID;
+		}
+	}
+	public string StatId {
+		get {
+			return this.statID;
 		}
 	}
 	
@@ -131,31 +140,32 @@ public class BaseStat{
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BaseStat`1"/> class.
 	/// 
-	/// ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE
+	/// STAT OWNER ID | STAT ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE
 	/// </summary>
 	/// <param name="attributes">Attributes.</param>
 	public BaseStat(string attributes){
 		string[] att = attributes.Split(ATTRIBUTES_SEPARATOR);
 		
-		if(att.Length > 0){
-			id = att[0];
+		if(att.Length > 1){
+			statOwnerID = att[0];
+			statID = att[1];
 			
 			//REAL VALUES
 			if(att.Length > 2){
 				float v;
 				
 				if(att.Length > 2){
-					name = att[1];
+					name = att[2];
 				}
 				
 				//inver values
 				int invert;
-				if(int.TryParse(att[2], out invert)){
+				if(int.TryParse(att[3], out invert)){
 					invertMinMax = invert == 0 ? false: true;
 				}
 				
 				//VALUES
-				string[] pValues = att[3].Split(LIST_SEPARATOR);
+				string[] pValues = att[4].Split(LIST_SEPARATOR);
 				float pIV, pMV;
 				string value1 = pValues[0];
 				string value2 = pValues[1];
@@ -186,7 +196,7 @@ public class BaseStat{
 			
 			
 			//SIMULATED VALUES
-			if(att.Length > 4){
+			if(att.Length > 5){
 				float v;
 				
 				//				//inver values
@@ -196,7 +206,7 @@ public class BaseStat{
 				//				}
 				
 				//VALUES
-				string[] pValues = att[4].Split(LIST_SEPARATOR);
+				string[] pValues = att[5].Split(LIST_SEPARATOR);
 				float pIV, pMV;
 				string value1 = pValues[0];
 				string value2 = pValues[1];
@@ -233,13 +243,13 @@ public class BaseStat{
 	/// <summary>
 	/// Returns a <see cref="System.String"/> that represents the current <see cref="BaseStat"/>.
 	/// 
-	/// ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE
+	/// STAT OWNER ID | STAT ID | NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE
 	/// </summary>
 	/// <returns>A <see cref="System.String"/> that represents the current <see cref="BaseStat"/>.</returns>
 	public override string ToString (){
 		int invert = invertMinMax ? 1: 0;
 		
-		return id + ATTRIBUTES_SEPARATOR + name + ATTRIBUTES_SEPARATOR + invert + ATTRIBUTES_SEPARATOR + 
+		return statOwnerID + ATTRIBUTES_SEPARATOR + statID + ATTRIBUTES_SEPARATOR + name + ATTRIBUTES_SEPARATOR + invert + ATTRIBUTES_SEPARATOR + 
 			minValue + ":" + maxValue + ATTRIBUTES_SEPARATOR + minSimValue + ":" + maxSimValue;
 	}
 	
@@ -248,7 +258,7 @@ public class BaseStat{
 	// Public Methods
 	//--------------------------------------
 	public bool loadedCorrectly(){
-		return !string.IsNullOrEmpty(id) && initialValue != null && maxValue != null && currentValue != null;
+		return !string.IsNullOrEmpty(statID) && initialValue != null && maxValue != null && currentValue != null;
 	}
 	
 	

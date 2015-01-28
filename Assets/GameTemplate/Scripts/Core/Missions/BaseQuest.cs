@@ -11,7 +11,7 @@ public class BaseQuest {
 	public const char 	SEPARATOR_ACTIONS_IDS 		= '.';
 	public const char 	SEPARATOR_LOCALIZED_DESC	= '|';
 	public const int 	NO_LEVEL 					= -1;
-
+	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -23,18 +23,18 @@ public class BaseQuest {
 	
 	[SerializeField]
 	private string id;
-
+	
 	[SerializeField]
 	protected int level;
 	
 	[SerializeField]
 	private List<GameAction> actions;
-
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	private bool completed = false;
-
+	
 	//--------------------------------------
 	// Protected Attributes
 	//--------------------------------------
@@ -60,7 +60,7 @@ public class BaseQuest {
 			return this.id;
 		}
 	}
-
+	
 	public int Level {
 		get {
 			return this.level;
@@ -81,13 +81,13 @@ public class BaseQuest {
 			completed = value;
 		}
 	}
-
+	
 	public string IdPlayerPrefs {
 		get {
 			return this.idPlayerPrefs;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -105,15 +105,16 @@ public class BaseQuest {
 	/// <param name="pAllActions">P all actions.</param>
 	public BaseQuest(string attributes, List<GameAction> pAllActions){
 		string[] atts = attributes.Split(SEPARATOR_ATTRIBUTES);
-
+		
 		//Quest ID
 		if(atts.Length > 0){
 			id = atts[0];
+			init();
 		}
 		else{
 			Debug.LogError("It was not found ID attribute");
 		}
-
+		
 		//Game Actions
 		if(atts.Length > 1){
 			string[] actionIds = atts[1].Split(SEPARATOR_ACTIONS_IDS);
@@ -122,7 +123,7 @@ public class BaseQuest {
 			foreach(string aId in actionIds){
 				if(!idsAux.Contains(aId)){
 					idsAux.Add(aId);
-
+					
 					foreach(GameAction ga in pAllActions){
 						if(ga.Id == aId){
 							this.actions.Add(ga);
@@ -135,7 +136,7 @@ public class BaseQuest {
 		else{
 			Debug.LogError("It was not found actions ids attribute");
 		}
-
+		
 		//Level
 		if(atts.Length > 2){
 			int iL;
@@ -150,11 +151,11 @@ public class BaseQuest {
 		else{
 			level = NO_LEVEL;
 		}
-
+		
 		//Description
 		if(atts.Length > 3){
 			string[] desc = atts[3].Split(SEPARATOR_LOCALIZED_DESC);
-
+			
 			//TODO get the localized version
 			description = desc[0];
 		}
@@ -164,7 +165,17 @@ public class BaseQuest {
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
-		return string.Format ("[BaseQuest: id={0}, level={1} name={2}, description={3}, completed={4}]", id, level, name, description, completed);
+		string actionsStr = "";
+		
+		for(int i=0; i<actions.Count; i++){
+			actionsStr += actions[i];
+			
+			if(i<actions.Count-1){
+				actionsStr += ".";
+			}
+		}
+		
+		return string.Format ("[BaseQuest: id={0}, level={1} actions={2} name={3}, description={4}, completed={5}]", id, level, actionsStr,name, description, completed);
 	}
 	
 	//--------------------------------------
@@ -175,15 +186,15 @@ public class BaseQuest {
 	// Public Methods
 	//--------------------------------------
 	public virtual bool loadedCorrectly(){
-		return (id != null && actions != null && actions.Count > 0 && level != null && level > 0 && description != null && description != "" && description.Length > 0);
+		return (id != null && actions.Count > 0 && level > 0);
 	}
-
+	
 	public bool completedPreviously(){
 		return PlayerPrefs.GetInt(idPlayerPrefs) == 1;
 	}
-
+	
 	public virtual void init(){
-		
+		idPlayerPrefs = "pp_quest_unlocked_" + Id;
 	}
 	
 	/// <summary>

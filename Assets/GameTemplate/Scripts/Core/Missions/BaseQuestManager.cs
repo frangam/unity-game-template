@@ -43,8 +43,6 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	[SerializeField]
 	private bool updateCompletedFlagOfPreviousCompletedQuests = true;
 	
-	[SerializeField]
-	private bool showDebugQuest = false;
 	
 	//--------------------------------------
 	// Private Attributes
@@ -180,7 +178,7 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 				}
 				
 				//show quests and actions for test purposes
-				if(showDebugQuest)
+				if(GameSettings.Instance.showTestLogs)
 					showActionsAndQuests();
 				
 				initialVerification();
@@ -440,17 +438,20 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		BaseQuest quest = e.data as BaseQuest;
 		
 		if(quest != null){
-			//TODO Delete Log
-			Debug.Log(quest + " is completed");
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log(quest + " is completed");
 			
 			if(saveOnPlayerPrefs){
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log(quest + " is saving on PlayerPrefs");
+				
 				saveCompletedQuestsInPlayerPrefs(quest);
 			}
 		}
 	}
 	
 	public virtual void OnAllQuestsCompleted(CEvent e){
-		//TODO Delete Log
-		Debug.Log("All of the quests are completed");
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("All of the quests are completed");
 	}
 }

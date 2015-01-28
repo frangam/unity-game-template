@@ -26,9 +26,15 @@ public class AutoType : UIBaseButton {
 	private string stoppedMessage;
 	private Text lbMessage;
 	private bool stopType = false;
+	private bool initedTyping = false;
 	
-	// Use this for initialization
-	void Awake () {
+	
+	void Start(){
+		if(!initStoped && !managedByWindow)
+			initType();
+	}
+	
+	private void init(){
 		lbMessage = GetComponent<Text>();
 		message = !string.IsNullOrEmpty(localizationMessageKey) ? Localization.Get(localizationMessageKey): lbMessage.text;
 		stoppedMessage = !string.IsNullOrEmpty(localForStopped) ? Localization.Get(localForStopped) : "";
@@ -38,11 +44,6 @@ public class AutoType : UIBaseButton {
 		if(initStoped){
 			lbMessage.text = stoppedMessage;
 		}
-	}
-	
-	void Start(){
-		if(!initStoped && !managedByWindow)
-			initType();
 	}
 	
 	IEnumerator TypeText () {
@@ -74,13 +75,17 @@ public class AutoType : UIBaseButton {
 	}
 	
 	public virtual void initType(){
+		init();
+		
 		stopType = false;
 		StartCoroutine(TypeText ());
+		initedTyping = true;
 	}
 	
 	public virtual void stop(){
 		if(!stopType){
 			stopType = true;
+			initedTyping = false;
 			
 			lbMessage.text = whenStopPutMessageForStopped ? stoppedMessage : message;
 			

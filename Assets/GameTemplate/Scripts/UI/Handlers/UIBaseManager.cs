@@ -3,11 +3,21 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
+using UnionAssets.FLE;
 
 public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
+	public const string ALL_WINDOWS_LOADED_AT_SCENE_AWAKE = "gt_all_windows_loaded_at_scene_awake";
+	
+	//--------------------------------------
+	// Static Attributes
+	//--------------------------------------
+	/// <summary>
+	/// Observer pattern
+	/// </summary>
+	private EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
 	
 	//--------------------------------------
 	// Setting Attributes
@@ -34,10 +44,17 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	//	private bool allWindowsLoadWhen
 	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
+	public EventDispatcherBase dispatcher {
+		get {
+			return _dispatcher;
+		}
+	}
+	
 	public List<UIBaseWindow> Windows {
 		get {
 			return this.windows;
@@ -108,8 +125,13 @@ public class UIBaseManager : MonoBehaviour {
 		
 		if(windows != null && windows.Count > 0){
 			foreach(UIBaseWindow w in windows){
-				open(w, !w.StartClosed);
+				if(w.StartClosed)
+					close (w);
+				else
+					open(w);
 			}
+			
+			dispatcher.dispatch(ALL_WINDOWS_LOADED_AT_SCENE_AWAKE);
 		}
 	}
 	
@@ -152,27 +174,27 @@ public class UIBaseManager : MonoBehaviour {
 		}
 	}
 	
-	public virtual void close(string id){
-		openWin(id, false);
+	public virtual void close(string id, bool handleStart = true){
+		openWin(id, handleStart, false);
 	}
 	
-	public virtual void close(UIBaseWindow window){
-		open(window, false);
+	public virtual void close(UIBaseWindow window, bool handleStart = true){
+		open(window, handleStart, false);
 	}
 	
-	public virtual void forceClose(string id){
-		openWin(id, false, true);
+	public virtual void forceClose(string id, bool handleStart = true){
+		openWin(id, handleStart, false, true);
 	}
 	
-	public virtual void forceClose(UIBaseWindow window){
-		openWin(window.Id, false, true);
+	public virtual void forceClose(UIBaseWindow window, bool handleStart = true){
+		openWin(window.Id, handleStart, false, true);
 	}
 	
-	public virtual void open(string id){
-		openWin(id);
+	public virtual void open(string id, bool handleStart = true){
+		openWin(id, handleStart);
 	}
 	
-	public virtual void openWin(string id, bool show = true, bool forceCloseWin = false){
+	public virtual void openWin(string id, bool handleStart = true, bool show = true, bool forceCloseWin = false){
 		UIBaseWindow win = null;
 		
 		foreach(UIBaseWindow w in windows){
@@ -183,7 +205,7 @@ public class UIBaseManager : MonoBehaviour {
 		}
 		
 		if(win != null){
-			open(win, show);
+			open(win, handleStart, show, forceCloseWin);
 		}
 		else{
 			Debug.LogError("Windows with id " + id + " does not exist");
@@ -191,14 +213,17 @@ public class UIBaseManager : MonoBehaviour {
 	}
 	
 	
-	public virtual void open(UIBaseWindow window, bool show = true, bool forceCloseWin = false){
-		if(windows.Contains(window)){
+	public virtual void open(UIBaseWindow window, bool handleStart = true, bool show = true, bool forceCloseWin = false){
+		if(window != null && (!handleStart || (handleStart && !window.NotStartWithManager))){
+			//		if(windows.Contains(window)){
 			//first do it visible or not
 			window.gameObject.SetActive(show);
 			
 			if(show)
 				window.open();
 			else{
+				
+				
 				if(!forceCloseWin)
 					window.close();
 				else

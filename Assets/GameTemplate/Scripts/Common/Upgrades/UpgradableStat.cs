@@ -6,8 +6,12 @@ using System.Collections.Generic;
 [System.Serializable]
 public class UpgradableStat : BaseStat{
 	//--------------------------------------
-	// Private Attributes
+	// Setting Attributes
 	//--------------------------------------
+	[SerializeField]
+	[Tooltip("The PlayerPrefs key for save progress of purchase. It is formed automatically by this value + STAT OWNER ID + STAT ID")]
+	private string 			ppKey;
+	
 	[SerializeField]
 	private List<float> 	prices;
 	
@@ -16,6 +20,11 @@ public class UpgradableStat : BaseStat{
 	
 	[SerializeField]
 	private int 			maxUpgrades;
+	
+	//--------------------------------------
+	// Private Attributes
+	//--------------------------------------
+	private string 			playerPrefsKey;
 	
 	//--------------------------------------
 	// Getters/MyGenericTypeetters
@@ -47,13 +56,15 @@ public class UpgradableStat : BaseStat{
 	/// <summary>
 	/// Initializes a new instance of the <see cref="UpgradableMyGenericTypetat`2"/> class.
 	/// 
-	/// ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE | CURRENT UPGRADE (0: INITIAL) |UPGRADE PRICES 
+	/// STAT OWNER ID | STAT ID | NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE |UPGRADE PRICES 
 	/// 
 	/// UPGRADE PRICES: u1:u2:u3 The number of prices indicate the max upgrades number
 	/// 
 	/// </summary>
 	/// <param name="attributes">Attributes.</param>
-	public UpgradableStat(string attributes): base(attributes){
+	public UpgradableStat(string pPPKey, string attributes): base(attributes){
+		ppKey = pPPKey;
+		playerPrefsKey = ppKey + StatOwnerID + "_" + StatId;
 		string[] att = attributes.Split(ATTRIBUTES_SEPARATOR);
 		string[] pPrices = null;
 		float p;
@@ -63,21 +74,20 @@ public class UpgradableStat : BaseStat{
 		prices = new List<float>();
 		
 		if(att.Length > 6){
-			int ci;
 			pPrices = att[6].Split(LIST_SEPARATOR);
 			
-			if(int.TryParse(att[5], out ci))
-				currentUpgradeIndex = ci;
+			//get from playerprefs the current index, by default is 0
+			currentUpgradeIndex = Mathf.Clamp(PlayerPrefs.GetInt(playerPrefsKey), 0, pPrices.Length); // max: pPrices.Length because is the last update value
 		}
 		else if(att.Length == 6){
 			int ci;
 			pPrices = att[5].Split(LIST_SEPARATOR);
 			
-			if(int.TryParse(att[4], out ci))
-				currentUpgradeIndex = ci;
+			//get from playerprefs the current index, by default is 0
+			currentUpgradeIndex = Mathf.Clamp(PlayerPrefs.GetInt(playerPrefsKey), 0, pPrices.Length);
 		}
 		else{
-			Debug.LogError("The format of the stat is not valid. A valid format is: ID| NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE| CURRENT UPGRADE (0: INITIAL) | UPGRADE PRICES");
+			Debug.LogError("The format of the stat is not valid. A valid format is: STAT OWNER ID | STAT ID | NAME | Invert min max value (1 or 0)| Min VALUE : MAX VALUE | SIMULATED MIN VALUE : SIMULATED MAX VALUE| UPGRADE PRICES");
 		}
 		
 		if(valid){
@@ -113,7 +123,7 @@ public class UpgradableStat : BaseStat{
 	/// </summary>
 	/// <returns>A <see cref="System.String"/> that represents the current <see cref="UpgradableStat"/>.</returns>
 	public override string ToString (){
-		return base.ToString() + ATTRIBUTES_SEPARATOR + currentUpgradeIndex + ATTRIBUTES_SEPARATOR + getPricesToString();
+		return base.ToString() + ATTRIBUTES_SEPARATOR + getPricesToString() + ATTRIBUTES_SEPARATOR + currentUpgradeIndex;
 	}
 	
 	
@@ -152,6 +162,7 @@ public class UpgradableStat : BaseStat{
 	private void LevelUp(){
 		if(!completed()){
 			currentUpgradeIndex++;
+			PlayerPrefs.SetInt(playerPrefsKey, currentUpgradeIndex); //save the progress in pp
 			updateCurrentValue();
 		}
 	}
