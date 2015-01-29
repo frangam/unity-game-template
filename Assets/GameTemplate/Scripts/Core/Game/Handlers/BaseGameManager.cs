@@ -133,7 +133,7 @@ public class BaseGameManager : MonoBehaviour {
 			BaseQuestManager.Instance.resetProperties();
 		}
 		
-		Time.timeScale = pauseTimeAtStart ? 0f : 1f;
+		
 	}
 	protected virtual void OnDestroy(){
 		if(gameMode == GameMode.CAMPAIGN){
@@ -237,10 +237,9 @@ public class BaseGameManager : MonoBehaviour {
 		gameMode = (GameMode) PlayerPrefs.GetInt(GameSettings.PP_GAME_MODE); //get the selected game mode
 		currentScore = 0;
 		inited = true;
-		Paused = false;
 		finished = false;
 		started = false;
-		
+		Paused = pauseTimeAtStart;
 		
 		currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
 			: PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); //get the current level selected
@@ -254,6 +253,7 @@ public class BaseGameManager : MonoBehaviour {
 	/// </summary>
 	public virtual void startGame(){
 		started = true;
+		Paused = false;
 	}
 	
 	/// <summary>
@@ -334,16 +334,21 @@ public class BaseGameManager : MonoBehaviour {
 		}
 		set
 		{
+			
 			// set paused 
 			paused = value;
 			
 			if (paused)
 			{
-				UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
+				if(started)
+					UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
+				
 				// pause time
 				Time.timeScale= 0f;
 			} else {
-				UIController.Instance.Manager.close(UIBaseWindowIDs.PAUSE);
+				if(started)
+					UIController.Instance.Manager.close(UIBaseWindowIDs.PAUSE);
+				
 				// unpause Unity
 				Time.timeScale = 1f;
 			}

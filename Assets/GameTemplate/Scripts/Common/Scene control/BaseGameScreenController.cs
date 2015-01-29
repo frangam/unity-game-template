@@ -62,6 +62,9 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 			Time.timeScale = paused ? 0f : 1f;
 		}
 		else if(paused && !GameController.Instance.Manager.Finished){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Pausing game from OnApplicationPause");
+			
 			GameController.Instance.Manager.Paused = paused;
 		}
 		
