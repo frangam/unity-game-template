@@ -32,6 +32,9 @@ public class InputBackButton : Singleton<InputBackButton> {
 	[SerializeField]
 	private List<UIBaseWindow> closeWindows;
 	
+	[SerializeField]
+	private bool resetEasterEggs = false;
+	
 	//--------------------------------------
 	// GETTERS && SETTERS
 	//--------------------------------------
@@ -79,6 +82,12 @@ public class InputBackButton : Singleton<InputBackButton> {
 		
 		#if UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR
 		if (Input.GetKeyDown(KeyCode.Escape)) {
+			//easter eggs
+			if(resetEasterEggs)
+				EasterEggsController.Instance.resetAllInputs();
+			
+			
+			//logic
 			
 			if(openWindows != null && openWindows.Count > 0){
 				//first need close

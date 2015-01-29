@@ -9,7 +9,7 @@ public class EasterEggsController : PersistentSingleton<EasterEggsController> {
 	//--------------------------------------
 	[SerializeField]
 	private List<EasterEgg> easterEggs;
-
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
@@ -18,14 +18,16 @@ public class EasterEggsController : PersistentSingleton<EasterEggsController> {
 		resetAllInputs();
 		EasterEgg.dispatcher.addEventListener(EasterEgg.EASTER_EGG_UNLOCKED, OnEasterEggUnlocked);
 	}
+	void OnDestroy(){
+	}
 	#endregion
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	public void checkCode(EasterEggCode code){
-//		Debug.Log("Checking EasterEgg code: " + code);
-
+		//		Debug.Log("Checking EasterEgg code: " + code);
+		
 		if(code == EasterEggCode.CODE_RESET){
 			resetAllInputs();
 		}
@@ -35,19 +37,19 @@ public class EasterEggsController : PersistentSingleton<EasterEggsController> {
 			}
 		}
 	}
-
+	
 	public void resetAllInputs(){
 		foreach(EasterEgg ee in easterEggs){
 			ee.resetMatches();
 		}
 	}
-
+	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
 	public void OnEasterEggUnlocked(CEvent e){
 		EasterEggResult result = e.data as EasterEggResult;
-
+		
 		if(result.IsSucceeded){
 			//reward of easter egg
 			BaseEasterEggRewardsController.Instance.reward(result.EasterEgg);

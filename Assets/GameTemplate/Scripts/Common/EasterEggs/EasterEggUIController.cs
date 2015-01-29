@@ -7,7 +7,7 @@ public class EasterEggUIController : Singleton<EasterEggUIController> {
 	//--------------------------------------
 	[SerializeField]
 	private EasterEggUINotificationPanel[] notificationsPanels;
-
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -16,5 +16,37 @@ public class EasterEggUIController : Singleton<EasterEggUIController> {
 			return this.notificationsPanels;
 		}
 	}
-
+	
+	//--------------------------------------
+	// Unity Methods
+	//--------------------------------------
+	public virtual void Awake(){
+		bool panelsNotFound = notificationsPanels == null || (notificationsPanels != null && notificationsPanels.Length == 0);
+		
+		if(panelsNotFound){
+			EasterEggUINotificationPanel[] aux = FindObjectsOfType<EasterEggUINotificationPanel>() as EasterEggUINotificationPanel[];
+			notificationsPanels = aux;
+			
+			
+			if(notificationsPanels != null && notificationsPanels.Length > 0)
+				init();
+			else
+				Debug.LogWarning("Not found any EasterEggUINotificationPanel");
+		}
+		else
+			init();
+	}
+	
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public virtual void init(){
+		if(notificationsPanels != null){
+			//init panels closed
+			foreach(EasterEggUINotificationPanel n in notificationsPanels){
+				n.gameObject.SetActive(false);
+				n.show(false);
+			}
+		}
+	}
 }

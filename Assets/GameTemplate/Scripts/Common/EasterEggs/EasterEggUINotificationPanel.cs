@@ -7,7 +7,7 @@ public class EasterEggUINotificationPanel : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private EasterEggID id;
-
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -16,14 +16,14 @@ public class EasterEggUINotificationPanel : MonoBehaviour {
 			return this.id;
 		}
 	}
-
-//	//--------------------------------------
-//	// Unity Methods
-//	//--------------------------------------
-//	void Awake(){
-//		show(false);
-//	}
-
+	
+	//	//--------------------------------------
+	//	// Unity Methods
+	//	//--------------------------------------
+	//	void Awake(){
+	//		show(false);
+	//	}
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------

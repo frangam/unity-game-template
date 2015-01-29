@@ -2,13 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EasterEggUIButton : MonoBehaviour {
+public class EasterEggUIButton : UIBaseButton {
+	//--------------------------------------
+	// Setting Attributes
+	//--------------------------------------
 	[SerializeField]
 	private EasterEggCode code;
-
-	void OnPress(bool pressed){
-		if(!pressed){
-			EasterEggsController.Instance.checkCode(code);
-		}
+	
+	//--------------------------------------
+	// Overriden Methods
+	//--------------------------------------
+	protected override void doPress ()
+	{
+		EasterEggsController.Instance.checkCode(code);
 	}
 }
