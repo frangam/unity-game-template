@@ -9,7 +9,8 @@ public class IAP_GameName : CoreIAPManager {
 	{
 		Init(products);
 	}
-	public override void OnProcessingConsumeProduct (string SKU)
+
+	public virtual void OnProcessingConsumeProduct (string SKU, bool success = true, bool deferred = false)
 	{
 		switch(SKU) {
 		case "100_coins":

@@ -37,6 +37,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 	public Action<IOSStoreKitResponse> OnTransactionComplete = delegate{};
 	public Action<ISN_Result> OnRestoreComplete = delegate{};
 	public Action<ISN_Result> OnStoreKitInitComplete = delegate{};
+	public Action<bool> OnPurchasesStateSettingsLoaded = delegate{};
 	public Action<IOSStoreKitVerificationResponse> OnVerificationComplete = delegate{};
 
 	
@@ -113,6 +114,10 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		
 	}
 
+	public void RequestInAppSettingState() {
+		IOSNativeMarketBridge.ISN_RequestInAppSettingState();
+	}
+
 
 	public void buyProduct(string productId) {
 
@@ -120,22 +125,18 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 
 		if(!_IsStoreLoaded) {
 
-			Debug.LogWarning("buyProduct shouldn't be called before store kit initialized"); 
+			if(!IOSNativeSettings.Instance.DisablePluginLogs) 
+				Debug.LogWarning("buyProduct shouldn't be called before store kit initialized"); 
 			SendTransactionFailEvent(productId, "Store kit not yet initialized", IOSTransactionErrorCode.SKErrorPaymentNotAllowed);
 
 			return;
-		} else {
-			if(!_IsInAppPurchasesEnabled) {
-				SendTransactionFailEvent(productId, "In App Purchases Disabled", IOSTransactionErrorCode.SKErrorPaymentNotAllowed);
-				return;
-			}
-		}
+		} 
 
 		IOSNativeMarketBridge.buyProduct(productId);
 
 		#else
 		if(IOSNativeSettings.Instance.SendFakeEventsInEditor) {
-			FireProductBoughtEvent(productId, "", false);
+			FireProductBoughtEvent(productId, "", "", false);
 		}
 		#endif
 	}
@@ -161,7 +162,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 	
 	public void restorePurchases() {
 
-		if(!_IsStoreLoaded || !_IsInAppPurchasesEnabled) {
+		if(!_IsStoreLoaded) {
 			dispatch(RESTORE_TRANSACTION_FAILED);
 			OnRestoreComplete(new ISN_Result(false));
 			return;
@@ -172,7 +173,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		#else
 		if(IOSNativeSettings.Instance.SendFakeEventsInEditor) {
 			foreach(string productId in _productsIds) {
-				FireProductBoughtEvent(productId, "", true);
+				FireProductBoughtEvent(productId, "", "", true);
 			}
 			FireRestoreCompleteEvent();
 		}
@@ -236,6 +237,8 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		} else {
 			_IsInAppPurchasesEnabled = false;
 		}
+
+		OnPurchasesStateSettingsLoaded(_IsInAppPurchasesEnabled);
 	}
 
 	private void OnStoreKitInitFailed(string data) {
@@ -258,6 +261,8 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		OnStoreKitInitComplete (res);
 
 
+		if(!IOSNativeSettings.Instance.DisablePluginLogs) 
+			Debug.Log("STORE_KIT_INITI_FAILED Erro: " + e.description);
 	}
 	
 	private void onStoreDataReceived(string data) {
@@ -299,7 +304,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 			IsRestored = true;
 		}
 
-		FireProductBoughtEvent(data [0], data [2], IsRestored);
+		FireProductBoughtEvent(data [0], data [2], data [3], IsRestored);
 
 
 	}
@@ -389,10 +394,11 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		OnRestoreComplete (new ISN_Result (true));
 	}
 
-	private void FireProductBoughtEvent(string productIdentifier, string receipt, bool IsRestored) {
+	private void FireProductBoughtEvent(string productIdentifier, string receipt, string transactionIdentifier, bool IsRestored) {
 		IOSStoreKitResponse response = new IOSStoreKitResponse ();
 		response.productIdentifier = productIdentifier;
 		response.receipt = receipt;
+		response.transactionIdentifier = transactionIdentifier;
 		if(IsRestored) {
 			response.state = InAppPurchaseState.Restored;
 		} else {

@@ -4,11 +4,12 @@ using UnionAssets.FLE;
 using System.Collections;
 
 public class NativeMobileDialog : EventDispatcherBase {
-
+	
 	public Action<NMDialogResult> OnComplete = delegate {};
-
+	
 	public NativeMobileDialog(string title, string message, string yes, string no )
 	{
+		#if UNITY_ANDROID || UNITY_IPHONE || UNITY_WP8
 		#if UNITY_ANDROID
 		AndroidDialog dialog  = AndroidDialog.Create(title, message, yes, no);
 		#endif
@@ -19,8 +20,9 @@ public class NativeMobileDialog : EventDispatcherBase {
 		WP8Dialog dialog  = WP8Dialog.Create(title, message);
 		#endif
 		dialog.addEventListener(BaseEvent.COMPLETE, OnCompleteListener);
+		#endif
 	}
-
+	
 	public static NativeMobileDialog Create(string title, string message)
 	{
 		return new NativeMobileDialog(title, message, "Yes", "No");
@@ -29,7 +31,7 @@ public class NativeMobileDialog : EventDispatcherBase {
 	{
 		return new NativeMobileDialog(title, message, yes, no);
 	}
-
+	
 	private void OnCompleteListener(CEvent e)
 	{
 		OnComplete((NMDialogResult)e.data);

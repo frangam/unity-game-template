@@ -15,7 +15,13 @@
     [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
     [numberFormatter setLocale:self.priceLocale];
     NSString *formattedString = [numberFormatter stringFromNumber:self.price];
+    
+   
+#if UNITY_VERSION < 500
     [numberFormatter release];
+#endif
+    
+    
     return formattedString;
 }
 

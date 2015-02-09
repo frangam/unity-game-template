@@ -42,7 +42,8 @@ public class PaymentManagerExample {
 			//Event Use Examples
 			IOSInAppPurchaseManager.instance.addEventListener(IOSInAppPurchaseManager.RESTORE_TRANSACTION_FAILED, onRestoreTransactionFailed);
 			IOSInAppPurchaseManager.instance.addEventListener(IOSInAppPurchaseManager.VERIFICATION_RESPONSE, onVerificationResponce);
-			IOSInAppPurchaseManager.instance.addEventListener(IOSInAppPurchaseManager.STORE_KIT_INITIALIZED, OnStoreKitInited);
+
+			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
 
 
 			//Action Use Examples
@@ -110,10 +111,17 @@ public class PaymentManagerExample {
 			//We can unlock intrefase and repor user that the purchase is failed. 
 			Debug.Log("Transaction failed with error, code: " + responce.error.code);
 			Debug.Log("Transaction failed with error, description: " + responce.error.description);
+
+
 			break;
 		}
 
-		IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
+		if(responce.state == InAppPurchaseState.Failed) {
+			IOSNativePopUpManager.showMessage("Transaction Failed", "Error code: " + responce.error.code + "\n" + "Error description:" + responce.error.description);
+		} else {
+			IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
+		}
+
 	}
  
 	private static void onRestoreTransactionFailed() {
@@ -129,9 +137,12 @@ public class PaymentManagerExample {
 		Debug.Log("ORIGINAL JSON ON: " + responce.originalJSON);
 	}
 
-	private static void OnStoreKitInited() {
-		IOSInAppPurchaseManager.instance.removeEventListener(IOSInAppPurchaseManager.STORE_KIT_INITIALIZED, OnStoreKitInited);
-		IOSNativePopUpManager.showMessage("StoreKit Inited", "Available products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
+	private static void OnStoreKitInitComplete(ISN_Result result) {
+		if(result.IsSucceeded) {
+			IOSNativePopUpManager.showMessage("StoreKit Init Succeeded", "Available products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
+		} else {
+			IOSNativePopUpManager.showMessage("StoreKit Init Failed",  "Error code: " + result.error.code + "\n" + "Error description:" + result.error.description);
+		}
 	}
 
 	

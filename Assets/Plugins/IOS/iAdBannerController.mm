@@ -98,7 +98,10 @@ static BOOL IsShowIntersticialsOnLoad = false;
     iAdBannerObject *banner = [_banners objectForKey:[NSNumber numberWithInt:bannerId]];
     if(banner != nil) {
         [banner HideAd];
+         #if UNITY_VERSION < 500
         [banner dealloc];
+        #endif
+        
         
     }
 }
@@ -109,14 +112,22 @@ static BOOL IsShowIntersticialsOnLoad = false;
 
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
     NSLog(@"interstitialAdDidUnload");
+   
+#if UNITY_VERSION < 500
     [interstitial release];
+#endif
+    
     interstitial = nil;
 }
 
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
    
     NSLog(@"didFailWithError: %@", error.description);
+    
+#if UNITY_VERSION < 500
     [interstitial release];
+#endif
+    
     interstitial = nil;
     
      UnitySendMessage("iAdBannerController", "interstitialdidFailWithError", "");
@@ -143,7 +154,11 @@ static BOOL IsShowIntersticialsOnLoad = false;
 - (void)interstitialAdActionDidFinish:(ADInterstitialAd *)interstitialAd {
     NSLog(@"interstitialAdActionDidFinish");
     
+#if UNITY_VERSION < 500
     [interstitial release];
+#endif
+    
+    
     interstitial = nil;
     
     UnitySendMessage("iAdBannerController", "interstitialAdActionDidFinish", "");

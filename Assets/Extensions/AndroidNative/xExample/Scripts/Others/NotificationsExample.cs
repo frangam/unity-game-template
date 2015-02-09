@@ -27,8 +27,10 @@ public class NotificationsExample : MonoBehaviour {
 	void Awake() {
 		GoogleCloudMessageService.instance.addEventListener(GoogleCloudMessageService.CLOUD_MESSAGE_SERVICE_REGISTRATION_FAILED, OnRegFailed);
 		GoogleCloudMessageService.instance.addEventListener(GoogleCloudMessageService.CLOUD_MESSAGE_SERVICE_REGISTRATION_RECIVED, OnRegstred);
-		
 		GoogleCloudMessageService.instance.addEventListener(GoogleCloudMessageService.CLOUD_MESSAGE_LOADED, OnMessageLoaded);
+
+		GoogleCloudMessageService.instance.InitPushNotifications ();
+		//GoogleCloudMessageService.instance.InitParsePushNotifications ();
 	}
 
 	//--------------------------------------
@@ -48,7 +50,7 @@ public class NotificationsExample : MonoBehaviour {
 		AndroidNotificationManager.instance.LocadAppLaunchNotificationId();
 	}
 
-	private void CancelLocal() {
+	private void CanselLocal() {
 		AndroidNotificationManager.instance.CancelLocalNotification(LastNotificationId);
 	}
 

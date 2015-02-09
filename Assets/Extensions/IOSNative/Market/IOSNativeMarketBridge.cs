@@ -16,6 +16,10 @@ public class IOSNativeMarketBridge  {
 	
 	[DllImport ("__Internal")]
 	private static extern void _buyProduct(string id);
+
+
+	[DllImport ("__Internal")]
+	private static extern void _ISN_RequestInAppSettingState();
 	
 	[DllImport ("__Internal")]
 	private static extern void _verifyLastPurchase(string url);
@@ -43,6 +47,13 @@ public class IOSNativeMarketBridge  {
 	public static void verifyLastPurchase(string url) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			_verifyLastPurchase(url);
+		#endif
+	}
+
+
+	public static void ISN_RequestInAppSettingState() {
+		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		_ISN_RequestInAppSettingState();
 		#endif
 	}
 

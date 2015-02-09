@@ -25,8 +25,18 @@ public class UIBaseWindow : MonoBehaviour {
 	private bool notStartWithManager = false;
 	
 	[SerializeField]
-	[Tooltip("This window attribute is open when the current window is closed")]
-	private UIBaseWindow openNewWinWhenClose;
+	[Tooltip("Greater than 0 if we want to close this window after it was open and wait this delay time")]
+	private float waitForcloseAfterOpen = 0f;
+	
+	[SerializeField]
+	private string openAnimTrigger = "";
+	
+	[SerializeField]
+	private string closeAnimTrigger = "";
+	
+	[SerializeField]
+	[Tooltip("These windows are open when the current window is closed")]
+	private List<UIBaseWindow> openNewWinsWhenClose;
 	
 	[SerializeField]
 	private List<string> soundIdsPlayWhenOpen;
@@ -45,6 +55,7 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	private Animator anim;
 	private Image window;
 	private bool isOpen = false;
 	private bool firstOpen = true;
@@ -85,12 +96,12 @@ public class UIBaseWindow : MonoBehaviour {
 		}
 	}
 	
-	public UIBaseWindow OpenNewWinWhenClose {
+	public List<UIBaseWindow> OpenNewWinsWhenClose {
 		get {
-			return this.openNewWinWhenClose;
+			return this.openNewWinsWhenClose;
 		}
 		set{
-			this.openNewWinWhenClose = value;
+			this.openNewWinsWhenClose = value;
 		}
 	}
 	
@@ -106,11 +117,18 @@ public class UIBaseWindow : MonoBehaviour {
 		}
 	}
 	
+	public Animator Anim {
+		get {
+			return this.anim;
+		}
+	}
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
+		anim = GetComponent<Animator>();
 		window = GetComponent<Image>();
 		
 		if(!window){
@@ -149,6 +167,13 @@ public class UIBaseWindow : MonoBehaviour {
 				at.initType();
 		
 		isOpen = true;
+		
+		if(Anim != null && !string.IsNullOrEmpty(openAnimTrigger))
+			Anim.SetTrigger(openAnimTrigger);
+		
+		//call to close it after a delay time
+		if(waitForcloseAfterOpen > 0)
+			UIController.Instance.Manager.waitForClose(this, waitForcloseAfterOpen);
 	}
 	
 	/// <summary>
@@ -156,6 +181,11 @@ public class UIBaseWindow : MonoBehaviour {
 	/// </summary>
 	public virtual void forceClose(){
 		close();
+		
+		if(Anim != null && !string.IsNullOrEmpty(openAnimTrigger))
+			Anim.ResetTrigger(openAnimTrigger);
+		if(Anim != null && !string.IsNullOrEmpty(closeAnimTrigger))
+			Anim.SetTrigger(closeAnimTrigger);
 	}
 	
 	public virtual void close(){

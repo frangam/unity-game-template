@@ -189,6 +189,18 @@ public class GameCenterExample : BaseIOSFeaturePreview {
 			GameCenterManager.issueAchievementChallenge(TEST_ACHIEVEMENT_1_ID, "Here is tiny challenge for you");
 		}
 
+
+		StartX = XStartPos;
+		StartY+= YButtonStep;
+		StartY+= YLableStep;
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "More", style);
+		
+		StartY+= YLableStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Retrieve Signature")) {
+			GameCenterManager.RetrievePlayerSignature();
+			GameCenterManager.OnPlayerSignatureRetrieveResult += OnPlayerSignatureRetrieveResult;
+		}
+
 	}
 	
 	//--------------------------------------
@@ -245,6 +257,9 @@ public class GameCenterExample : BaseIOSFeaturePreview {
 		if(result.IsSucceeded) {
 			GCScore score = result.loadedScore;
 			IOSNativePopUpManager.showMessage("Leader Board " + score.leaderboardId, "Score: " + score.score + "\n" + "Rank:" + score.rank);
+
+			Debug.Log("double score representation: " + score.GetDoubleScore());
+			Debug.Log("long score representation: " + score.GetLongScore());
 		}
 	}
 
@@ -258,6 +273,7 @@ public class GameCenterExample : BaseIOSFeaturePreview {
 		}
 	}
 
+
 	void OnAuthFinished (ISN_Result res) {
 		if (res.IsSucceeded) {
 			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.player.playerId + "\n" + "Alias: " + GameCenterManager.player.alias);
@@ -265,7 +281,28 @@ public class GameCenterExample : BaseIOSFeaturePreview {
 			IOSNativePopUpManager.showMessage("Game Cneter ", "Player auntification failed");
 		}
 	}
-	
+
+
+	void OnPlayerSignatureRetrieveResult (ISN_PlayerSignatureResult result) {
+		Debug.Log("OnPlayerSignatureRetrieveResult");
+
+		if(result.IsSucceeded) {
+
+			Debug.Log("PublicKeyUrl: " + result.PublicKeyUrl);
+			Debug.Log("Signature: " + result.Signature);
+			Debug.Log("Salt: " + result.Salt);
+			Debug.Log("Timestamp: " + result.Timestamp);
+
+		} else {
+			Debug.Log("Error code: " + result.error.code);
+			Debug.Log("Error description: " + result.error.description);
+		}
+
+		GameCenterManager.OnPlayerSignatureRetrieveResult -= OnPlayerSignatureRetrieveResult;
+	}
+
+
+
 
 	//--------------------------------------
 	//  PRIVATE METHODS

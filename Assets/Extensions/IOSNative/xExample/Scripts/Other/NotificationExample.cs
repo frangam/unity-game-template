@@ -57,7 +57,7 @@ public class NotificationExample : BaseIOSFeaturePreview {
 
 
 		StartX += XButtonStep;
-		if(UnityEngine.GUI.Button(new UnityEngine.Rect(StartX, StartY, buttonWidth, buttonHeight), "Cansel All Notifications")) {
+		if(UnityEngine.GUI.Button(new UnityEngine.Rect(StartX, StartY, buttonWidth, buttonHeight), "Cancel All Notifications")) {
 			IOSNotificationController.instance.CancelAllLocalNotifications();
 		}
 

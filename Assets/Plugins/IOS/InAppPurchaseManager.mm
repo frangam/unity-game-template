@@ -52,14 +52,14 @@ static NSMutableDictionary* _views;
     request.delegate = self;
     [request start];
     
-    
+}
+
+- (void) requestInAppSettingState {
     if ([SKPaymentQueue canMakePayments]) {
-       UnitySendMessage("IOSInAppPurchaseManager", "onStoreKitStart", "1");
+        UnitySendMessage("IOSInAppPurchaseManager", "onStoreKitStart", "1");
     } else {
-       UnitySendMessage("IOSInAppPurchaseManager", "onStoreKitStart", "0");
+        UnitySendMessage("IOSInAppPurchaseManager", "onStoreKitStart", "0");
     }
-    
-    
 }
 
 
@@ -191,30 +191,25 @@ static NSMutableDictionary* _views;
 -(void) buyProduct:(NSString *)productId {
     
     
-    if ([SKPaymentQueue canMakePayments]) {
         SKProduct* selectedProduct = [_products objectForKey: productId];
         if(selectedProduct != NULL) {
             SKPayment *payment = [SKPayment paymentWithProduct:selectedProduct];
             [[SKPaymentQueue defaultQueue] addPayment:payment];
         } else {
-            UIAlertView *alert = [[UIAlertView alloc] init];
-            [alert setTitle:@"Connection Error"];
-            [alert setMessage:@"Cannot connect to payment servers, check your internet connection"];
-            [alert addButtonWithTitle:@"Ok"];
-            [alert setDelegate:NULL];
-            [alert show];
-            [alert release];
+            NSMutableString * data = [[NSMutableString alloc] init];
+            
+            [data appendString:productId];
+            [data appendString:@"|"];
+            [data appendString:@"Product Not Available"];
+            [data appendString:@"|"];
+            [data appendString:@"4"];
+
+
+           NSString *str = [[data copy] autorelease];
+           UnitySendMessage("IOSInAppPurchaseManager", "onTransactionFailed", [ISNDataConvertor NSStringToChar:str]);
         }
-    } else {
-        UIAlertView *alert = [[UIAlertView alloc] init];
-        [alert setTitle:@"In-App Purchase's disaled"];
-        [alert setMessage:@"Check settings to allow In-App Purchase's on this device "];
-        [alert addButtonWithTitle:@"Ok"];
-        [alert setDelegate:NULL];
-        [alert show];
-        [alert release];
-    }
 }
+  
 
 -(void) verifyLastPurchase:(NSString *) verificationURL {
     [_storeServer verifyLastPurchase:verificationURL];
@@ -279,6 +274,10 @@ extern "C" {
     
     void _showProductView(int viewId) {
         [[InAppPurchaseManager instance] ShowProductView:viewId];
+    }
+    
+    void _ISN_RequestInAppSettingState() {
+        [[InAppPurchaseManager instance] requestInAppSettingState];
     }
     
     

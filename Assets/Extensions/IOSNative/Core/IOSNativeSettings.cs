@@ -10,7 +10,7 @@ using UnityEditor;
 
 public class IOSNativeSettings : ScriptableObject {
 
-	public const string VERSION_NUMBER = "5.5";
+	public const string VERSION_NUMBER = "5.7";
 
 	public string AppleId = "XXXXXXXXX";
 
@@ -26,6 +26,9 @@ public class IOSNativeSettings : ScriptableObject {
 	public bool ShowAchievementsParams = false;
 	public bool ShowOtherParams = false;
 	public bool ShowCameraAndGallryParams = false;
+
+
+	public bool DisablePluginLogs = false;
 
 
 	public bool UseGCRequestsCahing = false;

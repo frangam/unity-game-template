@@ -4,11 +4,12 @@ using UnionAssets.FLE;
 using System.Collections;
 
 public class NativeMobileRateUs : NMPopUp {
-
+	
 	public Action<NMDialogResult> OnComplete = delegate {};
-
+	
 	public NativeMobileRateUs(string title, string message, string url, string yes, string later, string no)
 	{
+		#if UNITY_ANDROID || UNITY_IPHONE || UNITY_WP8
 		#if UNITY_ANDROID
 		AndroidRateUsPopUp rate = AndroidRateUsPopUp.Create(title, message, url, yes, later, no);
 		#endif
@@ -19,6 +20,7 @@ public class NativeMobileRateUs : NMPopUp {
 		WP8RateUsPopUp rate = WP8RateUsPopUp.Create(title, message);
 		#endif
 		rate.addEventListener(BaseEvent.COMPLETE, OnCompleteListener);
+		#endif
 	}
 	
 	public static NativeMobileRateUs Create(string title, string message, string url)

@@ -1,3 +1,9 @@
+5.0:
+Compatibility Update
+
+4.2:
+Compatibility Update
+
 4.1:
 IO SDK update to  6.12.2
 Documentation urls added to the plugin menu 

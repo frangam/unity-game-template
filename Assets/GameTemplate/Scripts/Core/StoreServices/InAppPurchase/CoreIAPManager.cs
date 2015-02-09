@@ -218,7 +218,7 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		
 		if(result.IsSucceeded) {
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Inited successfully, Avaliable products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
+				Debug.Log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
 			
 			dispatcher.dispatch(RETRIEVED_PRODUCTS, IOSInAppPurchaseManager.instance.products);

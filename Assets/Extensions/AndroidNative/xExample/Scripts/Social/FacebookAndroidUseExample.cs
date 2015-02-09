@@ -250,7 +250,10 @@ public class FacebookAndroidUseExample : MonoBehaviour {
 	}
 	
 	
-	private string UNION_ASSETS_PAGE_ID = "1435528379999137";
+//	private string UNION_ASSETS_PAGE_ID = "1435528379999137";
+	private string UNION_ASSETS_PAGE_ID = "578153135619004";
+
+
 	public void CheckLike() {
 		
 		//checking if current user likes the page
@@ -262,7 +265,7 @@ public class FacebookAndroidUseExample : MonoBehaviour {
 		} else {
 			//user do not like the page or we han't yet downloaded likes data
 			//downloading likes for this page
-			SPFacebook.instance.addEventListener(FacebookEvents.LIKES_LIST_LOADED, OnLikesLoaded);
+			SPFacebook.instance.OnLikesListLoadedAction += OnLikesLoaded;
 			SPFacebook.instance.LoadLikes(SPFacebook.instance.UserId, UNION_ASSETS_PAGE_ID);
 
 		}
@@ -275,8 +278,7 @@ public class FacebookAndroidUseExample : MonoBehaviour {
 	// EVENTS
 	// --------------------------------------
 	
-	private void OnLikesLoaded() {
-		
+	private void OnLikesLoaded(FB_APIResult result) {
 		
 		//The likes is loaded so now we can find out for sure if user is like our page
 		bool IsLikes = SPFacebook.instance.IsUserLikesPage(SPFacebook.instance.UserId, UNION_ASSETS_PAGE_ID);

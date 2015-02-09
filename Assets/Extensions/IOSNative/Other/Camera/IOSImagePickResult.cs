@@ -19,7 +19,8 @@ public class IOSImagePickResult : ISN_Result {
 		_image.LoadImage(decodedFromBase64);
 		_image.hideFlags = HideFlags.DontSave;
 
-		Debug.Log("IOSImagePickResult: w" + _image.width + " h: " + _image.height);
+		if(!IOSNativeSettings.Instance.DisablePluginLogs) 
+			Debug.Log("IOSImagePickResult: w" + _image.width + " h: " + _image.height);
 	}
 	
 

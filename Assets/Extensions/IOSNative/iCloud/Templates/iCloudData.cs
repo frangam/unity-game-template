@@ -30,7 +30,8 @@ public class iCloudData  {
 		_val = v;
 
 		if(_val.Equals("null")) {
-			Debug.Log ("empty set");
+			if(!IOSNativeSettings.Instance.DisablePluginLogs) 
+				Debug.Log ("empty set");
 			_IsEmpty = true;
 		}
 	}

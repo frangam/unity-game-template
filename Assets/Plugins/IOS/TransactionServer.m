@@ -79,7 +79,11 @@ NSString* lastTransaction = @"";
     [data appendString:@"|"];
     [data appendString: lastTransaction];
     
-    NSString *str = [[data copy] autorelease];
+    NSString *str = [data copy] ;
+    #if UNITY_VERSION < 500
+    [str autorelease];
+    #endif
+    
     UnitySendMessage("IOSInAppPurchaseManager", "onVerificationResult", [ISNDataConvertor NSStringToChar:str]);
 
 }
@@ -124,7 +128,19 @@ NSString* lastTransaction = @"";
     [data appendString:@"|"];
     [data appendString: [self getReceipt:transaction]];
     
-    NSString *str = [[data copy] autorelease];
+    
+    [data appendString:@"|"];
+    [data appendString: transaction.transactionIdentifier];
+    
+    
+    
+    
+    NSString *str = [data copy] ;
+    #if UNITY_VERSION < 500
+    [str autorelease];
+    #endif
+    
+    
     UnitySendMessage("IOSInAppPurchaseManager", "onProductBought", [ISNDataConvertor NSStringToChar:str]);
 
     
@@ -215,7 +231,11 @@ NSString* lastTransaction = @"";
     [data appendString:erroCode];
    
     
-    NSString *str = [[data copy] autorelease];
+    NSString *str = [data copy] ;
+    #if UNITY_VERSION < 500
+    [str autorelease];
+    #endif
+    
     UnitySendMessage("IOSInAppPurchaseManager", "onTransactionFailed", [ISNDataConvertor NSStringToChar:str]);
     
     

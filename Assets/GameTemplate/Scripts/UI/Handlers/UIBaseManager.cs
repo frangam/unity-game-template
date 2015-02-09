@@ -230,9 +230,11 @@ public class UIBaseManager : MonoBehaviour {
 					window.forceClose();
 				
 				//open new window when close
-				if(window.OpenNewWinWhenClose != null){
-					window.OpenNewWinWhenClose.gameObject.SetActive(true);
-					window.OpenNewWinWhenClose.open();
+				if(window.OpenNewWinsWhenClose != null && window.OpenNewWinsWhenClose.Count > 0){
+					foreach(UIBaseWindow w in window.OpenNewWinsWhenClose){
+						w.gameObject.SetActive(true);
+						w.open();
+					}
 				}
 			}
 			

@@ -94,7 +94,8 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 	void FixedUpdate() {
 		if(NotificationServices.remoteNotificationCount > 0) {
 			foreach(var rn in NotificationServices.remoteNotifications) {
-				UnityEngine.Debug.Log("Remote Noti: " + rn.alertBody);
+				if(!IOSNativeSettings.Instance.DisablePluginLogs) 
+					UnityEngine.Debug.Log("Remote Noti: " + rn.alertBody);
 				IOSNotificationController.instance.ShowNotificationBanner("", rn.alertBody);
 				dispatch(REMOTE_NOTIFICATION_RECEIVED, rn);
 				OnRemoteNotificationReceived(rn);
@@ -118,10 +119,9 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 		int majorVersion = int.Parse(chunks[0]);
 		if (majorVersion >= 8) {
 			_ISN_RegisterForRemoteNotifications((int) notificationTypes);
-		} else {
-			NotificationServices.RegisterForRemoteNotificationTypes(notificationTypes);
-		}
+		} 
 
+		NotificationServices.RegisterForRemoteNotificationTypes(notificationTypes);
 
 		DeviceTokenListner.Create ();
 

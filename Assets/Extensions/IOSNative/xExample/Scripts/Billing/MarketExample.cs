@@ -19,7 +19,10 @@ public class MarketExample : BaseIOSFeaturePreview {
 	//--------------------------------------
 	
 	void Awake() {
-		PaymentManagerExample.init();
+
+		//Best pertise is to init billing on app launch
+		//But for this example we will use button for initialization
+		//PaymentManagerExample.init();
 	}
 
 	//--------------------------------------
@@ -27,24 +30,44 @@ public class MarketExample : BaseIOSFeaturePreview {
 	//--------------------------------------
 	
 	void OnGUI() {
+
+
+
+
 		UpdateToStartPos();
 		
 		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "In-App Purchases", style);
 
-	
+
+
 		StartY+= YLableStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Perfrom Buy")) {
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Init")) {
+			PaymentManagerExample.init();
+		}
+
+
+		if(IOSInAppPurchaseManager.instance.IsStoreLoaded) {
+			GUI.enabled = true;
+		} else {
+			GUI.enabled = false;
+		}
+
+
+		StartX = XStartPos;
+		StartY+= YButtonStep;
+
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Perform Buy #1")) {
 			PaymentManagerExample.buyItem(PaymentManagerExample.SMALL_PACK);
 
 		}
 
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Perfrom Buy2")) {
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Perform Buy #2")) {
 			PaymentManagerExample.buyItem(PaymentManagerExample.NC_PACK);
 		}
 
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Restore Purshases")) {
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Restore Purchases")) {
 			IOSInAppPurchaseManager.instance.restorePurchases();
 
 		}
@@ -52,7 +75,7 @@ public class MarketExample : BaseIOSFeaturePreview {
 
 		StartX = XStartPos;
 		StartY+= YButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Verifay Last Purshase")) {
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Verify Last Purchases")) {
 			IOSInAppPurchaseManager.instance.verifyLastPurchase(IOSInAppPurchaseManager.SANDBOX_VERIFICATION_SERVER);
 		}
 
@@ -60,6 +83,13 @@ public class MarketExample : BaseIOSFeaturePreview {
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Load Product View")) {
 			IOSStoreProductView view =  new IOSStoreProductView("333700869");
 			view.Load();
+		}
+
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Is Payments Enabled On device")) {
+			IOSInAppPurchaseManager.instance.OnPurchasesStateSettingsLoaded += OnPurchasesStateSettingsLoaded;
+			IOSInAppPurchaseManager.instance.RequestInAppSettingState();
 		}
 	}
 	
@@ -71,6 +101,11 @@ public class MarketExample : BaseIOSFeaturePreview {
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
+
+	void OnPurchasesStateSettingsLoaded (bool IsInAppPurchasesEnabled) {
+		IOSInAppPurchaseManager.instance.OnPurchasesStateSettingsLoaded -= OnPurchasesStateSettingsLoaded;
+		IOSNativePopUpManager.showMessage("Payments Settings State", "Is Payments Enabled: " + IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled);
+	}
 	
 	//--------------------------------------
 	//  PRIVATE METHODS
@@ -79,6 +114,7 @@ public class MarketExample : BaseIOSFeaturePreview {
 	//--------------------------------------
 	//  DESTROY
 	//--------------------------------------
+
 
 
 }

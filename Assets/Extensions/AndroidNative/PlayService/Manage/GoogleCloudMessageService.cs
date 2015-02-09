@@ -39,17 +39,32 @@ public class GoogleCloudMessageService : SA_Singleton<GoogleCloudMessageService>
 	void Awake() {
 		DontDestroyOnLoad(gameObject);
 	}
-	
-	public void RgisterDevice() {
-		AndroidNative.GCMRgisterDevice(AndroidNativeSettings.Instance.GCM_SenderId);
-	}
 
 	//--------------------------------------
 	// PUBLIC METHODS
 	//--------------------------------------
 
+	public void InitPushNotifications() {
+		AN_NotificationProxy.InitPushNotifications (
+			AndroidNativeSettings.Instance.PushNotificationIcon == null ? string.Empty : AndroidNativeSettings.Instance.PushNotificationIcon.name,
+		    AndroidNativeSettings.Instance.PushNotificationSound == null ? string.Empty : AndroidNativeSettings.Instance.PushNotificationSound.name,
+		    AndroidNativeSettings.Instance.EnableVibrationPush);
+	}
+
+	public void InitPushNotifications(string icon, string sound, bool enableVibrationPush) {
+		AN_NotificationProxy.InitPushNotifications (icon, sound,enableVibrationPush);
+	}
+
+	public void InitParsePushNotifications() {
+		AN_NotificationProxy.InitParsePushNotifications (AndroidNativeSettings.Instance.ParseAppId, AndroidNativeSettings.Instance.DotNetKey);
+	}
+
+	public void RgisterDevice() {
+		AN_NotificationProxy.GCMRgisterDevice(AndroidNativeSettings.Instance.GCM_SenderId);
+	}
+
 	public void LoadLastMessage() {
-		AndroidNative.GCMLoadLastMessage();
+		AN_NotificationProxy.GCMLoadLastMessage();
 	}
 	
 	//--------------------------------------

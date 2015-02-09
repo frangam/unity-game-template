@@ -23,6 +23,7 @@ public class IOSNativeSettingsEditor : Editor {
 
 
 	GUIContent EnablePushNotification  = new GUIContent("Enable Push Notifications API[?]:", "Enables Push Notifications Api");
+	GUIContent DisablePluginLogsNote  = new GUIContent("Disable Plugin Logs[?]:", "All plugins Debug.Log lines will be disabled if this option is enabled");
 
 
 	private IOSNativeSettings settings;
@@ -253,9 +254,19 @@ public class IOSNativeSettingsEditor : Editor {
 			IOSNativeSettings.Instance.EnablePushNotificationsAPI = EditorGUILayout.Toggle(IOSNativeSettings.Instance.EnablePushNotificationsAPI);
 			EditorGUILayout.EndHorizontal();
 
+
 			if(EditorGUI.EndChangeCheck()) {
 				UpdatePluginSettings();
 			}
+
+
+			EditorGUI.BeginChangeCheck();
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField(DisablePluginLogsNote);
+			IOSNativeSettings.Instance.DisablePluginLogs = EditorGUILayout.Toggle(IOSNativeSettings.Instance.DisablePluginLogs);
+			EditorGUILayout.EndHorizontal();
+
+
 		}
 	}
 

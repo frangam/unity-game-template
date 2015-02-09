@@ -4,11 +4,12 @@ using UnionAssets.FLE;
 using System.Collections;
 
 public class NativeMobileMessage : NMPopUp {
-
+	
 	public Action OnComplete = delegate {};
-
+	
 	public NativeMobileMessage(string title, string message, string ok)
 	{
+		#if UNITY_ANDROID || UNITY_IPHONE || UNITY_WP8
 		#if UNITY_ANDROID
 		AndroidMessage msg = AndroidMessage.Create(title, message, ok);
 		#endif
@@ -19,8 +20,9 @@ public class NativeMobileMessage : NMPopUp {
 		WP8Message msg = WP8Message.Create(title, message);
 		#endif
 		msg.addEventListener(BaseEvent.COMPLETE, OnCompleteListener);
+		#endif
 	}
-
+	
 	public static NativeMobileMessage Create(string title, string message)
 	{
 		return new NativeMobileMessage(title, message, "Ok");
@@ -29,7 +31,7 @@ public class NativeMobileMessage : NMPopUp {
 	{
 		return new NativeMobileMessage(title, message, ok);
 	}
-
+	
 	private void OnCompleteListener(CEvent e)
 	{
 		OnComplete();

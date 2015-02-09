@@ -1,180 +1,117 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
-using System.Collections.Generic;
 
-public class ZombieSniperLevelLoader : BaseLevelLoaderController {
+public class UIHealthBar : MonoBehaviour {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private ZSHostage[] 		pbHostages;
-	
+	private Slider slider;
 	[SerializeField]
-	private ZSZombie[] 			pbZombies;
-	
-	[SerializeField]
-	private FPSController		player;
-	
-	
-	[SerializeField]
-	private bool 				loadZombieData = true;
-	
+	private bool hideWhenCharDead = true;
+//	[SerializeField]
+//	private Texture		texBackground;	//texture for bacground bar
+//	[SerializeField]
+//	private Texture		texForeground;	//texture for life foreground bar
+
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private List<ZSBuildingDoor>	buildingDoors;
-	private List<ZSHostage> 		hostages;
-	private List<ZSZombie> 			zombies;
-	
+	private float 		maxValue = 100;
+	private float 		initialValue = 100;
+	private float 		_value = 100;
+	private Collider	collider;
+	private GameObject	livingCharacter;
+	private bool 		inited = false;
+
+
 	//--------------------------------------
-	// Overriden Methods
+	// Getters & Setters
 	//--------------------------------------
-	public override void loadLevel (int levelId){
-		string content = getLevelContent(levelId);
-		hostages = new List<ZSHostage>();
-		buildingDoors = new List<ZSBuildingDoor>();
-		zombies = new List<ZSZombie>();
-		
-		if(!string.IsNullOrEmpty(content)){
-			ZSLevel level = new ZSLevel(content, loadZombieData);
-			currentLevel = level;
-			
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log(level);
-			
-			if(level != null){
-				//player pos
-				if(!player.testInitialPos){
-					BaseLevelPosition playerPos = level.PlayerPosition;
-					player.transform.position = playerPos.transform.position;
-					player.transform.rotation = playerPos.transform.rotation;
-				}
-				
-				//spawn hostages
-				if(level.HostagesPositions != null){
-					foreach(BaseLevelPosition h in level.HostagesPositions){
-						int zhIndex = Random.Range(0, pbHostages.Length);
-						ZSHostage zh = pbHostages[zhIndex];
-						ZSHostage go = zh.Spawn(h.getARandomSpawnPosition(), zh.transform.rotation); //the game object
-						go.init(h); //init position
-						hostages.Add(go);
-					}
-				}
-				
-				//enable building doors
-				if(level.BuildingDoorsPositions != null && level.BuildingDoorsPositions.Count > 0){
-					foreach(BaseLevelPosition b in level.BuildingDoorsPositions){
-						foreach(BaseLevelPosition d in BaseLevelPositionsManager.Instance.Positions){
-							if(d.GetType() == typeof(ZSBuildingDoor)){
-								ZSBuildingDoor bd = (ZSBuildingDoor) d;
-								
-								if(bd != null && b.Id == d.Id){
-									bd.gameObject.SetActive(true);
-									buildingDoors.Add(bd);
-								}
-								else if(bd != null && b.Id != d.Id){
-									bd.gameObject.SetActive(false);
-								}
-							}
-						}
-					}
-				}
-				else{
-					foreach(BaseLevelPosition d in BaseLevelPositionsManager.Instance.Positions){
-						if(d.GetType() == typeof(ZSBuildingDoor)){
-							ZSBuildingDoor bd = (ZSBuildingDoor) d;
-							
-							if(bd != null){
-								bd.gameObject.SetActive(false);
-							}
-						}
-					}
-				}
-				
-				//spawn zombies
-				if(level.ZombiesData != null){
-					foreach(ZSZombieData z in level.ZombiesData){
-						int zIndex = Random.Range(0, pbZombies.Length);
-						
-						ZSZombie zombie = pbZombies[zIndex];
-						ZSZombie go = zombie.Spawn(z.Position.getARandomSpawnPosition(), zombie.transform.rotation); //the game object
-						
-						if(z.GetTargetType != null && z.TargetPosition != null){
-							Transform target = getTargetToFollow(z.GetTargetType, z.TargetPosition.Id); //get target to follow
-							go.init(z, target); //init
-						}
-						else
-							go.init(z);
-						
-						zombies.Add(go);
-					}
-				}
-				
-			}
+	public float Value {
+		get {
+			return this._value;
 		}
-		
-		
-		base.loadLevel(levelId);
-	}
-	
-	public override void loadAllOfLevels (){
-		string[] content = getContentOfAllLevels();
-		levels = new List<BaseLevel>();
-		
-		foreach(string line in content){
-			ZSLevel zl = new ZSLevel(line, loadZombieData);
-			
-			if(zl != null)
-				levels.Add(zl);
+		set {
+			_value = value;
 		}
-		
-		base.loadAllOfLevels();
 	}
-	
-	private ZSHostage getHostageByPosId(string id){
-		ZSHostage hostage = null;
-		
-		foreach(ZSHostage h in hostages){
-			if(h.Position.Id == id){
-				hostage = h;
-				break;
-			}
+
+	//--------------------------------------
+	// Unity Methods
+	//--------------------------------------
+	#region Unity
+	void Awake(){
+//		_value = initialValue;
+		if(slider == null){
+			slider = GetComponent<Slider>();
+
+			if(slider == null)
+				Debug.LogError("Not found slider component");
 		}
-		
-		return hostage;
 	}
-	
-	private ZSBuildingDoor getBuildingByPosId(string id){
-		ZSBuildingDoor res = null;
-		
-		foreach(ZSBuildingDoor b in buildingDoors){
-			if(b.Id == id){
-				res = b;
-				break;
-			}
+
+	void Update(){
+		if(inited){
+			slider.value = _value/maxValue;
+
+			if(hideWhenCharDead && slider.value <= 0)
+				gameObject.SetActive(false);
 		}
-		
-		return res;
+
+
 	}
-	
-	private Transform getTargetToFollow(ZSZombieData.TargetType type, string id){
-		Transform res = null;
-		
-		switch(type){
-		case ZSZombieData.TargetType.HOSTAGE: 
-			ZSHostage h = getHostageByPosId(id); 
-			
-			if(h != null)
-				res = h.transform;
-			break;
-		case ZSZombieData.TargetType.BUILDING: 
-			ZSBuildingDoor b = getBuildingByPosId(id); 
-			
-			if(b != null)
-				res = b.transform;
-			break;
-		}
-		
-		return res;
+
+//	void OnGUI(){
+//		draw ();
+//	}
+	#endregion
+
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public void init(float _initialValue, float _maxValue, GameObject go = null){
+		initialValue = _initialValue;
+		maxValue = _maxValue;
+		_value = initialValue;
+		livingCharacter = go;
+		inited = true;
 	}
+	public void changeValue(float value){
+		_value = value;
+	}
+//
+//	//--------------------------------------
+//	// Private Methods
+//	//--------------------------------------
+//	private void draw(){
+//		if(livingCharacter == null) return;
+//
+//		//Life bar
+//		Rect rcBg = new Rect(0,0, 60,14); //rect for the background
+//		Rect rcProgress = new Rect(0,0,((this._value)/this.initialValue)*56,10); //rect for the progress
+//		Rect label = new Rect(0,0,60,30);
+//
+//		float offset = livingCharacter != null && livingCharacter.collider != null ? livingCharacter.collider.bounds.size.y : 0;
+//
+//		//screen point to locate in 3D space the progress bar on the top of the livingCharacter
+//		Vector3 point = Camera.mainCamera.WorldToScreenPoint(new Vector3(
+//			livingCharacter.transform.position.x,
+//			livingCharacter.transform.position.y + offset ,
+//			livingCharacter.transform.position.z 
+//			));
+//		
+//		rcBg.y = Screen.height-point.y;
+//		rcBg.x = point.x-30;
+//		rcProgress.x = rcBg.x+2;
+//		rcProgress.y = rcBg.y+2;
+//		label.x = rcBg.x+5;
+//		label.y = rcBg.y-12;
+//		
+//		//draw background and foreground textures and label with the progress value
+//		GUI.DrawTexture(rcBg, texBackground);
+//		GUI.DrawTexture(rcProgress, texForeground, ScaleMode.ScaleAndCrop);
+//		GUI.Label(label, this._value.ToString());
+//	}
 }

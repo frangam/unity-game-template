@@ -131,18 +131,24 @@ static ISNCamera *_sharedInstance;
             // NSLog(@"MaxImageSize: %i", [self MaxImageSize]);
             //  NSLog(@"photo.size.width: %f", photo.size.width);
             
-            if(photo.size.width > [self MaxImageSize]) {
+            
+            
+            if(photo.size.width > [self MaxImageSize] || photo.size.height > [self MaxImageSize] ) {
                 NSLog(@"resizing image");
                 CGSize s = CGSizeMake([self MaxImageSize], [self MaxImageSize]);
-                CGFloat new_height = [self MaxImageSize] / (photo.size.width / photo.size.height);
-                s.height = new_height;
                 
+                if(photo.size.width > photo.size.height) {
+                    CGFloat new_height = [self MaxImageSize] / (photo.size.width / photo.size.height);
+                    s.height = new_height;
+
+                } else {
+                    CGFloat new_width = [self MaxImageSize] / (photo.size.height / photo.size.width);
+                    s.width = new_width;
+
+                }
+                              
                 photo =   [ISNCamera imageWithImage:photo scaledToSize:s];
-                
-                //  NSLog(@"photo.size.width: %f", photo.size.width);
-                //   NSLog(@"photo.size.height: %f", photo.size.height);
-                
-                
+
             }
             
             NSData *imageData = nil;

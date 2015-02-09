@@ -14,11 +14,11 @@
 - (void) dealloc
 {
     [self bannerView].delegate = nil;
-    [[self bannerView] release];
+#if UNITY_VERSION < 500
+   [[self bannerView] release];
+     [super dealloc];
+#endif
     
-    
-   // [[self bannerView] dealloc];
-    [super dealloc];
 }
 
 

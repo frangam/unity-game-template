@@ -36,7 +36,7 @@ public class WeaponUpgradesExample : MonoBehaviour {
 	//--------------------------------------
 	public void upgrade(string id){
 		foreach(UpgradableStat s in stats){
-			if(s.Id == id){
+			if(s.StatId.Equals(id)){
 				bool applied = s.apply();
 				
 				if(applied){
@@ -58,7 +58,7 @@ public class WeaponUpgradesExample : MonoBehaviour {
 		string value = stat.CurrentValue.ToString();
 		string price = stat.currentPrice() != -1f ? stat.currentPrice().ToString() : "";
 		
-		switch(stat.Id){
+		switch(stat.StatId){
 		case "s_0": lbPower.text = value; lbPowerPrice.text = price; break;
 		case "s_1": lbStability.text = value; lbStabilityPrice.text = price; break;
 		case "s_2": lbZoom.text = value; lbZoomPrice.text = price; break;

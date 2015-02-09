@@ -71,7 +71,9 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
         if((NotificationSettings.types & UIUserNotificationTypeSound) == 0) {
             if(sound) {
                 NSLog(@"ISN: no sound allowed for this user. notification sound disabled ");
+                 #if UNITY_VERSION < 500
                 sound = false;
+                #endif
             }
 
         }

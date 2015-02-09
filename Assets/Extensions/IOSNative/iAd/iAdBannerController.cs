@@ -114,11 +114,15 @@ public class iAdBannerController : EventDispatcher {
 	public void StartInterstitialAd() {
 
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
 			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
-				Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");
+				if(!IOSNativeSettings.Instance.DisablePluginLogs) 	
+					Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");
 				interstitialdidFailWithError("");
 				return;
 			}
+		#endif
 			_IADStartInterstitialAd();
 		#endif
 	}
@@ -126,11 +130,15 @@ public class iAdBannerController : EventDispatcher {
 	public void LoadInterstitialAd() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
 			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
-				Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");
+				if(!IOSNativeSettings.Instance.DisablePluginLogs) 	
+					Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");
 				interstitialdidFailWithError("");
 				return;
 			}
+		#endif
+
 			_IADLoadInterstitialAd();
 		#endif
 	}
@@ -160,7 +168,8 @@ public class iAdBannerController : EventDispatcher {
 		if(_banners.ContainsKey(id)) {
 			return _banners[id];
 		} else {
-			Debug.LogWarning("Banner id: " + id.ToString() + " not found");
+			if(!IOSNativeSettings.Instance.DisablePluginLogs) 
+				Debug.LogWarning("Banner id: " + id.ToString() + " not found");
 			return null;
 		}
 	}

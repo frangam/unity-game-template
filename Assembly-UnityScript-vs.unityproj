@@ -156,6 +156,7 @@
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\drawable\com_facebook_button_blue.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MobileBlur.shader" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SSAOShader.shader" />
+     <None Include="Assets\GameTemplate\Versions\GT_VersionInfo.txt" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ConvertDepth.shader" />
      <None Include="Assets\Plugins\Android\facebook\res\drawable\com_facebook_picker_top_button.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurvesSimple.shader" />
@@ -242,6 +243,7 @@
      <None Include="Assets\Plugins\Android\facebook\res\layout\com_facebook_login_activity_layout.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\values-he\strings.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SimpleClear.shader" />
+     <None Include="Assets\Extensions\StansAssetsCommon\SA_FB_PlaceHolder.txt" />
      <None Include="Assets\GameTemplate\Examples\Resources\Localization\English.txt" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\AndroidManifest.xml" />
      <None Include="Assets\Plugins\Android\res\values\version.xml" />

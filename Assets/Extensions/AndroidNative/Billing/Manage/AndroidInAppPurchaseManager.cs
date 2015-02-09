@@ -69,7 +69,7 @@ public class AndroidInAppPurchaseManager : SA_Singleton<AndroidInAppPurchaseMana
 
 	public void retrieveProducDetails() {
 		_IsProductRetrievingInProcess = true;
-		AndroidNative.retrieveProducDetails ();
+		AN_BillingProxy.RetrieveProducDetails();
 	}
 
 
@@ -81,7 +81,7 @@ public class AndroidInAppPurchaseManager : SA_Singleton<AndroidInAppPurchaseMana
 
 	public void purchase(string SKU, string DeveloperPayload) {
 		_processedSKU = SKU;
-		AndroidNative.purchase (SKU, DeveloperPayload);
+		AN_BillingProxy.Purchase (SKU, DeveloperPayload);
 	}
 
 
@@ -93,12 +93,12 @@ public class AndroidInAppPurchaseManager : SA_Singleton<AndroidInAppPurchaseMana
 
 	public void subscribe(string SKU, string DeveloperPayload) {
 		_processedSKU = SKU;
-		AndroidNative.subscribe (SKU, DeveloperPayload);
+		AN_BillingProxy.Subscribe (SKU, DeveloperPayload);
 	}
 
 	public void consume(string SKU) {
 		_processedSKU = SKU;
-		AndroidNative.consume (SKU);
+		AN_BillingProxy.Consume (SKU);
 	}
 
 
@@ -128,7 +128,7 @@ public class AndroidInAppPurchaseManager : SA_Singleton<AndroidInAppPurchaseMana
 			ids += _productsIds[i];
 		}
 
-		AndroidNative.connectToBilling (ids, base64EncodedPublicKey);
+		AN_BillingProxy.Connect (ids, base64EncodedPublicKey);
 	}
 
 
@@ -288,15 +288,17 @@ public class AndroidInAppPurchaseManager : SA_Singleton<AndroidInAppPurchaseMana
 
 
 
-		for(int i = 0; i < storeData.Length; i+=7) {
+		for(int i = 0; i < storeData.Length; i+=9) {
 			GooglePurchaseTemplate tpl =  new GooglePurchaseTemplate();
 			tpl.SKU 				= storeData[i];
 			tpl.packageName 		= storeData[i + 1];
 			tpl.developerPayload 	= storeData[i + 2];
 			tpl.orderId 	        = storeData[i + 3];
 			tpl.SetState(storeData[i + 4]);
-			tpl.token 	        = storeData[i + 5];
+			tpl.token 	        	= storeData[i + 5];
 			tpl.signature 	        = storeData[i + 6];
+			tpl.time 	        	= System.Convert.ToInt64(storeData[i + 7]); 
+			tpl.originalJson 	    = storeData[i + 8];
 
 			_inventory.addPurchase (tpl);
 		}
@@ -316,7 +318,7 @@ public class AndroidInAppPurchaseManager : SA_Singleton<AndroidInAppPurchaseMana
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 
 
-		for(int i = 0; i < storeData.Length; i+=6) {
+		for(int i = 0; i < storeData.Length; i+=7) {
 			GoogleProductTemplate tpl =  new GoogleProductTemplate();
 			tpl.SKU 		  				= storeData[i];
 			tpl.price 		  				= storeData[i + 1];
@@ -324,6 +326,7 @@ public class AndroidInAppPurchaseManager : SA_Singleton<AndroidInAppPurchaseMana
 			tpl.description   				= storeData[i + 3];
 			tpl.priceAmountMicros 	      	= storeData[i + 4];
 			tpl.priceCurrencyCode   		= storeData[i + 5];
+			tpl.originalJson   				= storeData[i + 6];
 			_inventory.addProduct (tpl);
 		}
 

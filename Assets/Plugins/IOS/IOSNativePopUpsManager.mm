@@ -18,7 +18,11 @@ static UIAlertView* _currentAllert =  nil;
 
 + (void) unregisterAllertView {
     if(_currentAllert != nil) {
-        [_currentAllert release];
+#if UNITY_VERSION < 500
+         [_currentAllert release];
+#endif
+        
+       
         _currentAllert = nil;
     }
 }
@@ -26,7 +30,9 @@ static UIAlertView* _currentAllert =  nil;
 +(void) dismissCurrentAlert {
     if(_currentAllert != nil) {
         [_currentAllert dismissWithClickedButtonIndex:0 animated:YES];
+#if UNITY_VERSION < 500
         [_currentAllert release];
+#endif
         _currentAllert = nil;
     }
 }
