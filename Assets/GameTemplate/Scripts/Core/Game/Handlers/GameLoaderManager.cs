@@ -13,6 +13,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	private const float DUMMY_WAIT_TIME = 3.5f;
 	private const float TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION = 10;
 	private const float TIEMPO_ESPERA_COMPROBAR_GC_CONEXION = 10;
 	private const float TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION = 8; 
@@ -134,9 +135,11 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
 		#endif
 		
-		if(!twInited || !fbInited)
+		if((GameSettings.Instance.USE_TWITTER && !twInited) ||  (GameSettings.Instance.USE_FACEBOOK && !fbInited))
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
 		
+		if(!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER)
+			yield return new WaitForSeconds (DUMMY_WAIT_TIME);
 		
 		//finally load the scene: tutorial or menu
 		if(GameSettings.mandatoryTutorial){

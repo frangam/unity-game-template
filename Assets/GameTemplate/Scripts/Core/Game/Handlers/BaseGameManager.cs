@@ -325,7 +325,7 @@ public class BaseGameManager : MonoBehaviour {
 		Application.LoadLevel(Application.loadedLevelName);
 	}
 	
-	public bool Paused
+	public virtual bool Paused
 	{
 		get 
 		{ 

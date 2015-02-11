@@ -4,7 +4,7 @@ using System.Collections;
 public class FovFixer : MonoBehaviour {
 	public float originalWidth = 1024.0f;
 	public float originalHeight = 768.0f;
-
+	
 	private float originalAspectRatio;
 	
 	public enum ADJUST_MODE {
@@ -27,9 +27,9 @@ public class FovFixer : MonoBehaviour {
 	public event OnFovChanged onFovChanged;
 	
 	// Use this for initialization
-	public virtual void Start () {
+	public virtual void Awake () {
 		originalAspectRatio = originalWidth / originalHeight;
-
+		
 		cam = camera;
 		if(cam == null)
 			Debug.LogError("FovFixer in " + gameObject.name + " needs a camera");
@@ -41,7 +41,7 @@ public class FovFixer : MonoBehaviour {
 		Fit();
 	}
 	
-
+	
 	// Update is called once per frame
 	void Update () {
 		if(cam.aspect != previousAspect || adjustMode != previousMode) {
@@ -57,21 +57,21 @@ public class FovFixer : MonoBehaviour {
 		
 		switch(adjustMode)
 		{
-			case ADJUST_MODE.FIXED_W:
-				SetFovY( 2.0f * Mathf.Atan( Mathf.Tan( originalFovH  * Mathf.Deg2Rad / 2.0f ) / aspectRatio) * Mathf.Rad2Deg);
+		case ADJUST_MODE.FIXED_W:
+			SetFovY( 2.0f * Mathf.Atan( Mathf.Tan( originalFovH  * Mathf.Deg2Rad / 2.0f ) / aspectRatio) * Mathf.Rad2Deg);
 			break;
 			
 			//This is unity default mode
-			case ADJUST_MODE.FIXED_H:
-				SetFovY(originalFovV);
-				break;
+		case ADJUST_MODE.FIXED_H:
+			SetFovY(originalFovV);
+			break;
 			
-			case ADJUST_MODE.FIXED_MINIMUM:
-				if(aspectRatio < originalAspectRatio)
-					SetFovY( 2.0f * Mathf.Atan( Mathf.Tan( originalFovH * Mathf.Deg2Rad / 2.0f ) / aspectRatio) * Mathf.Rad2Deg);
-				else
-					SetFovY(originalFovV);
-				break;
+		case ADJUST_MODE.FIXED_MINIMUM:
+			if(aspectRatio < originalAspectRatio)
+				SetFovY( 2.0f * Mathf.Atan( Mathf.Tan( originalFovH * Mathf.Deg2Rad / 2.0f ) / aspectRatio) * Mathf.Rad2Deg);
+			else
+				SetFovY(originalFovV);
+			break;
 		}
 		
 		if(onFovChanged != null)
