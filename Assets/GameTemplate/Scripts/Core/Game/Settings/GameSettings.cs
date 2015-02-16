@@ -73,10 +73,15 @@ public class GameSettings : ScriptableObject {
 	public bool 	IS_PRO_VERSION = false; 
 	public int		TIMES_START_GAME_TO_SHOW_AD_AT_START 			= 1; //1: we show an interstisial ad every time user inits the game		
 	public int 		NUM_GAMEOVERS_SHOW_AD_HARD_MODE 	= 5; //number of gameovers to show an ad in hard mode
+	public int 		NUM_WINS_SHOW_AD_HARD_MODE 			= 5; //number of WINS to show an ad in hard mode
 	public int 		NUM_GAMEOVERS_SHOW_AD_EASY_MODE 	= 3; 
+	public int 		NUM_WINS_SHOW_AD_EASY_MODE 			= 3; 
 	public int 		NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE 	= 2;
+	public int 		NUM_WINS_SHOW_AD_NORMAL_MODE 		= 2;
 	public int 		NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE	= 1;
+	public int 		NUM_WINS_SHOW_AD_SURVIVAL_MODE		= 1;
 	public int 		NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT 	= 5;
+	public int 		NUM_WINS_SHOW_AD_BY_DEFAULT 		= 3; //number of WINS to show an ad by default
 	
 	//SOCIAL NETWORKS
 	public bool BUILD_FOR_AMAZON 						= false; //if we are building for amazon (only change when the build is only for amazon, change it after building)
@@ -156,11 +161,23 @@ public class GameSettings : ScriptableObject {
 	public const string PP_CHARACTER_CONTROL_MAX_SENSITIVITY 			= "pp_character_control_max_sensitivity";
 	public const string PP_SHOW_MISSIONS_WINDOW	 						= "pp_show_mission_window";
 	public const string	PP_LAST_UNLOCKED_SURVIVAL_LEVEL	 				= "pp_last_unlocked_survival_level";
-	public const string	PP_TOTAL_GAME_OPENINGS				 			= "pp_total_game_openings"; //number of the game is open
+	public const string	PP_TOTAL_GAME_OPENINGS				 			= "pp_total_game_openings"; 
+	public const string	PP_TOTAL_GAMEOVERS					 			= "pp_total_gameovers"; //total of gameovers
+	public const string	PP_TOTAL_WINS					 				= "pp_total_wins"; //total of victories
+	public const string	PP_TOTAL_CAMPAIGN_WINS					 		= "pp_total_campaign_wins"; //total of victories in campaign mode
+	public const string	PP_TOTAL_QUICKGAME_WINS					 		= "pp_total_quickgame_wins"; //total of victories in quickgame mode
+	public const string	PP_TOTAL_SURVIVAL_WINS					 		= "pp_total_survival_wins"; //total of victories in survival mode
+	public const string	PP_TOTAL_CAMPAIGN_GAMEOVERS					 	= "pp_total_campaign_gameovers"; //total of gameovers in campaing mode
+	public const string	PP_TOTAL_QUICKGAME_GAMEOVERS					= "pp_total_quickgame_gameovers"; //total of gameovers in quickgame mode
+	public const string	PP_TOTAL_SURVIVAL_GAMEOVERS						= "pp_total_survival_gameovers"; //total of gameovers in survival mode
 	public const string	PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY	 			= "pp_num_gameovers_without_difficulty";
+	public const string	PP_NUM_WINS_WITHOUT_DIFFICULTY	 				= "pp_num_wins_without_difficulty";
 	public const string	PP_NUM_GAMEOVERS_WITH_DIFFICULTY				= "pp_num_gameovers_with_difficulty_"; //+ (int) GameDifficulty(enum)
+	public const string	PP_NUM_WINS_WITH_DIFFICULTY						= "pp_num_wins_with_difficulty_"; //+ (int) GameDifficulty(enum)
 	public const string	PP_NUM_GAMEOVERS_IN_LEVEL						= "pp_num_gameovers_in_level_"; //+ (int) level id
+	public const string	PP_NUM_WINS_IN_LEVEL							= "pp_num_wins_in_level_"; //+ (int) level id
 	public const string	PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL				= "pp_num_gameovers_in_survival_level_"; //+ (int) survival level id
+	public const string	PP_NUM_WINS_IN_SURVIVAL_LEVEL					= "pp_num_wins_in_survival_level_"; //+ (int) survival level id
 	public const string PP_UNIQUE_LIST_CURRENT_ITEM_SELECTED_ID			= "pp_unique_list_current_item_selected_id";
 	
 	//GooglePlay Services

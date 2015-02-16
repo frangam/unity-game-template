@@ -37,6 +37,31 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	private int 			lastUnlockedLevel;
 	
 	//--------------------------------------
+	// Getters & Setters
+	//--------------------------------------
+	public List<UIBasePlayLevelButton> LevelButtons {
+		get {
+			return this.levelButtons;
+		}
+	}
+	
+	public UIBasePlayLevelButton CurrentLevelButton{
+		get{
+			UIBasePlayLevelButton res = null;
+			UIBaseLevel uiLevel = (UIBaseLevel) currentItemSelected;
+			
+			foreach(UIBasePlayLevelButton b in levelButtons){
+				if(b.Level == uiLevel.Level){
+					res = b;
+					break;
+				}
+			}
+			
+			return res;
+		}
+	}
+	
+	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override void loadItems ()

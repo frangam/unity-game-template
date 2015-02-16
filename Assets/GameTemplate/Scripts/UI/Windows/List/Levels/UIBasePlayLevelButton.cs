@@ -22,6 +22,21 @@ public class UIBasePlayLevelButton : UIBaseButton {
 	private bool unlocked = true;
 	
 	//--------------------------------------
+	// Getters & Setters
+	//--------------------------------------
+	public BaseLevel Level {
+		get {
+			return this.level;
+		}
+	}
+	
+	public bool Unlocked {
+		get {
+			return this.unlocked;
+		}
+	}
+	
+	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override void Awake ()

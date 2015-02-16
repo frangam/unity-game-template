@@ -147,39 +147,144 @@ public class BaseGameManager : MonoBehaviour {
 	// Private Methods
 	//--------------------------------------
 	private void handleGameOverAdShowing(){
-		int numGameovers = 0;
-		int numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT;
-		
+		int numGameovers = 0, numWins = 0;
+		int numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT, numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT;
+
+		//handle total
+
+		//update total of gameovers
+		if(isGameOver){
+			numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAMEOVERS);
+			numGameovers++;
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAMEOVERS, numGameovers);
+		}
+		//update total of wins
+		else{
+			numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_WINS);
+			numWins++;
+			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_WINS, numWins);
+		}
+
+
+		//hanlde by each game mode
 		switch(gameMode){
 		case GameMode.CAMPAIGN:
-			numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString());
-			numGameovers++;
-			PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString(), numGameovers);
+			//handle campaign gameovers
+			if(isGameOver){
+				//total of campaign
+				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_CAMPAIGN_GAMEOVERS);
+				numGameovers++;
+				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_CAMPAIGN_GAMEOVERS, numGameovers);
+
+				//specific of this level
+				int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString());
+				go++;
+				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString(), go);
+			}
+			//handle campaign wins
+			else{
+				//total wins
+				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_CAMPAIGN_WINS);
+				numWins++;
+				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_CAMPAIGN_WINS, numWins);
+
+				//specific wins
+				int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_IN_LEVEL+currentLevelSelected.ToString());
+				w++;
+				PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_IN_LEVEL+currentLevelSelected.ToString(), w);
+			}
+
+
 			break;
 		case GameMode.QUICKGAME:
-			if(difficulty != GameDifficulty.NONE){
-				int dif = ((int) difficulty);
-				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString());
+			//update total of quickgame gameovers
+			if(isGameOver){
+				//total of campaign
+				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_QUICKGAME_GAMEOVERS);
 				numGameovers++;
-				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString(), numGameovers);
-			}
-			else{
-				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY);
-				numGameovers++;
-				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY, numGameovers);
-				
-				switch(difficulty){
-				case GameDifficulty.EASY: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE; break;
-				case GameDifficulty.NORMAL: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE; break;
-				case GameDifficulty.HARD: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE; break;
+				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_QUICKGAME_GAMEOVERS, numGameovers);
+
+				//specifi by difficulty
+				if(difficulty != GameDifficulty.NONE){
+					int dif = ((int) difficulty);
+					int go  = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString());
+					go++;
+					PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString(), go);
+
+					switch(difficulty){
+					case GameDifficulty.EASY: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE; break;
+					case GameDifficulty.NORMAL: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE; break;
+					case GameDifficulty.HARD: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE; break;
+					}
+				}
+				else if(difficulty == GameDifficulty.NONE){
+					int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY);
+					go++;
+					PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY, go);
 				}
 			}
+			//handle quickgame wins
+			else{
+				//total wins
+				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_QUICKGAME_WINS);
+				numWins++;
+				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_QUICKGAME_WINS, numWins);
+
+				//specific wins by difficulty
+				if(difficulty != GameDifficulty.NONE){
+					int dif = ((int) difficulty);
+					int w  = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_WITH_DIFFICULTY+dif.ToString());
+					w++;
+					PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_WITH_DIFFICULTY+dif.ToString(), w);
+
+					switch(difficulty){
+					case GameDifficulty.EASY: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE; break;
+					case GameDifficulty.NORMAL: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE; break;
+					case GameDifficulty.HARD: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE; break;
+					}
+				}
+				else if(difficulty == GameDifficulty.NONE){
+					int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_WITHOUT_DIFFICULTY);
+					w++;
+					PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_WITHOUT_DIFFICULTY, w);
+				}
+			}
+
+
 			break;
 		case GameMode.SURVIVAL:
-			numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE;
-			numGameovers = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
-			numGameovers++;
-			PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), numGameovers);
+			//update total of survival gameovers
+			if(isGameOver){
+				//total go of SURVIVAL
+				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_SURVIVAL_GAMEOVERS);
+				numGameovers++;
+				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_SURVIVAL_GAMEOVERS, numGameovers);
+
+				//specific go of survival
+				int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
+				go++;
+				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), go);
+
+				//num go to check to show ads
+				numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE;
+			}
+			//handle survival wins
+			else{
+				//total wins
+				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_SURVIVAL_WINS);
+				numWins++;
+				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_SURVIVAL_WINS, numWins);
+
+				//specific wins
+				int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
+				w++;
+				PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), w);
+
+				//num WINS to check to show ads
+				numGameoversToChek = GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE;
+			}
+
+
 			break;
 		}
 		
@@ -187,7 +292,7 @@ public class BaseGameManager : MonoBehaviour {
 		AdsHandler.Instance.refrescarBanner();
 		
 		//show interstitial ad
-		if(numGameovers % numGameoversToChek == 0)
+		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0))
 			AdsHandler.Instance.mostrarPantallazo();
 	}
 	

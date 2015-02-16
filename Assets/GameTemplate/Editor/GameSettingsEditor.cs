@@ -435,26 +435,51 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Default num GameOvers:");
 			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT);
 			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Default num Wins:");
+			GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Survival mode num GameOvers:");
+			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Survival mode num Wins:");
+			GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.Space();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Easy mode num GameOvers:");
 			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE);
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Easy mode num Wins:");
+			GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Normal mode num GameOvers:");
 			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE);
 			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Normal mode num Wins:");
+			GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE);
+			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Hard mode num GameOvers:");
 			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE);
 			EditorGUILayout.EndHorizontal();
-			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Survival mode num GameOvers:");
-			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE);
+			EditorGUILayout.LabelField("Hard mode num Wins:");
+			GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE);
 			EditorGUILayout.EndHorizontal();
+			
+
 		}
 	}
 	
