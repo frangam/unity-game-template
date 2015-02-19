@@ -8,6 +8,11 @@ using System.Collections;
 /// **** It is useful when we need to localize dynamically a text ***
 /// </summary>
 public class ExtraLocalizations{
+	public const string DIALONG_YES_BUTTON 							= "dialog_yes_button";
+	public const string DIALONG_OK_BUTTON 							= "dialog_ok_button";
+	public const string DIALONG_NO_BUTTON 							= "dialog_no_button";
+	public const string DIALONG_CANCEL_BUTTON 						= "dialog_cancel_button";
+	
 	public const string RATE_POPUP_TITLE 							= "rate_popup_title";
 	public const string RATE_POPUP_MESSAGE 							= "rate_popup_message";
 	public const string RATE_POPUP_VOTE_BUTTON 						= "rate_popup_vote_button";
@@ -53,4 +58,8 @@ public class ExtraLocalizations{
 	public const string LOADING			 							= "loading";
 	
 	public const string SHARE_LEVEL_COMPLETED						= "share_level_completed";
+	
+	
+	public const string LB_PLAY_BUTTON								= "play";
+	public const string LB_PURCHASE_BUTTON							= "purchase";
 }
