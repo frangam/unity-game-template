@@ -87,16 +87,14 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN) return;
 		
 		#if UNITY_ANDROID
-		if((!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && twInited && fbInited && !GameSettings.mandatoryTutorial)
-		   || (GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
+		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial){
 			handleInitialAdShowing();
 			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
 		else if(gpsPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
 		#elif UNITY_IPHONE
-		if((!GameSettings.Instance.USE_GAMECENTER && twInited && fbInited && !GameSettings.mandatoryTutorial)
-		   || (GameSettings.Instance.USE_GAMECENTER && gcPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial)){
+		if(GameSettings.Instance.USE_GAMECENTER && gcPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial){
 			handleInitialAdShowing();
 			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
 		}
@@ -126,21 +124,36 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		
 		#if UNITY_ANDROID
-		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
+		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
+			loadSceneAfterChecking();
+		}
 		#elif UNITY_IPHONE
-		if(GameSettings.Instance.USE_GAMECENTER)
+		if(GameSettings.Instance.USE_GAMECENTER){
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GC_CONEXION);
+			loadSceneAfterChecking();
+		}
 		#else
 		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
+		loadSceneAfterChecking();
 		#endif
 		
-		if((GameSettings.Instance.USE_TWITTER && !twInited) ||  (GameSettings.Instance.USE_FACEBOOK && !fbInited))
+		
+		
+		if((GameSettings.Instance.USE_TWITTER && !twInited) ||  (GameSettings.Instance.USE_FACEBOOK && !fbInited)){
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
+			loadSceneAfterChecking();
+		}
 		
-		if(!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER)
+		else if(!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER){
 			yield return new WaitForSeconds (DUMMY_WAIT_TIME);
+			loadSceneAfterChecking();
+		}
 		
+		
+	}
+	
+	private void loadSceneAfterChecking(){
 		//finally load the scene: tutorial or menu
 		if(GameSettings.mandatoryTutorial){
 			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);

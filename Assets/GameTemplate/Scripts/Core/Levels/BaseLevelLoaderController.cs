@@ -116,7 +116,8 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 			loadLevel(levelToLoadTEST);
 		else if(loadCurrentLevelAtStart)
 			loadCurrentLevel();
-		else if(loadAllLevels)
+		
+		if(loadAllLevels)
 			loadAllOfLevels();
 	}
 	
@@ -211,8 +212,11 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	/// Loads the current selected level
 	/// </summary>
 	/// <param name="levelId">Level identifier.</param>
-	public void loadCurrentLevel(){
-		loadLevel(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL));
+	public virtual void loadCurrentLevel(){
+		if(GameController.Instance.Manager.GameMode == GameMode.SURVIVAL)
+			loadLevel(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL));
+		else
+			loadLevel(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL));
 	}
 	
 	/// <summary>

@@ -140,6 +140,7 @@ public class GameSettings : ScriptableObject {
 	public const string PP_LEVEL_COMPLETED_TIMES						= "pp_level_completed_times_"; //+ level id
 	public const string PP_LEVEL_TRIES_TIMES							= "pp_level_tries_times_"; //+ level id
 	public const string PP_SELECTED_LEVEL 								= "pp_selected_level"; //id of selected level
+	public const string PP_SELECTED_SURVIVAL_LEVEL 						= "pp_selected_survival_level"; //id of survival selected level
 	public const string PP_MISION_POPUP_SHOWN 							= "pp_mision_popup_shown_"; //followed by level id
 	public const string PP_GAME_MODE 									= "pp_game_mode";
 	public const string PP_GAME_DIFFICULTY 								= "pp_game_difficulty";

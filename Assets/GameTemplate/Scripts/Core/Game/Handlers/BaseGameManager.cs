@@ -149,9 +149,9 @@ public class BaseGameManager : MonoBehaviour {
 	private void handleGameOverAdShowing(){
 		int numGameovers = 0, numWins = 0;
 		int numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT, numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT;
-
+		
 		//handle total
-
+		
 		//update total of gameovers
 		if(isGameOver){
 			numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAMEOVERS);
@@ -164,8 +164,8 @@ public class BaseGameManager : MonoBehaviour {
 			numWins++;
 			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_WINS, numWins);
 		}
-
-
+		
+		
 		//hanlde by each game mode
 		switch(gameMode){
 		case GameMode.CAMPAIGN:
@@ -175,7 +175,7 @@ public class BaseGameManager : MonoBehaviour {
 				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_CAMPAIGN_GAMEOVERS);
 				numGameovers++;
 				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_CAMPAIGN_GAMEOVERS, numGameovers);
-
+				
 				//specific of this level
 				int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString());
 				go++;
@@ -187,14 +187,14 @@ public class BaseGameManager : MonoBehaviour {
 				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_CAMPAIGN_WINS);
 				numWins++;
 				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_CAMPAIGN_WINS, numWins);
-
+				
 				//specific wins
 				int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_IN_LEVEL+currentLevelSelected.ToString());
 				w++;
 				PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_IN_LEVEL+currentLevelSelected.ToString(), w);
 			}
-
-
+			
+			
 			break;
 		case GameMode.QUICKGAME:
 			//update total of quickgame gameovers
@@ -203,14 +203,14 @@ public class BaseGameManager : MonoBehaviour {
 				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_QUICKGAME_GAMEOVERS);
 				numGameovers++;
 				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_QUICKGAME_GAMEOVERS, numGameovers);
-
+				
 				//specifi by difficulty
 				if(difficulty != GameDifficulty.NONE){
 					int dif = ((int) difficulty);
 					int go  = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString());
 					go++;
 					PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString(), go);
-
+					
 					switch(difficulty){
 					case GameDifficulty.EASY: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE; break;
 					case GameDifficulty.NORMAL: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE; break;
@@ -229,14 +229,14 @@ public class BaseGameManager : MonoBehaviour {
 				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_QUICKGAME_WINS);
 				numWins++;
 				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_QUICKGAME_WINS, numWins);
-
+				
 				//specific wins by difficulty
 				if(difficulty != GameDifficulty.NONE){
 					int dif = ((int) difficulty);
 					int w  = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_WITH_DIFFICULTY+dif.ToString());
 					w++;
 					PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_WITH_DIFFICULTY+dif.ToString(), w);
-
+					
 					switch(difficulty){
 					case GameDifficulty.EASY: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE; break;
 					case GameDifficulty.NORMAL: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE; break;
@@ -249,8 +249,8 @@ public class BaseGameManager : MonoBehaviour {
 					PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_WITHOUT_DIFFICULTY, w);
 				}
 			}
-
-
+			
+			
 			break;
 		case GameMode.SURVIVAL:
 			//update total of survival gameovers
@@ -259,12 +259,12 @@ public class BaseGameManager : MonoBehaviour {
 				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_SURVIVAL_GAMEOVERS);
 				numGameovers++;
 				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_SURVIVAL_GAMEOVERS, numGameovers);
-
+				
 				//specific go of survival
 				int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
 				go++;
 				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), go);
-
+				
 				//num go to check to show ads
 				numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE;
 			}
@@ -274,17 +274,17 @@ public class BaseGameManager : MonoBehaviour {
 				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_SURVIVAL_WINS);
 				numWins++;
 				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_SURVIVAL_WINS, numWins);
-
+				
 				//specific wins
 				int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
 				w++;
 				PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), w);
-
+				
 				//num WINS to check to show ads
 				numGameoversToChek = GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE;
 			}
-
-
+			
+			
 			break;
 		}
 		
@@ -346,13 +346,22 @@ public class BaseGameManager : MonoBehaviour {
 		started = false;
 		Paused = pauseTimeAtStart;
 		
+		
+		
 		currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
-			: PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); //get the current level selected
+			: lastSelectedLevel(); //get the current level selected
 		
 		if(gameMode == GameMode.CAMPAIGN){
 			BaseQuestManager.Instance.init(currentLevelSelected);
 		}
 	}
+	
+	public int lastSelectedLevel(){
+		int last = gameMode == GameMode.SURVIVAL ? PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL) : PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); 
+		
+		return last;
+	}
+	
 	/// <summary>
 	/// Do start game functions
 	/// </summary>
@@ -471,7 +480,7 @@ public class BaseGameManager : MonoBehaviour {
 		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
 		
 		//unlock the next level
-		if(currentLevelSelected == lastUnlockedLevel)
+		if(currentLevelSelected == lastUnlockedLevel && BaseLevelLoaderController.Instance.Levels != null && currentLevelSelected < BaseLevelLoaderController.Instance.Levels.Count)
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, currentLevelSelected+1);
 		
 		finishGame();

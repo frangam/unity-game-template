@@ -22,6 +22,33 @@ public class UIBtnPurchaseLevel : UIBasePurchaseButton {
 	
 	private bool levelLoaded = false;
 	
+	//--------------------------------------
+	// Getters && Setters
+	//--------------------------------------
+	public int IdLevel {
+		get {
+			return this.idLevel;
+		}
+	}
+	
+	public bool LevelLoaded {
+		get {
+			return this.levelLoaded;
+		}
+	}
+	
+	
+	public BasePurchasableLevel Level{
+		get{
+			return UILevel.Level;
+		}
+	}
+	
+	public UIBasePurchasableLevel UILevel{
+		get{
+			return ((UIBasePurchasableLevel) Item);
+		}
+	}
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -38,11 +65,11 @@ public class UIBtnPurchaseLevel : UIBasePurchaseButton {
 			loadLevelProperties();
 	}
 	
-//	public override void SetLocked ()
-//	{
-//		int lastLevel = PlayerPrefs.GetInt(ppKeyLastLevelPurchased);
-//		Locked = idLevel > lastLevel;
-//	}
+	//	public override void SetLocked ()
+	//	{
+	//		int lastLevel = PlayerPrefs.GetInt(ppKeyLastLevelPurchased);
+	//		Locked = idLevel > lastLevel;
+	//	}
 	
 	public override void OnDestroy ()
 	{
@@ -55,13 +82,16 @@ public class UIBtnPurchaseLevel : UIBasePurchaseButton {
 		base.doPress ();
 		
 		if(Item != null && Item.Purchased){
-			PlayerPrefs.SetInt(GameSettings.PP_SELECTED_LEVEL, idLevel);
+			selectLevel();
 			ScreenLoaderVisualIndicator.Instance.LoadScene(sceneToGoWhenPress);
 		}
 		
 	}
 	
-
+	public virtual void selectLevel(){
+		PlayerPrefs.SetInt(GameSettings.PP_SELECTED_LEVEL, idLevel);
+	}
+	
 	public virtual void loadLevelProperties(){
 		if(BaseLevelLoaderController.Instance.Levels != null && BaseLevelLoaderController.Instance.Levels.Count > 0){
 			foreach(BaseLevel l in BaseLevelLoaderController.Instance.Levels){
