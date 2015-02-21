@@ -92,13 +92,16 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		int scoreToSend = score >= best ? score : best;
 		string id = rankingID;
 		
-		//		Debug.Log ("Sending score to the server: " + puntosEnviar + " a ranking: " + id);
+		
 		
 		
 		
 		#if UNITY_ANDROID
 		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
 			if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+				
 				if(GooglePlayManager.instance.GetLeaderBoard (id) != null){
 					int scoreServidor = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).rank;
 					
@@ -117,11 +120,23 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthed){
 			id = id.Replace("-","_"); //replace because in iOS it is not supported ids with "-"
-			int scoreServidor = GameCenterManager.GetLeaderBoard(id).GetCurrentPlayerScore(GCBoardTimeSpan.ALL_TIME, GCCollectionType.GLOBAL).rank;
-			if(scoreServidor < scoreToSend)
+			
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+			
+			if(GameCenterManager.GetLeaderBoard(id) != null){
+				int scoreServidor = GameCenterManager.GetLeaderBoard(id).GetCurrentPlayerScore(GCBoardTimeSpan.ALL_TIME, GCCollectionType.GLOBAL).rank;
+				
+				
+				
+				if(scoreServidor < scoreToSend)
+					GameCenterManager.reportScore(scoreToSend, id);
+				else
+					saveBestScore(id, scoreServidor);
+			}
+			else{
 				GameCenterManager.reportScore(scoreToSend, id);
-			else
-				saveBestScore(id, scoreServidor);
+			}
 		}
 		#endif
 		
