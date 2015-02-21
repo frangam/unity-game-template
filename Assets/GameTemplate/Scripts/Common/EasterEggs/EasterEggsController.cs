@@ -14,7 +14,10 @@ public class EasterEggsController : PersistentSingleton<EasterEggsController> {
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	void Awake(){
+	protected override void Awake ()
+	{
+		base.Awake ();
+		
 		resetAllInputs();
 		EasterEgg.dispatcher.addEventListener(EasterEgg.EASTER_EGG_UNLOCKED, OnEasterEggUnlocked);
 	}

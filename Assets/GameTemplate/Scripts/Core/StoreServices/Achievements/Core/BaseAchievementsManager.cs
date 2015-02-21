@@ -71,6 +71,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		}
 		#elif UNITY_IPHONE
 		if(GameCenterManager.IsPlayerAuthed && GameCenterManager.getAchievementProgress(aID) < 100){ //Menor al 100%
+			aID = aID.Replace("-", "_");
 			GameCenterManager.submitAchievement(achievement.getProgressPercentage(), aID); //Completamos con el 100% del progreso
 		}
 		#elif WP8
@@ -88,12 +89,15 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 	public void initialCheckingInServerSide(){
 		bool lockedInServer = false;
 		
-		Debug.Log("Doing initial checking in server");
-		Debug.Log("Achievements: "+Quests);
+		if(GameSettings.Instance.showTestLogs){
+			Debug.Log("Doing initial checking in server");
+			Debug.Log("Achievements: "+Quests);
+		}
 		
 		
 		foreach(Achievement a in Quests){
-			Debug.Log("Achievement: "+a);
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Achievement: "+a);
 			//if it was completed previously
 			//we check if in the servers has updated it
 			if(a.completedPreviously()){				
@@ -104,7 +108,8 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 				}
 				#elif UNITY_IPHONE
 				if(GameCenterManager.IsPlayerAuthed){
-					lockedInServer = GameCenterManager.getAchievementProgress(a.Id) < 100;
+					string id = a.Id.Replace("-","_");
+					lockedInServer = GameCenterManager.getAchievementProgress(id) < 100;
 				}
 				#elif WP8
 				#endif

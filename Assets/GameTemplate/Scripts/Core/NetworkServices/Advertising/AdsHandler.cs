@@ -21,8 +21,10 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	// INITIALIZE
 	//--------------------------------------
 	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR)
-	void Awake() {
-		if(!GameSettings.Instance.IS_PRO_VERSION || !GameSettings.purchasedForQuitAds){
+	protected override void Awake (){
+		base.Awake ();
+		
+		if(!GameSettings.Instance.IS_PRO_VERSION){
 			
 			//Required
 			GoogleMobileAd.Init();
@@ -85,7 +87,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//	}
 	
 	private void crearBanner(){
-		if(!GameSettings.Instance.IS_PRO_VERSION || !GameSettings.purchasedForQuitAds)
+		if(!GameSettings.Instance.IS_PRO_VERSION)
 			banner = GoogleMobileAd.CreateAdBanner(anchor, size);
 	}
 	
@@ -94,12 +96,12 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//  PUBLIC METHODS
 	//--------------------------------------
 	public void mostrarBanner(){
-		if (!GameSettings.Instance.IS_PRO_VERSION || !GameSettings.purchasedForQuitAds)
+		if (!GameSettings.Instance.IS_PRO_VERSION)
 			ShowBanner();
 	}
 	
 	public void ocultarBanner(){
-		if (!GameSettings.Instance.IS_PRO_VERSION || !GameSettings.purchasedForQuitAds)
+		if (!GameSettings.Instance.IS_PRO_VERSION)
 			HideBanner();
 	}
 	
@@ -107,7 +109,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	
 	public void mostrarPantallazo(){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(!GameSettings.Instance.IS_PRO_VERSION || !GameSettings.purchasedForQuitAds){
+		if(!GameSettings.Instance.IS_PRO_VERSION){
 			//loadin ad:
 			GoogleMobileAd.LoadInterstitialAd ();
 		}
@@ -116,7 +118,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	
 	public void refrescarBanner(){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(!GameSettings.Instance.IS_PRO_VERSION || !GameSettings.purchasedForQuitAds)
+		if(!GameSettings.Instance.IS_PRO_VERSION)
 			RefreshBanner();
 		#endif
 	}
@@ -156,6 +158,9 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			GoogleMobileAdBanner banner = registerdBanners[sceneBannerId];
 			if (banner.IsLoaded){
 				if (banner.IsOnScreen){
+					//					if(GameSettings.Instance.showTestLogs)
+					//						Debug.Log("AdsHandler - refreshing banner ad at position: ");
+					
 					banner.Refresh();
 				}
 			}

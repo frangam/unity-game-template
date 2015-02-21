@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnionAssets.FLE;
 
-public class CoreIAPManager : Singleton<CoreIAPManager>{
+public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
@@ -26,6 +26,10 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	//--------------------------------------
 	private List<Product> _products;
 	private bool _isInited;
+	private int numProducts = 0;
+	private List<GoogleProductTemplate> productsGoogle = new List<GoogleProductTemplate>();
+	private List<IOSProductTemplate> productsIOS = new List<IOSProductTemplate>();
+	private List<WP8ProductTemplate> productsWP = new List<WP8ProductTemplate>();
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -44,6 +48,30 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		get { return _isInited; }
 		private set { _isInited = value; }
 	}
+	
+	public int NumProducts {
+		get {
+			return this.numProducts;
+		}
+	}
+	
+	public List<GoogleProductTemplate> ProductsGoogle {
+		get {
+			return this.productsGoogle;
+		}
+	}
+	
+	public List<IOSProductTemplate> ProductsIOS {
+		get {
+			return this.productsIOS;
+		}
+	}
+	
+	public List<WP8ProductTemplate> ProductsWP {
+		get {
+			return this.productsWP;
+		}
+	}
 	#endregion
 	
 	
@@ -51,12 +79,9 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	public virtual void Awake(){
-		if(GameSettings.Instance.inAppBillingIDS != null && GameSettings.Instance.inAppBillingIDS.Count > 0){
-			Init(GameSettings.Instance.inAppBillingIDS);
-		}
-		else
-			Debug.LogError("Not found any In App Billing ID");
+	protected override void Awake(){
+		base.Awake();
+		init();
 	}
 	
 	public virtual void Start(){
@@ -66,8 +91,33 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	public virtual void Update(){
 		
 	}
+	
+	//	public void OnEnable(){
+	//		if(_isInited){
+	//			#if UNITY_ANDROID
+	//			AndroidInAppPurchaseManager.ActionProductPurchased += OnProductPurchased; 
+	//			AndroidInAppPurchaseManager.ActionProductConsumed  += OnProductConsumed;
+	//			AndroidInAppPurchaseManager.ActionBillingSetupFinished += OnBillingConnected;
+	//			#elif UNITY_IPHONE
+	//			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
+	//			IOSInAppPurchaseManager.instance.OnTransactionComplete += OnTransactionComplete;
+	//			IOSInAppPurchaseManager.instance.OnVerificationComplete += OnVerificationComplete;
+	//			IOSInAppPurchaseManager.instance.OnRestoreComplete += OnRestoreComplete;
+	//			#elif WP8
+	//			WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
+	//			WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.PRODUCT_PURCHASE_FINISHED, OnPurchaseFinished);
+	//			#endif
+	//		}
+	//	}
+	
+	/// <summary>
+	/// We need unsubscribe from this events to avoid to give more rewards that needed
+	/// </summary>
 	public virtual void OnDestroy(){
 		if(_isInited){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("CoreIAPManager - destroying events");
+			
 			#if UNITY_ANDROID
 			AndroidInAppPurchaseManager.ActionProductPurchased -= OnProductPurchased; 
 			AndroidInAppPurchaseManager.ActionProductConsumed  -= OnProductConsumed;
@@ -108,6 +158,12 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	
 	
 	#region Init
+	public void init(){
+		if(GameSettings.Instance.inAppBillingIDS != null && GameSettings.Instance.inAppBillingIDS.Count > 0)
+			Init(GameSettings.Instance.inAppBillingIDS);
+		else
+			Debug.LogError("Not found any In App Billing ID");
+	}
 	/// <summary>
 	/// Init loading productIDs that are the same in all platforms
 	/// </summary>
@@ -123,6 +179,9 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	}
 	
 	private void endInit(){
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("CoreIAPManager - Loading Store products ids");
+		
 		#if UNITY_ANDROID
 		//2. Subscription to the important events.
 		//When product is bought.
@@ -146,8 +205,8 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 		WP8InAppPurchasesManager.instance.init();	
 		#endif
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("CoreIAPManager - Init finished");
+		//		if(GameSettings.Instance.showTestLogs)
+		//			Debug.Log("CoreIAPManager - Init finished");
 	}
 	#endregion
 	
@@ -190,44 +249,58 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	}
 	
 	void OnRetriveProductsFinised (BillingResult result){
-		//igual que antes ya no nos hace falta estar suscritos al evento.
-		AndroidInAppPurchaseManager.ActionRetrieveProducsFinished -= OnRetriveProductsFinised;
 		//si todo fue bien...
 		if(result.isSuccess) {
 			//cambiamos la bandera para avisar que la tienda esta lista
 			IsInited = true;
+			GameLoaderManager.Instance.InAppInited = true;
+			
+			numProducts = AndroidInAppPurchaseManager.instance.inventory.products.Count;
+			productsGoogle = AndroidInAppPurchaseManager.instance.inventory.products;
 			
 			//es buena practica comprobar que todos los productos adquiridos esta consumidos (por ejemplo pudimos
 			//comprar un prodcutos pero se nos salio del movil y no lo consumimos, o iniciamos desde otro dispositivo)
 			dispatcher.dispatch(RETRIEVED_PRODUCTS, AndroidInAppPurchaseManager.instance.inventory.products);
 			
-			Debug.Log("Inited successfully, Avaliable products cound: " + AndroidInAppPurchaseManager.instance.inventory.products.Count.ToString());
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Inited successfully, Avaliable products cound: " + AndroidInAppPurchaseManager.instance.inventory.products.Count.ToString());
 		}
 		else{
 			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
 			if(GameSettings.Instance.showTestLogs)
 				Debug.Log("Failed in init Stoke Kit :(");
 		}
+		
+		//igual que antes ya no nos hace falta estar suscritos al evento.
+		AndroidInAppPurchaseManager.ActionRetrieveProducsFinished -= OnRetriveProductsFinised;
 	}
 	#endregion
 	
 	
 	#region IOSEvents
 	void OnStoreKitInitComplete (ISN_Result result){
-		IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("CoreIAPManager - OnStoreKitInitComplete, success ? " +result.IsSucceeded);
 		
 		if(result.IsSucceeded) {
 			if(GameSettings.Instance.showTestLogs)
 				Debug.Log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
+			GameLoaderManager.Instance.InAppInited = true;
 			
+			numProducts = IOSInAppPurchaseManager.instance.products.Count;
+			productsIOS = IOSInAppPurchaseManager.instance.products;
 			dispatcher.dispatch(RETRIEVED_PRODUCTS, IOSInAppPurchaseManager.instance.products);
 		} else {
-			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
-			
 			if(GameSettings.Instance.showTestLogs)
 				Debug.Log("Failed in init Stoke Kit :(");
+			
+			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
+			
+			
 		}
+		
+		IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
 	}
 	void OnTransactionComplete (IOSStoreKitResponse responce){
 		if(GameSettings.Instance.showTestLogs){
@@ -295,12 +368,18 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 	
 	#region WP8Events
 	void OnInitComplete() {
-		IsInited = true;
-		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
+		
+		
 		
 		if(WP8InAppPurchasesManager.instance.products != null){
+			IsInited = true;
+			GameLoaderManager.Instance.InAppInited = true;
+			numProducts = WP8InAppPurchasesManager.instance.products.Count;
+			productsWP = WP8InAppPurchasesManager.instance.products;
 			dispatcher.dispatch(RETRIEVED_PRODUCTS, WP8InAppPurchasesManager.instance.products);
-			Debug.Log("Inited successfully, Avaliable products cound: " + WP8InAppPurchasesManager.instance.products.Count.ToString());
+			
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("Inited successfully, Avaliable products cound: " + WP8InAppPurchasesManager.instance.products.Count.ToString());
 		}
 		else{
 			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
@@ -320,6 +399,8 @@ public class CoreIAPManager : Singleton<CoreIAPManager>{
 				}
 			}
 		}
+		
+		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
 		
 		//		WP8Dialog.Create("market Initted", "Total products avaliable: " + WP8InAppPurchasesManager.instance.products.Count);
 	}

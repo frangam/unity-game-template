@@ -138,6 +138,8 @@ public class UIBaseWindow : MonoBehaviour {
 	public virtual void Start(){}
 	public virtual void Update(){}
 	public virtual void OnDestroy(){}
+	public virtual void OnEnable(){}
+	public virtual void OnDisable(){}
 	#endregion
 	
 	//--------------------------------------

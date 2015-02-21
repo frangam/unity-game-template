@@ -226,6 +226,12 @@ public class GameSettingsEditor : Editor {
 	protected virtual void inAppBilling(){
 		GameSettings.Instance.showInAppBillingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showInAppBillingSettings, "In App Billing");
 		if (GameSettings.Instance.showInAppBillingSettings) {
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Use In App Purchases service");
+			GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE = EditorGUILayout.Toggle(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE);
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
 			if(GameSettings.Instance.inAppBillingIDS.Count == 0) {
 				EditorGUILayout.HelpBox("No In App Billing IDs Registred",MessageType.None);
 			}
@@ -439,7 +445,7 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Default num Wins:");
 			GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT);
 			EditorGUILayout.EndHorizontal();
-
+			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Survival mode num GameOvers:");
 			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE);
@@ -449,7 +455,7 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Survival mode num Wins:");
 			GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE);
 			EditorGUILayout.EndHorizontal();
-
+			
 			EditorGUILayout.Space();
 			
 			EditorGUILayout.BeginHorizontal();
@@ -479,7 +485,7 @@ public class GameSettingsEditor : Editor {
 			GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE);
 			EditorGUILayout.EndHorizontal();
 			
-
+			
 		}
 	}
 	

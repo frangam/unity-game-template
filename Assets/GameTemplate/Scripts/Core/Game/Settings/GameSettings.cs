@@ -29,7 +29,6 @@ public class GameSettings : ScriptableObject {
 	// Static Attributes
 	//--------------------------------------
 	public const string VERSION_NUMBER 					= "1.0";
-	public static bool 	purchasedForQuitAds 			= false; //if player has purchased for quit all of the ads
 	public static int 	contInterstitialAdsDEFAULT 		= 0;
 	public static int 	contInterstitialAdsHARDMODE 	= 0;
 	public static int 	contInterstitialAdsNORMALMODE 	= 0;
@@ -52,6 +51,7 @@ public class GameSettings : ScriptableObject {
 	public bool HAS_INITIAL_TUTORIAL 					= false;
 	public bool 	showMissionsWinAtStart				= false;
 	public bool 	showLoadIndicatorInLoadingScene		= true;
+	public bool USE_IN_APP_PURCHASES_SERVICE 			= true;
 	public bool 	showTestLogs						= false; //show debug log for test or not
 	
 	//--------------------------------------
@@ -153,6 +153,7 @@ public class GameSettings : ScriptableObject {
 	public const string PP_TOTAL_MONEY 									= "pp_total_money"; //total of the money player has
 	public const string PP_TOTAL_GEMS									= "pp_total_gems"; //total of the gems player has
 	public const string PP_PURCHASED_ITEM 								= "pp_purchased_item_";  //followed by item id
+	public const string PP_PURCHASED_QUIT_ADS 							= "pp_purchased_quit_ads";  //if user purchased quit ads of the game
 	public const string PP_TOTAL_GAMES 									= "pp_total_games"; //total games played
 	public const string PP_TOTAL_SHOPPING 								= "pp_total_shopping"; //total items purchased
 	public const string PP_TOTAL_COLLECTED_COINS 						= "pp_total_coins_collected";
@@ -180,6 +181,7 @@ public class GameSettings : ScriptableObject {
 	public const string	PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL				= "pp_num_gameovers_in_survival_level_"; //+ (int) survival level id
 	public const string	PP_NUM_WINS_IN_SURVIVAL_LEVEL					= "pp_num_wins_in_survival_level_"; //+ (int) survival level id
 	public const string PP_UNIQUE_LIST_CURRENT_ITEM_SELECTED_ID			= "pp_unique_list_current_item_selected_id";
+	public const string PP_LAST_CAMPAIGN_LEVEL_COMPLETED				= "pp_last_campaign_level_completed";
 	
 	//GooglePlay Services
 	public string ID_UNIQUE_RANKING 				= "";

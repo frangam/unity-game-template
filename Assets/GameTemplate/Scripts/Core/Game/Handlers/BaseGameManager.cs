@@ -476,8 +476,19 @@ public class BaseGameManager : MonoBehaviour {
 		
 	}
 	
+	public virtual void OnLevelCompleted(int levelCompleted){
+		
+	}
+	
 	public virtual void OnQuestsCompleted(CEvent e){
 		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+		
+		//save completed level
+		int lastCompletedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED);
+		if(currentLevelSelected > lastCompletedLevel){
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED, currentLevelSelected);
+			OnLevelCompleted(currentLevelSelected);
+		}
 		
 		//unlock the next level
 		if(currentLevelSelected == lastUnlockedLevel && BaseLevelLoaderController.Instance.Levels != null && currentLevelSelected < BaseLevelLoaderController.Instance.Levels.Count)

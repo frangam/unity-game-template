@@ -21,6 +21,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private bool gcPrepared = false;
 	private bool twInited = false;
 	private bool fbInited = false;
+	private bool inAppInited = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -61,6 +62,14 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 	}
 	
+	public bool InAppInited {
+		get {
+			return this.inAppInited;
+		}
+		set {
+			inAppInited = value;
+		}
+	}
 	
 	//--------------------------------------
 	// Unity Methods
@@ -80,37 +89,48 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		LoadGPSandGC (); //google play services y game center
 		loadScoresWithDifficulty ();
 		
-		StartCoroutine (LoadTutorialOrMenu ()); //se carga el tutorial o el menu del juego
+		StartCoroutine (waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded ()); //se carga el tutorial o el menu del juego
 	}
 	
 	public virtual void LateUpdate(){
 		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN) return;
 		
+		bool initedGralServices = 
+			(!GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE || (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && inAppInited))
+				&& (!GameSettings.Instance.USE_FACEBOOK || (GameSettings.Instance.USE_FACEBOOK && fbInited))
+				&& (!GameSettings.Instance.USE_TWITTER || (GameSettings.Instance.USE_TWITTER && twInited));
+		bool initedAllSevices = initedGralServices;
+		
 		#if UNITY_ANDROID
-		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial){
-			handleInitialAdShowing();
-			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
-		}
-		else if(gpsPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
-			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
+		initedAllSevices = 
+			(!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES || (GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared))
+				&& initedGralServices;
+		
 		#elif UNITY_IPHONE
-		if(GameSettings.Instance.USE_GAMECENTER && gcPrepared && twInited && fbInited && !GameSettings.mandatoryTutorial){
-			handleInitialAdShowing();
-			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
-		}
-		else if(gcPrepared && twInited && fbInited && GameSettings.mandatoryTutorial)
-			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
+		initedAllSevices = 
+			(!GameSettings.Instance.USE_GAMECENTER || (GameSettings.Instance.USE_GAMECENTER && gcPrepared))
+				&& initedGralServices;
+		
+		#elif UNITY_WP8
+		
 		#endif
 		
 		
-		
+		if(initedAllSevices){
+			handleInitialAdShowing();
+			
+			if(GameSettings.mandatoryTutorial)
+				Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
+			else
+				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
+		}
 	}
 	#endregion
 	
 	/*--------------------------------
 	 * Load tutorial or menu
 	 -------------------------------*/
-	public virtual IEnumerator LoadTutorialOrMenu(){ 
+	public virtual IEnumerator waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded(){ 
 		//tutorial
 		GameSettings.mandatoryTutorial = GameSettings.Instance.HAS_INITIAL_TUTORIAL;
 		if(GameSettings.Instance.HAS_INITIAL_TUTORIAL){
@@ -123,6 +143,9 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			}
 		}
 		
+		///-----
+		/// Wait time for each platform
+		///-----
 		#if UNITY_ANDROID
 		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
@@ -139,18 +162,18 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		#endif
 		
 		
-		
-		if((GameSettings.Instance.USE_TWITTER && !twInited) ||  (GameSettings.Instance.USE_FACEBOOK && !fbInited)){
+		///-----
+		/// Wait more time
+		///-----
+		if((GameSettings.Instance.USE_TWITTER && !twInited) ||  (GameSettings.Instance.USE_FACEBOOK && !fbInited) || (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && !inAppInited)){
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
 			loadSceneAfterChecking();
 		}
-		
-		else if(!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER){
+		//Wait a dummy time if we not use any service
+		else if(!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER && !GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE){
 			yield return new WaitForSeconds (DUMMY_WAIT_TIME);
 			loadSceneAfterChecking();
 		}
-		
-		
 	}
 	
 	private void loadSceneAfterChecking(){
@@ -183,8 +206,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	public virtual void loadLanguage(){
 		if(!PlayerPrefs.HasKey(GameSettings.PP_LANGUAGE_CHANGED)){
 			PlayerPrefs.SetInt(GameSettings.PP_LANGUAGE_CHANGED, 0);
-			
-			//si no se ha cambiado el idioma, indicamos el idioma por defecto al del dispositivo
+		}
+		
+		//si no se ha cambiado el idioma, indicamos el idioma por defecto al del dispositivo
+		if(PlayerPrefs.GetInt(GameSettings.PP_LANGUAGE_CHANGED) == 0){
 			Languages.seleccionarIdiomaSegunIdiomaDispositivo();
 		}
 	}
@@ -254,6 +279,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 * Settings
 	 -------------------------------*/
 	public virtual void loadSettings(){
+		//show ads or not
+		bool purchasedQuitAds = PlayerPrefs.GetInt(GameSettings.PP_PURCHASED_QUIT_ADS) == 1;
+		if(purchasedQuitAds) GameSettings.Instance.IS_PRO_VERSION = true;
+		
 		//graphics details
 		if(!PlayerPrefs.HasKey(GameSettings.PP_GRAPHICS_DETAILS)){
 			PlayerPrefs.SetFloat(GameSettings.PP_GRAPHICS_DETAILS, 1f);

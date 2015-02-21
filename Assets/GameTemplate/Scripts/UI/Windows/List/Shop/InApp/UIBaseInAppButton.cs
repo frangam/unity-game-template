@@ -8,16 +8,16 @@ public class UIBaseInAppButton : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private UIBaseInAppWin window;
-
+	
 	[SerializeField]
 	private UIBaseInAppItem item;
-
+	
 	[SerializeField]
 	private Text lbQuantity;
-
+	
 	[SerializeField]
 	private Text lbRealMoneyPrice;
-
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -26,7 +26,7 @@ public class UIBaseInAppButton : UIBaseButton {
 			return this.item;
 		}
 	}	
-
+	
 	public UIBaseInAppWin Window {
 		get {
 			return this.window;
@@ -35,7 +35,7 @@ public class UIBaseInAppButton : UIBaseButton {
 			window = value;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -47,7 +47,7 @@ public class UIBaseInAppButton : UIBaseButton {
 		
 		getWindow();
 	}
-
+	
 	protected override void doPress ()
 	{
 		base.doPress ();
@@ -57,7 +57,7 @@ public class UIBaseInAppButton : UIBaseButton {
 				Window.purchaseItem(Item);
 		}
 	}
-
+	
 	public virtual void getWindow ()
 	{
 		if(Window == null)
@@ -66,7 +66,7 @@ public class UIBaseInAppButton : UIBaseButton {
 		if(Window == null)
 			Debug.LogError("Not found UIBaseInAppWin");
 	}
-
+	
 	public virtual void showInformation ()
 	{
 		if(item != null){
@@ -74,19 +74,19 @@ public class UIBaseInAppButton : UIBaseButton {
 				item.LbName.text = item.LocalizedName;
 			if(lbQuantity)
 				lbQuantity.text = item.Quantity.ToString();
-//			if(lbRealMoneyPrice){
-//				lbRealMoneyPrice.text = item.RealMoneyPrice.ToString();
-
-//				//TODO Poner moneda que corresponda
-//				lbRealMoneyPrice.text += "$";
-//			}
+			//			if(lbRealMoneyPrice){
+			//				lbRealMoneyPrice.text = item.RealMoneyPrice.ToString();
+			
+			//				//TODO Poner moneda que corresponda
+			//				lbRealMoneyPrice.text += "$";
+			//			}
 		}
 	}
-
+	
 	public virtual void showPriceInfo(string price, string priceCurrencyCode = ""){
 		if(lbRealMoneyPrice){
 			lbRealMoneyPrice.text = price.ToString();
-
+			
 			//TODO Poner moneda que corresponda
 			lbRealMoneyPrice.text += priceCurrencyCode;
 		}
