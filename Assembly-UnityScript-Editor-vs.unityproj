@@ -242,6 +242,7 @@
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />
      <None Include="Assets\codeandweb.com\Readme.txt" />
      <None Include="Assets\PlayMaker\Versions\readme.txt" />
+     <None Include="Assets\GameTemplate\Examples\Resources\InAppItems.txt" />
      <None Include="Assets\Plugins\StansAssets\Android\androidnative.txt" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\values\styles.xml" />
      <None Include="Assets\Plugins\Android\res\xml\file_paths.xml" />

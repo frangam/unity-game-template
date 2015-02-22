@@ -1,0 +1,10 @@
+pp_coins_100,lb_inapp_item_100_gems,GEM,100,icono diamantes 1,0.99
+pp_coins_500,lb_inapp_item_500_gems,GEM,500,icono diamantes 2,2.99
+pp_coins_1000,lb_inapp_item_1000_gems,GEM,1000,icono diamantes 3,4.99
+pp_coins_5000,lb_inapp_item_5000_gems,GEM,5000,icono diamantes 4,9.99
+pp_coins_15000,lb_inapp_item_15000_gems,GEM,15000,icono diamantes saco,19.99
+pp_coins_40000,lb_inapp_item_40000_gems,GEM,40000,icono diamantes sacos,49.99
+pp_coins_100000,lb_inapp_item_100000_gems,GEM,100000,icono diamantes cofre,99.99
+pp_bills_10000,lb_inapp_item_10000_bills,MONEY,10000,icono billetes 1,0.99
+pp_bills_50000,lb_inapp_item_50000_bills,MONEY,50000,icono billetes 2,2.99
+pp_bills_100000,lb_inapp_item_100000_bills,MONEY,100000,icono billetes 3,4.99

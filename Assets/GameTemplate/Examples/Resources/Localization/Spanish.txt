@@ -1,9 +1,15 @@
+dialog_yes_button = SI
+dialog_ok_button = VALE
+dialog_no_button = NO
+dialog_cancel_button = CANCELAR
 loading = Cargando...
+lb_loading = Cargando
 more_games = MAS JUEGOS
 more = Más
 pause_game = EN PAUSA
 pause = PAUSA
-score = RECORDS
+score = RECORD
+scores = RECORDS
 play = JUGAR
 retry = REINTENTAR
 simple_login_button = CONECTAR
@@ -14,6 +20,7 @@ comming_soon = PRÓXIMAMENTE
 sound = SOUND
 menu = MENU
 lb_continue = CONTINUAR
+close = CERRAR
 connect = CONECTAR
 connecting_to_fb = CONECTANDO CON LA CUENTA DE FACEBOOK...
 fb_connected = FACEBOOK CONECTADO CON ÉXITO
@@ -24,14 +31,37 @@ easy = FACIL
 hard = DIFICIL
 normal = NORMAL
 quickgame = PARTIDA RAPIDA
-campaign = CAMPAÑA
+campaign = MISIONES
 survival = SUPERVIVENCIA
 gameover = GAME OVER
 share_fb = COMPARTIR EN FACEBOOK
 share_tw = COMPARTIR EN TWITTER
+back = ATRAS
+share_level_completed = SUPERADO NIVEL
+pay = PAGAR
+lb_yes = SI
+lb_no = NO
+lb_inapp_no_inited = ERROR INTENTANDO ACCEDER A LA TIENDA. POR FAVOR, REVISE SU CONEXIÓN DE INTERNET.
+lb_inapp_no_internet = CONEXIÓN DE INTERNET PERDIDA. ESTA VENTANA SE CERRARÁ A CONTINUACIÓN.
+lb_inapp_resumed_internet = CONEXIÓN DE INTERNET RETOMADA. ESTA VENTANA SE CERRARÁ A CONTINUACIÓN.
+lb_loading_shop = CARGANDO TIENDA
+reset_purchases = REESTABLECER COMPRAS
+lb_success_purchase_inapp = COMPRA REALIZADA
+lb_failed_purchase_inapp = COMPRA CANCELADA
+lb_deferred_purchase_inapp = COMPRA APLAZADA. PIDE PERMISO A TUS PADRES.
+lb_surival_level_purchased = !ENHORABUENA HAS DESBLOQUEADO UN NUEVO NIVEL DE SUPERVIVENCIA!
+lb_processing_purchase_inapp = PROCESANDO COMPRA
+lb_restore_purchase_success = COMPRAS REESTABLECIDAS CON ÉXITO
+lb_restore_purchase_fail = NO HAY COMPRAS QUE REESTABLECER
+lb_restore_purchases_check = COMPROBANDO SI HAY COMPRAS QUE REESTABLECER
+gameover_survival = FIN DE LA PARTIDA
+lb_info_mission = INFORMACION
+lb_infinite = INFINITO
+lb_wave = OLEADA:
+lb_next_wave = PRÓXIMA OLEADA:
 
-rate_popup_title = Valóranos!
-rate_popup_message = Vota ahora y ayúdanos a mejorar!
+rate_popup_title = Vota
+rate_popup_message = Si te gusta el juego déjanos un comentario y valóralo ahora!
 rate_popup_vote_button = Valorar ahora
 rate_popup_remember_button = Recordar más tarde
 rate_popup_refuse_button = No gracias
@@ -55,12 +85,12 @@ popup_desc_gps_login = Tienes que iniciar sesión en Google Play Services
 ok_button_gps_login_popup = Login
 cancel_button_gps_login_popup = Cancelar 
 
-fb_invitation = Ven y juega a Ball Boy conmigo!
+fb_invitation = Ven y juega conmigo!
 fb_invitation_title = Invita a tus amigos
 fb_invitation_button_name = Invitar
 select_all = Seleccionar todo
 
-question_item_purchase = ESTAS SEGURO QUE QUIERES COMPRAR ESTE COCHE?
+question_item_purchase = ESTAS SEGURO QUE QUIERES COMPRAR ESTE ARTICULO?
 purchase = COMPRAR
 calcel_purchase = CANCELAR
 
@@ -77,4 +107,44 @@ exit_confirmation_message = ¿QUIERES ABANDONAR LA PARTIDA?
 
 tutorial_title = TUTORIAL
 end_tutorial_desc = ENHORABUENA HAS COMPLETADO EL TUTORIAL!\nAHORA A JUGAR Y A DIVERTIRSE!
+
+upgrade = MEJORAR
+select = SELECCIONAR
+purchase = COMPRAR
+rewards = RECOMPENSAS
+
+reqs = REQUISITOS
+welcome_title = Bienvenido
+welcome_dec = Bienvenido
+sensibility = SENSIBILIDAD
+audio = AUDIO
+
+mission_failed = MISION FALLIDA
+mission_completed = MISION SUPERADA
+all_completed = TODAS LAS MISIONES SUPERADAS
+
+reload = RECARGAR
+reloading = RECARGANDO
+
+lb_not_enough_gems = NO TIENES SUFICIENTE DINERO, PERO PUEDES AÑADIR MÁS.
+lb_not_enough_money = NO TIENES SUFICIENTE DINERO, PERO ¿QUIERES PAGARLO CON GEMAS?
+lb_buy_more_gems = ¿QUIERES COMPRAR MAS GEMAS?
+lb_level_reward = RECOMPENSA DEL NIVEL
+lb_total_rewards = TOTAL
+
+lb_inapp_item_100_gems = PAQUETE BÁSICO DE GEMAS
+lb_inapp_item_500_gems = PAQUETE MEDIO DE GEMAS
+lb_inapp_item_1000_gems = PAQUETE GRANDE DE GEMAS
+lb_inapp_item_5000_gems = PAQUETE XXL DE GEMAS
+lb_inapp_item_15000_gems = SACO DE GEMAS
+lb_inapp_item_40000_gems = SACO XXL DE GEMAS
+lb_inapp_item_100000_gems = COFRE DE GEMAS
+lb_inapp_item_10000_bills = PAQUETE BÁSICO DE BILLETES
+lb_inapp_item_50000_bills = PAQUETE GRANDE DE BILLETES
+lb_inapp_item_100000_bills = PAQUETE PRO DE BILLETES
+
+desc_lvl1 = 
+
+
+desc_survlvl1 = 
 
