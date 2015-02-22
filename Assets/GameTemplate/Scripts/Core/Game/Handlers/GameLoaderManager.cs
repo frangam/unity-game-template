@@ -279,6 +279,12 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 * Settings
 	 -------------------------------*/
 	public virtual void loadSettings(){
+		//Android immersive mode
+		#if UNITY_ANDROID
+		if(GameSettings.Instance.ENABLE_ANDROID_IMMERSIVE_MODE)
+			ImmersiveMode.instance.EnableImmersiveMode();
+		#endif
+		
 		//show ads or not
 		bool purchasedQuitAds = PlayerPrefs.GetInt(GameSettings.PP_PURCHASED_QUIT_ADS) == 1;
 		if(purchasedQuitAds) GameSettings.Instance.IS_PRO_VERSION = true;

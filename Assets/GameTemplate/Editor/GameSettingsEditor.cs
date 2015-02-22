@@ -210,6 +210,12 @@ public class GameSettingsEditor : Editor {
 		EditorGUILayout.EndHorizontal();
 		
 		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("Android Immersive Mode");
+		GameSettings.Instance.ENABLE_ANDROID_IMMERSIVE_MODE	= EditorGUILayout.Toggle(GameSettings.Instance.ENABLE_ANDROID_IMMERSIVE_MODE);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.Space();
+		
+		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Has Initial Tutorial");
 		GameSettings.Instance.HAS_INITIAL_TUTORIAL	= EditorGUILayout.Toggle(GameSettings.Instance.HAS_INITIAL_TUTORIAL);
 		EditorGUILayout.EndHorizontal();

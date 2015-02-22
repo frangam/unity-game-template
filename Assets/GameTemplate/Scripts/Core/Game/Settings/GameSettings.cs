@@ -52,6 +52,7 @@ public class GameSettings : ScriptableObject {
 	public bool 	showMissionsWinAtStart				= false;
 	public bool 	showLoadIndicatorInLoadingScene		= true;
 	public bool USE_IN_APP_PURCHASES_SERVICE 			= true;
+	public bool ENABLE_ANDROID_IMMERSIVE_MODE			= true;
 	public bool 	showTestLogs						= false; //show debug log for test or not
 	
 	//--------------------------------------

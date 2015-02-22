@@ -80,8 +80,12 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	//--------------------------------------
 	#region Unity
 	protected override void Awake(){
-		base.Awake();
-		init();
+		if(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE){
+			base.Awake();
+			init();
+		}
+		else
+			Destroy(Instance.gameObject);
 	}
 	
 	public virtual void Start(){
