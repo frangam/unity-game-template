@@ -127,13 +127,26 @@ public class BaseGameManager : MonoBehaviour {
 	protected virtual void Awake(){
 		initGame();
 		
-		if(gameMode == GameMode.CAMPAIGN){
+		string gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
+		switch(gameMode){
+		case GameMode.QUICKGAME:
+			gaEvent = GAEvents.QUICKGAME_LEVEL_OPENED;
+			break;
+		case GameMode.CAMPAIGN:
+			gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
 			BaseLevelLoaderController.dispatcher.addEventListener(BaseLevelLoaderController.LEVEL_LOADED, OnLevelLoaded);
 			BaseQuestManager.dispatcher.addEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
 			BaseQuestManager.Instance.resetProperties();
+			break;
+			
+		case GameMode.SURVIVAL:
+			gaEvent = GAEvents.SURVIVAL_LEVEL_OPENED;
+			break;
+			
 		}
 		
-		
+		//GA
+		GA.API.Design.NewEvent(gaEvent);
 	}
 	protected virtual void OnDestroy(){
 		if(gameMode == GameMode.CAMPAIGN){
@@ -292,8 +305,12 @@ public class BaseGameManager : MonoBehaviour {
 		AdsHandler.Instance.refrescarBanner();
 		
 		//show interstitial ad
-		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0))
+		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0)){
 			AdsHandler.Instance.mostrarPantallazo();
+			
+			//GA
+			GA.API.Design.NewEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
+		}
 	}
 	
 	private IEnumerator finishGameWithDelay(){
@@ -303,27 +320,47 @@ public class BaseGameManager : MonoBehaviour {
 		
 		PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_PLAYED, currentLevelSelected); //for analytics
 		
+		string gaEvent = GAEvents.CAMPAIGN_LEVEL_PLAYED; //analytics
+		
 		//show gameover windows
 		switch(gameMode){
 		case GameMode.CAMPAIGN:
 			if(isGameOver){
 				int prevTries = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_TRIES_TIMES+currentLevelSelected.ToString()); //get the previous tries
-				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_TRIES_TIMES+currentLevelSelected.ToString(), prevTries+1); //update tries
+				prevTries++;
+				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_TRIES_TIMES+currentLevelSelected.ToString(), prevTries); //update tries
 				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_FAILED);
+				
+				//GA
+				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries);
 			}
 			else{
 				int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString()); //get the previous completed times
+				prevCompleted++;
+				//				((UIBaseMIssionCompletedWin) UIController.Instance.Manager.getWindow(UIBaseWindowIDs.MISSION_COMPLETED)).init(BaseLevelLoaderController.Instance.CurrentLevel);
+				
+				//window mission completed is inited in event OnQuestCompleted!!
 				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_COMPLETED); //first show window
-				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted+1); //update completed times
+				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted); //update completed times
+				
+				//GA
+				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted);
 			}
 			break;
 			
 		case GameMode.SURVIVAL:
+			gaEvent = GAEvents.SURVIVAL_LEVEL_PLAYED;
+			UIController.Instance.Manager.open(gameoverWindow);
+			break;
 		case GameMode.QUICKGAME:
+			gaEvent = GAEvents.QUICKGAME_LEVEL_PLAYED;
 			UIController.Instance.Manager.open(gameoverWindow);
 			break;
 			
 		}
+		
+		//GA
+		GA.API.Design.NewEvent(gaEvent);
 		
 		//handle ad showing
 		handleGameOverAdShowing();
@@ -483,16 +520,32 @@ public class BaseGameManager : MonoBehaviour {
 	public virtual void OnQuestsCompleted(CEvent e){
 		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
 		
+		//first load info of completed mission window
+		if(gameMode == GameMode.CAMPAIGN){
+			UIBaseMIssionCompletedWin w = (UIBaseMIssionCompletedWin) UIController.Instance.Manager.getWindow(UIBaseWindowIDs.MISSION_COMPLETED);
+			w.init(BaseLevelLoaderController.Instance.CurrentLevel);
+			
+			if(w.LoadInfoWhenQuesCompleted)
+				w.showInfo();
+		}
+		
+		
 		//save completed level
 		int lastCompletedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED);
 		if(currentLevelSelected > lastCompletedLevel){
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED, currentLevelSelected);
+			
 			OnLevelCompleted(currentLevelSelected);
 		}
 		
 		//unlock the next level
-		if(currentLevelSelected == lastUnlockedLevel && BaseLevelLoaderController.Instance.Levels != null && currentLevelSelected < BaseLevelLoaderController.Instance.Levels.Count)
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, currentLevelSelected+1);
+		if(currentLevelSelected == lastUnlockedLevel && BaseLevelLoaderController.Instance.Levels != null && currentLevelSelected < BaseLevelLoaderController.Instance.Levels.Count){
+			int nextLevel = currentLevelSelected+1;
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, nextLevel);
+			
+			//GA
+			GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString());
+		}
 		
 		finishGame();
 	}

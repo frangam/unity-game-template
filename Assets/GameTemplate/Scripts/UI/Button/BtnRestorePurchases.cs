@@ -25,7 +25,7 @@ public class BtnRestorePurchases : UIBaseButton {
 	{
 		base.doPress ();
 		
-		#if UNITY_IPHONE
+		#if UNITY_IPHONE || UNITY_WP8 || UNITY_ANDROID
 		if(window)
 			window.restorePurchases();
 		else

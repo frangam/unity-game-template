@@ -34,7 +34,7 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private int 			lastUnlockedLevel;
+	protected int 			lastUnlockedLevel;
 	
 	//--------------------------------------
 	// Getters & Setters
@@ -51,7 +51,7 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 			UIBaseLevel uiLevel = (UIBaseLevel) currentItemSelected;
 			
 			foreach(UIBasePlayLevelButton b in levelButtons){
-				if(b.Level == uiLevel.Level){
+				if(b.Level.Id.Equals(uiLevel.Level.Id)){
 					res = b;
 					break;
 				}
@@ -135,8 +135,8 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 				UIBaseLevel uiLevel = (UIBaseLevel) item;
 				
 				if(uiLevel.Level != null){
-					UIBasePlayLevelButton button = pbLevelButton.Spawn();
-					button.transform.parent = populateWithLevelButtonPb;
+					UIBasePlayLevelButton button = pbLevelButton.Spawn(populateWithLevelButtonPb);
+					//					button.transform.parent = populateWithLevelButtonPb;
 					button.init(uiLevel.Level, this);
 					levelButtons.Add(button);
 				}

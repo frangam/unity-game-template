@@ -55,4 +55,5 @@
   <uses-permission android:name="com.pukepixel.gametemplate.permission.C2D_MESSAGE" />
   <uses-permission android:name="android.permission.VIBRATE" />
   <uses-permission android:name="android.permission.GET_TASKS" />
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 </manifest>

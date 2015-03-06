@@ -30,6 +30,9 @@ public class UIBaseMIssionCompletedWin : UIBaseWindow {
 	[SerializeField]
 	private Transform pnlTotalGemsRewards;
 	
+	[SerializeField]
+	private bool loadInfoWhenQuesCompleted = true;
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -38,10 +41,19 @@ public class UIBaseMIssionCompletedWin : UIBaseWindow {
 	protected int totalGemsRw;
 	
 	//--------------------------------------
+	// Getters && Setters
+	//--------------------------------------
+	public bool LoadInfoWhenQuesCompleted {
+		get {
+			return this.loadInfoWhenQuesCompleted;
+		}
+	}
+	
+	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override void open (){
-		if(level != null){
+		if(level != null && !loadInfoWhenQuesCompleted){
 			showInfo();
 		}
 		
@@ -64,11 +76,16 @@ public class UIBaseMIssionCompletedWin : UIBaseWindow {
 	}
 	
 	public virtual void showInfo(){
-		lbMoneyReward.text = level.RealMoneyReward.ToString();
-		lbGemsReward.text = level.RealGemsReward.ToString();
-		pnlGemsReward.gameObject.SetActive(level.RealGemsReward > 0);
-		showTotalMoneyReward();
-		showTotalGemsReward();
+		if(level != null){
+			lbMoneyReward.text = level.RealMoneyReward.ToString();
+			lbGemsReward.text = level.RealGemsReward.ToString();
+			pnlGemsReward.gameObject.SetActive(level.RealGemsReward > 0);
+			showTotalMoneyReward();
+			showTotalGemsReward();
+		}
+		else if(GameSettings.Instance.showTestLogs){
+			Debug.Log("UIBaseMIssionCompletedWin - Level not inited");
+		}
 	}
 	
 	public virtual void showTotalMoneyReward(){

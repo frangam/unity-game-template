@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnionAssets.FLE;
 
 public class UIBaseInAppButton : UIBaseButton {
 	//--------------------------------------
@@ -39,13 +40,56 @@ public class UIBaseInAppButton : UIBaseButton {
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	public override void OnEnable ()
+	{
+		base.OnEnable ();
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppButton- enabling quit ads button");
+		CoreIAPManager.dispatcher.removeEventListener(UIBaseInAppItem.REWARD_APPLYED, OnItemRewardApplyed);
+	}
+	
+	public override void OnDisable ()
+	{
+		base.OnDisable ();
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppButton - disabling quit ads button");
+		CoreIAPManager.dispatcher.removeEventListener(UIBaseInAppItem.REWARD_APPLYED, OnItemRewardApplyed);
+	}
+	
+	public override void OnDestroy ()
+	{
+		base.OnDestroy ();
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppButton - disabling quit ads button");
+		CoreIAPManager.dispatcher.removeEventListener(UIBaseInAppItem.REWARD_APPLYED, OnItemRewardApplyed);
+	}
+	
 	public virtual  void Awake ()
 	{
 		base.Awake ();
-		Item.load();
-		showInformation();
 		
-		getWindow();
+		bool active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+		
+		if(active){
+			
+			Item.load();
+			
+			if(item != null){
+				bool rewardedNonConsumable = item.RewardedNonConsumable;
+				
+				if(!rewardedNonConsumable){
+					showInformation();
+					
+					getWindow();
+				}
+				//hide if the item is non consumable and user was rewarded yet after purchase it
+				else{
+					gameObject.SetActive(false);
+				}
+			}
+		}
+		else
+			gameObject.SetActive(false);
 	}
 	
 	protected override void doPress ()
@@ -64,7 +108,7 @@ public class UIBaseInAppButton : UIBaseButton {
 			Window = GetComponentInParent<UIBaseInAppWin>();
 		
 		if(Window == null)
-			Debug.LogError("Not found UIBaseInAppWin");
+			Debug.LogError("UIBaseInAppButton - Not found UIBaseInAppWin");
 	}
 	
 	public virtual void showInformation ()
@@ -89,6 +133,21 @@ public class UIBaseInAppButton : UIBaseButton {
 			
 			//TODO Poner moneda que corresponda
 			lbRealMoneyPrice.text += priceCurrencyCode;
+		}
+	}
+	
+	//--------------------------------------
+	//  EVENTS
+	//--------------------------------------
+	public void OnItemRewardApplyed(CEvent e){
+		UIBaseInAppItem pitem = e.data as UIBaseInAppItem;
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppButton - item reward applyed: " + pitem + ", my item: " +this.item + ", rewarded non consumable ? " + pitem.RewardedNonConsumable);
+		
+		//hide in app button when the item es non consumable because user has just purchased it
+		if(pitem != null && this.item != null && pitem == this.item && pitem.RewardedNonConsumable){
+			gameObject.SetActive(false);
 		}
 	}
 }

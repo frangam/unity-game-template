@@ -132,6 +132,7 @@ lb_buy_more_gems = ¿QUIERES COMPRAR MAS GEMAS?
 lb_level_reward = RECOMPENSA DEL NIVEL
 lb_total_rewards = TOTAL
 
+lb_inapp_no_ads = QUITAR PUBLICIDAD
 lb_inapp_item_100_gems = PAQUETE BÁSICO DE GEMAS
 lb_inapp_item_500_gems = PAQUETE MEDIO DE GEMAS
 lb_inapp_item_1000_gems = PAQUETE GRANDE DE GEMAS

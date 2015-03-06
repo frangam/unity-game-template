@@ -17,6 +17,9 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	private GameObject pnlShopLoading;
 	
 	[SerializeField]
+	private UIBaseWindow shopWindow;
+	
+	[SerializeField]
 	private UIBaseWindow pnlNoInternet;
 	
 	[SerializeField]
@@ -61,6 +64,12 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		}
 	}
 	
+	public bool ProductsRetrieved {
+		get {
+			return this.productsRetrieved;
+		}
+	}
+	
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -68,11 +77,19 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	public override void Awake ()
 	{
 		base.Awake ();
+		
+		if(!shopWindow)
+			shopWindow = GetComponentInChildren<UIInAppShopWindow>();
+		
 		productsRetrieved = false;
 		
+		base.open ();
 		
+		UIBaseInAppButton[] auxBtns = GetComponentsInChildren<UIBaseInAppButton>() as UIBaseInAppButton[];
 		
-		inAppButtons = new List<UIBaseInAppButton> (GetComponentsInChildren<UIBaseInAppButton>() as UIBaseInAppButton[]);
+		foreach(UIBaseInAppButton b in auxBtns)
+			if(!inAppButtons.Contains(b))
+				inAppButtons.Add(b);
 		
 		if(inAppButtons == null)
 			Debug.LogError("Not found any UIBaseInAppButton");
@@ -80,6 +97,21 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		currentItem = null;
 		//		InternetChecker.dispatcher.addEventListener(InternetChecker.NO_INTERNET_CONNECTION, OnNoInternetConnection);
 		
+		
+		
+	}
+	
+	public override void OnEnable ()
+	{
+		base.OnEnable ();
+		
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.NOT_RETRIEVED_PRODUCTS, OnInAppServiceNotInited);
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RETRIEVED_PRODUCTS, OnRetrievedProducts);
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_COMPLETED, OnPurchaseCompleted);
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_FAILED, OnPurchaseFailed);
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.DEFERRED_PURCHASE_COMPLETED, OnDestroy);
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_COMPLETED, OnRestorePurchaseError);
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_FAILED, OnRestorePurchaseError);
 	}
 	
 	/// <summary>
@@ -105,26 +137,28 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	
 	public override void open ()
 	{
+		
+		
 		base.open ();
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("UIBaseInAppWin - Opening InApp window");
 		
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.NOT_RETRIEVED_PRODUCTS, OnInAppServiceNotInited);
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RETRIEVED_PRODUCTS, OnRetrievedProducts);
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_COMPLETED, OnPurchaseCompleted);
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_FAILED, OnPurchaseFailed);
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.DEFERRED_PURCHASE_COMPLETED, OnDestroy);
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_COMPLETED, OnRestorePurchaseError);
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_FAILED, OnRestorePurchaseError);
+		//		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.NOT_RETRIEVED_PRODUCTS, OnInAppServiceNotInited);
+		//		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RETRIEVED_PRODUCTS, OnRetrievedProducts);
+		//		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_COMPLETED, OnPurchaseCompleted);
+		//		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_FAILED, OnPurchaseFailed);
+		//		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.DEFERRED_PURCHASE_COMPLETED, OnDestroy);
+		//		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_COMPLETED, OnRestorePurchaseError);
+		//		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_FAILED, OnRestorePurchaseError);
 		
 		if(!CoreIAPManager.Instance.IsInited)
 			CoreIAPManager.Instance.init();
 		
-		if(pnlShopLoading){
-			bool hide = (hideLoadPanelInEditor && RuntimePlatformUtils.IsEditor());
-			pnlShopLoading.SetActive(!hide);
-		}
+		//		if(pnlShopLoading){
+		//			bool hide = (hideLoadPanelInEditor && RuntimePlatformUtils.IsEditor());
+		//			pnlShopLoading.SetActive(!hide);
+		//		}
 		
 		StartCoroutine(waitAtStartForCloseIfNotLoaded());
 	}
@@ -138,11 +172,11 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	}
 	
 	public virtual void restorePurchases(){
-		#if UNITY_IPHONE
+		#if UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8
 		if(restorePurchasesCheckingWin)
 			UIController.Instance.Manager.open(restorePurchasesCheckingWin);
 		
-		CoreIAPManager.Instance.IOSRestorePurchase();
+		CoreIAPManager.Instance.RestorePurchase();
 		#endif
 	}
 	
@@ -150,23 +184,23 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	
-	
-	//--------------------------------------
-	// Private Methods
-	//--------------------------------------
-	private void destroyEvents(){
-		//		InternetChecker.dispatcher.removeEventListener(InternetChecker.NO_INTERNET_CONNECTION, OnNoInternetConnection);
-		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.NOT_RETRIEVED_PRODUCTS, OnInAppServiceNotInited);
-		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.RETRIEVED_PRODUCTS, OnRetrievedProducts);
-		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.PURCHASE_COMPLETED, OnPurchaseCompleted);
-		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.PURCHASE_FAILED, OnPurchaseFailed);
-		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.DEFERRED_PURCHASE_COMPLETED, OnDestroy);
-		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.RESTORE_PURCHASE_COMPLETED, OnRestorePurchaseError);
-		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.RESTORE_PURCHASE_FAILED, OnRestorePurchaseError);
+	public void closeWinWhenErrorAtInit(bool callFromShopWin = false){
+		if(pnlInAppServiceNotInited && shopWindow && shopWindow.IsOpen){
+			UIController.Instance.Manager.open(pnlInAppServiceNotInited);
+		}
+		
+		if(pnlInAppServiceNotInited && shopWindow && shopWindow.IsOpen)
+			UIController.Instance.Manager.waitForClose(pnlInAppServiceNotInited, delayForCloseWin);
+		
+		if(callFromShopWin){
+			if(shopWindow)
+				UIController.Instance.Manager.close(shopWindow);
+			
+			showPanelLoading(false);
+		}
 	}
 	
-	private IEnumerator waitAtStartForCloseIfNotLoaded(){
+	public IEnumerator waitAtStartForCloseIfNotLoaded(bool callFromShopWin = false){
 		if(GameSettings.Instance.showTestLogs){
 			Debug.Log("InApp Inited ? " + CoreIAPManager.Instance.IsInited);
 			Debug.Log("InApp num products loaded: " + CoreIAPManager.Instance.NumProducts);
@@ -207,18 +241,22 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 					yield return new WaitForSeconds(delayForCloseInAppWinAtStart);
 					
 					if(!CoreIAPManager.Instance.IsInited || CoreIAPManager.Instance.NumProducts < 0 || !productsRetrieved){
-						closeWinWhenErrorAtInit();
+						closeWinWhenErrorAtInit(callFromShopWin);
 					}
 				}
-				else{
-					if(pnlShopLoading)
-						pnlShopLoading.SetActive(false);
-					
-					yield return null;
-				}
+				//				else{
+				//					if(shopWindow)
+				//						UIController.Instance.Manager.open(shopWindow);
+				//
+				//					if(pnlShopLoading)
+				//						pnlShopLoading.SetActive(false);
+				//
+				//
+				//					yield return null;
+				//				}
 			} //end_if_!productsRetrieved
 			else{
-				if(pnlShopLoading)
+				if(pnlShopLoading && shopWindow && callFromShopWin)
 					pnlShopLoading.SetActive(false);
 				
 				yield return null;
@@ -229,18 +267,35 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			yield return new WaitForSeconds(delayForCloseInAppWinAtStart);
 			
 			if(!CoreIAPManager.Instance.IsInited || CoreIAPManager.Instance.NumProducts < 0 || !productsRetrieved){
-				closeWinWhenErrorAtInit();
+				closeWinWhenErrorAtInit(callFromShopWin);
 			}
 		}
 	}
 	
-	private void closeWinWhenErrorAtInit(){
-		if(pnlInAppServiceNotInited)
-			UIController.Instance.Manager.open(pnlInAppServiceNotInited);
-		
-		UIController.Instance.Manager.waitForClose(pnlInAppServiceNotInited, delayForCloseWin);
-		UIController.Instance.Manager.waitForClose(this, delayForCloseWin);
+	public void showPanelLoading(bool show = true){
+		if(pnlShopLoading){
+			bool hide = (hideLoadPanelInEditor && RuntimePlatformUtils.IsEditor());
+			pnlShopLoading.SetActive(!hide && show);
+		}
 	}
+	
+	//--------------------------------------
+	// Private Methods
+	//--------------------------------------
+	private void destroyEvents(){
+		//		InternetChecker.dispatcher.removeEventListener(InternetChecker.NO_INTERNET_CONNECTION, OnNoInternetConnection);
+		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.NOT_RETRIEVED_PRODUCTS, OnInAppServiceNotInited);
+		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.RETRIEVED_PRODUCTS, OnRetrievedProducts);
+		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.PURCHASE_COMPLETED, OnPurchaseCompleted);
+		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.PURCHASE_FAILED, OnPurchaseFailed);
+		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.DEFERRED_PURCHASE_COMPLETED, OnDestroy);
+		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.RESTORE_PURCHASE_COMPLETED, OnRestorePurchaseError);
+		CoreIAPManager.dispatcher.removeEventListener(CoreIAPManager.RESTORE_PURCHASE_FAILED, OnRestorePurchaseError);
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -277,7 +332,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	}
 	
 	public void OnRetrievedProducts(CEvent e){
-		//		loadProductsReceived(e.data);
+		loadProductsReceived(e.data);
 		//#if UNITY_ANDROID
 		//		List<GoogleProductTemplate> products = e.data as List<GoogleProductTemplate>;
 		//		if(products != null && products.Count > 0 && inAppButtons != null){
@@ -384,7 +439,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 				
 				//show product price on the button
 				foreach(UIBaseInAppButton button in inAppButtons){
-					if(p.SKU.Equals(button.Item.Id)){
+					if(button != null && button.Item != null && p.SKU.Equals(button.Item.Id)){
 						button.showPriceInfo(p.price, p.priceCurrencyCode);
 						break;
 					}
@@ -464,9 +519,11 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	}
 	
 	public void OnPurchaseCompleted(CEvent e){
-		string id = e.data as string;
+		//		string id = e.data as string;
+		UIBaseInAppItem item = e.data as UIBaseInAppItem;
 		
-		if(currentItem != null && !string.IsNullOrEmpty(id) && currentItem.Id.Equals(id)){
+		//		if(currentItem != null && !string.IsNullOrEmpty(id) && currentItem.Id.Equals(id)){
+		if(item != null){
 			if(processingPurchaseWin)
 				UIController.Instance.Manager.close(processingPurchaseWin);
 			
@@ -476,10 +533,10 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			if(succesedPurchaseWin)
 				UIController.Instance.Manager.open(succesedPurchaseWin);
 			
-			currentItem.applyReward();
+			item.applyReward();
 		}
-		else
-			Debug.LogError("InApp OnPurchaseCompleted item id [" +id+ "] not correspond to the current item selected id [" +currentItem.Id+ "]");
+		//		else
+		//			Debug.LogError("InApp OnPurchaseCompleted item id [" +id+ "] not correspond to the current item selected id [" +currentItem.Id+ "]");
 	}
 	
 	public void OnPurchaseFailed(CEvent e){
@@ -503,6 +560,14 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	}
 	
 	public void OnRestorePurchaseSuccess(CEvent e){
+		//restore non-consumable products (like quit ads)
+		foreach(UIBaseInAppItem i in CoreIAPManager.Instance.Products){
+			if(i.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE){
+				i.applyReward();
+			}
+		}
+		
+		
 		if(restorePurchasesCheckingWin)
 			UIController.Instance.Manager.close(restorePurchasesCheckingWin);
 		

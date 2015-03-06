@@ -1,4 +1,4 @@
-﻿dialog_yes_button = YES
+dialog_yes_button = YES
 dialog_ok_button = OK
 dialog_no_button = NO
 dialog_cancel_button = CANCEL
@@ -134,6 +134,7 @@ lb_buy_more_gems = DO YOU WANT TO BUY GEMS?
 lb_level_reward = LEVEL REWARD
 lb_total_rewards = TOTAL
 
+lb_inapp_no_ads = QUIT ADS
 lb_inapp_item_100_gems = LITTLE GEMS PACK
 lb_inapp_item_500_gems = MEDIUM GEMS PACK
 lb_inapp_item_1000_gems = BIG GEMS PACK

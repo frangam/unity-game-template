@@ -17,11 +17,17 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private const float TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION = 10;
 	private const float TIEMPO_ESPERA_COMPROBAR_GC_CONEXION = 10;
 	private const float TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION = 8; 
+	private const float TIEMPO_ESPERA_COMPROBAR_INAPPS_INITED = 8; 
+	private const float TIEMPO_ESPERA_COMPROBAR_FACEBOOK_INITED = 5; 
 	private bool gpsPrepared = false;
 	private bool gcPrepared = false;
 	private bool twInited = false;
 	private bool fbInited = false;
 	private bool inAppInited = false;
+	private bool inAppNeedRestoreProducts = false;
+	private bool inAppAllProductsRestored = false;
+	
+	private bool initedGralServices = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -71,11 +77,32 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 	}
 	
+	public bool InAppNeedRestoreProducts {
+		get {
+			return this.inAppNeedRestoreProducts;
+		}
+		set {
+			inAppNeedRestoreProducts = value;
+		}
+	}
+	
+	public bool InAppAllProductsRestored {
+		get {
+			return this.inAppAllProductsRestored;
+		}
+		set {
+			inAppAllProductsRestored = value;
+		}
+	}
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake () {
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GameLoaderManager - initializing");
+		
 		if(deletePlayerPrefs)
 			PlayerPrefs.DeleteAll();
 		
@@ -86,18 +113,26 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		loadSettings();
 		loadAudio (); //musica y sonido
 		loadScoresAndInitialLevel (); //puntos
-		LoadGPSandGC (); //google play services y game center
+		//		LoadGPSandGC (); //google play services y game center
 		loadScoresWithDifficulty ();
 		
+		//		StartCoroutine (waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded ()); //se carga el tutorial o el menu del juego
+	}
+	
+	public virtual void Start(){
+		LoadGPSandGC (); //google play services y game center
 		StartCoroutine (waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded ()); //se carga el tutorial o el menu del juego
 	}
 	
 	public virtual void LateUpdate(){
 		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN) return;
 		
-		bool initedGralServices = 
-			(!GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE || (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && inAppInited))
+		initedGralServices = 
+			//inapp
+			(!GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE || (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && ((inAppInited && !inAppNeedRestoreProducts) || (inAppInited && inAppNeedRestoreProducts && inAppAllProductsRestored))))
+				//facebook
 				&& (!GameSettings.Instance.USE_FACEBOOK || (GameSettings.Instance.USE_FACEBOOK && fbInited))
+				//twitter
 				&& (!GameSettings.Instance.USE_TWITTER || (GameSettings.Instance.USE_TWITTER && twInited));
 		bool initedAllSevices = initedGralServices;
 		
@@ -126,6 +161,13 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 	}
 	#endregion
+	
+	//	/*--------------------------------
+	//	 * In App Billing
+	//	 -------------------------------*/
+	//	private IEnumerator waitForInAppBillingRestoreProductsAtStartIfNeeded(){
+	//
+	//	}
 	
 	/*--------------------------------
 	 * Load tutorial or menu
@@ -161,12 +203,20 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		loadSceneAfterChecking();
 		#endif
 		
-		
+		float wait = 0;
+		bool inappNotInited = (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && (!inAppInited || (inAppInited && inAppNeedRestoreProducts && !inAppAllProductsRestored)));
+		bool twNotInited = (GameSettings.Instance.USE_TWITTER && !twInited);
+		bool fbNotInited = (GameSettings.Instance.USE_FACEBOOK && !fbInited);
 		///-----
 		/// Wait more time
 		///-----
-		if((GameSettings.Instance.USE_TWITTER && !twInited) ||  (GameSettings.Instance.USE_FACEBOOK && !fbInited) || (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && !inAppInited)){
-			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
+		if(twNotInited ||  fbNotInited || inappNotInited){
+			if(inappNotInited)
+				wait += TIEMPO_ESPERA_COMPROBAR_INAPPS_INITED;
+			else if(twNotInited || fbNotInited)
+				wait += TIEMPO_ESPERA_COMPROBAR_FACEBOOK_INITED;
+			
+			yield return new WaitForSeconds (wait);
 			loadSceneAfterChecking();
 		}
 		//Wait a dummy time if we not use any service
@@ -288,6 +338,9 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		//show ads or not
 		bool purchasedQuitAds = PlayerPrefs.GetInt(GameSettings.PP_PURCHASED_QUIT_ADS) == 1;
 		if(purchasedQuitAds) GameSettings.Instance.IS_PRO_VERSION = true;
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GameLoaderManager - pro version: " + GameSettings.Instance.IS_PRO_VERSION);
 		
 		//graphics details
 		if(!PlayerPrefs.HasKey(GameSettings.PP_GRAPHICS_DETAILS)){
@@ -413,6 +466,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		//show initial Add
 		if(totalOpenings % openingsForShowInitialAd == 0){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GameLoaderManager - showing interstitial ad when start game");
 			AdsHandler.Instance.mostrarPantallazo();
 		}
 	}

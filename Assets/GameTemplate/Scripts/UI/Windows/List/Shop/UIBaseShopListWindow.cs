@@ -156,7 +156,7 @@ public class UIBaseShopListWindow : UIBaseListWindow {
 		}
 	}
 	
-	public virtual void itemPurchased(UIBasePurchasableListItem item){
+	public virtual void itemPurchased(UIBasePurchasableListItem item, bool payWithMoney = true){
 		showItem(item);
 	}
 	

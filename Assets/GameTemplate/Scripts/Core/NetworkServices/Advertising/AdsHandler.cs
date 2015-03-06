@@ -13,18 +13,45 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private GoogleMobileAdBanner banner;
+	private const float IN_APP_WAIT_INITIALIZATION_TIME = 15; 
 	private bool IsInterstisialsAdReady = false;
 	private static Dictionary<string, GoogleMobileAdBanner> _registerdBanners = null;
+	private float currentTime;
 	
 	//--------------------------------------
 	// INITIALIZE
 	//--------------------------------------
 	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR)
-	protected override void Awake (){
-		base.Awake ();
+	protected void Start(){
+		//	protected override void Awake (){
+		//		base.Awake ();
 		
+		if(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE)
+			StartCoroutine(handleInitializationWhenUsingInAppBilling());
+		else
+			init();
+	}
+	
+	private IEnumerator handleInitializationWhenUsingInAppBilling(){
+		yield return null;
+		
+		currentTime = Time.timeSinceLevelLoad;
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("AdsHandler handleInitialization() - current time: " + currentTime);
+		
+		if(currentTime < IN_APP_WAIT_INITIALIZATION_TIME && !CoreIAPManager.Instance.IsInited)
+			StartCoroutine(handleInitializationWhenUsingInAppBilling());
+		
+		//long time waiting to init, now we can init ads handler
+		else
+			init();
+	}
+	
+	private void init(){
 		if(!GameSettings.Instance.IS_PRO_VERSION){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("AdsHandler - initializing");
 			
 			//Required
 			GoogleMobileAd.Init();
@@ -45,14 +72,19 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			//		GoogleMobileAd.addEventListener(GoogleMobileAdEvents.ON_AD_IN_APP_REQUEST, OnInAppRequest);
 			
 			//create a show banner ad
-			crearBanner ();
-			mostrarBanner ();
+			CreateBanner ();
+			//			mostrarBanner ();
 		}
 	}
 	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
+	private void OnBannerLoadedAction (GoogleMobileAdBanner banner) {
+		banner.OnLoadedAction -= OnBannerLoadedAction;
+		banner.Show();
+	}
+	
 	private void OnInterstisialsLoaded() {
 		//ad loaded, strting ad
 		IsInterstisialsAdReady = true;
@@ -86,18 +118,16 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//		
 	//	}
 	
-	private void crearBanner(){
-		if(!GameSettings.Instance.IS_PRO_VERSION)
-			banner = GoogleMobileAd.CreateAdBanner(anchor, size);
-	}
+	
 	
 	
 	//--------------------------------------
 	//  PUBLIC METHODS
 	//--------------------------------------
-	public void mostrarBanner(){
-		if (!GameSettings.Instance.IS_PRO_VERSION)
-			ShowBanner();
+	public void quitAds(){
+		PlayerPrefs.SetInt(GameSettings.PP_PURCHASED_QUIT_ADS, 1);
+		GameSettings.Instance.IS_PRO_VERSION = true;
+		DestroyAllBanners();
 	}
 	
 	public void ocultarBanner(){
@@ -123,46 +153,92 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		#endif
 	}
 	
-	public void ShowBanner(){
-		GoogleMobileAdBanner banner;
-		
-		if (registerdBanners.ContainsKey(sceneBannerId)){
-			banner = registerdBanners[sceneBannerId];
-		}
-		else{
-			banner = GoogleMobileAd.CreateAdBanner(anchor, size);
-			registerdBanners.Add(sceneBannerId, banner);
-		}
-		
-		if (banner.IsLoaded && !banner.IsOnScreen){
-			banner.Show();
-		}
-	}
-	
-	public void HideBanner(){
-		if (registerdBanners.ContainsKey(sceneBannerId)){
-			GoogleMobileAdBanner banner = registerdBanners[sceneBannerId];
-			if (banner.IsLoaded){
-				if (banner.IsOnScreen){
-					banner.Hide();
-				}
+	private void CreateBanner(){
+		if(!GameSettings.Instance.IS_PRO_VERSION){
+			GoogleMobileAdBanner banner;
+			
+			if (registerdBanners.ContainsKey(UniqueBannerID)){
+				banner = registerdBanners[UniqueBannerID];
 			}
 			else{
+				banner = GoogleMobileAd.CreateAdBanner(anchor, size);
+				registerdBanners.Add(UniqueBannerID, banner);
+			}
+			
+			if (banner.IsLoaded && !banner.IsOnScreen){
+				//listening for banner to load example using C# actions:
+				banner.OnLoadedAction += OnBannerLoadedAction;
+				
+				//By setting this flsg to fals we will prevent banner to show when it's loaded
+				//e will listner for OnLoadedAction event and show it by our selfs instead
 				banner.ShowOnLoad = false;
 			}
 		}
 	}
 	
-	public void RefreshBanner(){
-		if (registerdBanners.ContainsKey(sceneBannerId)){
-			GoogleMobileAdBanner banner = registerdBanners[sceneBannerId];
+	private void DestroyAllBanners(){
+		if(registerdBanners != null && registerdBanners.Count > 0){
+			
+			foreach(GoogleMobileAdBanner b in registerdBanners.Values){
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("AdsHandler DestroyBanner() - Found banner with id: " + b.id + " destroying");
+				//				b.Hide();
+				GoogleMobileAd.DestroyBanner(b.id);
+			}
+		}
+	}
+	
+	private void HideBanner(){
+		if (registerdBanners.ContainsKey(UniqueBannerID)){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("AdsHandler HideBanner() - Found banner with id: " + UniqueBannerID);
+			
+			GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
+			if (banner.IsLoaded){
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " loaded");
+				
+				if (banner.IsOnScreen){
+					if(GameSettings.Instance.showTestLogs)
+						Debug.Log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " hiding");
+					
+					banner.Hide();
+				}
+			}
+			else{
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " not loaded");
+				
+				banner.ShowOnLoad = false;
+			}
+		}
+		else{
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("AdsHandler HideBanner() - No banner found with id: " + UniqueBannerID);
+		}
+	}
+	
+	private void RefreshBanner(){
+		if (registerdBanners.ContainsKey(UniqueBannerID)){
+			GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
 			if (banner.IsLoaded){
 				if (banner.IsOnScreen){
+					if(GameSettings.Instance.showTestLogs)
+						Debug.Log("AdsHandler refresh() - banner with id: " + UniqueBannerID + " refreshing");
+					
 					//					if(GameSettings.Instance.showTestLogs)
 					//						Debug.Log("AdsHandler - refreshing banner ad at position: ");
 					
 					banner.Refresh();
 				}
+				else{
+					if(GameSettings.Instance.showTestLogs)
+						Debug.Log("AdsHandler refresh() - banner with id: " + UniqueBannerID + "not refreshing");
+				}
+			}
+			else{
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("AdsHandler refresh() - banner with id: " + UniqueBannerID + "not loaded");
 			}
 			//else
 			//{
@@ -186,6 +262,12 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	public string sceneBannerId{
 		get{
 			return Application.loadedLevelName + "_" + this.gameObject.name;
+		}
+	}
+	
+	public string UniqueBannerID{
+		get{
+			return this.gameObject.name;
 		}
 	}
 	#endif

@@ -31,6 +31,7 @@ public static class UIBaseWindowIDs {
 	public const string SOCIAL_SHARE_FAIL	 			= "bwi_000082";
 	
 	public const string BUY_ITEM_CONFIRMATION			= "bwi_000100";
-	public const string SHOP 							= "bwi_000101";
+	public const string IN_APP_MAIN_WINDOW 				= "bwi_000101";
 	public const string SPECIFIC_ITEM_FOR_PURCHASE		= "bwi_000102";
+	public const string IN_APP_SHOP_WITH_ITEMS_WINDOW 	= "bwi_000103";
 }

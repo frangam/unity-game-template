@@ -6,12 +6,12 @@ public class HUDManager : MonoBehaviour {
 	public Button Coins;
 	public Text loaded;
 	public Button IosRestore;
-
+	
 	void Awake()
 	{
-#if UNITY_IPHONE
+		#if UNITY_IPHONE
 		IosRestore.gameObject.SetActive(true);
-#endif
+		#endif
 	}
 	public void Consume(string SKU)
 	{
@@ -26,7 +26,7 @@ public class HUDManager : MonoBehaviour {
 	/// </summary>
 	public void RestoreIOS()
 	{
-		IAP_GameName.Instance.IOSRestorePurchase();
+		IAP_GameName.Instance.RestorePurchase();
 	}
 	void Update()
 	{
@@ -36,5 +36,5 @@ public class HUDManager : MonoBehaviour {
 			Coins.interactable = true;
 		}
 	}
-
+	
 }

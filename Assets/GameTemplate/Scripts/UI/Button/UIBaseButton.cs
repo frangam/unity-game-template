@@ -52,6 +52,8 @@ public class UIBaseButton : MonoBehaviour {
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
+	public virtual void OnEnable(){}
+	public virtual void OnDisable(){}
 	public virtual void Awake(){
 		init();
 	}

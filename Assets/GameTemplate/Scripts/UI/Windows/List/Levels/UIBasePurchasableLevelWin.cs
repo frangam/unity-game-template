@@ -79,7 +79,7 @@ public class UIBasePurchasableLevelWin : UIBaseShopListWindow {
 	}
 	
 	
-	public override void itemPurchased (UIBasePurchasableListItem item)
+	public override void itemPurchased (UIBasePurchasableListItem item, bool payWithMoney = true)
 	{
 		base.itemPurchased (item);
 		
