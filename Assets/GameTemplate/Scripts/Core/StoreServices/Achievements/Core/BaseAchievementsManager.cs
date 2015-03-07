@@ -143,7 +143,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
 		}
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
-			GooglePlayManager.instance.showAchievementsUI();
+			GooglePlayManager.instance.ShowAchievementsUI();
 		}
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthed)

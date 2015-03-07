@@ -33,6 +33,14 @@ public class UIInAppShopWindow : UIBaseWindow {
 		}
 	}
 	
+	public override void close ()
+	{
+		if(IsOpen && gralInAppWin)
+			gralInAppWin.closeLoading(true);
+		
+		base.close ();
+	}
+	
 	private void closeWinWhenErrorAtInit(){
 		if(gralInAppWin )
 			gralInAppWin.closeWinWhenErrorAtInit(true);

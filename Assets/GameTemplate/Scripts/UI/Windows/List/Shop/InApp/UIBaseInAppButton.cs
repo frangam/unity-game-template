@@ -19,6 +19,12 @@ public class UIBaseInAppButton : UIBaseButton {
 	[SerializeField]
 	private Text lbRealMoneyPrice;
 	
+	[SerializeField]
+	private bool hideWhenNonConsumableItemWasPurchased = true;
+	
+	[SerializeField]
+	private bool restartWhenNonConsumableItemWasPurchased = false;
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -38,33 +44,9 @@ public class UIBaseInAppButton : UIBaseButton {
 	}
 	
 	//--------------------------------------
-	// Overriden Methods
+	// Public Methods
 	//--------------------------------------
-	public override void OnEnable ()
-	{
-		base.OnEnable ();
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("UIBaseInAppButton- enabling quit ads button");
-		CoreIAPManager.dispatcher.removeEventListener(UIBaseInAppItem.REWARD_APPLYED, OnItemRewardApplyed);
-	}
-	
-	public override void OnDisable ()
-	{
-		base.OnDisable ();
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("UIBaseInAppButton - disabling quit ads button");
-		CoreIAPManager.dispatcher.removeEventListener(UIBaseInAppItem.REWARD_APPLYED, OnItemRewardApplyed);
-	}
-	
-	public override void OnDestroy ()
-	{
-		base.OnDestroy ();
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("UIBaseInAppButton - disabling quit ads button");
-		CoreIAPManager.dispatcher.removeEventListener(UIBaseInAppItem.REWARD_APPLYED, OnItemRewardApplyed);
-	}
-	
-	public virtual  void Awake ()
+	public override void Awake ()
 	{
 		base.Awake ();
 		
@@ -137,17 +119,21 @@ public class UIBaseInAppButton : UIBaseButton {
 	}
 	
 	//--------------------------------------
-	//  EVENTS
+	//  Public methods
 	//--------------------------------------
-	public void OnItemRewardApplyed(CEvent e){
-		UIBaseInAppItem pitem = e.data as UIBaseInAppItem;
-		
+	public void itemRewarded(UIBaseInAppItem pitem){
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("UIBaseInAppButton - item reward applyed: " + pitem + ", my item: " +this.item + ", rewarded non consumable ? " + pitem.RewardedNonConsumable);
 		
-		//hide in app button when the item es non consumable because user has just purchased it
-		if(pitem != null && this.item != null && pitem == this.item && pitem.RewardedNonConsumable){
+		//hide in app button when the item is non consumable because user has just purchased it
+		if(hideWhenNonConsumableItemWasPurchased && pitem != null && this.item != null && pitem.Id.Equals(pitem.Id) && pitem.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE && pitem.RewardedNonConsumable){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("UIBaseInAppButton - hiding button " + gameObject.name);
+			
 			gameObject.SetActive(false);
 		}
+		
+		if(restartWhenNonConsumableItemWasPurchased)
+			ScreenLoaderVisualIndicator.Instance.LoadScene(Application.loadedLevelName);
 	}
 }

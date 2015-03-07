@@ -23,6 +23,8 @@ public class GameSettings : ScriptableObject {
 	public bool showSurvivalLevelsRankingSettings 		= false;
 	public bool showDifficultiesRankingSettings 		= false;
 	public bool showInAppBillingSettings 				= false;
+	public bool showGooglePlayServicesSettings 			= false;
+	public bool showGameCenterSettings 					= false;
 	
 	
 	//--------------------------------------
@@ -83,6 +85,10 @@ public class GameSettings : ScriptableObject {
 	public int 		NUM_WINS_SHOW_AD_SURVIVAL_MODE		= 1;
 	public int 		NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT 	= 5;
 	public int 		NUM_WINS_SHOW_AD_BY_DEFAULT 		= 3; //number of WINS to show an ad by default
+	public int		NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES = 5; //show login to GPS when eacth times it is equals to this value 
+	public int		NUM_GAME_OPENING_TO_INIT_GAME_CENTER = 5; //show login to GC when it is gotten this value 
+	public bool		SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING = true; //show login to GPS when it is the first game opening
+	public bool		SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING = true; //show login to GPS when it is the first game opening
 	
 	//SOCIAL NETWORKS
 	public bool BUILD_FOR_AMAZON 						= false; //if we are building for amazon (only change when the build is only for amazon, change it after building)
@@ -164,7 +170,7 @@ public class GameSettings : ScriptableObject {
 	public const string PP_CHARACTER_CONTROL_MAX_SENSITIVITY 			= "pp_character_control_max_sensitivity";
 	public const string PP_SHOW_MISSIONS_WINDOW	 						= "pp_show_mission_window";
 	public const string	PP_LAST_UNLOCKED_SURVIVAL_LEVEL	 				= "pp_last_unlocked_survival_level";
-	public const string	PP_TOTAL_GAME_OPENINGS				 			= "pp_total_game_openings"; 
+	public const string	PP_TOTAL_GAME_OPENINGS				 			= "pp_total_game_openings";
 	public const string	PP_TOTAL_GAMEOVERS					 			= "pp_total_gameovers"; //total of gameovers
 	public const string	PP_TOTAL_WINS					 				= "pp_total_wins"; //total of victories
 	public const string	PP_TOTAL_CAMPAIGN_WINS					 		= "pp_total_campaign_wins"; //total of victories in campaign mode
@@ -183,6 +189,7 @@ public class GameSettings : ScriptableObject {
 	public const string	PP_NUM_WINS_IN_SURVIVAL_LEVEL					= "pp_num_wins_in_survival_level_"; //+ (int) survival level id
 	public const string PP_UNIQUE_LIST_CURRENT_ITEM_SELECTED_ID			= "pp_unique_list_current_item_selected_id";
 	public const string PP_LAST_CAMPAIGN_LEVEL_COMPLETED				= "pp_last_campaign_level_completed";
+	public const string PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE = "pp_last_opening_user_connected_to_store_service"; //1 or 0 y playerprefs to know if user conneted to the gps or gc in the last opening
 	
 	//GooglePlay Services
 	public string ID_UNIQUE_RANKING 				= "";

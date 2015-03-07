@@ -306,6 +306,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			//event to process this purchase
 			OnProcessingPurchaseProduct (result.purchase.SKU);
 		} 
+		else{
+			OnProcessingPurchaseProduct (result.purchase.SKU, false);
+		}
 	}
 	void OnProductConsumed (BillingResult result){
 		if(result.isSuccess) {
@@ -338,8 +341,8 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		//si todo fue bien...
 		if(result.isSuccess) {
 			//cambiamos la bandera para avisar que la tienda esta lista
-			//			IsInited = true;
-			//			GameLoaderManager.Instance.InAppInited = true;
+			IsInited = true;
+			GameLoaderManager.Instance.InAppInited = true;
 			
 			numProducts = AndroidInAppPurchaseManager.instance.inventory.products.Count;
 			productsGoogle = AndroidInAppPurchaseManager.instance.inventory.products;

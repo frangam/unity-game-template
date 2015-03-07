@@ -9,6 +9,7 @@ public class GPSConnect : Singleton<GPSConnect> {
 	private bool achievementsChecked = false; //it has checked if there are achievements that need to be updated in server side beacuse they were unlocked locally
 	private bool notifiedLoader = false;
 	
+	
 	void Update(){
 		if(!notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
 			GameLoaderManager.Instance.GPSPrepared = true;
@@ -27,7 +28,7 @@ public class GPSConnect : Singleton<GPSConnect> {
 	//--------------------------------------
 	//  Inicializar
 	//--------------------------------------
-	public void init () {
+	public void init (bool showLoginWindowGameServices = true) {
 		//		//listen for GooglePlayConnection events
 		//		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
 		//		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
@@ -74,11 +75,20 @@ public class GPSConnect : Singleton<GPSConnect> {
 		
 		
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GPSConnect - connected");
+			
 			//checking if player already connected
 			OnPlayerConnected ();
 		} 
 		else{
-			GooglePlayConnection.instance.connect (); //conectar
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GPSConnect - not connected. Show Login Window ? " + showLoginWindowGameServices);
+			
+			
+			if(showLoginWindowGameServices){
+				GooglePlayConnection.instance.connect (); //conectar
+			}
 		}
 	}
 	
@@ -100,6 +110,9 @@ public class GPSConnect : Singleton<GPSConnect> {
 	//	}
 	private void OnDestroy() {
 		if(!GooglePlayConnection.IsDestroyed) {
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GPSConnect - destroying events");
+			
 			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
 			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
 			
@@ -126,9 +139,6 @@ public class GPSConnect : Singleton<GPSConnect> {
 	/*--------------------------------
 	 * Eventos Google Play Services
 	 -------------------------------*/
-	private void OnConnect() {
-		GooglePlayConnection.instance.connect ();
-	}
 	
 	private void OnScoreSubmited(CEvent e) {
 		//		GooglePlayResult result = e.data as GooglePlayResult;
@@ -151,12 +161,21 @@ public class GPSConnect : Singleton<GPSConnect> {
 	}
 	
 	private void OnPlayerDisconnected() {
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GPSConnect - player connected");
+		
+		PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
+		
 		jugadorConectado = false;
-		GameLoaderManager.Instance.GPSPrepared = false;
 	}
 	
 	private void OnPlayerConnected() {
-		GooglePlayManager.instance.loadConnectedPlayers ();
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GPSConnect - player connected");
+		
+		PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 1);
+		
+		GooglePlayManager.instance.LoadConnectedPlayers ();
 		
 		loadLeaderBoards ();
 		loadAchievements ();

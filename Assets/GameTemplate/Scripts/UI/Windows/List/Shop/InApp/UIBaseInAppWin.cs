@@ -120,6 +120,10 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	public override void OnDisable ()
 	{
 		base.OnDisable ();
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppWin - disabling events");
+		
 		destroyEvents();
 	}
 	
@@ -184,6 +188,12 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	public void closeLoading(bool callFromShopWin = false){
+		if(callFromShopWin){			
+			showPanelLoading(false);
+		}
+	}
+	
 	public void closeWinWhenErrorAtInit(bool callFromShopWin = false){
 		if(pnlInAppServiceNotInited && shopWindow && shopWindow.IsOpen){
 			UIController.Instance.Manager.open(pnlInAppServiceNotInited);
@@ -524,6 +534,15 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		
 		//		if(currentItem != null && !string.IsNullOrEmpty(id) && currentItem.Id.Equals(id)){
 		if(item != null){
+			//apply reward
+			item.applyReward();
+			
+			//get the corresponding in app button of this in app item
+			UIBaseInAppButton button = getButton(item);
+			if(button != null && item.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE && item.RewardedNonConsumable){
+				button.itemRewarded(item);
+			}
+			
 			if(processingPurchaseWin)
 				UIController.Instance.Manager.close(processingPurchaseWin);
 			
@@ -533,10 +552,26 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			if(succesedPurchaseWin)
 				UIController.Instance.Manager.open(succesedPurchaseWin);
 			
-			item.applyReward();
+			
+			
 		}
 		//		else
 		//			Debug.LogError("InApp OnPurchaseCompleted item id [" +id+ "] not correspond to the current item selected id [" +currentItem.Id+ "]");
+	}
+	
+	public UIBaseInAppButton getButton(UIBaseInAppItem item){
+		UIBaseInAppButton res = null;
+		
+		if(inAppButtons != null && inAppButtons.Count > 0){
+			foreach(UIBaseInAppButton b in inAppButtons){
+				if(b.Item != null && item != null && b.Item.Id.Equals(item.Id)){
+					res = b;
+					break;
+				}
+			}
+		}
+		
+		return res;
 	}
 	
 	public void OnPurchaseFailed(CEvent e){

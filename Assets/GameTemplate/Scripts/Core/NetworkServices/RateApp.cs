@@ -77,6 +77,17 @@ public class RateApp : Singleton<RateApp>{
 		#endif
 	}
 	
+	public void rateUsNow(){
+		#if UNITY_IPHONE
+		IOSNativeUtility.RedirectToAppStoreRatingPage();
+		#elif UNITY_ANDROID
+		string url = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.LINK_AMAZON_APP : GameSettings.Instance.LINK_ANDROID_APP;
+		AN_PoupsProxy.OpenAppRatePage(url);
+		#elif UNITY_WP8
+		WP8PopUps.PopUp.ShowRateWindow();
+		#endif
+	}
+	
 	
 	//--------------------------------------
 	//  EVENTS 
@@ -101,4 +112,5 @@ public class RateApp : Singleton<RateApp>{
 			PlayerPrefs.SetString(PP_RATE_LATER, System.DateTime.Now.ToBinary().ToString());
 		}
 	}
+	
 }

@@ -39,10 +39,10 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
 			//Show all rankings
 			if(string.IsNullOrEmpty(rankingID))
-				GooglePlayManager.instance.showLeaderBoardsUI();
+				GooglePlayManager.instance.ShowLeaderBoardsUI();
 			//show specific ranking
 			else
-				GooglePlayManager.instance.showLeaderBoardById(rankingID);
+				GooglePlayManager.instance.ShowLeaderBoard(rankingID);
 			
 		}
 		
@@ -106,12 +106,12 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 					int scoreServidor = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).rank;
 					
 					if(scoreServidor < scoreToSend)
-						GooglePlayManager.instance.submitScoreById (id, scoreToSend);
+						GooglePlayManager.instance.SubmitScoreById (id, scoreToSend);
 					else
 						saveBestScore(id, scoreServidor);
 				}
 				else{
-					GooglePlayManager.instance.submitScoreById (id, scoreToSend);
+					GooglePlayManager.instance.SubmitScoreById (id, scoreToSend);
 				}
 			}
 			

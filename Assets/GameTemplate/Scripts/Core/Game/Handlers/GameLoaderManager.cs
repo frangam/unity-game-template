@@ -26,8 +26,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private bool inAppInited = false;
 	private bool inAppNeedRestoreProducts = false;
 	private bool inAppAllProductsRestored = false;
-	
 	private bool initedGralServices = false;
+	private bool showLoginWindowGameServices = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -127,7 +127,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	public virtual void LateUpdate(){
 		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN) return;
 		
-		initedGralServices = 
+		initedGralServices =
 			//inapp
 			(!GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE || (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && ((inAppInited && !inAppNeedRestoreProducts) || (inAppInited && inAppNeedRestoreProducts && inAppAllProductsRestored))))
 				//facebook
@@ -243,10 +243,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	public virtual void LoadGPSandGC(){
 		#if UNITY_ANDROID
 		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
-			GPSConnect.Instance.init();
+			GPSConnect.Instance.init(showLoginWindowGameServices);
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER)
-			GCConnect.Instance.init();
+			GCConnect.Instance.init(showLoginWindowGameServices);
 		#endif
 	}
 	
@@ -370,7 +370,17 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		//game opening + 1 
 		int totalOpenings = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAME_OPENINGS);
-		PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAME_OPENINGS, totalOpenings+1);
+		totalOpenings++;
+		PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAME_OPENINGS, totalOpenings);
+		
+		//GA
+		GA.API.Design.NewEvent(GAEvents.GAME_OPENING);
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GameLoaderManager - total openings: " + totalOpenings);
+		
+		//game store services
+		storeGameServicesSettings(totalOpenings);
 		
 		//Social Networks use
 		if(!GameSettings.Instance.USE_FACEBOOK)
@@ -386,6 +396,50 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		//loading indicator
 		if(GameSettings.Instance.showLoadIndicatorInLoadingScene)
 			ScreenLoaderVisualIndicator.Instance.LoadScene ();
+	}
+	
+	/// <summary>
+	/// Init store services or not (Google Play Services and Game Center)
+	/// </summary>
+	/// <param name="totalOpenings">Total openings.</param>
+	public virtual void storeGameServicesSettings(int totalOpenings){
+		bool lastOpeningWasConnected = PlayerPrefs.GetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE) != 0 ? true : false;
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GameLoaderManager - last opening was connected to store services ? " + lastOpeningWasConnected);
+		
+		bool loadGameSettings = !lastOpeningWasConnected;
+		showLoginWindowGameServices = lastOpeningWasConnected;
+		
+		if(loadGameSettings){
+			#if UNITY_ANDROID
+			loadGameSettings = GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES;
+			#elif UNITY_IPHONE
+			loadGameSettings = GameSettings.Instance.USE_GAMECENTER;
+			#endif
+			
+			if(loadGameSettings){
+				//first time
+				if(totalOpenings == 1){
+					#if UNITY_ANDROID
+					showLoginWindowGameServices = GameSettings.Instance.SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING;
+					#elif UNITY_IPHONE
+					showLoginWindowGameServices = GameSettings.Instance.SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING;
+					#endif
+				}
+				//other times
+				else{
+					int eachOpening = 0;
+					#if UNITY_ANDROID
+					eachOpening = GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES;
+					#elif UNITY_IPHONE
+					eachOpening = GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER;
+					#endif
+					
+					showLoginWindowGameServices =  totalOpenings % eachOpening == 0;
+				}
+			}//end_if_loadGameSettings
+		}//end_if_loadGameSettings
 	}
 	
 	/*--------------------------------

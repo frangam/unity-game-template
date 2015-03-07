@@ -13,7 +13,7 @@ public class GameSettingsEditor : Editor {
 	GUIContent whenShowInitialAd   = new GUIContent("When show Initial Ad [?]:", "Number of times the game starts to show ads. Value of 1 indicates that in every game start we show an interstitial ad.");
 	GUIContent proVersionLabel   = new GUIContent("Is Pro Version [?]:", "True for not show ads. False if we are going to show ads.");
 	GUIContent buildForAmazon   = new GUIContent("Build for Amazon [?]:", "If we are building for amazon (only change when the build is only for amazon, change it after building)");
-	GUIContent rankingIDs   = new GUIContent("Rangins IDs [?]:", "All of the Ranking IDs that must be equals in the different platforms.");
+	GUIContent rankingIDs   = new GUIContent("Rankins IDs [?]:", "All of the Ranking IDs that must be equals in the different platforms.");
 	GUIContent rewardPercentageLabel   = new GUIContent("% Money Reward [?]:", "This is the percentage of a money reward applied when a level was completed previously to get the reward.");
 	GUIContent gameDiffLabel   = new GUIContent("Game Difficulties [?]:", "All of the difficulties available in the game. NONE for not supporting any difficult.");
 	GUIContent musicFXLabel   = new GUIContent("Music & Fx are the same [?]:", "True if music and fx are the same. False if each one is handled by itself.");
@@ -503,15 +503,10 @@ public class GameSettingsEditor : Editor {
 			GameSettings.Instance.BUILD_FOR_AMAZON	= EditorGUILayout.Toggle(GameSettings.Instance.BUILD_FOR_AMAZON);
 			EditorGUILayout.EndHorizontal();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Google Play Services");
-			GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES	= EditorGUILayout.Toggle(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES);
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Game Center");
-			GameSettings.Instance.USE_GAMECENTER	= EditorGUILayout.Toggle(GameSettings.Instance.USE_GAMECENTER);
-			EditorGUILayout.EndHorizontal();
+			EditorGUI.indentLevel++;
+			googlePlayServices();
+			gamecenterSettings();
+			EditorGUI.indentLevel--;
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Facebook");
@@ -527,6 +522,50 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.LabelField("#Hashtag:");
 			GameSettings.Instance.HASHTAG	= EditorGUILayout.TextField(GameSettings.Instance.HASHTAG).Trim();
 			EditorGUILayout.EndHorizontal();
+		}
+	}
+	
+	protected virtual void googlePlayServices(){
+		GameSettings.Instance.showGooglePlayServicesSettings = EditorGUILayout.Foldout(GameSettings.Instance.showGooglePlayServicesSettings, "Google Play Services");
+		if (GameSettings.Instance.showGooglePlayServicesSettings) {
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Enabled");
+			GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES	= EditorGUILayout.Toggle(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES);
+			EditorGUILayout.EndHorizontal();
+			
+			if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Show login window first opening");
+				GameSettings.Instance.SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING	= EditorGUILayout.Toggle(GameSettings.Instance.SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Game openings to show login window");
+				GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES);
+				EditorGUILayout.EndHorizontal();
+			}
+		}
+	}
+	
+	protected virtual void gamecenterSettings(){
+		GameSettings.Instance.showGameCenterSettings = EditorGUILayout.Foldout(GameSettings.Instance.showGameCenterSettings, "Game Center");
+		if (GameSettings.Instance.showGameCenterSettings) {
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Enabled");
+			GameSettings.Instance.USE_GAMECENTER	= EditorGUILayout.Toggle(GameSettings.Instance.USE_GAMECENTER);
+			EditorGUILayout.EndHorizontal();
+			
+			if(GameSettings.Instance.USE_GAMECENTER){
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Show login window first opening");
+				GameSettings.Instance.SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING	= EditorGUILayout.Toggle(GameSettings.Instance.SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Game openings to show login window");
+				GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER);
+				EditorGUILayout.EndHorizontal();
+			}
 		}
 	}
 	
@@ -583,6 +622,7 @@ public class GameSettingsEditor : Editor {
 			GameSettings.Instance.ID_RANKING_SURVIVAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL).Trim();
 			EditorGUILayout.EndHorizontal();
 			
+			EditorGUI.indentLevel++;
 			GameSettings.Instance.showDifficultiesRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showDifficultiesRankingSettings, "Rankings by Difficulty");
 			if (GameSettings.Instance.showDifficultiesRankingSettings) {
 				EditorGUILayout.BeginHorizontal();
@@ -618,6 +658,7 @@ public class GameSettingsEditor : Editor {
 			
 			handleWorldLevelRankings();
 			handleSurvivalLevelRankings();
+			EditorGUI.indentLevel--;
 			
 			//			GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, "Rankings by Survival Levels");
 			//			if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
