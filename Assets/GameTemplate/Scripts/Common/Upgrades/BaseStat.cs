@@ -89,6 +89,12 @@ public class BaseStat{
 		}
 	}
 	
+	public float MinValue {
+		get {
+			return this.minValue;
+		}
+	}
+	
 	public float MaxValue {
 		get {
 			return this.maxValue;
