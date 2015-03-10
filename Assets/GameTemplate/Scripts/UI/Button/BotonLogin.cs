@@ -59,9 +59,9 @@ public class BotonLogin : UIBaseButton {
 	void LateUpdate(){
 		#if UNITY_ANDROID
 		if(GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED || GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED)
-			label.text = "LOGIN"; //Localization.Localize(LocalizacionesExtra.BOTON_LOGIN);
+			label.text = Localization.Get(ExtraLocalizations.SIMPLE_LOGIN_BUTTON);
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED)
-			label.text = "EXIT";//Localization.Localize(LocalizacionesExtra.BOTON_LOGOUT);
+			label.text = Localization.Get(ExtraLocalizations.SIMPLE_LOGOUT_BUTTON);
 		#endif
 		
 		

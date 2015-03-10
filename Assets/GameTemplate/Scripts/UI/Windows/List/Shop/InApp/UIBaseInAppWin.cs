@@ -602,6 +602,8 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			}
 		}
 		
+		if(restorePurchasesFailedWin)
+			UIController.Instance.Manager.close(restorePurchasesFailedWin);
 		
 		if(restorePurchasesCheckingWin)
 			UIController.Instance.Manager.close(restorePurchasesCheckingWin);

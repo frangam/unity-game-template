@@ -95,7 +95,7 @@ public class BaseLevel {
 			int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
 			int idLevel;
 			
-			if(int.TryParse(Id, out idLevel) && idLevel < lastUnlockedLevel && prevCompleted > 0){
+			if(int.TryParse(Id, out idLevel) && prevCompleted > 0){
 				res = (int) (moneyReward*GameSettings.Instance.PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED);
 			}
 			
@@ -118,7 +118,7 @@ public class BaseLevel {
 			int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
 			int idLevel;
 			
-			if(int.TryParse(Id, out idLevel) && idLevel < lastUnlockedLevel && prevCompleted > 0){
+			if(int.TryParse(Id, out idLevel) && prevCompleted > 0){
 				res = (int) (gemsReward*GameSettings.Instance.PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED);
 			}
 			
