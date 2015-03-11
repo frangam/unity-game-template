@@ -49,6 +49,7 @@ public class BaseGameManager : MonoBehaviour {
 	private GameMode 		gameMode;
 	private int 			currentScore;
 	private int				currentLevelSelected;
+	private int				currentLevelPackSelected;
 	private bool			isGameOver;
 	
 	/// <summary>
@@ -89,6 +90,12 @@ public class BaseGameManager : MonoBehaviour {
 	public int CurrentLevelSelected {
 		get {
 			return this.currentLevelSelected;
+		}
+	}
+	
+	public int CurrentLevelPackSelected {
+		get {
+			return this.currentLevelPackSelected;
 		}
 	}
 	
@@ -384,7 +391,8 @@ public class BaseGameManager : MonoBehaviour {
 		Paused = pauseTimeAtStart;
 		
 		
-		
+		currentLevelPackSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelPackToLoadTEST //get a test level pack
+			: lastSelectedLevelPack(); //get the current level pack selected
 		currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
 			: lastSelectedLevel(); //get the current level selected
 		
@@ -395,6 +403,12 @@ public class BaseGameManager : MonoBehaviour {
 	
 	public int lastSelectedLevel(){
 		int last = gameMode == GameMode.SURVIVAL ? PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL) : PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); 
+		
+		return last;
+	}
+	
+	public int lastSelectedLevelPack(){
+		int last = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL_PACK); 
 		
 		return last;
 	}
@@ -518,7 +532,7 @@ public class BaseGameManager : MonoBehaviour {
 	}
 	
 	public virtual void OnQuestsCompleted(CEvent e){
-		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+currentLevelPackSelected.ToString());
 		
 		//first load info of completed mission window
 		if(gameMode == GameMode.CAMPAIGN){
@@ -531,17 +545,17 @@ public class BaseGameManager : MonoBehaviour {
 		
 		
 		//save completed level
-		int lastCompletedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED);
+		int lastCompletedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+currentLevelPackSelected.ToString());
 		if(currentLevelSelected > lastCompletedLevel){
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED, currentLevelSelected);
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+currentLevelPackSelected.ToString(), currentLevelSelected);
 			
 			OnLevelCompleted(currentLevelSelected);
 		}
 		
 		//unlock the next level
-		if(currentLevelSelected == lastUnlockedLevel && BaseLevelLoaderController.Instance.Levels != null && currentLevelSelected < BaseLevelLoaderController.Instance.Levels.Count){
+		if(currentLevelSelected == lastUnlockedLevel && LevelPacks.Instance.packs != null && currentLevelSelected < LevelPacks.Instance.totalLevels()){
 			int nextLevel = currentLevelSelected+1;
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, nextLevel);
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+currentLevelPackSelected.ToString(), nextLevel);
 			
 			//GA
 			GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString());

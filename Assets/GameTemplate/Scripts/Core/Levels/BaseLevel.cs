@@ -14,6 +14,7 @@ public class BaseLevel {
 	// Private Attributes
 	//--------------------------------------
 	private string 		id;
+	private string 		levelPackId;
 	
 	private int 		initialPlayerLife;
 	private int 		initialGameLifes;
@@ -35,6 +36,11 @@ public class BaseLevel {
 	public string Id {
 		get {
 			return this.id;
+		}
+	}
+	public string LevelPackId {
+		get {
+			return this.levelPackId;
 		}
 	}
 	public int InitialPlayerLife {
@@ -90,9 +96,9 @@ public class BaseLevel {
 	public int RealMoneyReward{
 		get{
 			int res = moneyReward;
-			int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+id.ToString()); //get the previous completed times for this level
+			int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+id); //get the previous completed times for this level
 			int totalGames = prevCompleted; //total games for this level
-			int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+			int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+levelPackId);
 			int idLevel;
 			
 			if(int.TryParse(Id, out idLevel) && prevCompleted > 0){
@@ -113,9 +119,9 @@ public class BaseLevel {
 		get{
 			int res = gemsReward;
 			//			int prevTries = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_TRIES_TIMES+id.ToString()); //get the previous tries for this level
-			int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+id.ToString()); //get the previous completed times for this level
+			int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+id); //get the previous completed times for this level
 			int totalGames = prevCompleted; //total games for this level
-			int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+			int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+levelPackId);
 			int idLevel;
 			
 			if(int.TryParse(Id, out idLevel) && prevCompleted > 0){
@@ -145,15 +151,20 @@ public class BaseLevel {
 			id = att[0];
 		}
 		
-		//localization key
+		//level pack id
 		if(att.Length > 1){
-			descriptionLocKey = att[1];
+			levelPackId = att[1];
+		}
+		
+		//localization key
+		if(att.Length > 2){
+			descriptionLocKey = att[2];
 			localizedDescripcion = Localization.Get(descriptionLocKey);
 		}
 		
 		//player life
 		int life;
-		if(att.Length > 2 && int.TryParse(att[2], out life)){
+		if(att.Length > 3 && int.TryParse(att[3], out life)){
 			initialPlayerLife = life;
 		}
 		else{
@@ -162,7 +173,7 @@ public class BaseLevel {
 		
 		//game lifes
 		int gLifes;
-		if(att.Length > 3 && int.TryParse(att[3], out gLifes)){
+		if(att.Length > 4 && int.TryParse(att[4], out gLifes)){
 			initialGameLifes = gLifes;
 		}
 		else{
@@ -171,9 +182,9 @@ public class BaseLevel {
 		
 		//money & gems reward
 		int pMoney, pGems;
-		if(att.Length > 4 && int.TryParse(att[4], out pMoney))
+		if(att.Length > 5 && int.TryParse(att[5], out pMoney))
 			moneyReward = pMoney;
-		if(att.Length > 5 && int.TryParse(att[5], out pGems))
+		if(att.Length > 6 && int.TryParse(att[6], out pGems))
 			gemsReward = pGems;
 		
 		//reset to set all attributes to initial values
@@ -184,7 +195,7 @@ public class BaseLevel {
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
-		return string.Format ("[BaseLevel: Id={0}, Description={1}, InitialPlayerLife={2}, InitialGameLifes={3}, PlayerLife={4}, GameLifes={5}, MoneyReward={6}, GemsReward={7}]", Id, localizedDescripcion, InitialPlayerLife, InitialGameLifes, PlayerLife, GameLifes, RealMoneyReward, GemsReward);
+		return string.Format ("[BaseLevel: Id={0}, LevelPackId={1}, Description={2}, InitialPlayerLife={3}, InitialGameLifes={4}, PlayerLife={5}, GameLifes={6}, MoneyReward={7}, GemsReward={8}]", Id, LevelPackId, localizedDescripcion, InitialPlayerLife, InitialGameLifes, PlayerLife, GameLifes, RealMoneyReward, GemsReward);
 	}
 	
 	//--------------------------------------

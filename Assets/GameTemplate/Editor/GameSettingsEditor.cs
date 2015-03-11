@@ -67,6 +67,8 @@ public class GameSettingsEditor : Editor {
 		
 		GeneralOptions();
 		gameInfo();
+		//		EditorGUILayout.Space();
+		//		levelsSettings();
 		EditorGUILayout.Space();
 		moneySettings();
 		EditorGUILayout.Space();
@@ -228,6 +230,99 @@ public class GameSettingsEditor : Editor {
 		
 		handleDifficulties();
 	}
+	
+	//	protected virtual void levelsSettings(){
+	//		GameSettings.Instance.showLevelsSettings = EditorGUILayout.Foldout(GameSettings.Instance.showLevelsSettings, "Levels Settings");
+	//		if (GameSettings.Instance.showLevelsSettings) {
+	//			EditorGUILayout.BeginHorizontal();
+	//			EditorGUILayout.LabelField("Defaul level pack size");
+	//			GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE = EditorGUILayout.IntField(GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE);
+	//			EditorGUILayout.EndHorizontal();
+	//			EditorGUILayout.Space();
+	//
+	//			EditorGUI.indentLevel++;
+	//			levelPacksSettings();
+	//			EditorGUI.indentLevel--;
+	//		}
+	//	}
+	//	protected virtual void levelPacksSettings(){
+	//		if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count == 0) {
+	//			EditorGUILayout.HelpBox("No level packs registred",MessageType.None);
+	//		}
+	//
+	//		if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count > 0){
+	//			foreach(BaseLevelPack levelPack in LevelPacks.Instance.packs) {
+	//				if(levelPack != null){
+	//					if(!LevelPacks.Instance.showLevelPacks.ContainsKey(levelPack))
+	//						LevelPacks.Instance.showLevelPacks.Add(levelPack, true);
+	//
+	//					LevelPacks.Instance.showLevelPacks[levelPack] = EditorGUILayout.Foldout(LevelPacks.Instance.showLevelPacks[levelPack], "Pack " + levelPack.Id);
+	//					if(LevelPacks.Instance.showLevelPacks[levelPack]){
+	//
+	//						EditorGUILayout.BeginHorizontal();
+	//						EditorGUILayout.LabelField("Id");
+	//						levelPack.Id = EditorGUILayout.TextField(levelPack.Id).Trim();
+	//						EditorGUILayout.EndHorizontal();
+	//
+	//						EditorGUILayout.BeginHorizontal();
+	//						EditorGUILayout.LabelField("Initial Level");
+	//						levelPack.InitialLevel = EditorGUILayout.IntField(levelPack.InitialLevel);
+	//						EditorGUILayout.EndHorizontal();
+	//
+	//						EditorGUILayout.BeginHorizontal();
+	//						EditorGUILayout.LabelField("Total levels");
+	//						levelPack.TotalLevelsInPack = EditorGUILayout.IntField(levelPack.TotalLevelsInPack);
+	//						EditorGUILayout.EndHorizontal();
+	//
+	//
+	//						EditorGUILayout.BeginHorizontal();
+	//						if(GUILayout.Button("Delete Pack " + levelPack.Id,  GUILayout.Width(120))) {
+	//							LevelPacks.Instance.packs.Remove(levelPack);
+	//							break;
+	//						}
+	//						EditorGUILayout.EndHorizontal();
+	//					}//end_if(levelPack != null)
+	//				}//end_foreach
+	//			}//end_if
+	//
+	//			EditorGUILayout.BeginHorizontal();
+	//			EditorGUILayout.Space();
+	//			if(GUILayout.Button("Delete all packs",  GUILayout.Width(180))) {
+	//				if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count > 0){
+	//					List<BaseLevelPack> packsRemove = new List<BaseLevelPack>();
+	//					foreach(BaseLevelPack levelPack in LevelPacks.Instance.packs)
+	//						packsRemove.Add(levelPack);
+	//					foreach(BaseLevelPack levelPack in packsRemove)
+	//						LevelPacks.Instance.packs.Remove(levelPack);
+	//				}
+	//			}
+	//
+	//		}
+	//		else{
+	//			EditorGUILayout.BeginHorizontal();
+	//			EditorGUILayout.Space();
+	//		}
+	//
+	//		
+	//		
+	////		EditorGUILayout.BeginHorizontal();
+	////		EditorGUILayout.Space();
+	//
+	//		if(GUILayout.Button("Add new level pack",  GUILayout.Width(180))) {
+	//			if(LevelPacks.Instance.packs == null || (LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count == 0))
+	//				LevelPacks.Instance.packs.Add(new BaseLevelPack("1", 1, GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE, null));
+	//			else{
+	//				BaseLevelPack lastPack = LevelPacks.Instance.packs[LevelPacks.Instance.packs.Count-1];
+	//				int lastPackId;
+	//
+	//				if(int.TryParse(lastPack.Id, out lastPackId))
+	//					LevelPacks.Instance.packs.Add(new BaseLevelPack((lastPackId+1).ToString(), lastPack.FinalLevel+1, GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE, null));
+	//			}
+	//		}
+	//		EditorGUILayout.EndHorizontal();
+	//		EditorGUILayout.Space();
+	//	}
+	
 	
 	protected virtual void inAppBilling(){
 		GameSettings.Instance.showInAppBillingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showInAppBillingSettings, "In App Billing");

@@ -58,7 +58,7 @@ public class UIBasePlayLevelButton : UIBaseButton {
 		
 		if(window != null){
 			if(level != null)
-				window.playLevel(level.Id);
+				window.playLevel(level);
 			else
 				window.playLevel();
 		}
@@ -77,11 +77,17 @@ public class UIBasePlayLevelButton : UIBaseButton {
 				lbLevelID.text = level.Id;
 			
 			if(spLock){
-				int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+				int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+level.LevelPackId);
 				int id;
 				
 				
+				
 				if(int.TryParse(level.Id, out id)){
+					if(level.Id.Equals("101")){
+						Debug.Log(level);
+						Debug.Log("last unlocked: " +lastUnlockedLevel);
+					}
+					
 					unlocked = id <= lastUnlockedLevel;
 					button.interactable = unlocked;
 					spLock.gameObject.SetActive(!unlocked);

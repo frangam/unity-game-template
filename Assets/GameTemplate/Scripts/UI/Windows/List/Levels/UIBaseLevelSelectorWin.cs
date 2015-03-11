@@ -8,6 +8,9 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	private string levelPackId = "1";
+	
+	[SerializeField]
 	private Text lbLevelDesc;
 	
 	[SerializeField]
@@ -39,6 +42,12 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	//--------------------------------------
 	// Getters & Setters
 	//--------------------------------------
+	public string LevelPackId {
+		get {
+			return this.levelPackId;
+		}
+	}
+	
 	public List<UIBasePlayLevelButton> LevelButtons {
 		get {
 			return this.levelButtons;
@@ -91,10 +100,10 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	
 	public override void initIndexCurrentItem ()
 	{
-		int last = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+		int last = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+levelPackId);
 		
 		if(last == 0)
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, 1);
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+levelPackId, 1);
 		
 		lastUnlockedLevel = last == 0 ? 1: last; 
 		indexCurrentItem = lastUnlockedLevel - 1; //-1 porque el primer nivel es el 1 y el indice debe empezar en 0;
@@ -158,20 +167,23 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 			pnlGemsReward.gameObject.SetActive(level.RealGemsReward > 0);
 	}
 	
-	public virtual void playLevel(string levelId = ""){
+	public virtual void playLevel(BaseLevel level = null){
 		string _id = items[indexCurrentItem].Id; //id from the current item selected
+		string _levelPackID = ((UIBaseLevel) items[indexCurrentItem]).Level.LevelPackId;
 		
-		//the given id
-		if(!string.IsNullOrEmpty(levelId)){
-			_id = levelId;
+		//the given level id and level pack id
+		if(level != null && !string.IsNullOrEmpty(level.Id) && !string.IsNullOrEmpty(level.LevelPackId)){
+			_id = level.Id;
+			_levelPackID = level.LevelPackId;
 		}
 		
 		//select and play level
-		if(!string.IsNullOrEmpty(_id)){
-			int l;
+		if(!string.IsNullOrEmpty(_id) && !string.IsNullOrEmpty(_levelPackID)){
+			int l, pl;
 			
-			if(int.TryParse(_id, out l)){
+			if(int.TryParse(_id, out l) && int.TryParse(_levelPackID, out pl)){
 				PlayerPrefs.SetInt(GameSettings.PP_SELECTED_LEVEL, l);
+				PlayerPrefs.SetInt(GameSettings.PP_SELECTED_LEVEL_PACK, pl);
 				ScreenLoaderVisualIndicator.Instance.LoadScene(sceneToGoAtSelectLevel);
 			}
 		}

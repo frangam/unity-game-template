@@ -35,6 +35,8 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	private bool loadTestLevel = false;
 	[SerializeField]
 	private int levelToLoadTEST = 1;
+	[SerializeField]
+	private int levelPackToLoadTEST = 1;
 	
 	//--------------------------------------
 	// Private Attributes
@@ -84,6 +86,12 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 		}
 	}
 	
+	public int LevelPackToLoadTEST {
+		get {
+			return this.levelToLoadTEST;
+		}
+	}
+	
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -113,7 +121,7 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	//--------------------------------------
 	private void initialize(){
 		if(loadTestLevel)
-			loadLevel(levelToLoadTEST);
+			loadLevel(levelToLoadTEST, levelPackToLoadTEST);
 		else if(loadCurrentLevelAtStart)
 			loadCurrentLevel();
 		
@@ -153,7 +161,7 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public string getLevelContent(int levelId){
+	public string getLevelContent(int levelId, int levelPackId){
 		string content = getContentLevelFile();
 		string[] lines = null;
 		string result = "";
@@ -167,10 +175,10 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 			else{				
 				foreach(string line in lines){
 					string[] level = line.Split(SEPARATOR_ATTRIBUTES);
-					int levelIdFromLine;
+					int levelIdFromLine, levelPackIdFromLine;
 					
 					//first attribute is the level id
-					if(int.TryParse(level[0], out levelIdFromLine) && levelIdFromLine == levelId){
+					if(int.TryParse(level[0], out levelIdFromLine) && int.TryParse(level[1], out levelPackIdFromLine) && levelIdFromLine == levelId && levelPackIdFromLine == levelPackId){
 						result = line;
 						break;
 					}
@@ -205,7 +213,7 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	/// </summary>
 	/// <returns>The current level content.</returns>
 	public string getCurrentLevelContent(){
-		return getLevelContent(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL)); // get the current level selected content
+		return getLevelContent(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL), PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL_PACK)); // get the current level selected content
 	}
 	
 	/// <summary>
@@ -214,17 +222,19 @@ public class BaseLevelLoaderController : Singleton<BaseLevelLoaderController>{
 	/// <param name="levelId">Level identifier.</param>
 	public virtual void loadCurrentLevel(){
 		if(GameController.Instance.Manager.GameMode == GameMode.SURVIVAL)
-			loadLevel(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL));
+			loadLevel(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL), PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL_PACK));
 		else
-			loadLevel(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL));
+			loadLevel(PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL), PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL_PACK));
 	}
 	
 	/// <summary>
 	/// Do start the level load given
 	/// </summary>
-	public virtual void loadLevel(int levelId){
+	public virtual void loadLevel(int levelId, int levelPackId){
 		if(levelId <= 0)
 			Debug.LogError("Level id "+ levelId + " is invalid. Level did not load.");
+		if(levelPackId <= 0)
+			Debug.LogError("Level pack id "+ levelPackId + " is invalid. Level pack did not load.");
 		
 		if(currentLevel != null)
 			dispatcher.dispatch(LEVEL_LOADED, currentLevel);

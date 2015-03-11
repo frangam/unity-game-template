@@ -14,6 +14,10 @@ public class GameTemplateMenu : EditorWindow {
 	public static void Edit() {
 		Selection.activeObject = GameSettings.Instance;
 	}
+	[MenuItem("Window/Game Template/Level Packs Settings", false, 1)]
+	public static void EditLevelPacks() {
+		Selection.activeObject = LevelPacks.Instance;
+	}
 	
 	//--------------------------------------
 	//  Documentation

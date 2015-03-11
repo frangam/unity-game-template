@@ -55,9 +55,10 @@ public class UIBasePurchasableLevelWin : UIBaseShopListWindow {
 	public override void initIndexCurrentItem ()
 	{
 		int last = lastSelectedLevel();
+		int lastPack = lastSelectedLevelPack();
 		
 		if(last == 0)
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, 1);
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+lastPack.ToString(), 1);
 		
 		lastUnlockedLevel = last == 0 ? 1: last;
 		indexCurrentItem = lastUnlockedLevel - 1; //-1 porque el primer nivel es el 1 y el indice debe empezar en 0;
@@ -92,6 +93,9 @@ public class UIBasePurchasableLevelWin : UIBaseShopListWindow {
 	//--------------------------------------
 	public virtual int lastSelectedLevel(){
 		return PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); 
+	}
+	public virtual int lastSelectedLevelPack(){
+		return PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL_PACK); 
 	}
 	
 	public virtual void showLevel(BasePurchasableLevel level){
