@@ -129,6 +129,7 @@
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldDX11.shader" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\layout\com_facebook_usersettingsfragment.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ContrastComposite.shader" />
+     <None Include="Assets\DOTween\DOTween46.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset3.shader" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\layout\com_facebook_picker_checkbox.xml" />
      <None Include="Assets\Plugins\Android\facebook\bin\R.txt" />
@@ -145,6 +146,7 @@
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\drawable\com_facebook_picker_item_background.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\layout\com_facebook_picker_image.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\libs\android-support-v4.txt" />
+     <None Include="Assets\DOTween\readme.txt" />
      <None Include="Assets\GameTemplate\Examples\Resources\Achievements.txt" />
      <None Include="Assets\Plugins\Android\facebook\res\drawable\com_facebook_button_check.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\drawable\com_facebook_top_background.xml" />
@@ -269,6 +271,7 @@
      <None Include="Assets\Plugins\StansAssets\Android\androidnative.txt" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\values\styles.xml" />
      <None Include="Assets\Plugins\Android\res\xml\file_paths.xml" />
+     <None Include="Assets\DOTween\DOTween43.xml" />
      <None Include="Assets\Plugins\StansAssets\Android\facebook\res\values-xhdpi\dimens.xml" />
      <None Include="Assets\Plugins\Android\facebook\res\layout\com_facebook_picker_list_section_header.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset2.shader" />
@@ -276,6 +279,15 @@
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendForBloom.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity 4.6.2/Unity.app/Contents/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="DOTween">
+ <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/DOTween/DOTween.dll</HintPath>
+ </Reference>
+ <Reference Include="DOTween43">
+ <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/DOTween/DOTween43.dll</HintPath>
+ </Reference>
+ <Reference Include="DOTween46">
+ <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/DOTween/DOTween46.dll</HintPath>
  </Reference>
  <Reference Include="IFacebook">
  <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/Facebook/Scripts/IFacebook.dll</HintPath>

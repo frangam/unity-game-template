@@ -3,6 +3,10 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Single Window where we show a unique level to select
+/// We navigate with buttons or other widget that changes between this current level 
+/// </summary>
 public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	//--------------------------------------
 	// Setting Attributes
@@ -38,6 +42,7 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	// Private Attributes
 	//--------------------------------------
 	protected int 			lastUnlockedLevel;
+	private int 			totalLevelsPack;
 	
 	//--------------------------------------
 	// Getters & Setters
@@ -45,6 +50,12 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	public string LevelPackId {
 		get {
 			return this.levelPackId;
+		}
+	}
+	
+	public int TotalLevelsPack {
+		get {
+			return this.totalLevelsPack;
 		}
 	}
 	
@@ -73,6 +84,13 @@ public class UIBaseLevelSelectorWin : UIBaseListWindow {
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	public override void Awake ()
+	{
+		base.Awake ();
+		
+		totalLevelsPack =  LevelPacks.Instance.getPackById(LevelPackId).TotalLevelsInPack;
+	}
+	
 	public override void loadItems ()
 	{
 		base.loadItems ();
