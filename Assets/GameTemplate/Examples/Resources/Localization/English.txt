@@ -134,6 +134,12 @@ lb_buy_more_gems = DO YOU WANT TO BUY GEMS?
 lb_level_reward = LEVEL REWARD
 lb_total_rewards = TOTAL
 
+shop = SHOP
+lb_price = PRICE
+lb_btn_rateus = RATE US
+lb_min = MIN
+lb_max = MAX
+lb_cur = CUR
 lb_inapp_no_ads = QUIT ADS
 lb_inapp_item_100_gems = LITTLE GEMS PACK
 lb_inapp_item_500_gems = MEDIUM GEMS PACK

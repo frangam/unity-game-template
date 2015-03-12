@@ -78,7 +78,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 	}
 	
-	public int CurrentScore {
+	public virtual int CurrentScore {
 		get {
 			return this.currentScore;
 		}
@@ -161,6 +161,7 @@ public class BaseGameManager : MonoBehaviour {
 			BaseQuestManager.dispatcher.removeEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
 		}
 	}
+	protected virtual void Update(){}
 	#endregion
 	
 	//--------------------------------------
