@@ -89,7 +89,7 @@ public class GA {
 				if (path == "") 
 				{
 					path = "Assets";
-				}
+				}  
 				else if (Path.GetExtension (path) != "") 
 				{
 					path = path.Replace (Path.GetFileName (AssetDatabase.GetAssetPath (Selection.activeObject)), "");
@@ -97,9 +97,7 @@ public class GA {
 				string uniquePath = AssetDatabase.GenerateUniqueAssetPath("Assets/Resources/GameAnalytics/GA_Settings.asset");
 				AssetDatabase.CreateAsset(asset, uniquePath);
 				if(uniquePath != "Assets/Resources/GameAnalytics/GA_Settings.asset")
-				{
-					Debug.LogWarning("GameAnalytics: The path Assets/Resources/GameAnalytics/GA_Settings.asset used to save the settings file is not available.");
-				}
+					GA.Log("GameAnalytics: The path Assets/Resources/GameAnalytics/GA_Settings.asset used to save the settings file is not available.");
 				AssetDatabase.SaveAssets ();
 				Debug.LogWarning("GameAnalytics: Settings file didn't exist and was created");
 				Selection.activeObject = asset;
@@ -112,7 +110,7 @@ public class GA {
 		}
 		catch (Exception e)
 		{
-			Debug.LogWarning("Error getting GA_Settings in InitAPI: " + e.Message);
+			Debug.Log("Error getting GA_Settings in InitAPI: " + e.Message);
 		}
 	}
 	 

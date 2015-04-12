@@ -30,10 +30,13 @@ public class BaseGameManager : MonoBehaviour {
 	private string 		gameoverWindow = UIBaseWindowIDs.GAMEOVER;
 	
 	[SerializeField]
-	private float 		gameOverDelay = 1.5f;
+	private string 		playerWinsWindow = UIBaseWindowIDs.PLAYER_WINS_WINDOW;
 	
 	[SerializeField]
-	private float 		missionCompletedDelay = 2.5f;
+	protected float 	gameOverDelay = 1.5f;
+	
+	[SerializeField]
+	protected float 	missionCompletedDelay = 2.5f;
 	
 	public GameObject 	explosionPrefab;
 	
@@ -47,10 +50,12 @@ public class BaseGameManager : MonoBehaviour {
 	private bool 			finished;
 	private GameDifficulty 	difficulty;
 	private GameMode 		gameMode;
-	private int 			currentScore;
+	private long 			currentScore;
 	private int				currentLevelSelected;
 	private int				currentLevelPackSelected;
 	private bool			isGameOver;
+	private bool 			isLocalMultiplayerGame;
+	private bool 			isOnlineMultiplayerGame;
 	
 	/// <summary>
 	/// True if we are going to handle scores in the current game mode. Recommended to its value in a child class.
@@ -78,7 +83,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 	}
 	
-	public virtual int CurrentScore {
+	public virtual long CurrentScore {
 		get {
 			return this.currentScore;
 		}
@@ -125,6 +130,17 @@ public class BaseGameManager : MonoBehaviour {
 			isGameOver = value;
 		}
 	}
+	public bool IsLocalMultiplayerGame {
+		get {
+			return this.isLocalMultiplayerGame;
+		}
+	}
+	
+	public bool IsOnlineMultiplayerGame {
+		get {
+			return this.isOnlineMultiplayerGame;
+		}
+	}
 	
 	
 	//--------------------------------------
@@ -151,6 +167,9 @@ public class BaseGameManager : MonoBehaviour {
 			break;
 			
 		}
+		//multiplayer options
+		isLocalMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_LOCAL_MULTIPLAYER) != 0 ? true:false;
+		isOnlineMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_ONLINE_MULTIPLAYER) != 0 ? true:false;
 		
 		//GA
 		GA.API.Design.NewEvent(gaEvent);
@@ -161,6 +180,7 @@ public class BaseGameManager : MonoBehaviour {
 			BaseQuestManager.dispatcher.removeEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
 		}
 	}
+	protected virtual void Start(){}
 	protected virtual void Update(){}
 	#endregion
 	
@@ -321,7 +341,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 	}
 	
-	private IEnumerator finishGameWithDelay(){
+	public virtual IEnumerator finishGameWithDelay(){
 		float delay = isGameOver ? gameOverDelay : missionCompletedDelay;
 		
 		yield return new WaitForSeconds(delay);
@@ -361,8 +381,13 @@ public class BaseGameManager : MonoBehaviour {
 			UIController.Instance.Manager.open(gameoverWindow);
 			break;
 		case GameMode.QUICKGAME:
-			gaEvent = GAEvents.QUICKGAME_LEVEL_PLAYED;
-			UIController.Instance.Manager.open(gameoverWindow);
+			if(isGameOver){
+				gaEvent = GAEvents.QUICKGAME_LEVEL_PLAYED;
+				UIController.Instance.Manager.open(gameoverWindow);
+			}
+			else{
+				UIController.Instance.Manager.open(playerWinsWindow);
+			}
 			break;
 			
 		}

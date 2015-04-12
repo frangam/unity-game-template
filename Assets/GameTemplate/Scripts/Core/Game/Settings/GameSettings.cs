@@ -192,6 +192,8 @@ public class GameSettings : ScriptableObject {
 	public const string PP_UNIQUE_LIST_CURRENT_ITEM_SELECTED_ID			= "pp_unique_list_current_item_selected_id";
 	public const string PP_LAST_CAMPAIGN_LEVEL_COMPLETED				= "pp_last_campaign_level_completed_";
 	public const string PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE = "pp_last_opening_user_connected_to_store_service"; //1 or 0 y playerprefs to know if user conneted to the gps or gc in the last opening
+	public const string PP_LOCAL_MULTIPLAYER 							= "pp_local_multiplayer";
+	public const string PP_ONLINE_MULTIPLAYER 							= "pp_online_multiplayer";
 	
 	//GooglePlay Services
 	public string ID_UNIQUE_RANKING 				= "";

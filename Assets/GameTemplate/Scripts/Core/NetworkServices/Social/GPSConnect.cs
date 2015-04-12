@@ -2,13 +2,13 @@ using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
 
-public class GPSConnect : Singleton<GPSConnect> {
+public class GPSConnect : PersistentSingleton<GPSConnect> {
 	private static bool jugadorConectado = false;
 	private bool leaderBoardsLoaded = false;
 	private bool achievementsLoaded = false;
 	private bool achievementsChecked = false; //it has checked if there are achievements that need to be updated in server side beacuse they were unlocked locally
 	private bool notifiedLoader = false;
-	
+	private bool submittedScoreZeroAtInit = false;
 	
 	void Update(){
 		if(!notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
@@ -36,7 +36,7 @@ public class GPSConnect : Singleton<GPSConnect> {
 		//
 		//		//listen for GooglePlayManager events
 		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.ACHIEVEMENT_UPDATED, OnAchivmentUpdated);
-		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.SCORE_SUBMITED, OnScoreSubmited);
+		GooglePlayManager.instance.addEventListener (GooglePlayManager.SCORE_SUBMITED, OnScoreSubmited);
 		//		
 		//		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
 		//			//checking if player already connected
@@ -53,13 +53,14 @@ public class GPSConnect : Singleton<GPSConnect> {
 		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
 		
 		
-		//		GooglePlayConnection.ActionConnectionResultReceived += ActionConnectionResultReceived;
+		GooglePlayConnection.ActionConnectionResultReceived += ActionConnectionResultReceived;
 		
 		
 		
 		//listen for GooglePlayManager events
 		GooglePlayManager.instance.addEventListener (GooglePlayManager.ACHIEVEMENT_UPDATED, OnAchivmentUpdated);
 		GooglePlayManager.instance.addEventListener (GooglePlayManager.SCORE_SUBMITED, OnScoreSubmited);
+		
 		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.SCORE_REQUEST_RECEIVED, OnScoreUpdated);
 		
 		
@@ -139,11 +140,34 @@ public class GPSConnect : Singleton<GPSConnect> {
 	/*--------------------------------
 	 * Eventos Google Play Services
 	 -------------------------------*/
+	private void ActionConnectionResultReceived(GooglePlayConnectionResult result) {
+		
+		if(result.IsSuccess) {
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GPSConnect - Connected! ActionConnectionResultReceived");
+			
+			OnConnectionEstablished();
+		} else {
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GPSConnect - Connection failed with code: " + result.code.ToString());
+		}
+	}
 	
 	private void OnScoreSubmited(CEvent e) {
 		//		GooglePlayResult result = e.data as GooglePlayResult;
 		//		AndroidNative.showMessage ("OnScoreSubmited", result.message);
 		
+		
+		//try to load scores if we submitted a dummy zero score previously
+		if(submittedScoreZeroAtInit){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GPSConnect - Dyummy zero score submitted");
+			
+			submittedScoreZeroAtInit = false;
+			loadLeaderBoards();
+		}
+		
+		GooglePlayManager.instance.LoadPlayerCenteredScores(GameSettings.Instance.ID_UNIQUE_RANKING, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
 	}
 	
 	private void OnPlayerInfoLoaded(CEvent e) {
@@ -162,7 +186,7 @@ public class GPSConnect : Singleton<GPSConnect> {
 	
 	private void OnPlayerDisconnected() {
 		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GPSConnect - player connected");
+			Debug.Log("GPSConnect - player disconnected");
 		
 		PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
 		
@@ -170,9 +194,12 @@ public class GPSConnect : Singleton<GPSConnect> {
 	}
 	
 	private void OnPlayerConnected() {
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GPSConnect - player connected");
 		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GPSConnect - OnPlayerConnected - player connected");
+	}
+	
+	private void OnConnectionEstablished(){
 		PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 1);
 		
 		GooglePlayManager.instance.LoadConnectedPlayers ();
@@ -187,10 +214,13 @@ public class GPSConnect : Singleton<GPSConnect> {
 	}
 	
 	private void loadLeaderBoards() {
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GPSConnect - loading leaderboards");
 		
 		//listening for load event 
 		GooglePlayManager.instance.addEventListener (GooglePlayManager.LEADERBOARDS_LOADED, OnLeaderBoardsLoaded);
 		GooglePlayManager.instance.LoadLeaderBoards ();
+		
 	}
 	
 	private void loadAchievements() {
@@ -201,6 +231,45 @@ public class GPSConnect : Singleton<GPSConnect> {
 	
 	private void OnLeaderBoardsLoaded(CEvent e) {
 		GooglePlayManager.instance.removeEventListener (GooglePlayManager.LEADERBOARDS_LOADED, OnLeaderBoardsLoaded);
+		GooglePlayResult result = e.data as GooglePlayResult;
+		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GPSConnect - Leader boards loaded result success: " +result.isSuccess + ". Result code: " +result.response);
+		
+		if(result.isSuccess) {
+			string id = GameSettings.Instance.ID_UNIQUE_RANKING;
+			GooglePlayManager.instance.LoadPlayerCenteredScores(id, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
+			GPLeaderBoard leaderboard = GooglePlayManager.instance.GetLeaderBoard(id);
+			
+			if( leaderboard == null) {
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("GPSConnect - Leader boards loaded " + id + " not found in leader boards list");
+				return;
+			}
+			
+			GPScore gpScore = leaderboard.GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL);
+			long score = gpScore.score;
+			
+			//a tricky to get a previous score
+			//<0 means not configured good
+			if(score < 0){
+				//				ScoresHandler.Instance.showRanking(id);
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("GPSConnect - Submitting dummy zero score to store because score from store is "+score);
+				
+				submittedScoreZeroAtInit = true;
+				ScoresHandler.Instance.sendScoreToServer(id, 0);
+			}
+			else{
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("GPSConnect - Leader board id " + id + " current player "+gpScore.playerId + " rank: " +gpScore.rank + " score: " + gpScore.score);
+				
+				ScoresHandler.Instance.loadBestScore(id, score);
+			}
+		} else {
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GPSConnect - Leader-Boards Loaded error: "+ result.message);
+		}
 	}
 	
 	private void OnAchivmentsLoaded(CEvent e) {

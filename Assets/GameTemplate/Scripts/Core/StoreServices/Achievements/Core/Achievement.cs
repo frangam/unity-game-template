@@ -65,4 +65,33 @@ public class Achievement : BaseQuest{
 	public override string ToString (){
 		return string.Format ("[Achievement: id={0}, actions={1}, name={2}, description={3}, isIncremental={4}, unlocked={5}]", Id, stgActions, Name, Description, isIncremental, Completed);
 	}
+	
+	public override float getProgressPercentage ()
+	{
+		float res = 0f;
+		int actionProgresses = 0;
+		int totalProgressToComplete = 0;
+		
+		//check total active actions
+		foreach(GameAction action in Actions){
+			totalProgressToComplete += action.ActivationValue;
+			actionProgresses += action.Progress;
+		}
+		
+		res = (actionProgresses * 100f) / totalProgressToComplete;
+		
+		return res;
+	}
+	
+	public override int getProgressIntegerValue ()
+	{
+		int res = 0;
+		
+		//check total active actions
+		foreach(GameAction action in Actions){
+			res += action.Progress;
+		}
+		
+		return res;
+	}
 }

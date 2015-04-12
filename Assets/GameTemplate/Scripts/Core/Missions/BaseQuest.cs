@@ -201,7 +201,7 @@ public class BaseQuest {
 	/// Gets the progress percentage.
 	/// </summary>
 	/// <returns>The progress percentage.</returns>
-	public float getProgressPercentage(){
+	public virtual float getProgressPercentage(){
 		float res = 0f;
 		int activeActions = 0;
 		
@@ -222,7 +222,7 @@ public class BaseQuest {
 	/// The total completed actions
 	/// </summary>
 	/// <returns>The progress integer value.</returns>
-	public int getProgressIntegerValue(){
+	public virtual int getProgressIntegerValue(){
 		int res = 0;
 		
 		//check total active actions

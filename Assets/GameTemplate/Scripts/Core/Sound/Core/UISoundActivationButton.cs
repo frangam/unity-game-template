@@ -72,10 +72,18 @@ public class UISoundActivationButton : UIBaseButton {
 		imgInactive.gameObject.SetActive(!activo);
 		
 		if(type == SoundType.MUSIC){
-			if(activo)
-				BaseSoundManager.Instance.play(BaseSoundIDs.MENU_MUSIC);
-			else
-				BaseSoundManager.Instance.stop(BaseSoundIDs.MENU_MUSIC);
+			if(activo){
+				if(BaseGameScreenController.Instance.Section == GameSection.MAIN_MENU)
+					BaseSoundManager.Instance.play(BaseSoundIDs.MENU_MUSIC);
+				else if(BaseGameScreenController.Instance.Section == GameSection.GAME)
+					BaseSoundManager.Instance.play(BaseSoundIDs.GAME_MUSIC);
+			}
+			else{
+				if(BaseGameScreenController.Instance.Section == GameSection.MAIN_MENU)
+					BaseSoundManager.Instance.stop(BaseSoundIDs.MENU_MUSIC);
+				else if(BaseGameScreenController.Instance.Section == GameSection.GAME)
+					BaseSoundManager.Instance.stop(BaseSoundIDs.GAME_MUSIC);
+			}
 		}
 	}
 }

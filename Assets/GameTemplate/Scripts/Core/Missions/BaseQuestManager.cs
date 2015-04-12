@@ -14,6 +14,7 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	public const string GAME_PROPERTY_CHANGED = "gt_game_property_changed";
 	public const string GAME_PROPERTY_RESETED = "gt_game_property_reseted";
 	public const string ACTION_COMPLETED = "gt_action_completed";
+	public const string ACTION_PROGRESS_CHANGED = "gt_action_progress_changed";
 	public const string QUEST_COMPLETED = "gt_quest_completed";
 	public const string ALL_QUESTS_COMPLETED = "gt_all_quests_completed";
 	
@@ -88,6 +89,7 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		dispatcher.removeEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
 		dispatcher.removeEventListener(GAME_PROPERTY_RESETED, OnGamePropertyReseted); 
 		dispatcher.removeEventListener(ACTION_COMPLETED, OnActionCompleted); 
+		dispatcher.removeEventListener(ACTION_PROGRESS_CHANGED, OnActionProgressChanged); 
 		dispatcher.removeEventListener(QUEST_COMPLETED, OnQuestCompleted); 
 		dispatcher.removeEventListener(ALL_QUESTS_COMPLETED, OnAllQuestsCompleted); 
 	}
@@ -154,8 +156,16 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 				finalValue = value > actionProgress ? value : actionProgress;
 				break;
 				
+			case AchieveCondition.ACTIVE_IF_GREATER_OR_EQUALS:
+				finalValue = value >= actionProgress ? value : actionProgress;
+				break;
+				
 			case AchieveCondition.ACTIVE_IF_LOWER_THAN:
 				finalValue = value < actionProgress ? value : actionProgress;
+				break;
+				
+			case AchieveCondition.ACTIVE_IF_LOWER_OR_EQUALS:
+				finalValue = value <= actionProgress ? value : actionProgress;
 				break;
 			}
 		}
@@ -187,6 +197,7 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 				dispatcher.addEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
 				dispatcher.addEventListener(GAME_PROPERTY_RESETED, OnGamePropertyReseted); 
 				dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
+				dispatcher.addEventListener(ACTION_PROGRESS_CHANGED, OnActionProgressChanged); 
 				dispatcher.addEventListener(QUEST_COMPLETED, OnQuestCompleted); 
 				dispatcher.addEventListener(ALL_QUESTS_COMPLETED, OnAllQuestsCompleted); 
 				
@@ -431,6 +442,17 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 				dispatcher.dispatch(ALL_QUESTS_COMPLETED);
 			}
 			//---
+		}
+	}
+	
+	public virtual void OnActionProgressChanged(CEvent e){
+		GameActionResult result = e.data as GameActionResult;
+		
+		if(result.IsSucceeded){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GameAction " +result.CurrentActionId + " progress is changed");
+			
+			
 		}
 	}
 	

@@ -333,10 +333,6 @@ public class GA_Settings : ScriptableObject
 		#if !UNITY_EDITOR && UNITY_STANDALONE_WIN
 		
 		string device = "PC";
-
-		#elif !UNITY_EDITOR && UNITY_ANDROID
-
-		string device = "Android";
 		
 		#elif !UNITY_EDITOR
 		

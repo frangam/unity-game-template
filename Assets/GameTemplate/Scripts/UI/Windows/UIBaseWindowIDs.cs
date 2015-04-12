@@ -19,6 +19,7 @@ public static class UIBaseWindowIDs {
 	public const string LEVEL_UP 						= "bwi_000009";
 	public const string ALL_MISSIONS_COMPLETED			= "bwi_000010";
 	public const string PLAYER_MONEY_WINDOW				= "bwi_000011";
+	public const string PLAYER_WINS_WINDOW 				= "bwi_000012";
 	
 	public const string UNIQUE_LIST_WINDOW				= "bwi_000020";
 	

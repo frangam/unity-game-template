@@ -15,37 +15,37 @@ public class GameAction {
 	public const char SEPARATOR_ATTRIBUTES 		= ',';
 	public const char SEPARATOR_INTERVAL 		= '-';
 	public const char SEPARATOR_TAGS 			= '.';
-
+	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
 	private string name;
-
+	
 	[SerializeField]
 	private string id;
-
+	
 	[SerializeField]
 	private AchieveCondition activation;
-
+	
 	[SerializeField]
 	private int activationValue;
-
+	
 	[SerializeField]
 	[Tooltip("Valid if activation is ACTIVE_IF_BETWEEN")]
 	private IntervalObject<int> activationInterval;
-
+	
 	[SerializeField]
 	private int initialValue;
-
+	
 	[SerializeField]
 	private List<string> tags;
-
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	private int progress;
-
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -54,49 +54,85 @@ public class GameAction {
 			return this.name;
 		}
 	}
-
+	
 	public string Id {
 		get {
 			return this.id;
 		}
 	}
-
+	
 	public AchieveCondition ActivationCondition {
 		get {
 			return this.activation;
 		}
 	}
-
+	
 	public int Progress {
 		get {
 			return this.progress;
 		}
 		set {
-			progress = value;
-
+			int tempProgress = value;
+			bool completed = isCompleted();
+			
+			if(!completed)
+				progress = tempProgress;
+			
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GameAction - GameAction "+id + " changed. Progress: "+progress + " completed?" +isCompleted());
+			
 			//Observer Pattern
-			if(isCompleted()){
+			if(completed){
 				GameActionResult res =  new GameActionResult(id, value);
-
+				
 				//TODO mejorar llamada a un unigo manager
 				BaseQuestManager<BaseQuestManager, BaseQuest>.dispatcher.dispatch(BaseQuestManager<BaseQuestManager, BaseQuest>.ACTION_COMPLETED, res);
 				BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.ACTION_COMPLETED, res);
 			}
+			else{
+				GameActionResult res =  new GameActionResult(id, value);
+				
+				//TODO mejorar llamada a un unigo manager
+				BaseQuestManager<BaseQuestManager, BaseQuest>.dispatcher.dispatch(BaseQuestManager<BaseQuestManager, BaseQuest>.ACTION_PROGRESS_CHANGED, res);
+				BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.ACTION_PROGRESS_CHANGED, res);
+			}
 		}
 	}
-
+	
+	/// <summary>
+	/// Gets the progress completed. Values betwee 0 and 1
+	/// </summary>
+	/// <value>The progress completed.</value>
+	public float ProgressCompleted{
+		get{
+			return this.progress/this.activationValue;
+		}
+	}
+	
+	public int RemainingProgress{
+		get{
+			return this.activationValue-this.progress;
+		}
+	}
+	
 	public int InitialValue {
 		get {
 			return this.initialValue;
 		}
 	}
-
+	
+	public int ActivationValue {
+		get {
+			return this.activationValue;
+		}
+	}
+	
 	public List<string> Tags {
 		get {
 			return this.tags;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -115,7 +151,7 @@ public class GameAction {
 	public GameAction(string attributes){
 		string[] atts = attributes.Split(SEPARATOR_ATTRIBUTES);
 		int aV1, aV2, aIV;
-
+		
 		//ID
 		if(atts.Length > 0){
 			id = atts[0];
@@ -123,12 +159,15 @@ public class GameAction {
 		else{
 			Debug.LogError("It was not found ID attribute");
 		}
-
+		
 		//AchieveCondition
 		if(atts.Length > 1){
 			switch(atts[1]){
 			case "L":
 				activation = AchieveCondition.ACTIVE_IF_LOWER_THAN;
+				break;
+			case "LE":
+				activation = AchieveCondition.ACTIVE_IF_LOWER_OR_EQUALS;
 				break;
 			case "E":
 				activation = AchieveCondition.ACTIVE_IF_EQUALS_TO;
@@ -136,9 +175,12 @@ public class GameAction {
 			case "G":
 				activation = AchieveCondition.ACTIVE_IF_GREATER_THAN;
 				break;
+			case "GE":
+				activation = AchieveCondition.ACTIVE_IF_GREATER_OR_EQUALS;
+				break;
 			case "B":
 				activation = AchieveCondition.ACTIVE_IF_BETWEEN;
-
+				
 				//activation value IntervalObject
 				if(atts.Length > 2){
 					string[] interval = atts[2].Split(SEPARATOR_INTERVAL);
@@ -158,7 +200,7 @@ public class GameAction {
 		else{
 			Debug.LogError("It was not found Activation condition attribute");
 		}
-
+		
 		//activation value with condition != BETWEEN
 		if(activation != AchieveCondition.ACTIVE_IF_BETWEEN){
 			if(atts.Length > 2){
@@ -170,7 +212,7 @@ public class GameAction {
 				Debug.LogError("It was not found Activation value attribute");
 			}
 		}
-
+		
 		//initial value
 		if(atts.Length > 3){
 			if(int.TryParse(atts[3], out aIV)){
@@ -180,7 +222,7 @@ public class GameAction {
 		else{
 			Debug.LogError("It was not found Initial value attribute");
 		}
-
+		
 		//tags (optional)
 		if(atts.Length > 4){
 			string[] pTags = atts[4].Split(SEPARATOR_TAGS);
@@ -194,14 +236,14 @@ public class GameAction {
 			}
 		}
 	}
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
 		return string.Format ("[AAction: name={0}, id={1}, activation={2}, activationValue={3}, activationIntervalValue={4}, initialValue={5}, progress={6}]", name, id, activation, activationValue, activationInterval, initialValue, progress);
 	}
-
+	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
@@ -211,39 +253,47 @@ public class GameAction {
 	//--------------------------------------
 	public bool loadedCorrectly(){
 		return (id != null && activation != null 
-			        && ((activation != AchieveCondition.ACTIVE_IF_BETWEEN && activationValue != null) 
-			    || (activation == AchieveCondition.ACTIVE_IF_BETWEEN && activationInterval != null))
-			        && initialValue != null);
+		        && ((activation != AchieveCondition.ACTIVE_IF_BETWEEN && activationValue != null) 
+		    || (activation == AchieveCondition.ACTIVE_IF_BETWEEN && activationInterval != null))
+		        && initialValue != null);
 	}
-
+	
 	/// <summary>
 	/// Checks if the achievement action is completed or not
 	/// </summary>
 	/// <returns><c>true</c>, if completed was ised, <c>false</c> otherwise.</returns>
 	public bool isCompleted(){
 		bool res = false;
-
+		
 		switch(activation){
 		case AchieveCondition.ACTIVE_IF_EQUALS_TO:
 			res = progress == activationValue;
 			break;
-
+			
 		case AchieveCondition.ACTIVE_IF_GREATER_THAN:
 			res = progress > activationValue;
 			break;
-
+			
+		case AchieveCondition.ACTIVE_IF_GREATER_OR_EQUALS:
+			res = progress >= activationValue;
+			break;
+			
 		case AchieveCondition.ACTIVE_IF_LOWER_THAN:
 			res = progress < activationValue;
 			break;
-
+			
+		case AchieveCondition.ACTIVE_IF_LOWER_OR_EQUALS:
+			res = progress <= activationValue;
+			break;
+			
 		case AchieveCondition.ACTIVE_IF_BETWEEN:
 			res = activationInterval.contiene(progress);
 			break;
 		}
-
+		
 		return res;
 	}
-
+	
 	public void reset(){
 		progress = initialValue;
 	}

@@ -208,6 +208,8 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			
 			showPanelLoading(false);
 		}
+		else
+			showPanelLoading(false);
 	}
 	
 	public IEnumerator waitAtStartForCloseIfNotLoaded(bool callFromShopWin = false){
@@ -450,7 +452,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 				//show product price on the button
 				foreach(UIBaseInAppButton button in inAppButtons){
 					if(button != null && button.Item != null && p.SKU.Equals(button.Item.Id)){
-						button.showPriceInfo(p.price, p.priceCurrencyCode);
+						button.showPriceInfo(p.price);
 						break;
 					}
 				}

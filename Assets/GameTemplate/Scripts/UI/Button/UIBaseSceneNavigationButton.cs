@@ -14,6 +14,12 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	[Tooltip("Leave empty if do navigate with Section. If we go to an specific scene represented by another game section fill it")]
 	private string sceneToGo = "";
 	
+	[SerializeField]
+	private bool localMultiplayer = false;
+	
+	[SerializeField]
+	private bool onlineMultiplayer = false;
+	
 	//--------------------------------------
 	// GETTERS && SETTERS
 	//--------------------------------------
@@ -45,6 +51,10 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 			PlayerPrefs.SetInt(GameSettings.PP_GAME_MODE, (int) GameMode.SURVIVAL);
 			break;
 		}
+		
+		//multiplayer options
+		PlayerPrefs.SetInt(GameSettings.PP_LOCAL_MULTIPLAYER, localMultiplayer ? 1:0);
+		PlayerPrefs.SetInt(GameSettings.PP_ONLINE_MULTIPLAYER, onlineMultiplayer ? 1:0);
 		
 		//Load scene
 		if(string.IsNullOrEmpty(sceneToGo)){

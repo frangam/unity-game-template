@@ -474,7 +474,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	}
 	
 	public void SubmitScore() {
-		SPFacebook.instance.SubmitScore(ScoresHandler.Instance.getBestScore(GameController.Instance.Manager.getRankingID()));
+		//		SPFacebook.instance.SubmitScore(ScoresHandler.Instance.getBestScore(GameController.Instance.Manager.getRankingID()));
 	}
 	
 	

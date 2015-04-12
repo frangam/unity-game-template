@@ -21,4 +21,6 @@ public enum GameSection{
 	ITEMS_SELECTION							= 15,
 	TUTORIAL								= 16,
 	IN_APP									= 17,
+	LOCAL_MULTIPLAYER						= 18,
+	ONLINE_MULTIPLAYER						= 19
 }

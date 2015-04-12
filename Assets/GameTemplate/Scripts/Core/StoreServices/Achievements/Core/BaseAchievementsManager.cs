@@ -43,6 +43,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		
 		//listeners
 		dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
+		//		dispatcher.addEventListener(ACTION_PROGRESS_CHANGED, OnActionCompleted); 
 	}
 	#endregion
 	
@@ -63,7 +64,12 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(aID);
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED && gpAchievement != null && gpAchievement.state != GPAchievementState.STATE_UNLOCKED){
 			if(achievement.IsIncremental){
-				GooglePlayManager.instance.IncrementAchievementById(aID, achievement.getProgressIntegerValue());
+				int completedProgress = achievement.getProgressIntegerValue();
+				
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("BaseAchievementsManager - reporting to server achievement "+achievement.Id+" progress: " + completedProgress);
+				
+				GooglePlayManager.instance.IncrementAchievementById(aID, 1);
 			}
 			else{
 				GooglePlayManager.instance.UnlockAchievementById(aID);
@@ -71,8 +77,13 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		}
 		#elif UNITY_IPHONE
 		if(GameCenterManager.IsPlayerAuthed && GameCenterManager.getAchievementProgress(aID) < 100){ //Menor al 100%
+			float completedProgress = achievement.getProgressPercentage();
+			
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("BaseAchievementsManager - reporting to server achievement progress: " + completedProgress);
+			
 			aID = aID.Replace("-", "_");
-			GameCenterManager.submitAchievement(achievement.getProgressPercentage(), aID); //Completamos con el 100% del progreso
+			GameCenterManager.submitAchievement(completedProgress, aID); //Completamos con el 100% del progreso
 		}
 		#elif WP8
 		
@@ -94,34 +105,79 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			Debug.Log("Achievements: "+Quests);
 		}
 		
-		
-		foreach(Achievement a in Quests){
+		if(Quests == null || (Quests != null && Quests.Count == 0)){
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Achievement: "+a);
-			//if it was completed previously
-			//we check if in the servers has updated it
-			if(a.completedPreviously()){				
-				#if UNITY_ANDROID
-				if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
-					GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(a.Id);
-					lockedInServer = gpAchievement != null && gpAchievement.state != GPAchievementState.STATE_UNLOCKED;
-				}
-				#elif UNITY_IPHONE
-				if(GameCenterManager.IsPlayerAuthed){
-					string id = a.Id.Replace("-","_");
-					lockedInServer = GameCenterManager.getAchievementProgress(id) < 100;
-				}
-				#elif WP8
-				#endif
-				
-				//report to the server to unlock
-				if(lockedInServer){
-					reportToServer(a);
-				}
-			}
-		}	
+				Debug.Log("Initing Achievements Manager");
+			init(PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED));
+		}
 		
-		dispatcher.dispatch(ACHIEVEMENTS_INITIAL_CHEKING);
+		if(Quests != null && Quests.Count > 0){
+			
+			foreach(Achievement a in Quests){
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("Achievement: "+a);
+				//if it was completed previously
+				//we check if in the servers has updated it
+				if(a.completedPreviously()){				
+					#if UNITY_ANDROID
+					if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
+						GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(a.Id);
+						lockedInServer = gpAchievement != null && gpAchievement.state != GPAchievementState.STATE_UNLOCKED;
+					}
+					#elif UNITY_IPHONE
+					if(GameCenterManager.IsPlayerAuthed){
+						string id = a.Id.Replace("-","_");
+						lockedInServer = GameCenterManager.getAchievementProgress(id) < 100;
+					}
+					#elif WP8
+					#endif
+					
+					//report to the server to unlock
+					if(lockedInServer){
+						reportToServer(a);
+					}
+				}
+				else if(a.IsIncremental){
+					
+					#if UNITY_ANDROID
+					if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
+						GPAchievement gpAchievement = GooglePlayManager.instance.GetAchievement(a.Id);
+						lockedInServer = gpAchievement != null && gpAchievement.state != GPAchievementState.STATE_UNLOCKED && gpAchievement.type == GPAchievementType.TYPE_INCREMENTAL;
+						
+						if(lockedInServer){
+							int progress = gpAchievement.currentSteps;
+							int completedProgress = a.getProgressIntegerValue();
+							if(completedProgress > 0 && completedProgress > progress){
+								reportToServer(a);
+								
+								if(GameSettings.Instance.showTestLogs)
+									Debug.Log("BaseAchievementsManager - reporting to server achievement progress: " + completedProgress);
+							}
+						}
+					}
+					#elif UNITY_IPHONE
+					if(GameCenterManager.IsPlayerAuthed){
+						string id = a.Id.Replace("-","_");
+						float progress = GameCenterManager.getAchievementProgress(id);
+						lockedInServer = progress < 100;
+						
+						//report to the server to unlock
+						if(lockedInServer && progress < a.getProgressPercentage())
+							reportToServer(a);
+					}
+					#elif WP8
+					#endif
+					
+					
+				}
+			}	
+			
+			dispatcher.dispatch(ACHIEVEMENTS_INITIAL_CHEKING);
+		}
+		else{
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("BaseAchievementsManager - Could not complete initial checking because there are not any achievement");
+		}
 	}
 	
 	public void showAchievementsFromServer(){
@@ -182,6 +238,34 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 				Debug.Log("Achievement " + achievement + " is completed");
 			reportToServer(achievement); //report achiement progress to the server side
 			dispatcher.dispatch(ACHIEVEMENT_UNLOCKED, achievement);
+		}
+	}
+	public override void OnActionProgressChanged (CEvent e)
+	{
+		base.OnActionProgressChanged (e);
+		
+		GameActionResult result = e.data as GameActionResult;
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("GameAction " +result.CurrentActionId + " progress changed event. Rult succeded? "+result.IsSucceeded);
+		
+		if(result.IsSucceeded){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("GameAction " +result.CurrentActionId + " progress is changed");
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("BaseAchievementsManager - reporting to server only achievements has this action "+result.CurrentActionId);
+			
+			foreach(Achievement a in Quests){
+				if(a != null){
+					foreach(GameAction ac in a.Actions){
+						if(ac.Id.Equals(result.CurrentActionId)){
+							if(GameSettings.Instance.showTestLogs)
+								Debug.Log("BaseAchievementsManager - reporting to server achievement progress for achievement "+a.Id);
+							reportToServer(a);
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 }
