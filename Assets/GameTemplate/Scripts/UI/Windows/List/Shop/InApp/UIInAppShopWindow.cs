@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using GameAnalyticsSDK;
 
 public class UIInAppShopWindow : UIBaseWindow {
 	//--------------------------------------
@@ -23,7 +24,7 @@ public class UIInAppShopWindow : UIBaseWindow {
 	public override void open ()
 	{
 		//GA
-		GA.API.Design.NewEvent(GAEvents.INAPP_WIN_OPEN);
+		GameAnalytics.NewDesignEvent(GAEvents.INAPP_WIN_OPEN);
 		
 		base.open ();
 		

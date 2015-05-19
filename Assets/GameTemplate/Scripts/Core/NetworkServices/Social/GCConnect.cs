@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
-using System.Collections.Generic;
 
-public class GCConnect : PersistentSingleton<GCConnect> {
+public class GCConnect : Singleton<GCConnect> {
 	private static bool IsInited = false;
 	private bool leaderBoardsLoaded = false;
 	private bool achievementsLoaded = false;
@@ -50,8 +49,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			//--
 			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_LEADERBOARD_SCORE_LOADED, OnLeaderBoarScoreLoaded);
 			
-			//actions use example
-			GameCenterManager.OnPlayerScoreLoaded += OnPlayerScoreLoaded;
+			
 			GameCenterManager.OnAuthFinished += OnAuthFinished;
 			
 			//		DontDestroyOnLoad (gameObject);
@@ -67,46 +65,9 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	/*--------------------------------
 	 * Eventos Game Center
 	 -------------------------------*/
-	private void OnPlayerScoreLoaded (ISN_PlayerScoreLoadedResult result) {
-		if(result.IsSucceeded) {
-			//			GCScore score = result.loadedScore;
-			//
-			//			if(GameSettings.Instance.showTestLogs)
-			//				Debug.Log("Leaderboard " + score.leaderboardId + "Score: " + score.score + "\n" + "Rank:" + score.rank);
-			//
-			////			IOSNativePopUpManager.showMessage("Leaderboard " + score.leaderboardId, "Score: " + score.score + "\n" + "Rank:" + score.rank);
-			//			
-			////			Debug.Log("double score representation: " + score.GetDoubleScore());
-			//
-			//			if(GameSettings.Instance.showTestLogs)
-			//				Debug.Log("long score representation: " + score.GetLongScore());
-			//
-			//			string id = GameSettings.Instance.ID_UNIQUE_RANKING;
-			//			loadBestScore(id);
-			//
-			//			if(score.leaderboardId.Equals(leaderBoardId2)) {
-			//				Debug.Log("Updating leaderboard 2 score");
-			//				long LB2BestScores = score.GetLongScore();
-			//				
-			//			}
-		}
-	}
 	private void OnLeaderBoarScoreLoaded(CEvent e) {
-		ISN_PlayerScoreLoadedResult result = e.data as ISN_PlayerScoreLoadedResult;
-		
-		if(result.IsSucceeded) {
-			GCScore score = result.loadedScore;
-			
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Leaderboard " + score.leaderboardId+ "Score: " + score.score + "\n" + "Rank:" + score.rank);
-			
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("long score representation: " + score.GetLongScore());
-			
-			string id = GameSettings.Instance.ID_UNIQUE_RANKING;
-			long scoreLong = score.GetLongScore();
-			ScoresHandler.Instance.loadBestScore(id, scoreLong);
-		}
+		//		LeaderBoardScoreData data = e.data as LeaderBoardScoreData;
+		//		IOSNative.showMessage("Leader Board " + data.leaderBoardId, "Score: " + data.leaderBoardScore);
 	}
 	
 	void OnAuthFinished (ISN_Result res) {

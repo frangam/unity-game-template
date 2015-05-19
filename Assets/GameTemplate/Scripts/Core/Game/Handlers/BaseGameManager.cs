@@ -2,6 +2,7 @@
 using System.Collections;
 using UnionAssets.FLE;
 using System;
+using GameAnalyticsSDK;
 
 public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
@@ -30,13 +31,10 @@ public class BaseGameManager : MonoBehaviour {
 	private string 		gameoverWindow = UIBaseWindowIDs.GAMEOVER;
 	
 	[SerializeField]
-	private string 		playerWinsWindow = UIBaseWindowIDs.PLAYER_WINS_WINDOW;
+	private float 		gameOverDelay = 1.5f;
 	
 	[SerializeField]
-	protected float 	gameOverDelay = 1.5f;
-	
-	[SerializeField]
-	protected float 	missionCompletedDelay = 2.5f;
+	private float 		missionCompletedDelay = 2.5f;
 	
 	public GameObject 	explosionPrefab;
 	
@@ -50,12 +48,9 @@ public class BaseGameManager : MonoBehaviour {
 	private bool 			finished;
 	private GameDifficulty 	difficulty;
 	private GameMode 		gameMode;
-	private long 			currentScore;
+	private int 			currentScore;
 	private int				currentLevelSelected;
-	private int				currentLevelPackSelected;
 	private bool			isGameOver;
-	private bool 			isLocalMultiplayerGame;
-	private bool 			isOnlineMultiplayerGame;
 	
 	/// <summary>
 	/// True if we are going to handle scores in the current game mode. Recommended to its value in a child class.
@@ -83,7 +78,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 	}
 	
-	public virtual long CurrentScore {
+	public int CurrentScore {
 		get {
 			return this.currentScore;
 		}
@@ -95,12 +90,6 @@ public class BaseGameManager : MonoBehaviour {
 	public int CurrentLevelSelected {
 		get {
 			return this.currentLevelSelected;
-		}
-	}
-	
-	public int CurrentLevelPackSelected {
-		get {
-			return this.currentLevelPackSelected;
 		}
 	}
 	
@@ -130,17 +119,6 @@ public class BaseGameManager : MonoBehaviour {
 			isGameOver = value;
 		}
 	}
-	public bool IsLocalMultiplayerGame {
-		get {
-			return this.isLocalMultiplayerGame;
-		}
-	}
-	
-	public bool IsOnlineMultiplayerGame {
-		get {
-			return this.isOnlineMultiplayerGame;
-		}
-	}
 	
 	
 	//--------------------------------------
@@ -167,12 +145,9 @@ public class BaseGameManager : MonoBehaviour {
 			break;
 			
 		}
-		//multiplayer options
-		isLocalMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_LOCAL_MULTIPLAYER) != 0 ? true:false;
-		isOnlineMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_ONLINE_MULTIPLAYER) != 0 ? true:false;
 		
 		//GA
-		GA.API.Design.NewEvent(gaEvent);
+		GameAnalytics.NewDesignEvent(gaEvent);
 	}
 	protected virtual void OnDestroy(){
 		if(gameMode == GameMode.CAMPAIGN){
@@ -180,8 +155,6 @@ public class BaseGameManager : MonoBehaviour {
 			BaseQuestManager.dispatcher.removeEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
 		}
 	}
-	protected virtual void Start(){}
-	protected virtual void Update(){}
 	#endregion
 	
 	//--------------------------------------
@@ -337,11 +310,11 @@ public class BaseGameManager : MonoBehaviour {
 			AdsHandler.Instance.mostrarPantallazo();
 			
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
+			GameAnalytics.NewDesignEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
 		}
 	}
 	
-	public virtual IEnumerator finishGameWithDelay(){
+	private IEnumerator finishGameWithDelay(){
 		float delay = isGameOver ? gameOverDelay : missionCompletedDelay;
 		
 		yield return new WaitForSeconds(delay);
@@ -360,7 +333,7 @@ public class BaseGameManager : MonoBehaviour {
 				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_FAILED);
 				
 				//GA
-				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries);
+				GameAnalytics.NewDesignEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries);
 			}
 			else{
 				int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString()); //get the previous completed times
@@ -372,7 +345,7 @@ public class BaseGameManager : MonoBehaviour {
 				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted); //update completed times
 				
 				//GA
-				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted);
+				GameAnalytics.NewDesignEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted);
 			}
 			break;
 			
@@ -381,19 +354,14 @@ public class BaseGameManager : MonoBehaviour {
 			UIController.Instance.Manager.open(gameoverWindow);
 			break;
 		case GameMode.QUICKGAME:
-			if(isGameOver){
-				gaEvent = GAEvents.QUICKGAME_LEVEL_PLAYED;
-				UIController.Instance.Manager.open(gameoverWindow);
-			}
-			else{
-				UIController.Instance.Manager.open(playerWinsWindow);
-			}
+			gaEvent = GAEvents.QUICKGAME_LEVEL_PLAYED;
+			UIController.Instance.Manager.open(gameoverWindow);
 			break;
 			
 		}
 		
 		//GA
-		GA.API.Design.NewEvent(gaEvent);
+		GameAnalytics.NewDesignEvent(gaEvent);
 		
 		//handle ad showing
 		handleGameOverAdShowing();
@@ -417,8 +385,7 @@ public class BaseGameManager : MonoBehaviour {
 		Paused = pauseTimeAtStart;
 		
 		
-		currentLevelPackSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelPackToLoadTEST //get a test level pack
-			: lastSelectedLevelPack(); //get the current level pack selected
+		
 		currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
 			: lastSelectedLevel(); //get the current level selected
 		
@@ -429,12 +396,6 @@ public class BaseGameManager : MonoBehaviour {
 	
 	public int lastSelectedLevel(){
 		int last = gameMode == GameMode.SURVIVAL ? PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL) : PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); 
-		
-		return last;
-	}
-	
-	public int lastSelectedLevelPack(){
-		int last = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL_PACK); 
 		
 		return last;
 	}
@@ -558,7 +519,7 @@ public class BaseGameManager : MonoBehaviour {
 	}
 	
 	public virtual void OnQuestsCompleted(CEvent e){
-		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+currentLevelPackSelected.ToString());
+		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
 		
 		//first load info of completed mission window
 		if(gameMode == GameMode.CAMPAIGN){
@@ -571,20 +532,20 @@ public class BaseGameManager : MonoBehaviour {
 		
 		
 		//save completed level
-		int lastCompletedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+currentLevelPackSelected.ToString());
+		int lastCompletedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED);
 		if(currentLevelSelected > lastCompletedLevel){
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+currentLevelPackSelected.ToString(), currentLevelSelected);
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED, currentLevelSelected);
 			
 			OnLevelCompleted(currentLevelSelected);
 		}
 		
 		//unlock the next level
-		if(currentLevelSelected == lastUnlockedLevel && LevelPacks.Instance.packs != null && currentLevelSelected < LevelPacks.Instance.totalLevels()){
+		if(currentLevelSelected == lastUnlockedLevel && BaseLevelLoaderController.Instance.Levels != null && currentLevelSelected < BaseLevelLoaderController.Instance.Levels.Count){
 			int nextLevel = currentLevelSelected+1;
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+currentLevelPackSelected.ToString(), nextLevel);
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, nextLevel);
 			
 			//GA
-			GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString());
+			GameAnalytics.NewDesignEvent(GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString());
 		}
 		
 		finishGame();

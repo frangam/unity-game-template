@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
+using GameAnalyticsSDK;
 
 public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
@@ -375,7 +375,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAME_OPENINGS, totalOpenings);
 		
 		//GA
-		GA.API.Design.NewEvent(GAEvents.GAME_OPENING);
+		GameAnalytics.NewDesignEvent(GAEvents.GAME_OPENING);
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("GameLoaderManager - total openings: " + totalOpenings);
@@ -479,83 +479,22 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		
 		//initial unlocked level
-		loadinitialCampaignLevelsUnlocked();
+		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_LEVEL_UNLOCKED)){
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, 1);
+			GameSettings.lastLevelUnlocked = 1;
+		}
+		else{
+			GameSettings.lastLevelUnlocked = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
+		}
 		
 		//last unlocked survival level
-		loadinitialSurvivalLevelsUnlocked();
+		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL))
+			PlayerPrefs.SetInt(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL, 1);
 		
 		//select level 1 at start
 		if(!PlayerPrefs.HasKey(GameSettings.PP_SELECTED_LEVEL))
 			PlayerPrefs.SetInt(GameSettings.PP_SELECTED_LEVEL, 1);
 	}
-	
-	public virtual void loadinitialCampaignLevelsUnlocked(){
-		//--------------------------
-		//deprecated unlocked level player prefs
-		if(PlayerPrefs.HasKey("pp_last_level_unlocked")){
-			int last = PlayerPrefs.GetInt("pp_last_level_unlocked");
-			
-			
-			if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count > 0){
-				foreach(BaseLevelPack pack in LevelPacks.Instance.packs){
-					//unlock just the last (deprecated) level that now corresponds to this pack
-					if(last >= pack.InitialLevel && last <= pack.FinalLevel){
-						PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+pack.Id, last); //the unlocked
-						PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+pack.Id, last-1); //completed is 1 lower than the unlocked
-					}
-					//unlock the next packs that have its initial level greater than the deprecated value for last unlocked level
-					//Ex: deprecated unlocked leve : 305. pack5 (401-500) need to unlock its initial level
-					else if(last < pack.InitialLevel){
-						initUnlockedLevelPack(pack);
-					}
-					//unlock final level of this pack
-					else if(last > pack.FinalLevel){
-						PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+pack.Id, pack.FinalLevel); //the unlocked
-						PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+pack.Id, pack.FinalLevel); //completed the final level
-					}
-				}
-				
-				
-				//finally delete playerprefs keys deprecated
-				PlayerPrefs.DeleteKey("pp_last_level_unlocked");
-				PlayerPrefs.DeleteKey("pp_last_campaign_level_completed");
-			}
-		}
-		//NEW
-		else{
-			//initial unlocked campaign level player prefs
-			if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count > 0){
-				foreach(BaseLevelPack pack in LevelPacks.Instance.packs){
-					initUnlockedLevelPack(pack);
-				}
-			}
-			else{
-				Debug.LogWarning("Not found any level pack");
-			}
-		}
-		//--------------------------
-	}
-	
-	public void initUnlockedLevelPack(BaseLevelPack pack){
-		//if this pack no has any required packs to unlock this
-		//we unlock the initial level to can play and initialize last completed level of this pack to zero
-		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_LEVEL_UNLOCKED+pack.Id) 
-		   && (!pack.HasAnyRequiredPacksToUnlockThis || pack.HasAnyRequiredPacksToUnlockThis && pack.AllRequiredPacksCompleted)){
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+pack.Id, pack.InitialLevel);
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+pack.Id, 0);
-		}
-		else if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_LEVEL_UNLOCKED+pack.Id) 
-		        && (!pack.HasAnyRequiredPacksToUnlockThis || pack.HasAnyRequiredPacksToUnlockThis && !pack.AllRequiredPacksCompleted)){
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED+pack.Id, 0);
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED+pack.Id, 0);
-		}
-	}
-	
-	public virtual void loadinitialSurvivalLevelsUnlocked(){
-		if(!PlayerPrefs.HasKey(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL))
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_UNLOCKED_SURVIVAL_LEVEL, 1);
-	}
-	
 	
 	/*--------------------------------
 	 * Money

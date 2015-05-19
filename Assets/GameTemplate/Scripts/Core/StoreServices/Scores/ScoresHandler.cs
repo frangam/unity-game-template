@@ -4,93 +4,8 @@ using System.Collections;
 
 public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	//--------------------------------------
-	// Private Methods
-	//--------------------------------------
-	//	private void OnPlayerScoreLoaded (ISN_PlayerScoreLoadedResult result) {
-	//		if(result.IsSucceeded) {
-	//			GCScore score = result.loadedScore;
-	//			
-	//			if(GameSettings.Instance.showTestLogs)
-	//				Debug.Log("Leaderboard " + score.leaderboardId + "Score: " + score.score + "\n" + "Rank:" + score.rank);
-	//			
-	//			//			IOSNativePopUpManager.showMessage("Leaderboard " + score.leaderboardId, "Score: " + score.score + "\n" + "Rank:" + score.rank);
-	//			
-	//			//			Debug.Log("double score representation: " + score.GetDoubleScore());
-	//			
-	//			if(GameSettings.Instance.showTestLogs)
-	//				Debug.Log("long score representation: " + score.GetLongScore());
-	//			
-	//			string id = GameSettings.Instance.ID_UNIQUE_RANKING;
-	//			long scoreLong = score.GetLongScore();
-	//			loadBestScore(id, scoreLong);
-	//		}
-	//	}
-	//
-	//	private void OnLeaderBoardsLoaded(GooglePlayResult result) {
-	//#if UNITY_ANDROID
-	//		GooglePlayManager.ActionLeaderboardsLoaded -= OnLeaderBoardsLoaded;
-	//		if(result.isSuccess) {
-	//			string id = GameSettings.Instance.ID_UNIQUE_RANKING;
-	//
-	//			if(GooglePlayManager.instance.GetLeaderBoard(id) != null){
-	//				GPLeaderBoard leaderboard = GooglePlayManager.instance.GetLeaderBoard(id);
-	//				long score = leaderboard.GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).score;
-	//				loadBestScore(id, score);
-	//			}
-	//
-	//		} else {
-	//			if(GameSettings.Instance.showTestLogs)
-	//				Debug.Log("ScoresHandler - Leader-Boards Loaded error: "+ result.message);
-	////			AndroidMessage.Create("Leader-Boards Loaded error: ", result.message);
-	//		}
-	//#endif
-	//	}
-	
-	
-	
-	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	//	public void Start(){
-	//	
-	//#if UNITY_ANDROID
-	//		GooglePlayManager.ActionLeaderboardsLoaded += OnLeaderBoardsLoaded;
-	//		GooglePlayManager.instance.loadLeaderBoards ();
-	//#elif UNITY_IPHONE
-	//		GameCenterManager.OnPlayerScoreLoaded += OnPlayerScoreLoaded;
-	//#endif
-	//	}
-	
-	public void loadBestScore(string leaderboardID, long score){
-		if(!string.IsNullOrEmpty(leaderboardID)){
-			if(GameSettings.Instance.showTestLogs){
-				Debug.Log(leaderboardID + "  long score saved on the Store: "+  score.ToString());
-			}
-			
-			long scoreFromStore = score; //the score saved on the online store
-			long savedLocally = getBestScore (leaderboardID); //the score saved on the device (locally)
-			
-			if(GameSettings.Instance.showTestLogs){
-				Debug.Log(leaderboardID + " int score saved on the Store: "+  scoreFromStore.ToString());
-				Debug.Log(leaderboardID + "  score saved on the device: "+  savedLocally.ToString());
-			}
-			
-			//update the score saved on the device by the online score is greater
-			if(scoreFromStore > savedLocally){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - saving locally score from store because is greater than the previous saved on the device. From Store: "+scoreFromStore+", SavedLocally: "+savedLocally);
-				saveScoreOnlyLocally(leaderboardID, scoreFromStore);
-			}
-			//send to server the greatest score that is the saved score locally
-			else if(scoreFromStore < savedLocally){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - sending to server the best score saved locally: " +savedLocally +". From Store: " + scoreFromStore);
-				
-				ScoresHandler.Instance.sendScoreToServer(leaderboardID, savedLocally);
-			}
-			
-		}
-	}
 	
 	public void showRanking(string rankingID = ""){
 		if(Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor) return;
@@ -127,7 +42,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				GooglePlayManager.instance.ShowLeaderBoardsUI();
 			//show specific ranking
 			else
-				GooglePlayManager.instance.ShowLeaderBoardById(rankingID);
+				GooglePlayManager.instance.ShowLeaderBoard(rankingID);
 			
 		}
 		
@@ -157,9 +72,9 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			
 		}
 	}
-	public void saveScoreOnlyLocally(string rankingID, long score){
-		long best = getBestScore (rankingID);
-		long scoreToSend = score >= best ? score : best;
+	public void saveScoreOnlyLocally(string rankingID, int score){
+		int best = getBestScore (rankingID);
+		int scoreToSend = score >= best ? score : best;
 		
 		//--------------------------------------
 		// Save locally on PlayerPrefs
@@ -172,11 +87,13 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		saveLastScore (rankingID, score);
 	}
 	
-	public void sendScoreToServer(string rankingID, long score){
-		long best = getBestScore (rankingID);
-		long scoreToSend = score >= best ? score : best;
-		long serverScore = 0;
-		string id = rankingID;		
+	public void sendScoreToServer(string rankingID, int score){
+		int best = getBestScore (rankingID);
+		int scoreToSend = score >= best ? score : best;
+		string id = rankingID;
+		
+		
+		
 		
 		
 		#if UNITY_ANDROID
@@ -186,17 +103,16 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 					Debug.Log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
 				
 				if(GooglePlayManager.instance.GetLeaderBoard (id) != null){
-					serverScore = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).score;
+					int scoreServidor = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).rank;
 					
-					if(GameSettings.Instance.showTestLogs)
-						Debug.Log("ScoresHandler - Server score: "+serverScore + ". Score to send to the server: "+scoreToSend);
-					
-					if(serverScore < scoreToSend){
+					if(scoreServidor < scoreToSend)
 						GooglePlayManager.instance.SubmitScoreById (id, scoreToSend);
-					}
+					else
+						saveBestScore(id, scoreServidor);
 				}
-				else
+				else{
 					GooglePlayManager.instance.SubmitScoreById (id, scoreToSend);
+				}
 			}
 			
 			
@@ -209,10 +125,14 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				Debug.Log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
 			
 			if(GameCenterManager.GetLeaderboard(id) != null){
-				serverScore = GameCenterManager.GetLeaderboard(id).GetCurrentPlayerScore(GCBoardTimeSpan.ALL_TIME, GCCollectionType.GLOBAL).GetLongScore();
+				int scoreServidor = GameCenterManager.GetLeaderboard(id).GetCurrentPlayerScore(GCBoardTimeSpan.ALL_TIME, GCCollectionType.GLOBAL).rank;
 				
-				if(serverScore < scoreToSend)
+				
+				
+				if(scoreServidor < scoreToSend)
 					GameCenterManager.ReportScore(scoreToSend, id);
+				else
+					saveBestScore(id, scoreServidor);
 			}
 			else{
 				GameCenterManager.ReportScore(scoreToSend, id);
@@ -225,18 +145,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		// Save locally on PlayerPrefs
 		//--------------------------------------
 		//save the best score
-		if(serverScore > best && serverScore > scoreToSend){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("ScoresHandler - saving locally best score is in the server side: "+serverScore);
-			
-			saveBestScore(rankingID, serverScore);
-		}
-		else if(score > best){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("ScoresHandler - saving locally best score player has got now: "+score);
-			
+		if(score > best)
 			saveBestScore(rankingID, score);
-		}
 		
 		//save the last score
 		saveLastScore (rankingID, score);
@@ -247,31 +157,25 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	// Get && Save Scores Methods 
 	//--------------------------------------
 	//--------------------------------------
-	public long getLastScore(string id){
+	public int getLastScore(string id){
 		string key = GameSettings.PP_LAST_SCORE + id; //ultima_puntuacion_RANKING_ID
-		string score = PlayerPrefs.GetString(key);
-		long res = 0;
-		long.TryParse(score, out res);
 		
-		return res;
+		
+		return PlayerPrefs.GetInt(key);
 	}
-	public long getBestScore(string id){
+	public int getBestScore(string id){
 		string key = GameSettings.PP_BEST_SCORE + id; //ultima_puntuacion_RANKING_ID
-		string score = PlayerPrefs.GetString(key);
-		long res = 0;
-		long.TryParse(score, out res);
-		
-		return res;
+		return PlayerPrefs.GetInt(key);
 	}
 	
-	public void saveLastScore(string id, long score){
+	public void saveLastScore(string id, int puntos){
 		string key = GameSettings.PP_LAST_SCORE + id; //ultima_puntuacion_RANKING_ID
-		PlayerPrefs.SetString(key, score.ToString()); 
+		PlayerPrefs.SetInt(key, puntos); 
 	}
 	
-	public void saveBestScore(string id, long score){
+	public void saveBestScore(string id, int puntos){
 		string key = GameSettings.PP_BEST_SCORE + id; //ultima_puntuacion_RANKING_ID
-		PlayerPrefs.SetString(key, score.ToString()); 
+		PlayerPrefs.SetInt(key, puntos); 
 	}
 	
 	//--------------------------------------
