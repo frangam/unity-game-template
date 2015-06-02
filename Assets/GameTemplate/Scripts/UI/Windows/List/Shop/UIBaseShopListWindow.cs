@@ -147,7 +147,7 @@ public class UIBaseShopListWindow : UIBaseListWindow {
 				UIController.Instance.Manager.open(confirmationPurchaseWin);
 			}
 			//open add more gems window
-			else if(!GameMoneyManager.Instance.hasEnoughMoney(pItem) && (useGemsIfNotEnoughMoney && !GameMoneyManager.Instance.hasEnoughGems(pItem))){
+			else {
 				UIController.Instance.Manager.open(addMoreGemsWin);
 			}
 		}
