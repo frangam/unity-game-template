@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using GameAnalyticsSDK;
 
 public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
@@ -375,7 +374,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAME_OPENINGS, totalOpenings);
 		
 		//GA
-		GameAnalytics.NewDesignEvent(GAEvents.GAME_OPENING);
+		GA.API.Design.NewEvent(GAEvents.GAME_OPENING);
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("GameLoaderManager - total openings: " + totalOpenings);
@@ -494,6 +493,9 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		//select level 1 at start
 		if(!PlayerPrefs.HasKey(GameSettings.PP_SELECTED_LEVEL))
 			PlayerPrefs.SetInt(GameSettings.PP_SELECTED_LEVEL, 1);
+		if(!PlayerPrefs.HasKey(GameSettings.PP_SELECTED_SURVIVAL_LEVEL))
+			PlayerPrefs.SetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL, 1);
+		
 	}
 	
 	/*--------------------------------

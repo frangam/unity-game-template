@@ -22,6 +22,10 @@ public class UpgradeStatButton : UIBaseButton {
 	private string currentValueFormat = "#.#";
 	
 	[SerializeField]
+	[Tooltip("True if we will use gems to purchase when user has not enough money")]
+	private bool useGemsIfNotEnoughMoney = true;
+	
+	[SerializeField]
 	[Tooltip("An adding string precedes to the current value string")]
 	private string currentValuePrevStringAdding;
 	
@@ -156,7 +160,7 @@ public class UpgradeStatButton : UIBaseButton {
 			if(GameMoneyManager.Instance.hasEnoughMoney((int)stat.currentPrice())){
 				upgrade();
 			}
-			else if(GameMoneyManager.Instance.hasEnoughGems((int)stat.currentPrice(), true)){
+			else if(useGemsIfNotEnoughMoney && GameMoneyManager.Instance.hasEnoughGems((int)stat.currentPrice(), true)){
 				window.openConfirmPayWithGems((int) stat.currentPrice(), this);
 			}
 			else {
