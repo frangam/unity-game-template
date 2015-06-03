@@ -23,7 +23,7 @@ public class UILoadingPanel : Singleton<UILoadingPanel> {
 		panel = GetComponentInChildren<CanvasGroup>();
 		
 		if(panel == null)
-			Debug.LogError("Not found CanvasGroup component in children");
+			Debug.LogWarning("Not found CanvasGroup component in children");
 		
 		hide();
 	}

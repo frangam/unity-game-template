@@ -20,7 +20,11 @@ public class UIBaseStatsUpgradesWin : UIBaseShopListWindow {
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
-	
+	public List<UpgradeStatButton> UpgradeButtons {
+		get {
+			return this.upgradeButtons;
+		}
+	}
 	
 	//--------------------------------------
 	// Overriden Methods

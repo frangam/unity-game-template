@@ -50,7 +50,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	 OnAuthFB);
 			SPFacebook.instance.addEventListener(FacebookEvents.USER_DATA_LOADED,  			OnUserDataLoaded);
 			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_FAILED,  	 OnAuthFailedFB);
-			//			SPFacebook.instance.addEventListener(FacebookUserInfo.PROFILE_IMAGE_LOADED,   OnProfileImageLoaded);
+			SPFacebook.instance.addEventListener(FacebookUserInfo.PROFILE_IMAGE_LOADED,   OnProfileImageLoaded);
 			SPFacebook.instance.addEventListener(FacebookEvents.GAME_FOCUS_CHANGED,   OnFocusChanged);
 			SPFacebook.instance.addEventListener(FacebookEvents.FRIENDS_DATA_LOADED,  			OnFriendsDataLoaded);
 		}
@@ -474,7 +474,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	}
 	
 	public void SubmitScore() {
-		SPFacebook.instance.SubmitScore(ScoresHandler.Instance.getBestScore(GameController.Instance.Manager.getRankingID()));
+		//		SPFacebook.instance.SubmitScore(ScoresHandler.Instance.getBestScore(GameController.Instance.Manager.getRankingID()));
 	}
 	
 	

@@ -8,7 +8,7 @@ public class UIBaseUpgradableStatListItem : UIBasePurchasableListItem {
 	//--------------------------------------
 	[SerializeField]
 	private List<UpgradableStat> stats;
-
+	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -20,7 +20,7 @@ public class UIBaseUpgradableStatListItem : UIBasePurchasableListItem {
 			stats = value;
 		}
 	}
-
+	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -33,16 +33,16 @@ public class UIBaseUpgradableStatListItem : UIBasePurchasableListItem {
 	/// <param name="anim">Animation.</param>
 	public UIBaseUpgradableStatListItem(string pPPKey, string data, Animator anim = null) :base(pPPKey, data, anim){
 		string[] atts = data.Split(ATTRIBUTES_SEPARATOR);
-
+		
 		if(atts.Length > 4)
 			init (atts[4]);
 	}
-
+	
 	public UIBaseUpgradableStatListItem(string pPPKey, string pId, string pName, bool pPurchased, int pPrice, int pGemsPrice, List<UpgradableStat> pStats)
-		: base(pPPKey, pId, pName, pPurchased, pPrice, pGemsPrice){
+	: base(pPPKey, pId, pName, pPurchased, pPrice, pGemsPrice){
 		this.stats = pStats;
 	}
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -50,11 +50,11 @@ public class UIBaseUpgradableStatListItem : UIBasePurchasableListItem {
 	{
 		base.save();
 	}
-
+	
 	public override void load ()
 	{
 		base.load ();
-
+		
 		string stats = getContent();
 		
 		//load stats
@@ -65,19 +65,19 @@ public class UIBaseUpgradableStatListItem : UIBasePurchasableListItem {
 				init (att[4]);
 		}
 	}
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	public void init(string data){
 		string[] uStatsList = data.Split(LIST_CONTAINER_SEPARATOR);
-
+		
 		if(uStatsList != null && uStatsList.Length > 0){
 			this.stats = new List<UpgradableStat>();
-
+			
 			foreach(string uStat in uStatsList){
 				UpgradableStat us = new UpgradableStat(ppKey, uStat);
-
+				
 				if(us != null && !this.stats.Contains(us))
 					this.stats.Add(us);
 			}
@@ -86,37 +86,37 @@ public class UIBaseUpgradableStatListItem : UIBasePurchasableListItem {
 			Debug.LogError("Not found any UpgradableStat List");
 		}
 	}
-
+	
 	public UpgradableStat getUpgradableStatByID(string uStatID){
 		UpgradableStat res = null;
-
+		
 		foreach(UpgradableStat s in stats){
 			if(s.StatId.Equals(uStatID)){
 				res = s;
 				break;
 			}
 		}
-
+		
 		return res;
 	}
-
+	
 	public virtual void upgrade(UpgradableStat stat){
 		//Save the current upgrade index of the stat
-
+		
 	}
-
+	
 	public virtual bool allUpgradesCompleted(){
 		bool res = false;
-
+		
 		if(stats != null && stats.Count > 0){
 			foreach(UpgradableStat s in stats){
 				res = s.completed();
-
+				
 				if(!res)
 					break;
 			}
 		}
-
+		
 		return res;
 	}
 }

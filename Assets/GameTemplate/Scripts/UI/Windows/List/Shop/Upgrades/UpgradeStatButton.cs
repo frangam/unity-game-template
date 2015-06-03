@@ -51,6 +51,34 @@ public class UpgradeStatButton : UIBaseButton {
 	[SerializeField]
 	private Text lbCurrentUpgradePrice;
 	
+	[SerializeField]
+	private Image pnlParent;
+	[SerializeField]
+	private Image pnlChild1;
+	[SerializeField]
+	private Image pnlChild2;
+	[SerializeField]
+	private Color pnlParentNormalColor;
+	[SerializeField]
+	private Color pnlChild1NormalColor;
+	[SerializeField]
+	private Color pnlChild2NormalColor;
+	[SerializeField]
+	private Transform[] pnlToHide;
+	
+	//--------------------------------------
+	// Getters/Setters
+	//--------------------------------------
+	public string StatID {
+		get {
+			return this.statID;
+		}
+	}
+	public UpgradableStat Stat {
+		get {
+			return this.stat;
+		}
+	}
 	
 	//--------------------------------------
 	// Private Attributes
@@ -116,7 +144,7 @@ public class UpgradeStatButton : UIBaseButton {
 					showInfo();
 				}
 				else
-					Debug.LogError("Not loaded stat");
+					Debug.LogWarning("Not loaded stat");
 			}
 			else
 				Debug.LogError("Not loaded stat");
@@ -127,6 +155,36 @@ public class UpgradeStatButton : UIBaseButton {
 		if(stat.apply(payWithMoney)){
 			window.upgrade(stat);
 			showInfo();
+		}
+	}
+	
+	public virtual void showButton(){
+		if(pnlParent)
+			pnlParent.color = pnlParentNormalColor;
+		if(pnlChild1)
+			pnlChild1.color = pnlChild1NormalColor;
+		if(pnlChild2)
+			pnlChild2.color = pnlChild2NormalColor;
+		
+		//show panels were hidden
+		if(pnlToHide != null && pnlToHide.Length > 0){
+			foreach(Transform t in pnlToHide)
+				t.gameObject.SetActive(true);
+		}
+	}
+	
+	public virtual void hideButton(){
+		if(pnlParent)
+			pnlParent.color = new Color(pnlParentNormalColor.r, pnlParentNormalColor.g, pnlParentNormalColor.b, 0);
+		if(pnlChild1)
+			pnlChild1.color = new Color(pnlChild1NormalColor.r, pnlChild1NormalColor.g, pnlChild1NormalColor.b, 0);
+		if(pnlChild2)
+			pnlChild2.color = new Color(pnlChild2NormalColor.r, pnlChild2NormalColor.g, pnlChild2NormalColor.b, 0);
+		
+		//show panels were shown
+		if(pnlToHide != null && pnlToHide.Length > 0){
+			foreach(Transform t in pnlToHide)
+				t.gameObject.SetActive(false);
 		}
 	}
 	

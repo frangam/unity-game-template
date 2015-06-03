@@ -12,7 +12,7 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 	/// The partial player prefs key: only the name, so it is not the complete key composed by this name + item id
 	/// </summary>
 	protected string 		ppKey;
-
+	
 	[SerializeField]
 	private int 			price;
 	
@@ -21,7 +21,7 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 	
 	[SerializeField]
 	private bool 			purchased = false;
-
+	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -49,7 +49,7 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 			this.gemsPrice = value;
 		}
 	}
-
+	
 	public bool Purchased {
 		get {
 			return this.purchased;
@@ -58,11 +58,11 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 			purchased = value;
 		}
 	}
-
+	
 	public bool AvailableForPurchase{
 		get{return ((Price > 0 && GemsPrice > 0 && !Purchased) || (Price <= 0 && GemsPrice <= 0));}
 	}
-
+	
 	public string PlayerPrefsKey {
 		get {
 			return this.playerPrefsKey;
@@ -83,7 +83,7 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 		string[] atts = data.Split(ATTRIBUTES_SEPARATOR);
 		init(atts);
 	}
-
+	
 	public UIBasePurchasableListItem(string pPPKey, string pId, string pName, bool pPurchased, int pPrice, int pGemsPrice): base(pId, pName){
 		this.ppKey = pPPKey;
 		this.playerPrefsKey = pPPKey + Id.ToString();
@@ -91,14 +91,14 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 		price = pPrice;
 		gemsPrice = pGemsPrice;
 	}
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
-//	public override void Awake (){
-//		base.Awake ();
-//	}
-
+	//	public override void Awake (){
+	//		base.Awake ();
+	//	}
+	
 	/// <summary>
 	/// Returns a <see cref="System.String"/> that represents the current <see cref="UIBaseListItem"/> with this format: 
 	/// ID,NAME,PURCHASED,PRICE,GEMSPRICE
@@ -108,27 +108,27 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 		string purchasedString = purchased ? "1":"0";
 		return base.ToString() +ATTRIBUTES_SEPARATOR+ purchasedString +ATTRIBUTES_SEPARATOR+ price.ToString() +ATTRIBUTES_SEPARATOR+ gemsPrice.ToString();
 	}
-
+	
 	public override void load (){
 		base.load ();
-
+		
 		string stats = getContent();
 		
 		//load stats
 		if(!string.IsNullOrEmpty(stats)){
 			string[] att = stats.Split(ATTRIBUTES_SEPARATOR);
-
+			
 			init (att);
 		}
 	}
-
+	
 	public virtual void save ()
 	{
 		int pPurchase = purchased ? 1: 0;
 		PlayerPrefs.SetInt(playerPrefsKey, pPurchase);
 	}
 	
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
@@ -140,38 +140,39 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 	/// <param name="data">Data.</param>
 	public void init(string[] data){
 		int pPrice, pGemsPrice, pPurchased;
-
+		playerPrefsKey = ppKey+Id.ToString();
+		
 		if(int.TryParse(data[2], out pPrice))
 			Price = pPrice;
 		if(data.Length > 3 && int.TryParse(data[3], out pGemsPrice))
 			GemsPrice = pGemsPrice;
-
+		
 		pPurchased = (price > 0 || gemsPrice > 0) ? PlayerPrefs.GetInt(playerPrefsKey) : 1; // this is usefull for set initial item as purchased if its price and gems price are 0
 		purchased = pPurchased != 0 ? true:false;
 	}
-
+	
 	public virtual bool purchaseWithMoney(){
 		bool res = false;
-
+		
 		if(GameMoneyManager.Instance.purchaseWithMoney(price)){
 			finalizePurchase();
 			res = true;
 		}
-
+		
 		return res;
 	}
-
+	
 	public virtual bool purchaseWithGems(){
 		bool res = false;
-
+		
 		if(GameMoneyManager.Instance.purchaseWithGems(GemsPrice)){
 			finalizePurchase();
 			res = true;
 		}
-
+		
 		return res;
 	}
-
+	
 	public virtual void finalizePurchase(){
 		Purchased = true;
 		save();
