@@ -2,7 +2,6 @@
 using System.Collections;
 using UnionAssets.FLE;
 using System;
-using GameAnalyticsSDK;
 
 public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
@@ -38,6 +37,8 @@ public class BaseGameManager : MonoBehaviour {
 	
 	public GameObject 	explosionPrefab;
 	
+	public bool 		showAdWhenPlayerForcesFinishGame = true;
+	
 	
 	//--------------------------------------
 	// Private Attributes
@@ -48,7 +49,7 @@ public class BaseGameManager : MonoBehaviour {
 	private bool 			finished;
 	private GameDifficulty 	difficulty;
 	private GameMode 		gameMode;
-	private int 			currentScore;
+	private long 			currentScore;
 	private int				currentLevelSelected;
 	private bool			isGameOver;
 	
@@ -78,7 +79,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 	}
 	
-	public int CurrentScore {
+	public long CurrentScore {
 		get {
 			return this.currentScore;
 		}
@@ -147,7 +148,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 		
 		//GA
-		GameAnalytics.NewDesignEvent(gaEvent);
+		GA.API.Design.NewEvent(gaEvent);
 	}
 	protected virtual void OnDestroy(){
 		if(gameMode == GameMode.CAMPAIGN){
@@ -310,7 +311,7 @@ public class BaseGameManager : MonoBehaviour {
 			AdsHandler.Instance.mostrarPantallazo();
 			
 			//GA
-			GameAnalytics.NewDesignEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
+			GA.API.Design.NewEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
 		}
 	}
 	
@@ -333,7 +334,7 @@ public class BaseGameManager : MonoBehaviour {
 				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_FAILED);
 				
 				//GA
-				GameAnalytics.NewDesignEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries);
+				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries);
 			}
 			else{
 				int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString()); //get the previous completed times
@@ -345,7 +346,7 @@ public class BaseGameManager : MonoBehaviour {
 				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted); //update completed times
 				
 				//GA
-				GameAnalytics.NewDesignEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted);
+				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted);
 			}
 			break;
 			
@@ -361,7 +362,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 		
 		//GA
-		GameAnalytics.NewDesignEvent(gaEvent);
+		GA.API.Design.NewEvent(gaEvent);
 		
 		//handle ad showing
 		handleGameOverAdShowing();
@@ -398,6 +399,15 @@ public class BaseGameManager : MonoBehaviour {
 		int last = gameMode == GameMode.SURVIVAL ? PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL) : PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); 
 		
 		return last;
+	}
+	
+	public void playerForcesFinishGame(){
+		if(showAdWhenPlayerForcesFinishGame){
+			AdsHandler.Instance.mostrarPantallazo();
+			
+			//GA
+			GA.API.Design.NewEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
+		}
 	}
 	
 	/// <summary>
@@ -545,7 +555,7 @@ public class BaseGameManager : MonoBehaviour {
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, nextLevel);
 			
 			//GA
-			GameAnalytics.NewDesignEvent(GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString());
+			GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString());
 		}
 		
 		finishGame();
