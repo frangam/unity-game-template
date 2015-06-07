@@ -118,10 +118,10 @@ public class InputBackButton : Singleton<InputBackButton> {
 					
 					
 				case Action.POPUP_PAUSE:
-					if(GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
+					if(GameController.Instance.Manager.Paused && GameController.Instance.Manager.Started && !GameController.Instance.Manager.Finished){
 						GameController.Instance.Manager.Paused = false;
 					}
-					else if(!GameController.Instance.Manager.Paused && !GameController.Instance.Manager.Finished){
+					else if(!GameController.Instance.Manager.Paused && GameController.Instance.Manager.Started && !GameController.Instance.Manager.Finished){
 						GameController.Instance.Manager.Paused = true;
 					}
 					else if(GameController.Instance.Manager.Finished){

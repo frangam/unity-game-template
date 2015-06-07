@@ -99,7 +99,7 @@ public class UIBaseInAppButton : UIBaseButton {
 			if(item.LbName)
 				item.LbName.text = item.LocalizedName;
 			if(lbQuantity)
-				lbQuantity.text = item.Quantity.ToString();
+				lbQuantity.text = item.Quantity.ToString("N0", System.Globalization.CultureInfo.CurrentCulture);
 			//			if(lbRealMoneyPrice){
 			//				lbRealMoneyPrice.text = item.RealMoneyPrice.ToString();
 			

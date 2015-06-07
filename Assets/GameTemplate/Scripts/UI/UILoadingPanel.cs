@@ -10,6 +10,12 @@ public class UILoadingPanel : Singleton<UILoadingPanel> {
 	[SerializeField]
 	private float alfa = 0.748f;
 	
+	[SerializeField]
+	private Slider slider;
+	
+	[SerializeField]
+	private Text lbProgress;
+	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -44,5 +50,13 @@ public class UILoadingPanel : Singleton<UILoadingPanel> {
 			panel.alpha = 0;
 			panel.gameObject.SetActive(false);
 		}
+	}
+	
+	public void changeProgress(float pProgress){
+		if(slider)
+			slider.value = pProgress;
+		
+		if(lbProgress)
+			lbProgress.text = ((int)(pProgress*100)).ToString()+"%";
 	}
 }

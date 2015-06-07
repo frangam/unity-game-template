@@ -148,9 +148,35 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthenticated)
 			GameCenterManager.ShowAchievements();
+		else if(GameSettings.Instance.USE_GAMECENTER && !GameCenterManager.IsPlayerAuthenticated){
+			IOSDialog dialog = IOSDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GC_LOGIN)
+			                                    ,Localization.Localize(ExtraLocalizations.POPUP_DESC_GC_LOGIN)
+			                                    , Localization.Localize(ExtraLocalizations.OK_BUTTON_GC_LOGIN_POPUP)
+			                                    , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GC_LOGIN_POPUP));
+			dialog.OnComplete += onDialogIOSClose;
+		}
 		#endif
 	}
 	
+	private void onDialogIOSClose(IOSDialogResult result) {
+		
+		//parsing result
+		switch(result) {
+		case IOSDialogResult.YES:
+			GameCenterManager.OnAuthFinished += OnAuthIOSFinished;
+			GameCenterManager.init();
+			break;
+		case IOSDialogResult.NO:
+			break;
+			
+		}
+	}
+	void OnAuthIOSFinished (ISN_Result res) {
+		GameCenterManager.OnAuthFinished -= OnAuthIOSFinished;
+		if (res.IsSucceeded) {
+			GameCenterManager.ShowAchievements();
+		} 
+	}
 	private void OnDialogClose(CEvent e) {
 		//removing listner
 		(e.dispatcher as AndroidDialog).removeEventListener(BaseEvent.COMPLETE, OnDialogClose);

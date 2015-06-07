@@ -61,6 +61,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	//#endif
 	//	}
 	
+	private string scoreIDToShow = "";
+	
 	public void loadBestScore(string leaderboardID, long score){
 		if(!string.IsNullOrEmpty(leaderboardID)){
 			if(GameSettings.Instance.showTestLogs){
@@ -133,14 +135,34 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		
 		#elif UNITY_IPHONE
 		string id = rankingID.Replace("-","_"); //replace because in iOS it is not supported ids with "-"
+		scoreIDToShow = id;
 		
-		//Show all rankings
-		if(string.IsNullOrEmpty(rankingID))
-			GameCenterManager.ShowLeaderboards();
-		//show specific ranking
-		else
-			GameCenterManager.ShowLeaderboard(id);
+		if(GameCenterManager.IsPlayerAuthenticated){
+			//Show all rankings
+			if(string.IsNullOrEmpty(rankingID))
+				GameCenterManager.ShowLeaderboards();
+			//show specific ranking
+			else
+				GameCenterManager.ShowLeaderboard(id);
+		}
+		else{
+			IOSDialog dialog = IOSDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GC_LOGIN)
+			                                    ,Localization.Localize(ExtraLocalizations.POPUP_DESC_GC_LOGIN)
+			                                    , Localization.Localize(ExtraLocalizations.OK_BUTTON_GC_LOGIN_POPUP)
+			                                    , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GC_LOGIN_POPUP));
+			dialog.OnComplete += onDialogIOSClose;
+		}
 		#endif
+	}
+	
+	void OnAuthIOSFinished (ISN_Result res) {
+		GameCenterManager.OnAuthFinished -= OnAuthIOSFinished;
+		if (res.IsSucceeded) {
+			if(!string.IsNullOrEmpty(scoreIDToShow))
+				GameCenterManager.ShowLeaderboard(scoreIDToShow);
+			else
+				GameCenterManager.ShowLeaderboards();
+		} 
 	}
 	private void OnDialogClose(CEvent e) {
 		//removing listner
@@ -153,6 +175,19 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			GooglePlayManager.instance.showAchievementsUI();
 			break;
 		case AndroidDialogResult.NO:
+			break;
+			
+		}
+	}
+	private void onDialogIOSClose(IOSDialogResult result) {
+		
+		//parsing result
+		switch(result) {
+		case IOSDialogResult.YES:
+			GameCenterManager.OnAuthFinished += OnAuthIOSFinished;
+			GameCenterManager.init();
+			break;
+		case IOSDialogResult.NO:
 			break;
 			
 		}

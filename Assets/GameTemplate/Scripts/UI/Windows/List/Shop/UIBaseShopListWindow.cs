@@ -121,11 +121,12 @@ public class UIBaseShopListWindow : UIBaseListWindow {
 			if(btnSelect)
 				btnSelect.gameObject.SetActive(pItem.Purchased);
 			
-			if(lbPrice)
-				lbPrice.text = pItem.Price.ToString();
+			if(lbPrice){
+				lbPrice.text = pItem.Price.ToString("N0", System.Globalization.CultureInfo.CurrentCulture);
+			}
 			
 			if(lbGemsPrice)
-				lbGemsPrice.text = pItem.GemsPrice.ToString();
+				lbGemsPrice.text = pItem.GemsPrice.ToString("N0", System.Globalization.CultureInfo.CurrentCulture);
 		}
 	}
 	

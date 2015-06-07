@@ -3,7 +3,6 @@ using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 using UnionAssets.FLE;
-using GameAnalyticsSDK;
 
 public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	//--------------------------------------
@@ -397,8 +396,8 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	}
 	void OnTransactionComplete (IOSStoreKitResponse responce){
 		if(GameSettings.Instance.showTestLogs){
-			Debug.Log("OnTransactionComplete: " + responce.productIdentifier);
-			Debug.Log("OnTransactionComplete: state: " + responce.state);
+			Debug.Log("CoreIAManager - OnTransactionComplete: " + responce.productIdentifier);
+			Debug.Log("CoreIAManager - OnTransactionComplete: state: " + responce.state);
 		}
 		
 		switch(responce.state) {
@@ -541,19 +540,19 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	{
 		if(success && !deferred){
 			//GA
-			GameAnalytics.NewDesignEvent(GAEvents.INAPP_ITEM_PURCHASED +":"+ SKU);
+			GA.API.Design.NewEvent(GAEvents.INAPP_ITEM_PURCHASED +":"+ SKU);
 			
 			dispatcher.dispatch(PURCHASE_COMPLETED, getProductByID(SKU));
 		}
 		else if(!success && !deferred){
 			//GA
-			GameAnalytics.NewDesignEvent(GAEvents.INAPP_ITEM_PURCHASE_FAILED +":"+ SKU);
+			GA.API.Design.NewEvent(GAEvents.INAPP_ITEM_PURCHASE_FAILED +":"+ SKU);
 			
 			dispatcher.dispatch(PURCHASE_FAILED, getProductByID(SKU));
 		}
 		else if(deferred){
 			//GA
-			GameAnalytics.NewDesignEvent(GAEvents.INAPP_ITEM_PURCHASE_CANCELED +":"+ SKU);
+			GA.API.Design.NewEvent(GAEvents.INAPP_ITEM_PURCHASE_CANCELED +":"+ SKU);
 			
 			dispatcher.dispatch(DEFERRED_PURCHASE_COMPLETED, getProductByID(SKU));
 		}
@@ -563,13 +562,13 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	{
 		if(success){
 			//GA
-			GameAnalytics.NewDesignEvent(GAEvents.INAPP_PURCHASES_RESTORED);
+			GA.API.Design.NewEvent(GAEvents.INAPP_PURCHASES_RESTORED);
 			
 			dispatcher.dispatch(RESTORE_PURCHASE_COMPLETED);
 		}
 		else{
 			//GA
-			GameAnalytics.NewDesignEvent(GAEvents.INAPP_PURCHASES_NO_RESTORED);
+			GA.API.Design.NewEvent(GAEvents.INAPP_PURCHASES_NO_RESTORED);
 			
 			dispatcher.dispatch(RESTORE_PURCHASE_FAILED);
 		}

@@ -8,7 +8,7 @@ public class SplashCorporativeLogo : MonoBehaviour {
 	[SerializeField]
 	public float waitTime = 0.3f;
 	public float waitTimeForWeb = 2f;
-
+	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
@@ -17,15 +17,16 @@ public class SplashCorporativeLogo : MonoBehaviour {
 		StartCoroutine(splash());
 	}
 	#endregion
-
+	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
 	private IEnumerator splash(){
 		waitTime = Application.isWebPlayer ? waitTimeForWeb : waitTime;
-		float delay = audio.clip ? audio.clip.length + waitTime : waitTime;
+		float delay = GetComponent<AudioSource>().clip ? GetComponent<AudioSource>().clip.length + waitTime : waitTime;
 		yield return new WaitForSeconds(delay);
 		
-		Application.LoadLevel(GameSettings.SCENE_LOADER);
+		ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_LOADER, false);
+		//		Application.LoadLevel(GameSettings.SCENE_LOADER);
 	}
 }

@@ -155,9 +155,9 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			handleInitialAdShowing();
 			
 			if(GameSettings.mandatoryTutorial)
-				Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
+				ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL, GameSettings.Instance.showLoadIndicatorInLoadingScene);
 			else
-				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
+				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU, GameSettings.Instance.showLoadIndicatorInLoadingScene);
 		}
 	}
 	#endregion
@@ -229,11 +229,11 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private void loadSceneAfterChecking(){
 		//finally load the scene: tutorial or menu
 		if(GameSettings.mandatoryTutorial){
-			Application.LoadLevel(GameSettings.SCENE_TUTORIAL);
+			ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL, GameSettings.Instance.showLoadIndicatorInLoadingScene);
 		}
 		else{
 			handleInitialAdShowing();
-			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
+			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU, GameSettings.Instance.showLoadIndicatorInLoadingScene);
 		}
 	}
 	
@@ -395,7 +395,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		//loading indicator
 		if(GameSettings.Instance.showLoadIndicatorInLoadingScene)
-			ScreenLoaderVisualIndicator.Instance.LoadScene ();
+			ScreenLoaderVisualIndicator.Instance.ShowLoadIndicator();
 	}
 	
 	/// <summary>

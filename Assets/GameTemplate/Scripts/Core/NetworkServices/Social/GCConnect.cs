@@ -40,14 +40,14 @@ public class GCConnect : Singleton<GCConnect> {
 			
 			
 			//Listen for the Game Center events
-			GameCenterManager.dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_LOADED, OnAchievementsLoaded);
-			GameCenterManager.dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENT_PROGRESS, OnAchievementProgress);
-			GameCenterManager.dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_RESET, OnAchievementsReset);
+			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_LOADED, OnAchievementsLoaded);
+			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENT_PROGRESS, OnAchievementProgress);
+			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_RESET, OnAchievementsReset);
 			
 			//--
 			// Puntos
 			//--
-			GameCenterManager.dispatcher.addEventListener (GameCenterManager.GAME_CENTER_LEADER_BOARD_SCORE_LOADED, OnLeaderBoarScoreLoaded);
+			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_LEADERBOARD_SCORE_LOADED, OnLeaderBoarScoreLoaded);
 			
 			
 			GameCenterManager.OnAuthFinished += OnAuthFinished;
@@ -56,8 +56,15 @@ public class GCConnect : Singleton<GCConnect> {
 			
 			//Initializing Game Cneter class. This action will triger authentication flow
 			if(showLoginWindowGameServices){
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("GCConnect - showing authentication flow of Game Center");
+				
 				GameCenterManager.init();
 				IsInited = true;
+			}
+			else{
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("GCConnect - NOT showing authentication flow of Game Center");
 			}
 		}
 	}
@@ -82,7 +89,7 @@ public class GCConnect : Singleton<GCConnect> {
 			//			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.player.playerId + "\n" + "Alias: " + GameCenterManager.player.alias);
 		} else {
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GCConnect - player connected");
+				Debug.Log("GCConnect - player NOT connected");
 			
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
 			

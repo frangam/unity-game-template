@@ -2,66 +2,89 @@
 using System.Collections;
 
 public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator> {
-
-	private IEnumerator Load(string escena, bool showLoadingPanel = true){
+	
+	private IEnumerator Load(string escena, bool showLoadIndicator = true,  bool showLoadingPanel = true){
 		if(showLoadingPanel)
 			UILoadingPanel.Instance.show();
-
-		#if UNITY_IPHONE
-		Handheld.SetActivityIndicatorStyle(iOSActivityIndicatorStyle.WhiteLarge);
-		Handheld.StartActivityIndicator();
-		#elif UNITY_ANDROID
+		
+		if(showLoadIndicator){
+			#if UNITY_IPHONE
+			Handheld.SetActivityIndicatorStyle(UnityEngine.iOS.ActivityIndicatorStyle.WhiteLarge);
+			Handheld.StartActivityIndicator();
+			#elif UNITY_ANDROID
 			Handheld.SetActivityIndicatorStyle(AndroidActivityIndicatorStyle.Small);
-		Handheld.StartActivityIndicator();
-		#endif
-
-		yield return null;
-		Application.LoadLevel (escena);
-//		finCarga ();
+			Handheld.StartActivityIndicator();
+			#endif
+		}
+		
+		//		yield return null;
+		//		Application.LoadLevel (escena);
+		//		finCarga ();
+		
+		AsyncOperation async = Application.LoadLevelAsync(escena);
+		while (!async.isDone) {
+			//			Debug.Log("%: " + async.progress);
+			UILoadingPanel.Instance.changeProgress(async.progress);
+			yield return null;
+		}
+		//
+		//		yield return async;
+		//		Debug.Log("Loading complete");
 	}
-
-	private IEnumerator Load(int escena, bool showLoadingPanel = true){
+	
+	private IEnumerator Load(int escena, bool showLoadIndicator = true,  bool showLoadingPanel = true){
 		if(showLoadingPanel)
 			UILoadingPanel.Instance.show();
-
+		
+		if(showLoadIndicator){
+			#if UNITY_IPHONE
+			Handheld.SetActivityIndicatorStyle(UnityEngine.iOS.ActivityIndicatorStyle.WhiteLarge);
+			Handheld.StartActivityIndicator();
+			#elif UNITY_ANDROID
+			Handheld.SetActivityIndicatorStyle(AndroidActivityIndicatorStyle.Small);
+			Handheld.StartActivityIndicator();
+			#endif
+		}
+		
+		//		yield return null;
+		//		finCarga ();
+		//		Application.LoadLevel (escena);
+		AsyncOperation async = Application.LoadLevelAsync(escena);
+		while (!async.isDone) {
+			//			Debug.Log("%: " + async.progress);
+			UILoadingPanel.Instance.changeProgress(async.progress);
+			yield return null;
+		}
+		
+		//		yield return null;
+		//		Debug.Log("Loading complete");
+	}
+	
+	private IEnumerator ShowLoadIndicatorOnly(){
 		#if UNITY_IPHONE
-		Handheld.SetActivityIndicatorStyle(iOSActivityIndicatorStyle.WhiteLarge);
+		Handheld.SetActivityIndicatorStyle(UnityEngine.iOS.ActivityIndicatorStyle.WhiteLarge);
 		Handheld.StartActivityIndicator();
 		#elif UNITY_ANDROID
 		Handheld.SetActivityIndicatorStyle(AndroidActivityIndicatorStyle.Small);
 		Handheld.StartActivityIndicator();
 		#endif
-
+		
 		yield return null;
-//		finCarga ();
-		Application.LoadLevel (escena);
+		//		finCarga ();
 	}
-
-	private IEnumerator Load(){
-		#if UNITY_IPHONE
-		Handheld.SetActivityIndicatorStyle(iOSActivityIndicatorStyle.WhiteLarge);
-		Handheld.StartActivityIndicator();
-		#elif UNITY_ANDROID
-		Handheld.SetActivityIndicatorStyle(AndroidActivityIndicatorStyle.Small);
-		Handheld.StartActivityIndicator();
-		#endif
-
-		yield return new WaitForSeconds(0);
-//		finCarga ();
+	
+	public void ShowLoadIndicator(){
+		StartCoroutine(ShowLoadIndicatorOnly());
 	}
-
-	public void LoadScene(){
-		StartCoroutine(Load());
+	
+	public void LoadScene(string scene, bool showLoadIndicator = true, bool showLoadingPanel = true){
+		StartCoroutine(Load(scene, showLoadIndicator, showLoadingPanel));
 	}
-
-	public void LoadScene(string scene, bool showLoadingPanel = true){
-		StartCoroutine(Load(scene, showLoadingPanel));
+	
+	public void LoadScene(int scene, bool showLoadIndicator = true, bool showLoadingPanel = true){
+		StartCoroutine(Load(scene, showLoadIndicator, showLoadingPanel));
 	}
-
-	public void LoadScene(int scene, bool showLoadingPanel = true){
-		StartCoroutine(Load(scene, showLoadingPanel));
-}
-
+	
 	public void finishLoad(){
 		#if UNITY_IPHONE || UNITY_ANDROID
 		Handheld.StopActivityIndicator();
