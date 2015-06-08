@@ -30,6 +30,10 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	}
 	
 	public virtual void Start () {
+		//set Timemanager fixed timestep
+		BaseGameScreenController.Instance.resetFixedTimeStepOfTimeManager();
+		
+		
 		#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
 		//refresh banner in every Screen loaded
 		AdsHandler.Instance.refrescarBanner();
@@ -38,8 +42,10 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 		ScreenLoaderVisualIndicator.Instance.finishLoad ();
 		
 		//reset time scale to 1 en all sections except Game Scene
-		if(currentSection != GameSection.GAME)
+		if(currentSection != GameSection.GAME){
 			Time.timeScale = 1f;
+			
+		}
 		
 		//Generic logic for these sections
 		switch(currentSection){
@@ -76,4 +82,19 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	}
 	
 	#endregion
+	
+	
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public virtual void resetFixedTimeStepOfTimeManager(){
+		if(!PlayerPrefs.HasKey(GameSettings.PP_DEFAULT_FIXED_TIMESTEP))
+			PlayerPrefs.SetFloat(GameSettings.PP_DEFAULT_FIXED_TIMESTEP, Time.fixedDeltaTime);
+		else{
+			float defaultValue = PlayerPrefs.GetFloat(GameSettings.PP_DEFAULT_FIXED_TIMESTEP);
+			
+			if(defaultValue != Time.fixedDeltaTime)
+				Time.fixedDeltaTime = defaultValue;
+		}
+	}
 }

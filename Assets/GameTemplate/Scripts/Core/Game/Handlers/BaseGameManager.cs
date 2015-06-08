@@ -496,6 +496,8 @@ public class BaseGameManager : MonoBehaviour {
 		}
 		set
 		{
+			//set Timemanager fixed timestep
+			BaseGameScreenController.Instance.resetFixedTimeStepOfTimeManager();	
 			
 			// set paused 
 			paused = value;

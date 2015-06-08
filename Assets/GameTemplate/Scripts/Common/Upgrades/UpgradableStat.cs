@@ -50,6 +50,18 @@ public class UpgradableStat : BaseStat{
 		}
 	}
 	
+	public float IncrementValue{
+		get{
+			return (MaxValue-InitialValue)/maxUpgrades;
+		}
+	}
+	
+	public float IncrementSimulatedValue{
+		get{
+			return (MaxSimValue-InitialSimValue)/maxUpgrades;
+		}
+	}
+	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -145,8 +157,8 @@ public class UpgradableStat : BaseStat{
 	}
 	
 	private void updateCurrentValue(){
-		CurrentValue += (MaxValue-InitialValue)/maxUpgrades; //(Level*1f/MaxLevel) * MaxValue;
-		CurrentSimValue += (MaxSimValue-InitialSimValue)/maxUpgrades; //(Level*1f/MaxLevel) * MaxValue;
+		CurrentValue += IncrementValue; //(Level*1f/MaxLevel) * MaxValue;
+		CurrentSimValue += IncrementSimulatedValue; //(Level*1f/MaxLevel) * MaxValue;
 	}
 	
 	private void initCurrentValue(){

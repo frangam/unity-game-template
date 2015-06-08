@@ -12,20 +12,19 @@ public class GameSettings : ScriptableObject {
 	//--------------------------------------
 	// Flags to control showing in editor
 	//--------------------------------------
-	public bool showGameDifficulties			 					= false;
-	public bool showMoneySettings 									= false;
-	public bool showAdsSettings 									= false;
-	public bool showSocialNetworksSettings 							= false;
-	public bool showAppLinksSettings 								= false;
-	public bool showCharacterControlSettings 						= false;
-	public bool showRankingSettings 								= false;
-	public bool showWorldRankingSettings 							= false;
-	public bool showSurvivalLevelsRankingSettings 					= false;
-	public bool showDifficultiesRankingSettings 					= false;
-	public bool showInAppBillingSettings 							= false;
-	public bool showGooglePlayServicesSettings 						= false;
-	public bool showGameCenterSettings 								= false;
-	
+	public bool showGameDifficulties			 		= false;
+	public bool showMoneySettings 						= false;
+	public bool showAdsSettings 						= false;
+	public bool showSocialNetworksSettings 				= false;
+	public bool showAppLinksSettings 					= false;
+	public bool showCharacterControlSettings 			= false;
+	public bool showRankingSettings 					= false;
+	public bool showWorldRankingSettings 				= false;
+	public bool showSurvivalLevelsRankingSettings 		= false;
+	public bool showDifficultiesRankingSettings 		= false;
+	public bool showInAppBillingSettings 				= false;
+	public bool showGooglePlayServicesSettings 			= false;
+	public bool showGameCenterSettings 					= false;
 	
 	
 	//--------------------------------------
@@ -136,6 +135,7 @@ public class GameSettings : ScriptableObject {
 	public const string SCENE_INAPP			 			= "InApp";
 	
 	//PlayerPrefs KEYS
+	public const string PP_DEFAULT_FIXED_TIMESTEP 						= "pp_defaul_fixed_timestep";
 	public const string PP_FIRST_PLAY 									= "pp_first_play";
 	public const string PP_MUSIC 										= "pp_music";
 	public const string PP_SOUND 										= "pp_sound";
@@ -143,11 +143,10 @@ public class GameSettings : ScriptableObject {
 	public const string PP_LANGUAGE_CHANGED 							= "pp_language_changed";
 	public const string PP_LAST_SCORE 									= "pp_last_score_"; //followed by game difficulty
 	public const string PP_BEST_SCORE 									= "pp_best_score_"; //followed by game difficulty
-	public const string PP_LAST_LEVEL_UNLOCKED 							= "pp_last_level_unlocked_"; //id of last level unlocked
+	public const string PP_LAST_LEVEL_UNLOCKED 							= "pp_last_level_unlocked"; //id of last level unlocked
 	public const string PP_LAST_LEVEL_PLAYED							= "pp_last_level_played"; //id of last level played
 	public const string PP_LEVEL_COMPLETED_TIMES						= "pp_level_completed_times_"; //+ level id
 	public const string PP_LEVEL_TRIES_TIMES							= "pp_level_tries_times_"; //+ level id
-	public const string PP_SELECTED_LEVEL_PACK 							= "pp_selected_level_pack"; //id of selected level pack
 	public const string PP_SELECTED_LEVEL 								= "pp_selected_level"; //id of selected level
 	public const string PP_SELECTED_SURVIVAL_LEVEL 						= "pp_selected_survival_level"; //id of survival selected level
 	public const string PP_MISION_POPUP_SHOWN 							= "pp_mision_popup_shown_"; //followed by level id
@@ -190,10 +189,8 @@ public class GameSettings : ScriptableObject {
 	public const string	PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL				= "pp_num_gameovers_in_survival_level_"; //+ (int) survival level id
 	public const string	PP_NUM_WINS_IN_SURVIVAL_LEVEL					= "pp_num_wins_in_survival_level_"; //+ (int) survival level id
 	public const string PP_UNIQUE_LIST_CURRENT_ITEM_SELECTED_ID			= "pp_unique_list_current_item_selected_id";
-	public const string PP_LAST_CAMPAIGN_LEVEL_COMPLETED				= "pp_last_campaign_level_completed_";
+	public const string PP_LAST_CAMPAIGN_LEVEL_COMPLETED				= "pp_last_campaign_level_completed";
 	public const string PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE = "pp_last_opening_user_connected_to_store_service"; //1 or 0 y playerprefs to know if user conneted to the gps or gc in the last opening
-	public const string PP_LOCAL_MULTIPLAYER 							= "pp_local_multiplayer";
-	public const string PP_ONLINE_MULTIPLAYER 							= "pp_online_multiplayer";
 	
 	//GooglePlay Services
 	public string ID_UNIQUE_RANKING 				= "";
@@ -244,16 +241,13 @@ public class GameSettings : ScriptableObject {
 	#endregion
 	
 	
-	
-	
-	//--------------------------------------
-	// Instance
-	//--------------------------------------
 	public const string assetName = "GameSettings";
 	public const string path = "GameTemplate/Resources";
 	public const string extension = ".asset";
 	
 	private static GameSettings instance = null;
+	
+	
 	public static GameSettings Instance {
 		
 		get {
