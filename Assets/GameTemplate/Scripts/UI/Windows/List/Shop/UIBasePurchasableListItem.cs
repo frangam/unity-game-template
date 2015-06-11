@@ -14,10 +14,10 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 	protected string 		ppKey;
 	
 	[SerializeField]
-	private int 			price;
+	private long 			price;
 	
 	[SerializeField]
-	private int 			gemsPrice;
+	private long 			gemsPrice;
 	
 	[SerializeField]
 	private bool 			purchased = false;
@@ -32,7 +32,7 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
-	public int Price {
+	public long Price {
 		get {
 			return this.price;
 		}
@@ -41,7 +41,7 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 		}
 	}
 	
-	public int GemsPrice {
+	public long GemsPrice {
 		get {
 			return this.gemsPrice;
 		}
@@ -84,7 +84,7 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 		init(atts);
 	}
 	
-	public UIBasePurchasableListItem(string pPPKey, string pId, string pName, bool pPurchased, int pPrice, int pGemsPrice): base(pId, pName){
+	public UIBasePurchasableListItem(string pPPKey, string pId, string pName, bool pPurchased, long pPrice, long pGemsPrice): base(pId, pName){
 		this.ppKey = pPPKey;
 		this.playerPrefsKey = pPPKey + Id.ToString();
 		purchased = pPurchased;
@@ -139,12 +139,14 @@ public class UIBasePurchasableListItem : UIBaseListItem {
 	/// </summary>
 	/// <param name="data">Data.</param>
 	public void init(string[] data){
-		int pPrice, pGemsPrice, pPurchased;
+		long pPrice, pGemsPrice;
+		int pPurchased;
+		
 		playerPrefsKey = ppKey+Id.ToString();
 		
-		if(int.TryParse(data[2], out pPrice))
+		if(long.TryParse(data[2], out pPrice))
 			Price = pPrice;
-		if(data.Length > 3 && int.TryParse(data[3], out pGemsPrice))
+		if(data.Length > 3 && long.TryParse(data[3], out pGemsPrice))
 			GemsPrice = pGemsPrice;
 		
 		pPurchased = (price > 0 || gemsPrice > 0) ? PlayerPrefs.GetInt(playerPrefsKey) : 1; // this is usefull for set initial item as purchased if its price and gems price are 0

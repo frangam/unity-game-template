@@ -66,10 +66,13 @@ public class GameSettings : ScriptableObject {
 	/// 1 gem is equals to 100 or less coins
 	/// </summary>
 	public int 		ONE_GEM_VALUE_IN_COINS = 100;
-	public int 		INITIAL_MONEY = 0;
-	public int 		INITIAL_GEMS = 5;
+	public long		INITIAL_MONEY = 0;
+	public long 	INITIAL_GEMS = 5;
+	public long		MAX_MONEY = long.MaxValue;
+	public long 	MAX_GEMS = long.MaxValue;
 	public float	PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED 		= 0.3f;
 	public float	PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED 		= 0f;
+	public string	testLanguage = "English";
 	
 	//ADS 
 	public bool 	IS_A_DEV_VERSION = true; 

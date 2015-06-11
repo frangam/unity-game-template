@@ -38,6 +38,9 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	private UIBaseWindow restorePurchasesFailedWin;
 	
 	[SerializeField]
+	private UIBaseWindow maxAmountOfMoneyRaisedWin;
+	
+	[SerializeField]
 	private bool hideLoadPanelInEditor = true;
 	
 	[SerializeField]
@@ -164,7 +167,18 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		//			pnlShopLoading.SetActive(!hide);
 		//		}
 		
+		
+		//		checkMaxAmountOfMoneyRaised();
 		StartCoroutine(waitAtStartForCloseIfNotLoaded());
+	}
+	
+	public void checkMaxAmountOfMoneyRaised(){
+		if(maxAmountOfMoneyRaisedWin){
+			if(GameMoneyManager.Instance.maximumAmountOfMoneyRaised())
+				UIController.Instance.Manager.open(maxAmountOfMoneyRaisedWin);
+			else
+				UIController.Instance.Manager.close(maxAmountOfMoneyRaisedWin);
+		}
 	}
 	
 	public override void purchaseItem (UIBaseListItem item){
@@ -194,6 +208,16 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		}
 	}
 	
+	public void forceClose(){		
+		if(pnlInAppServiceNotInited && shopWindow && shopWindow.IsOpen)
+			UIController.Instance.Manager.close(pnlInAppServiceNotInited);
+		
+		if(shopWindow)
+			UIController.Instance.Manager.close(shopWindow);
+		
+		showPanelLoading(false);
+	}
+	
 	public void closeWinWhenErrorAtInit(bool callFromShopWin = false){
 		if(pnlInAppServiceNotInited && shopWindow && shopWindow.IsOpen){
 			UIController.Instance.Manager.open(pnlInAppServiceNotInited);
@@ -208,8 +232,6 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			
 			showPanelLoading(false);
 		}
-		else
-			showPanelLoading(false);
 	}
 	
 	public IEnumerator waitAtStartForCloseIfNotLoaded(bool callFromShopWin = false){
@@ -452,7 +474,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 				//show product price on the button
 				foreach(UIBaseInAppButton button in inAppButtons){
 					if(button != null && button.Item != null && p.SKU.Equals(button.Item.Id)){
-						button.showPriceInfo(p.price);
+						button.showPriceInfo(p.price, p.priceCurrencyCode);
 						break;
 					}
 				}

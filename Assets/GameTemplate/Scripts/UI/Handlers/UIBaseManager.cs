@@ -208,7 +208,7 @@ public class UIBaseManager : MonoBehaviour {
 			open(win, handleStart, show, forceCloseWin);
 		}
 		else{
-			Debug.LogError("Windows with id " + id + " does not exist");
+			Debug.LogWarning("Windows with id " + id + " does not exist or is not loaded yet");
 		}
 	}
 	
@@ -219,8 +219,23 @@ public class UIBaseManager : MonoBehaviour {
 			//first do it visible or not
 			window.gameObject.SetActive(show);
 			
-			if(show)
+			if(show){
 				window.open();
+				
+				//close windows when open the current one
+				if(window.CloseWinsWhenOpen != null && window.CloseWinsWhenOpen.Count > 0){
+					foreach(UIBaseWindow w in window.CloseWinsWhenOpen){
+						w.gameObject.SetActive(false);
+						w.close();
+					}
+				}
+				//hide gameobjects when the current window are open
+				if(window.HideObjsWhenOpen != null && window.HideObjsWhenOpen.Count > 0){
+					foreach(GameObject g in window.HideObjsWhenOpen){
+						g.SetActive(false);
+					}
+				}
+			}
 			else{
 				
 				
@@ -234,6 +249,13 @@ public class UIBaseManager : MonoBehaviour {
 					foreach(UIBaseWindow w in window.OpenNewWinsWhenClose){
 						w.gameObject.SetActive(true);
 						w.open();
+					}
+				}
+				
+				//show gameobjects when the current window are close
+				if(window.ShowObjsWhenClose != null && window.ShowObjsWhenClose.Count > 0){
+					foreach(GameObject g in window.ShowObjsWhenClose){
+						g.SetActive(true);
 					}
 				}
 			}

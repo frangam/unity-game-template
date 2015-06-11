@@ -39,6 +39,18 @@ public class UIBaseWindow : MonoBehaviour {
 	private List<UIBaseWindow> openNewWinsWhenClose;
 	
 	[SerializeField]
+	[Tooltip("These windows are closed when the current window is open")]
+	private List<UIBaseWindow> closeWinsWhenOpen;
+	
+	[SerializeField]
+	[Tooltip("These gameobjects are shown when the current window is closed")]
+	private List<GameObject> showObjsWhenClose;
+	
+	[SerializeField]
+	[Tooltip("These gameobjects are hiden when the current window is open")]
+	private List<GameObject> hideObjsWhenOpen;
+	
+	[SerializeField]
 	private List<string> soundIdsPlayWhenOpen;
 	
 	[SerializeField]
@@ -95,13 +107,36 @@ public class UIBaseWindow : MonoBehaviour {
 			changeIpBB = value;
 		}
 	}
-	
+	public List<GameObject> ShowObjsWhenClose {
+		get {
+			return this.showObjsWhenClose;
+		}
+		set {
+			showObjsWhenClose = value;
+		}
+	}
 	public List<UIBaseWindow> OpenNewWinsWhenClose {
 		get {
 			return this.openNewWinsWhenClose;
 		}
 		set{
 			this.openNewWinsWhenClose = value;
+		}
+	}
+	public List<GameObject> HideObjsWhenOpen {
+		get {
+			return this.hideObjsWhenOpen;
+		}
+		set {
+			hideObjsWhenOpen = value;
+		}
+	}
+	public List<UIBaseWindow> CloseWinsWhenOpen {
+		get {
+			return this.closeWinsWhenOpen;
+		}
+		set {
+			closeWinsWhenOpen = value;
 		}
 	}
 	

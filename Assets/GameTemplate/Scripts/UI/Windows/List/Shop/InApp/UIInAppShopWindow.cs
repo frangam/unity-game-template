@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using GameAnalyticsSDK;
 
 public class UIInAppShopWindow : UIBaseWindow {
 	//--------------------------------------
@@ -24,11 +23,12 @@ public class UIInAppShopWindow : UIBaseWindow {
 	public override void open ()
 	{
 		//GA
-		GameAnalytics.NewDesignEvent(GAEvents.INAPP_WIN_OPEN);
+		GA.API.Design.NewEvent(GAEvents.INAPP_WIN_OPEN);
 		
 		base.open ();
 		
 		if(gralInAppWin ){
+			gralInAppWin.checkMaxAmountOfMoneyRaised();
 			gralInAppWin.showPanelLoading();
 			StartCoroutine(gralInAppWin.waitAtStartForCloseIfNotLoaded(true));
 		}
@@ -40,6 +40,11 @@ public class UIInAppShopWindow : UIBaseWindow {
 			gralInAppWin.closeLoading(true);
 		
 		base.close ();
+	}
+	
+	public void forceClose(){
+		if(gralInAppWin )
+			gralInAppWin.forceClose();
 	}
 	
 	private void closeWinWhenErrorAtInit(){

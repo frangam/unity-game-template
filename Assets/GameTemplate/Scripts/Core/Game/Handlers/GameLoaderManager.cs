@@ -254,13 +254,18 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 * Idioma seleccionado
 	 -------------------------------*/
 	public virtual void loadLanguage(){
-		if(!PlayerPrefs.HasKey(GameSettings.PP_LANGUAGE_CHANGED)){
-			PlayerPrefs.SetInt(GameSettings.PP_LANGUAGE_CHANGED, 0);
+		if(!string.IsNullOrEmpty(GameSettings.Instance.testLanguage)){
+			Languages.selectLanguage(GameSettings.Instance.testLanguage);
 		}
-		
-		//si no se ha cambiado el idioma, indicamos el idioma por defecto al del dispositivo
-		if(PlayerPrefs.GetInt(GameSettings.PP_LANGUAGE_CHANGED) == 0){
-			Languages.seleccionarIdiomaSegunIdiomaDispositivo();
+		else{
+			if(!PlayerPrefs.HasKey(GameSettings.PP_LANGUAGE_CHANGED)){
+				PlayerPrefs.SetInt(GameSettings.PP_LANGUAGE_CHANGED, 0);
+			}
+			
+			//si no se ha cambiado el idioma, indicamos el idioma por defecto al del dispositivo
+			if(PlayerPrefs.GetInt(GameSettings.PP_LANGUAGE_CHANGED) == 0){
+				Languages.seleccionarIdiomaSegunIdiomaDispositivo();
+			}
 		}
 	}
 	
@@ -504,12 +509,12 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	public virtual void loadInitialMoneyOnlyFirstTime(){
 		//money
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_MONEY)){
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_MONEY, GameSettings.Instance.INITIAL_MONEY);
+			GameMoneyManager.Instance.addMoney(GameSettings.Instance.INITIAL_MONEY);
 		}
 		
 		//gems
 		if(!PlayerPrefs.HasKey(GameSettings.PP_TOTAL_GEMS)){
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GEMS, GameSettings.Instance.INITIAL_GEMS);
+			GameMoneyManager.Instance.addMoney(GameSettings.Instance.INITIAL_GEMS);
 		}
 	}
 	

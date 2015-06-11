@@ -21,6 +21,7 @@ public class GameSettingsEditor : Editor {
 	GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is Plugin version.  If you have problems or compliments please include this so we know exactly what version to look out for.");
 	GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical quastion, feel free to drop an e-mail");
 	GUIContent showMissionsWinLabel   = new GUIContent("Show missions win [?]:", "True for showing missions window at start.");
+	GUIContent testLanguage   = new GUIContent("Language for test [?]:", "Leave empty for production version");
 	
 	private GameSettings settings;
 	
@@ -67,8 +68,6 @@ public class GameSettingsEditor : Editor {
 		
 		GeneralOptions();
 		gameInfo();
-		//		EditorGUILayout.Space();
-		//		levelsSettings();
 		EditorGUILayout.Space();
 		moneySettings();
 		EditorGUILayout.Space();
@@ -202,6 +201,12 @@ public class GameSettingsEditor : Editor {
 		EditorGUILayout.Space();
 		
 		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField(testLanguage);
+		GameSettings.Instance.testLanguage	= EditorGUILayout.TextField(GameSettings.Instance.testLanguage);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.Space();
+		
+		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField(musicFXLabel);
 		GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME	= EditorGUILayout.Toggle(GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME);
 		EditorGUILayout.EndHorizontal();
@@ -230,99 +235,6 @@ public class GameSettingsEditor : Editor {
 		
 		handleDifficulties();
 	}
-	
-	//	protected virtual void levelsSettings(){
-	//		GameSettings.Instance.showLevelsSettings = EditorGUILayout.Foldout(GameSettings.Instance.showLevelsSettings, "Levels Settings");
-	//		if (GameSettings.Instance.showLevelsSettings) {
-	//			EditorGUILayout.BeginHorizontal();
-	//			EditorGUILayout.LabelField("Defaul level pack size");
-	//			GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE = EditorGUILayout.IntField(GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE);
-	//			EditorGUILayout.EndHorizontal();
-	//			EditorGUILayout.Space();
-	//
-	//			EditorGUI.indentLevel++;
-	//			levelPacksSettings();
-	//			EditorGUI.indentLevel--;
-	//		}
-	//	}
-	//	protected virtual void levelPacksSettings(){
-	//		if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count == 0) {
-	//			EditorGUILayout.HelpBox("No level packs registred",MessageType.None);
-	//		}
-	//
-	//		if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count > 0){
-	//			foreach(BaseLevelPack levelPack in LevelPacks.Instance.packs) {
-	//				if(levelPack != null){
-	//					if(!LevelPacks.Instance.showLevelPacks.ContainsKey(levelPack))
-	//						LevelPacks.Instance.showLevelPacks.Add(levelPack, true);
-	//
-	//					LevelPacks.Instance.showLevelPacks[levelPack] = EditorGUILayout.Foldout(LevelPacks.Instance.showLevelPacks[levelPack], "Pack " + levelPack.Id);
-	//					if(LevelPacks.Instance.showLevelPacks[levelPack]){
-	//
-	//						EditorGUILayout.BeginHorizontal();
-	//						EditorGUILayout.LabelField("Id");
-	//						levelPack.Id = EditorGUILayout.TextField(levelPack.Id).Trim();
-	//						EditorGUILayout.EndHorizontal();
-	//
-	//						EditorGUILayout.BeginHorizontal();
-	//						EditorGUILayout.LabelField("Initial Level");
-	//						levelPack.InitialLevel = EditorGUILayout.IntField(levelPack.InitialLevel);
-	//						EditorGUILayout.EndHorizontal();
-	//
-	//						EditorGUILayout.BeginHorizontal();
-	//						EditorGUILayout.LabelField("Total levels");
-	//						levelPack.TotalLevelsInPack = EditorGUILayout.IntField(levelPack.TotalLevelsInPack);
-	//						EditorGUILayout.EndHorizontal();
-	//
-	//
-	//						EditorGUILayout.BeginHorizontal();
-	//						if(GUILayout.Button("Delete Pack " + levelPack.Id,  GUILayout.Width(120))) {
-	//							LevelPacks.Instance.packs.Remove(levelPack);
-	//							break;
-	//						}
-	//						EditorGUILayout.EndHorizontal();
-	//					}//end_if(levelPack != null)
-	//				}//end_foreach
-	//			}//end_if
-	//
-	//			EditorGUILayout.BeginHorizontal();
-	//			EditorGUILayout.Space();
-	//			if(GUILayout.Button("Delete all packs",  GUILayout.Width(180))) {
-	//				if(LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count > 0){
-	//					List<BaseLevelPack> packsRemove = new List<BaseLevelPack>();
-	//					foreach(BaseLevelPack levelPack in LevelPacks.Instance.packs)
-	//						packsRemove.Add(levelPack);
-	//					foreach(BaseLevelPack levelPack in packsRemove)
-	//						LevelPacks.Instance.packs.Remove(levelPack);
-	//				}
-	//			}
-	//
-	//		}
-	//		else{
-	//			EditorGUILayout.BeginHorizontal();
-	//			EditorGUILayout.Space();
-	//		}
-	//
-	//		
-	//		
-	////		EditorGUILayout.BeginHorizontal();
-	////		EditorGUILayout.Space();
-	//
-	//		if(GUILayout.Button("Add new level pack",  GUILayout.Width(180))) {
-	//			if(LevelPacks.Instance.packs == null || (LevelPacks.Instance.packs != null && LevelPacks.Instance.packs.Count == 0))
-	//				LevelPacks.Instance.packs.Add(new BaseLevelPack("1", 1, GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE, null));
-	//			else{
-	//				BaseLevelPack lastPack = LevelPacks.Instance.packs[LevelPacks.Instance.packs.Count-1];
-	//				int lastPackId;
-	//
-	//				if(int.TryParse(lastPack.Id, out lastPackId))
-	//					LevelPacks.Instance.packs.Add(new BaseLevelPack((lastPackId+1).ToString(), lastPack.FinalLevel+1, GameSettings.Instance.DEFAULT_LEVEL_PACKS_SIZE, null));
-	//			}
-	//		}
-	//		EditorGUILayout.EndHorizontal();
-	//		EditorGUILayout.Space();
-	//	}
-	
 	
 	protected virtual void inAppBilling(){
 		GameSettings.Instance.showInAppBillingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showInAppBillingSettings, "In App Billing");
@@ -471,12 +383,22 @@ public class GameSettingsEditor : Editor {
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Initial Money:");
-			GameSettings.Instance.INITIAL_MONEY	= EditorGUILayout.IntField(GameSettings.Instance.INITIAL_MONEY);
+			GameSettings.Instance.INITIAL_MONEY	= EditorGUILayout.LongField(GameSettings.Instance.INITIAL_MONEY);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Max Money:");
+			GameSettings.Instance.MAX_MONEY	= EditorGUILayout.LongField(GameSettings.Instance.MAX_MONEY);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Initial Gems:");
-			GameSettings.Instance.INITIAL_GEMS	= EditorGUILayout.IntField(GameSettings.Instance.INITIAL_GEMS);
+			GameSettings.Instance.INITIAL_GEMS	= EditorGUILayout.LongField(GameSettings.Instance.INITIAL_GEMS);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Max Gems:");
+			GameSettings.Instance.MAX_GEMS	= EditorGUILayout.LongField(GameSettings.Instance.MAX_GEMS);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();

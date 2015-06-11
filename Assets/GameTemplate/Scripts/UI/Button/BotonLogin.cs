@@ -25,6 +25,7 @@ public class BotonLogin : UIBaseButton {
 	public string spriteDesconectar;
 	
 	private Text label;
+	private bool iosAuthenticated = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -55,7 +56,8 @@ public class BotonLogin : UIBaseButton {
 			break;
 			
 		case SocialNetwork.GAME_CENTER:
-			gameObject.SetActive(Application.platform == RuntimePlatform.IPhonePlayer && !GameCenterManager.IsPlayerAuthenticated);
+			iosAuthenticated = GameCenterManager.IsPlayerAuthenticated;
+			gameObject.SetActive(!iosAuthenticated);
 			break;
 			
 		case SocialNetwork.FACEBOOK:
@@ -72,7 +74,9 @@ public class BotonLogin : UIBaseButton {
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED)
 			label.text = Localization.Get(ExtraLocalizations.SIMPLE_LOGOUT_BUTTON);
 		#elif UNITY_IPHONE
-		
+		iosAuthenticated = GameCenterManager.IsPlayerAuthenticated;
+		gameObject.SetActive(!iosAuthenticated);
+		showAndHideTranforms(iosAuthenticated);
 		#endif
 		
 		
