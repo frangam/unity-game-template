@@ -113,7 +113,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_COMPLETED, OnPurchaseCompleted);
 		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.PURCHASE_FAILED, OnPurchaseFailed);
 		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.DEFERRED_PURCHASE_COMPLETED, OnDestroy);
-		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_COMPLETED, OnRestorePurchaseError);
+		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_COMPLETED, OnRestorePurchaseSuccess);
 		CoreIAPManager.dispatcher.addEventListener(CoreIAPManager.RESTORE_PURCHASE_FAILED, OnRestorePurchaseError);
 	}
 	
@@ -236,16 +236,16 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	
 	public IEnumerator waitAtStartForCloseIfNotLoaded(bool callFromShopWin = false){
 		if(GameSettings.Instance.showTestLogs){
-			Debug.Log("InApp Inited ? " + CoreIAPManager.Instance.IsInited);
-			Debug.Log("InApp num products loaded: " + CoreIAPManager.Instance.NumProducts);
-			Debug.Log("InApp num products retrieved: " + productsRetrieved);
+			Debug.Log("UIBaseInAppWin - InApp Inited ? " + CoreIAPManager.Instance.IsInited);
+			Debug.Log("UIBaseInAppWin - InApp num products loaded: " + CoreIAPManager.Instance.NumProducts);
+			Debug.Log("UIBaseInAppWin - InApp num products retrieved: " + productsRetrieved);
 		}
 		
 		if(CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0){
 			//Try to retreive products from InApp Handler
 			if(!productsRetrieved){
 				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("Trying to load products from CoreIAPManager");
+					Debug.Log("UIBaseInAppWin - Trying to load products from CoreIAPManager");
 				#if UNITY_ANDROID
 				if(CoreIAPManager.Instance.ProductsGoogle != null){
 					if(GameSettings.Instance.showTestLogs)
@@ -256,7 +256,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 				#elif UNITY_IOS
 				if(CoreIAPManager.Instance.ProductsIOS != null){
 					if(GameSettings.Instance.showTestLogs)
-						Debug.Log("Products loaded in CoreIAPManager, total: " + CoreIAPManager.Instance.ProductsIOS.Count);
+						Debug.Log("UIBaseInAppWin - Products loaded in CoreIAPManager, total: " + CoreIAPManager.Instance.ProductsIOS.Count);
 					
 					loadProductsReceived(CoreIAPManager.Instance.ProductsIOS);
 				}
@@ -494,18 +494,31 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		List<IOSProductTemplate> products = productsData as List<IOSProductTemplate>;
 		if(products != null && products.Count > 0 && inAppButtons != null){
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("In App Products retrieved");
+				Debug.Log("UIBaseInAppWin - In App Products retrieved");
 			
 			foreach(IOSProductTemplate p in products){
 				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("product [id: " + p.id + ", title: " + p.title + ", desc: " + p.description + ", price: " + p.price + ", localizedPrice: " + p.localizedPrice
+					Debug.Log("UIBaseInAppWin - product [id: " + p.id + ", title: " + p.title + ", desc: " + p.description + ", price: " + p.price + ", localizedPrice: " + p.localizedPrice
 					          + ", currency symbol" + p.currencySymbol + ", price code: " + p.currencyCode + "]");
 				
 				//show product price on the button
-				foreach(UIBaseInAppButton button in inAppButtons){
-					if(p.id.Equals(button.Item.Id)){
-						button.showPriceInfo(p.localizedPrice);
-						break;
+				if(inAppButtons != null && inAppButtons.Count > 0){
+					foreach(UIBaseInAppButton button in inAppButtons){
+						if(button != null && button.Item != null && p.id.Equals(button.Item.Id)){
+							if(GameSettings.Instance.showTestLogs)
+								Debug.Log("UIBaseInAppWin - Showing price info on the In App Button with id "+button.Item.Id);
+							
+							button.showPriceInfo(p.localizedPrice);
+							break;
+						}
+						else{
+							if(GameSettings.Instance.showTestLogs){
+								if(button == null)
+									Debug.Log("UIBaseInAppWin - In App Button is null");
+								else if(button.Item == null)
+									Debug.Log("UIBaseInAppWin - Item of In App Button is null");
+							}
+						}
 					}
 				}
 			}
@@ -553,6 +566,9 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	}
 	
 	public void OnPurchaseCompleted(CEvent e){
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppWin - Purchase Completed");
+		
 		//		string id = e.data as string;
 		UIBaseInAppItem item = e.data as UIBaseInAppItem;
 		
@@ -588,7 +604,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		
 		if(inAppButtons != null && inAppButtons.Count > 0){
 			foreach(UIBaseInAppButton b in inAppButtons){
-				if(b.Item != null && item != null && b.Item.Id.Equals(item.Id)){
+				if(b != null && b.Item != null && item != null && b.Item.Id.Equals(item.Id)){
 					res = b;
 					break;
 				}
@@ -599,6 +615,9 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	}
 	
 	public void OnPurchaseFailed(CEvent e){
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppWin - Purchase Failed");
+		
 		if(processingPurchaseWin)
 			UIController.Instance.Manager.close(processingPurchaseWin);
 		
@@ -611,6 +630,9 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	
 	
 	public void OnRestorePurchaseError(CEvent e){
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppWin - Restore Purchase Error");
+		
 		if(restorePurchasesCheckingWin)
 			UIController.Instance.Manager.close(restorePurchasesCheckingWin);
 		
@@ -619,6 +641,9 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 	}
 	
 	public void OnRestorePurchaseSuccess(CEvent e){
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppWin - Restore Purchase Success");
+		
 		//restore non-consumable products (like quit ads)
 		foreach(UIBaseInAppItem i in CoreIAPManager.Instance.Products){
 			if(i.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE){

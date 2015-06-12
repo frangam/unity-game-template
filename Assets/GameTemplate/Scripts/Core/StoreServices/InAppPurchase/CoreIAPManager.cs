@@ -135,10 +135,12 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			AndroidInAppPurchaseManager.ActionProductConsumed  -= OnProductConsumed;
 			AndroidInAppPurchaseManager.ActionBillingSetupFinished -= OnBillingConnected;
 			#elif UNITY_IPHONE
-			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
-			IOSInAppPurchaseManager.instance.OnTransactionComplete -= OnTransactionComplete;
-			IOSInAppPurchaseManager.instance.OnVerificationComplete -= OnVerificationComplete;
-			IOSInAppPurchaseManager.instance.OnRestoreComplete -= OnRestoreComplete;
+			if(IOSInAppPurchaseManager.instance != null){
+				IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
+				IOSInAppPurchaseManager.instance.OnTransactionComplete -= OnTransactionComplete;
+				IOSInAppPurchaseManager.instance.OnVerificationComplete -= OnVerificationComplete;
+				IOSInAppPurchaseManager.instance.OnRestoreComplete -= OnRestoreComplete;
+			}
 			#elif WP8
 			WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
 			WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.PRODUCT_PURCHASE_FINISHED, OnPurchaseFinished);
@@ -176,7 +178,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			}
 		}
 		#elif UNITY_IPHONE
-		if(IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
+		if(IOSInAppPurchaseManager.instance != null && IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
 			//			IOSInAppPurchaseManager.instance.restorePurchases();
 		}
 		#endif
@@ -186,7 +188,8 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		#if UNITY_ANDROID
 		AndroidInAppPurchaseManager.instance.purchase(SKU);
 		#elif UNITY_IPHONE
-		IOSInAppPurchaseManager.instance.buyProduct(SKU);
+		if(IOSInAppPurchaseManager.instance != null)
+			IOSInAppPurchaseManager.instance.buyProduct(SKU);
 		#elif UNITY_WP8
 		WP8InAppPurchasesManager.instance.purchase(SKU);			
 		#endif
@@ -219,7 +222,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				OnProcessingRestorePurchases();
 		}
 		#elif UNITY_IPHONE
-		if(IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
+		if(IOSInAppPurchaseManager.instance != null && IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
 			IOSInAppPurchaseManager.instance.restorePurchases();
 		}
 		#endif
@@ -274,11 +277,13 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		AndroidInAppPurchaseManager.instance.loadStore();
 		
 		#elif UNITY_IPHONE
-		IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
-		IOSInAppPurchaseManager.instance.OnTransactionComplete += OnTransactionComplete;
-		IOSInAppPurchaseManager.instance.OnVerificationComplete += OnVerificationComplete;
-		IOSInAppPurchaseManager.instance.OnRestoreComplete += OnRestoreComplete;
-		IOSInAppPurchaseManager.instance.loadStore();
+		if(IOSInAppPurchaseManager.instance != null){
+			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
+			IOSInAppPurchaseManager.instance.OnTransactionComplete += OnTransactionComplete;
+			IOSInAppPurchaseManager.instance.OnVerificationComplete += OnVerificationComplete;
+			IOSInAppPurchaseManager.instance.OnRestoreComplete += OnRestoreComplete;
+			IOSInAppPurchaseManager.instance.loadStore();
+		}
 		#elif UNITY_WP8
 		WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
 		WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.PRODUCT_PURCHASE_FINISHED, OnPurchaseFinished);
@@ -401,12 +406,18 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		}
 		
 		switch(responce.state) {
-		case InAppPurchaseState.Purchased:
 		case InAppPurchaseState.Restored:
-			//Our product been succsesly purchased or restored
-			//So we need to provide content to our user 
-			//depends on productIdentifier
-			OnProcessingPurchaseProduct(responce.productIdentifier);
+			//			OnProcessingRestorePurchases();
+			//			break;
+		case InAppPurchaseState.Purchased:
+			if(responce.state == InAppPurchaseState.Purchased){
+				//Our product been succsesly purchased or restored
+				//So we need to provide content to our user 
+				//depends on productIdentifier
+				OnProcessingPurchaseProduct(responce.productIdentifier);		
+			}
+			
+			
 			//Warning: Use 
 			//SANDBOX_VERIFICATION_SERVER url (https://sandbox.itunes.apple.com/verifyReceipt) during app testing  and 
 			//APPLE_VERIFICATION_SERVER url  (https://buy.itunes.apple.com/verifyReceipt) on production.
@@ -414,6 +425,8 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			IOSInAppPurchaseManager.instance.verifyLastPurchase(verifURL);
 			break;
 		case InAppPurchaseState.Deferred:
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("CoreIAManager - OnTransactionComplete [State: Deferred]");
 			//iOS 8 introduces Ask to Buy, which lets 
 			//parents approve any purchases initiated by children
 			//You should update your UI to reflect this 
@@ -426,6 +439,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			OnProcessingPurchaseProduct(responce.productIdentifier, false, true);
 			break;
 		case InAppPurchaseState.Failed:
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("CoreIAManager - OnTransactionComplete [State: Failed]");
+			
 			OnProcessingPurchaseProduct(responce.productIdentifier, false);
 			
 			//Our purchase flow is failed.

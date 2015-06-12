@@ -52,6 +52,9 @@ public class UIBaseInAppButton : UIBaseButton {
 		
 		bool active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 		
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("UIBaseInAppButton - active ? " + active);
+		
 		if(active){
 			
 			Item.load();
