@@ -31,12 +31,14 @@ public class UIShareButton : UIBaseButton {
 		#else
 		switch(network){
 		case SocialNetwork.FACEBOOK:
+			gameObject.SetActive(GameSettings.Instance.USE_FACEBOOK);
+			
 			if(activeIfLoggedIn)
 				gameObject.SetActive(FB.IsLoggedIn);
 			break;
 			
 		case SocialNetwork.TWITTER:
-			
+			gameObject.SetActive(GameSettings.Instance.USE_TWITTER);
 			break;
 		}
 		#endif
