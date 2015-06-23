@@ -85,6 +85,7 @@ public class GameSettingsEditor : Editor {
 		socialNetworksSettings();
 		//		EditorGUILayout.Space();
 		rankingIdsSettings();
+		achievements();
 		//		EditorGUILayout.Space();
 		inAppBilling();
 		
@@ -378,6 +379,7 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.Space();
 			
+			Color prevCol = GUI.color;
 			
 			if(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE){
 				if(GameSettings.Instance.allInAppBillingIDS.Count == 0) {
@@ -397,11 +399,12 @@ public class GameSettingsEditor : Editor {
 					
 					GameSettings.Instance.showInAppBillingIDsPack[GameSettings.Instance.allInAppBillingIDS[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showInAppBillingIDsPack[GameSettings.Instance.allInAppBillingIDS[i]], "InApp Billing IDs for Game Version "+i.ToString());
 					
-					
+					GUI.color = Color.red;
 					if(GUILayout.Button("-",  GUILayout.Width(30))) {
 						GameSettings.Instance.allInAppBillingIDS.Remove(idsPack);
 						break;
 					}
+					GUI.color = prevCol;
 					EditorGUILayout.EndHorizontal();
 					
 					inAppBillingForEveryGameMultiversion(i);
@@ -409,9 +412,10 @@ public class GameSettingsEditor : Editor {
 				}
 				
 				
-				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
-				if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				EditorGUILayout.BeginHorizontal();
+				GUI.color = Color.green;
+				if(GUILayout.Button("New Pack")) {
 					if(GameSettings.Instance.allInAppBillingIDS == null || (GameSettings.Instance.allInAppBillingIDS != null && GameSettings.Instance.allInAppBillingIDS.Count == 0))
 						GameSettings.Instance.allInAppBillingIDS.Add(new InAppBillingIDPack(0, null));
 					else{
@@ -420,6 +424,7 @@ public class GameSettingsEditor : Editor {
 						GameSettings.Instance.allInAppBillingIDS.Add(new InAppBillingIDPack(lastPackId+1, null));
 					}
 				}
+				GUI.color = prevCol;
 				EditorGUILayout.EndHorizontal();
 				
 				//			EditorGUILayout.Space();
@@ -430,10 +435,11 @@ public class GameSettingsEditor : Editor {
 	
 	protected virtual void inAppBillingForEveryGameMultiversion(int index){
 		if((GameSettings.Instance.allInAppBillingIDS != null && GameSettings.Instance.allInAppBillingIDS.Count > 0)){
-			EditorGUILayout.BeginVertical(GUI.skin.box);
-			
+			Color prevCol = GUI.color;
 			
 			if(GameSettings.Instance.showInAppBillingIDsPack[GameSettings.Instance.allInAppBillingIDS[index]]){
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
 				if(GameSettings.Instance.allInAppBillingIDS[index].ids == null || (GameSettings.Instance.allInAppBillingIDS[index].ids != null && GameSettings.Instance.allInAppBillingIDS[index].ids.Count == 0)) {
 					EditorGUILayout.HelpBox("No In App Billing IDs Registred",MessageType.None);
 				}
@@ -446,11 +452,12 @@ public class GameSettingsEditor : Editor {
 						EditorGUILayout.LabelField("ID "+i.ToString()+":", GUILayout.Width(120));
 						GameSettings.Instance.allInAppBillingIDS[index].ids[i] = EditorGUILayout.TextField(GameSettings.Instance.allInAppBillingIDS[index].ids[i]).Trim();
 						
-						
+						//						GUI.color = Color.red;
 						if(GUILayout.Button("-",  GUILayout.Width(30))) {
 							GameSettings.Instance.allInAppBillingIDS[index].ids.Remove(d);
 							break;
 						}
+						//						GUI.color = prevCol;
 						EditorGUILayout.EndHorizontal();
 						i++;
 					}
@@ -458,17 +465,404 @@ public class GameSettingsEditor : Editor {
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
+				GUI.color =  Color.cyan;
 				if(GUILayout.Button("+",  GUILayout.Width(60))) {
 					GameSettings.Instance.allInAppBillingIDS[index].ids.Add("");
 				}
+				GUI.color = prevCol;
 				EditorGUILayout.EndHorizontal();
 				EditorGUILayout.Space();
+				
+				EditorGUILayout.EndVertical();
 			}
-			EditorGUILayout.EndVertical();
+		}
+	}
+	
+	protected virtual void allAchievementsActions(){
+		GameSettings.Instance.showAchievementsActionsSettings = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsActionsSettings, "Achievement Actions");
+		if (GameSettings.Instance.showAchievementsActionsSettings) {	
+			
+			
+			Color prevCol = GUI.color;
+			
+			if(GameSettings.Instance.achievementsActions.Count == 0) {
+				EditorGUILayout.HelpBox("No Achievements Actions Registred",MessageType.None);
+			}
+			else{
+				EditorGUILayout.HelpBox("Achievements Actions for ALL Game Multiversions", MessageType.None);
+			}
+			
+			int i = 0;
+			EditorGUI.indentLevel++;
+			foreach(GameAction action in GameSettings.Instance.achievementsActions) {
+				
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
+				if(!GameSettings.Instance.showAchievementsActions.ContainsKey(action))
+					GameSettings.Instance.showAchievementsActions.Add(action, true);
+				
+				GameSettings.Instance.showAchievementsActions[action] = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsActions[action], "Action"+action.Id);
+				if(GameSettings.Instance.showAchievementsActions[action]){
+					
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("ID:", GUILayout.Width(120));
+					GameSettings.Instance.achievementsActions[i].Id = EditorGUILayout.TextField(GameSettings.Instance.achievementsActions[i].Id).Trim();
+					EditorGUILayout.EndHorizontal();
+					
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("Initial Value:", GUILayout.Width(120));
+					GameSettings.Instance.achievementsActions[i].InitialValue = EditorGUILayout.IntField(GameSettings.Instance.achievementsActions[i].InitialValue);
+					EditorGUILayout.EndHorizontal();
+					
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("Activation Condition:", GUILayout.Width(120));
+					GameSettings.Instance.achievementsActions[i].ActivationCondition = (AchieveCondition) EditorGUILayout.EnumPopup(GameSettings.Instance.achievementsActions[i].ActivationCondition);
+					EditorGUILayout.EndHorizontal();
+					
+					if(GameSettings.Instance.achievementsActions[i].ActivationCondition != AchieveCondition.ACTIVE_IF_BETWEEN){
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.LabelField("Activation Value:", GUILayout.Width(120));
+						GameSettings.Instance.achievementsActions[i].ActivationValue = EditorGUILayout.IntField(GameSettings.Instance.achievementsActions[i].ActivationValue);
+						EditorGUILayout.EndHorizontal();
+					}
+					else{
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.LabelField("Interval Value:", GUILayout.Width(120));
+						EditorGUILayout.EndHorizontal();
+						EditorGUI.indentLevel++;
+						EditorGUILayout.BeginHorizontal();
+						GameSettings.Instance.achievementsActions[i].ActivationInterval.From = EditorGUILayout.IntField("From", GameSettings.Instance.achievementsActions[i].ActivationInterval.From);
+						EditorGUILayout.EndHorizontal();
+						EditorGUILayout.BeginHorizontal();
+						GameSettings.Instance.achievementsActions[i].ActivationInterval.To = EditorGUILayout.IntField("To", GameSettings.Instance.achievementsActions[i].ActivationInterval.To);
+						EditorGUILayout.EndHorizontal();
+						EditorGUI.indentLevel--;
+					}
+					
+					
+					
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					
+					GUI.color = Color.red;
+					if(GUILayout.Button("Remove",  GUILayout.Width(80))) {
+						GameSettings.Instance.achievementsActions.Remove(action);
+						break;
+					}
+					GUI.color = prevCol;
+					
+					EditorGUILayout.EndHorizontal();
+					EditorGUILayout.Space();
+				}
+				i++;
+				EditorGUILayout.EndVertical();
+			}
+			EditorGUI.indentLevel--;
+			
+			EditorGUILayout.Space();
+			EditorGUILayout.BeginHorizontal();
+			GUI.color = Color.green;
+			if(GUILayout.Button("New Action")) {
+				if(GameSettings.Instance.achievementsActions == null || (GameSettings.Instance.achievementsActions != null && GameSettings.Instance.achievementsActions.Count == 0))
+					GameSettings.Instance.achievementsActions.Add(new GameAction("0", AchieveCondition.ACTIVE_IF_EQUALS_TO, 0));
+				else{
+					GameAction lastPack = GameSettings.Instance.achievementsActions[GameSettings.Instance.achievementsActions.Count-1];
+					int lastPackId = 0;
+					
+					if(int.TryParse(lastPack.Id, out lastPackId))
+						GameSettings.Instance.achievementsActions.Add(new GameAction((lastPackId+1).ToString(), lastPack.ActivationCondition ,lastPack.InitialValue));
+				}
+			}
+			GUI.color = prevCol;
+			EditorGUILayout.EndHorizontal();			
+		}
+	}
+	
+	protected virtual void achievements(){
+		GameSettings.Instance.showAchievementsSettings = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsSettings, "Achievements Settings");
+		if (GameSettings.Instance.showAchievementsSettings) {	
+			EditorGUI.indentLevel++;
+			
+			allAchievementsActions();
+			//			EditorGUILayout.Space();
+			
+			GameSettings.Instance.showAchievementsPacksSettings = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsPacksSettings, "Achievements Packs");
+			if (GameSettings.Instance.showAchievementsPacksSettings) {	
+				
+				
+				Color prevCol = GUI.color;
+				
+				if(GameSettings.Instance.achievementsPacks.Count == 0) {
+					EditorGUILayout.HelpBox("No Achievements for Game Multiversion Registred",MessageType.None);
+				}
+				else{
+					EditorGUILayout.HelpBox("Achievements by Each Game Multiversion", MessageType.None);
+				}
+				
+				int i = 0;
+				EditorGUI.indentLevel++;
+				foreach(AchievementsPack pack in GameSettings.Instance.achievementsPacks) {
+					EditorGUILayout.BeginHorizontal();
+					if(!GameSettings.Instance.showAchievementsPack.ContainsKey(GameSettings.Instance.achievementsPacks[i]))
+						GameSettings.Instance.showAchievementsPack.Add(GameSettings.Instance.achievementsPacks[i], true);
+					
+					GameSettings.Instance.showAchievementsPack[GameSettings.Instance.achievementsPacks[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsPack[GameSettings.Instance.achievementsPacks[i]], "Achievements for Game Version "+i.ToString());
+					
+					GUI.color = Color.red;
+					if(GUILayout.Button("-",  GUILayout.Width(30))) {
+						GameSettings.Instance.achievementsPacks.Remove(pack);
+						break;
+					}
+					GUI.color = prevCol;
+					EditorGUILayout.EndHorizontal();
+					
+					achievementsForEveryGameMultiversion(i);
+					i++;
+				}
+				EditorGUI.indentLevel--;
+				
+				EditorGUILayout.Space();
+				EditorGUILayout.BeginHorizontal();
+				GUI.color = Color.green;
+				if(GUILayout.Button("New Pack")) {
+					if(GameSettings.Instance.achievementsPacks == null || (GameSettings.Instance.achievementsPacks != null && GameSettings.Instance.achievementsPacks.Count == 0))
+						GameSettings.Instance.achievementsPacks.Add(new AchievementsPack(0, null));
+					else{
+						AchievementsPack lastPack = GameSettings.Instance.achievementsPacks[GameSettings.Instance.achievementsPacks.Count-1];
+						int lastPackId = lastPack.gameVersion;
+						GameSettings.Instance.achievementsPacks.Add(new AchievementsPack(lastPackId+1, lastPack.achievements));
+					}
+				}
+				GUI.color = prevCol;
+				EditorGUILayout.EndHorizontal();
+				
+				//			EditorGUILayout.Space();
+			}
+			EditorGUI.indentLevel--;
+		}
+	}
+	
+	protected virtual void achievementsForEveryGameMultiversion(int packIndex){
+		if((GameSettings.Instance.achievementsPacks != null && GameSettings.Instance.achievementsPacks.Count > 0)){
+			
+			Color prevCol = GUI.color;
+			
+			
+			if(GameSettings.Instance.showAchievementsPack[GameSettings.Instance.achievementsPacks[packIndex]]){
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
+				if(GameSettings.Instance.achievementsPacks[packIndex].achievements == null || (GameSettings.Instance.achievementsPacks[packIndex].achievements != null && GameSettings.Instance.achievementsPacks[packIndex].achievements.Count == 0)) {
+					EditorGUILayout.HelpBox("No In App Billing IDs Registred",MessageType.None);
+				}
+				else{
+					EditorGUILayout.Space();
+					
+					int i = 0;
+					
+					
+					foreach(Achievement achievement in GameSettings.Instance.achievementsPacks[packIndex].achievements) {
+						
+						
+						if(!GameSettings.Instance.showSpecificAchievementsOfAPack.ContainsKey(GameSettings.Instance.achievementsPacks[packIndex].achievements[i]))
+							GameSettings.Instance.showSpecificAchievementsOfAPack.Add(GameSettings.Instance.achievementsPacks[packIndex].achievements[i], true);
+						
+						GameSettings.Instance.showSpecificAchievementsOfAPack[GameSettings.Instance.achievementsPacks[packIndex].achievements[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showSpecificAchievementsOfAPack[GameSettings.Instance.achievementsPacks[packIndex].achievements[i]], "Achievement "+(i+1).ToString());
+						if(GameSettings.Instance.showSpecificAchievementsOfAPack[GameSettings.Instance.achievementsPacks[packIndex].achievements[i]]){
+							EditorGUILayout.BeginVertical(GUI.skin.box);
+							
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField("ID:", GUILayout.Width(120));
+							GameSettings.Instance.achievementsPacks[packIndex].achievements[i].Id = EditorGUILayout.TextField(GameSettings.Instance.achievementsPacks[packIndex].achievements[i].Id).Trim();
+							EditorGUILayout.EndHorizontal();
+							
+							
+							specificAchievementsActions(packIndex, i);
+							
+							
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.Space();
+							
+							if(GUILayout.Button("Remove Achievement",  GUILayout.Width(180))) {
+								GameSettings.Instance.achievementsPacks[packIndex].achievements.Remove(achievement);
+								break;
+							}
+							
+							EditorGUILayout.EndHorizontal();
+							EditorGUILayout.Space();
+							
+							
+							EditorGUILayout.EndVertical();
+						}
+						
+						i++;
+					}
+				}
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.Space();
+				GUI.color = Color.cyan;
+				if(GUILayout.Button("New Achievement",  GUILayout.Width(120))) {
+					GameSettings.Instance.achievementsPacks[packIndex].achievements.Add(new Achievement());
+				}
+				GUI.color = prevCol;
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.Space();
+				
+				
+				EditorGUILayout.EndVertical();
+			}
 		}
 	}
 	
 	
+	
+	protected virtual void specificAchievementsActions(int packIndex, int achievementIndex){
+		if(GameSettings.Instance.achievementsPacks != null && GameSettings.Instance.achievementsPacks.Count > 0 && GameSettings.Instance.achievementsPacks[packIndex].achievements != null && GameSettings.Instance.achievementsPacks[packIndex].achievements.Count > 0){
+			if(!GameSettings.Instance.showAchActionsPack.ContainsKey(GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]))
+				GameSettings.Instance.showAchActionsPack.Add(GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex], true);
+			
+			GameSettings.Instance.showAchActionsPack[GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]] = EditorGUILayout.Foldout(GameSettings.Instance.showAchActionsPack[GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]], "Actions");
+			if(GameSettings.Instance.showAchActionsPack[GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]]){
+				//				EditorGUILayout.BeginVertical(GUI.skin.box);
+				Color prevCol = GUI.color;
+				
+				if(!GameSettings.Instance.achPackActionsSelected.ContainsKey(GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]))
+					GameSettings.Instance.achPackActionsSelected.Add(GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex], 0);
+				
+				bool notHasActions = GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions == null 
+					|| (GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions != null 
+					    && GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions.Count == 0);
+				
+				if(notHasActions)
+					EditorGUILayout.HelpBox("No Game Actions Registred",MessageType.None);
+				
+				
+				
+				if(!notHasActions) {
+					EditorGUILayout.Space();
+					
+					int i = 0;
+					
+					
+					
+					
+					foreach(GameAction action in GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions) {
+						EditorGUILayout.BeginVertical(GUI.skin.box);
+						
+						
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.LabelField("Action:", GUILayout.Width(120));
+						EditorGUILayout.HelpBox("Action: "+action.Id, MessageType.None);
+						
+						
+						
+						
+						
+						if(GUILayout.Button("-",  GUILayout.Width(30))) {
+							GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions.Remove(action);
+							break;
+						}
+						
+						EditorGUILayout.EndHorizontal();
+						EditorGUILayout.Space();
+						i++;
+						
+						EditorGUILayout.EndVertical();
+					}
+				}
+				
+				//----------------------------------
+				//ADD Button
+				if(GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions.Count < GameSettings.Instance.achievementsActions.Count){
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					EditorGUILayout.LabelField("Select",  GUILayout.MinWidth(30));
+					
+					//popup to select a specific game action
+					List<string> options = GameSettings.Instance.AllNotSelectedAchievementActionsNames(packIndex, achievementIndex);
+					GameSettings.Instance.achPackActionsSelected[GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]] = EditorGUILayout.Popup(GameSettings.Instance.achPackActionsSelected[GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]], options.ToArray(), GUILayout.Width(120));
+					
+					
+					GUI.color = Color.cyan;
+					if(GUILayout.Button("Add",  GUILayout.Width(40))) {
+						int selectedActionIndex = GameSettings.Instance.achPackActionsSelected[GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]];
+						int correctIndex = getGerenalActionIndexSelectedFromPopup(options, selectedActionIndex);
+						
+						
+						if(correctIndex < GameSettings.Instance.achievementsActions.Count 
+						   && !GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions.Contains(GameSettings.Instance.achievementsActions[correctIndex])
+						   && !GameSettings.Instance.containedActionID(GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions, GameSettings.Instance.achievementsActions[correctIndex])){
+							GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex].Actions.Add(GameSettings.Instance.achievementsActions[correctIndex]);
+							GameSettings.Instance.achPackActionsSelected[GameSettings.Instance.achievementsPacks[packIndex].achievements[achievementIndex]] = 0;
+						}
+					}
+					GUI.color = prevCol;
+					EditorGUILayout.EndHorizontal();
+					EditorGUILayout.Space();
+				}
+				else{
+					EditorGUILayout.HelpBox("All Game Actions Added", MessageType.Info);
+				}
+				//----------------------------------
+				
+				
+				
+				//				EditorGUILayout.EndVertical();
+			}
+		}
+	}
+	
+	private int getGerenalActionIndexSelectedFromPopup(List<string> options, int selectedOption){
+		int index = 0;
+		string selectedActionId = options[selectedOption].Replace(" ", "").Replace("Action", "");
+		
+		for(int i=0; i<GameSettings.Instance.achievementsActions.Count; i++){
+			if(GameSettings.Instance.achievementsActions[i].Id.Equals(selectedActionId)){
+				index = i;
+				break;
+			}
+		}
+		
+		return index;
+	}
+	
+	//	protected virtual void achievementsActions(){
+	//		GameSettings.Instance.showAppleAppID = EditorGUILayout.Foldout(GameSettings.Instance.showAppleAppID, "Apple App IDs");
+	//		if (GameSettings.Instance.showAppleAppID) {
+	//			EditorGUILayout.BeginVertical(GUI.skin.box);
+	//			
+	//			if(GameSettings.Instance.appleAppIDs.Count == 0) {
+	//				EditorGUILayout.HelpBox("No Apple App ID Registred",MessageType.Error);
+	//			}
+	//			
+	//			int i = 0;
+	//			foreach(string d in GameSettings.Instance.appleAppIDs) {
+	//				EditorGUILayout.BeginHorizontal();
+	//				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
+	//				GameSettings.Instance.appleAppIDs[i] = EditorGUILayout.TextField(GameSettings.Instance.appleAppIDs[i]).Trim();
+	//				
+	//				
+	//				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+	//					GameSettings.Instance.appleAppIDs.Remove(d);
+	//					break;
+	//				}
+	//				EditorGUILayout.EndHorizontal();
+	//				i++;
+	//			}
+	//			
+	//			
+	//			EditorGUILayout.BeginHorizontal();
+	//			EditorGUILayout.Space();
+	//			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+	//				GameSettings.Instance.appleAppIDs.Add("");
+	//			}
+	//			EditorGUILayout.EndHorizontal();
+	//			EditorGUILayout.Space();
+	//			
+	//			EditorGUILayout.EndVertical();
+	//		}
+	
+	//	}
 	
 	private void handleDifficulties(){
 		GameSettings.Instance.showGameDifficulties = EditorGUILayout.Foldout(GameSettings.Instance.showGameDifficulties, gameDiffLabel);
@@ -1120,6 +1514,8 @@ public class GameSettingsEditor : Editor {
 		}
 		EditorGUILayout.Space();
 	}
+	
+	
 	
 	protected virtual void characterControl(){
 		GameSettings.Instance.showCharacterControlSettings = EditorGUILayout.Foldout(GameSettings.Instance.showCharacterControlSettings, "Character Control");

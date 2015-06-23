@@ -12,73 +12,81 @@ public class GameSettings : ScriptableObject {
 	//--------------------------------------
 	// Flags to control showing in editor
 	//--------------------------------------
-	public bool showGameInfo												= false;
-	public bool showGameNames 												= false;
-	public bool showBuildPackageIDs											= false;
-	public bool showAppleAppID												= false;
-	public bool showGameDifficulties			 							= false;
-	public bool showMoneySettings 											= false;
-	public bool showAdsSettings 											= false;
-	public bool showSocialNetworksSettings 									= false;
-	public bool showAppLinksSettings 										= false;
-	public bool showAndroidLinks											= false;
-	public bool showiOSLinks												= false;
-	public bool showAmazonLinks												= false;
-	public bool showLogoLinksIDS											= false;
-	public bool showCharacterControlSettings 								= false;
-	public bool showRankingSettings 										= false;
-	public bool showUniqueRankingSettings 									= false;
-	public bool showUniqueSurvivalRankingSettings 							= false;
-	public bool showWorldRankingSettings 									= false;
-	public bool showSurvivalLevelsRankingSettings 							= false;
-	public bool showDifficultiesRankingSettings 							= false;
-	public bool showInAppBillingSettings 									= false;
-	public bool showGooglePlayServicesSettings 								= false;
-	public bool showGameCenterSettings 										= false;
-	public Dictionary<InAppBillingIDPack, bool> showInAppBillingIDsPack		= new Dictionary<InAppBillingIDPack, bool>();
-	
+	public bool 								showGameInfo												= false;
+	public bool 								showGameNames 												= false;
+	public bool 								showBuildPackageIDs											= false;
+	public bool 								showAppleAppID												= false;
+	public bool 								showGameDifficulties			 							= false;
+	public bool 								showMoneySettings 											= false;
+	public bool 								showAdsSettings 											= false;
+	public bool 								showSocialNetworksSettings 									= false;
+	public bool 								showAppLinksSettings 										= false;
+	public bool 								showAndroidLinks											= false;
+	public bool 								showiOSLinks												= false;
+	public bool 								showAmazonLinks												= false;
+	public bool 								showLogoLinksIDS											= false;
+	public bool 								showCharacterControlSettings 								= false;
+	public bool 								showRankingSettings 										= false;
+	public bool 								showUniqueRankingSettings 									= false;
+	public bool 								showUniqueSurvivalRankingSettings 							= false;
+	public bool 								showWorldRankingSettings 									= false;
+	public bool 								showSurvivalLevelsRankingSettings 							= false;
+	public bool 								showDifficultiesRankingSettings 							= false;
+	public bool 								showInAppBillingSettings 									= false;
+	public bool 								showGooglePlayServicesSettings 								= false;
+	public bool 								showGameCenterSettings 										= false;
+	public bool 								showAchievementsSettings 									= false;
+	public bool 								showAchievementsActionsSettings 							= false;
+	public bool 								showAchievementsPacksSettings 								= false;
+	public Dictionary<InAppBillingIDPack, bool> showInAppBillingIDsPack										= new Dictionary<InAppBillingIDPack, bool>();
+	public Dictionary<AchievementsPack, bool> 	showAchievementsPack										= new Dictionary<AchievementsPack, bool>();
+	public Dictionary<Achievement, bool> 		showAchActionsPack											= new Dictionary<Achievement, bool>();
+	public Dictionary<Achievement, bool> 		showSpecificAchievementsOfAPack								= new Dictionary<Achievement, bool>();
+	public Dictionary<GameAction, bool> 		showAchievementsActions										= new Dictionary<GameAction, bool>();
 	
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
-	public const string VERSION_NUMBER 					= "1.0";
-	public static int 	contInterstitialAdsDEFAULT 		= 0;
-	public static int 	contInterstitialAdsHARDMODE 	= 0;
-	public static int 	contInterstitialAdsNORMALMODE 	= 0;
-	public static int 	contInterstitialAdsEASYMODE 	= 0;
-	public static int 	lastLevelUnlocked 				= 1;
-	public static bool 	mandatoryTutorial 				= false; //if it is mandatory to do tutorial before to play
-	public static bool 	firstTimePlayerInviteFriends 	= false; //show invite friends screen if it is the firs time
-	public static int 	maxLevels 						= 10;
+	public const string	 						VERSION_NUMBER 					= "1.0";
+	public static int 							contInterstitialAdsDEFAULT 		= 0;
+	public static int 							contInterstitialAdsHARDMODE 	= 0;
+	public static int 							contInterstitialAdsNORMALMODE 	= 0;
+	public static int 							contInterstitialAdsEASYMODE 	= 0;
+	public static int 							lastLevelUnlocked 				= 1;
+	public static bool 							mandatoryTutorial 				= false; //if it is mandatory to do tutorial before to play
+	public static bool 							firstTimePlayerInviteFriends 	= false; //show invite friends screen if it is the firs time
+	public static int 							maxLevels 						= 10;
 	
 	
 	//STATIC SETTINGS
-	public static float				musicVolume						= 1f;
-	public static float 			soundVolume 					= 1f;
-	public static float 			graphicsDetails					= 1f;
+	public static float							musicVolume						= 1f;
+	public static float 						soundVolume 					= 1f;
+	public static float 						graphicsDetails					= 1f;
 	
 	//SETTINGS
-	public List<GameDifficulty> 	gameDifficulties 				= new List<GameDifficulty>(){GameDifficulty.NONE};
-	public List<string> 			appleAppIDs				 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 			gameNames				 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 			buildPackagesIDs		 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 			androidShortLinks		 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 			iOSShortLinks			 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 			amazonShortLinks		 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 			logoLinks				 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 			uniqueRankingIDS 				= new List<string>(); //for every game version (versinable game)
-	public List<string> 			uniqueSurvivalRankingIDS 		= new List<string>(); //for every game version (versinable game)
-	public List<List<string>>		worldLevelRankingIDS 			= new List<List<string>>(); //for every game version (versinable game)
-	public List<List<string>>		survivalLevelRankingIDS 		= new List<List<string>>(); //for every game version (versinable game)
-	//	public List<string> 			inAppBillingIDS 				= new List<string>();
-	public List<InAppBillingIDPack> allInAppBillingIDS 				= new List<InAppBillingIDPack>();
-	public bool 					FX_AND_MUSIC_ARE_THE_SAME 		= true;
-	public bool 					HAS_INITIAL_TUTORIAL 			= false;
-	public bool 					showMissionsWinAtStart			= false;
-	public bool 					showLoadIndicatorInLoadingScene	= true;
-	public bool 					USE_IN_APP_PURCHASES_SERVICE 	= true;
-	public bool 					ENABLE_ANDROID_IMMERSIVE_MODE	= true;
-	public bool 					showTestLogs					= false; //show debug log for test or not
+	public List<GameDifficulty> 				gameDifficulties 				= new List<GameDifficulty>(){GameDifficulty.NONE};
+	public List<string> 						appleAppIDs				 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						gameNames				 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						buildPackagesIDs		 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						androidShortLinks		 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						iOSShortLinks			 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						amazonShortLinks		 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						logoLinks				 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						uniqueRankingIDS 				= new List<string>(); //for every game version (versinable game)
+	public List<string> 						uniqueSurvivalRankingIDS 		= new List<string>(); //for every game version (versinable game)
+	public List<List<string>>					worldLevelRankingIDS 			= new List<List<string>>(); //for every game version (versinable game)
+	public List<List<string>>					survivalLevelRankingIDS 		= new List<List<string>>(); //for every game version (versinable game)
+	public List<AchievementsPack> 				achievementsPacks 				= new List<AchievementsPack>(); //for every game version (versinable game)
+	public List<GameAction> 					achievementsActions				= new List<GameAction>(); //for every game version (versinable game)
+	public Dictionary<Achievement, int> 		achPackActionsSelected 			= new Dictionary<Achievement, int>();
+	public List<InAppBillingIDPack> 			allInAppBillingIDS 				= new List<InAppBillingIDPack>(); //for every game version (versinable game)
+	public bool 								FX_AND_MUSIC_ARE_THE_SAME 		= true;
+	public bool 								HAS_INITIAL_TUTORIAL 			= false;
+	public bool 								showMissionsWinAtStart			= false;
+	public bool 								showLoadIndicatorInLoadingScene	= true;
+	public bool 								USE_IN_APP_PURCHASES_SERVICE 	= true;
+	public bool 								ENABLE_ANDROID_IMMERSIVE_MODE	= true;
+	public bool 								showTestLogs					= false; //show debug log for test or not
 	
 	//--------------------------------------
 	// Constants
@@ -279,6 +287,68 @@ public class GameSettings : ScriptableObject {
 	public List<string> CurrentInAppBillingIDs{
 		get{ return allInAppBillingIDS[currentGameMultiversion].ids;}
 	}
+	public List<string> AllAchievementActionsNames(){
+		List<string> res = new List<string>();
+		
+		if(achievementsActions != null && achievementsActions.Count > 0){
+			foreach(GameAction ga in achievementsActions){
+				string name = "Action "+ga.Id;
+				
+				if(!res.Contains(name))
+					res.Add(name);
+			}
+		}
+		
+		return res;
+	}
+	
+	public List<string> AllNotSelectedAchievementActionsNames(int pack, int achID){
+		List<string> res = new List<string>();
+		List<string> selectedActionIDs = new List<string>();
+		
+		if(GameSettings.Instance.achievementsPacks[pack] != null && GameSettings.Instance.achievementsPacks[pack].achievements[achID] != null
+		   && GameSettings.Instance.achievementsPacks[pack].achievements[achID].Actions != null && GameSettings.Instance.achievementsPacks[pack].achievements[achID].Actions.Count > 0){
+			
+			
+			if(achievementsActions != null && achievementsActions.Count > 0){
+				foreach(GameAction ga in achievementsActions){
+					if(!GameSettings.Instance.achievementsPacks[pack].achievements[achID].Actions.Contains(ga) && !containedActionID(GameSettings.Instance.achievementsPacks[pack].achievements[achID].Actions, ga)){
+						string name = "Action "+ga.Id;
+						
+						if(!res.Contains(name))
+							res.Add(name);
+					}
+				}
+			}
+		}
+		else{
+			res = AllAchievementActionsNames();
+		}
+		
+		return res;
+	}
+	
+	public bool containedActionID(List<GameAction> actions, GameAction ga){
+		bool contained = false;
+		
+		foreach(GameAction a in actions){
+			contained = a.Id.Equals(ga.Id);
+			
+			if(contained)
+				break;
+		}
+		
+		return contained;
+	}
+	
+	public List<GameAction> CurrentAchievementsActions{
+		get{return achievementsActions;}
+	}
+	
+	public List<Achievement> CurrentAchievements{
+		get{return achievementsPacks[currentGameMultiversion].achievements;}
+	}
+	
 	
 	
 	//--------------------------------------

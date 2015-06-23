@@ -7,7 +7,7 @@ using UnionAssets.FLE;
 /// An action measures an achievement activationValue. It is a counter with some special attributes
 /// (such as default value and update constraints)
 /// </summary>
-
+[System.Serializable]
 public class GameAction {
 	//--------------------------------------
 	// Constants
@@ -20,26 +20,26 @@ public class GameAction {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private string name;
+	public string name;
 	
 	[SerializeField]
-	private string id;
+	public string id;
 	
 	[SerializeField]
-	private AchieveCondition activation;
+	public AchieveCondition activation;
 	
 	[SerializeField]
-	private int activationValue;
+	public int activationValue;
 	
 	[SerializeField]
 	[Tooltip("Valid if activation is ACTIVE_IF_BETWEEN")]
 	private IntervalObject<int> activationInterval;
 	
 	[SerializeField]
-	private int initialValue;
+	public int initialValue;
 	
 	[SerializeField]
-	private List<string> tags;
+	public List<string> tags;
 	
 	//--------------------------------------
 	// Private Attributes
@@ -49,21 +49,21 @@ public class GameAction {
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
-	public string Name {
-		get {
-			return this.name;
-		}
-	}
-	
 	public string Id {
 		get {
 			return this.id;
+		}
+		set{
+			this.id = value;
 		}
 	}
 	
 	public AchieveCondition ActivationCondition {
 		get {
 			return this.activation;
+		}
+		set{
+			this.activation = value;
 		}
 	}
 	
@@ -72,46 +72,16 @@ public class GameAction {
 			return this.progress;
 		}
 		set {
-			int tempProgress = value;
-			bool completed = isCompleted();
-			
-			if(!completed)
-				progress = tempProgress;
-			
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GameAction - GameAction "+id + " changed. Progress: "+progress + " completed?" +isCompleted());
+			progress = value;
 			
 			//Observer Pattern
-			if(completed){
+			if(isCompleted()){
 				GameActionResult res =  new GameActionResult(id, value);
 				
 				//TODO mejorar llamada a un unigo manager
 				BaseQuestManager<BaseQuestManager, BaseQuest>.dispatcher.dispatch(BaseQuestManager<BaseQuestManager, BaseQuest>.ACTION_COMPLETED, res);
 				BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.ACTION_COMPLETED, res);
 			}
-			else{
-				GameActionResult res =  new GameActionResult(id, value);
-				
-				//TODO mejorar llamada a un unigo manager
-				BaseQuestManager<BaseQuestManager, BaseQuest>.dispatcher.dispatch(BaseQuestManager<BaseQuestManager, BaseQuest>.ACTION_PROGRESS_CHANGED, res);
-				BaseAchievementsManager.dispatcher.dispatch(BaseAchievementsManager.ACTION_PROGRESS_CHANGED, res);
-			}
-		}
-	}
-	
-	/// <summary>
-	/// Gets the progress completed. Values betwee 0 and 1
-	/// </summary>
-	/// <value>The progress completed.</value>
-	public float ProgressCompleted{
-		get{
-			return this.progress/this.activationValue;
-		}
-	}
-	
-	public int RemainingProgress{
-		get{
-			return this.activationValue-this.progress;
 		}
 	}
 	
@@ -119,11 +89,8 @@ public class GameAction {
 		get {
 			return this.initialValue;
 		}
-	}
-	
-	public int ActivationValue {
-		get {
-			return this.activationValue;
+		set{
+			this.initialValue = value;
 		}
 	}
 	
@@ -131,11 +98,45 @@ public class GameAction {
 		get {
 			return this.tags;
 		}
+		set{
+			this.tags = value;
+		}
+	}
+	
+	public int ActivationValue {
+		get {
+			return this.activationValue;
+		}
+		set {
+			activationValue = value;
+		}
+	}
+	
+	public IntervalObject<int> ActivationInterval {
+		get {
+			return this.activationInterval;
+		}
+		set {
+			activationInterval = value;
+		}
 	}
 	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
+	public GameAction(string pId, AchieveCondition aCond, int pInitialValue):this(){
+		id = pId;
+		activation = aCond;
+		initialValue = pInitialValue;
+	}
+	
+	public GameAction(){
+		id = "";
+		activation = AchieveCondition.ACTIVE_IF_EQUALS_TO;
+		activationValue = 1;
+		activationInterval = new IntervalObject<int>();
+		initialValue = 0;
+	}
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="GameAction"/> class.
@@ -166,17 +167,11 @@ public class GameAction {
 			case "L":
 				activation = AchieveCondition.ACTIVE_IF_LOWER_THAN;
 				break;
-			case "LE":
-				activation = AchieveCondition.ACTIVE_IF_LOWER_OR_EQUALS;
-				break;
 			case "E":
 				activation = AchieveCondition.ACTIVE_IF_EQUALS_TO;
 				break;
 			case "G":
 				activation = AchieveCondition.ACTIVE_IF_GREATER_THAN;
-				break;
-			case "GE":
-				activation = AchieveCondition.ACTIVE_IF_GREATER_OR_EQUALS;
 				break;
 			case "B":
 				activation = AchieveCondition.ACTIVE_IF_BETWEEN;
@@ -274,16 +269,8 @@ public class GameAction {
 			res = progress > activationValue;
 			break;
 			
-		case AchieveCondition.ACTIVE_IF_GREATER_OR_EQUALS:
-			res = progress >= activationValue;
-			break;
-			
 		case AchieveCondition.ACTIVE_IF_LOWER_THAN:
 			res = progress < activationValue;
-			break;
-			
-		case AchieveCondition.ACTIVE_IF_LOWER_OR_EQUALS:
-			res = progress <= activationValue;
 			break;
 			
 		case AchieveCondition.ACTIVE_IF_BETWEEN:

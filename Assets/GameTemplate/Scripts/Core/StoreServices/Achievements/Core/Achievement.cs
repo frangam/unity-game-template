@@ -27,6 +27,13 @@ public class Achievement : BaseQuest{
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
+	public Achievement():base(){
+		isIncremental = false;
+	}
+	public Achievement(Achievement aAchievement):base(aAchievement){
+		isIncremental = aAchievement.IsIncremental;
+	}
+	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Achievement"/> class.
 	/// 
@@ -63,35 +70,21 @@ public class Achievement : BaseQuest{
 	}
 	
 	public override string ToString (){
-		return string.Format ("[Achievement: id={0}, actions={1}, name={2}, description={3}, isIncremental={4}, unlocked={5}]", Id, stgActions, Name, Description, isIncremental, Completed);
+		return string.Format ("[Achievement: id={0}, actions={1}, name={2}, description={3}, isIncremental={4}, unlocked={5}]", Id, actionsToString(), Name, Description, isIncremental, Completed);
 	}
 	
-	public override float getProgressPercentage ()
+	public override string actionsToString ()
 	{
-		float res = 0f;
-		int actionProgresses = 0;
-		int totalProgressToComplete = 0;
+		string actionsStr = "";
 		
-		//check total active actions
-		foreach(GameAction action in Actions){
-			totalProgressToComplete += action.ActivationValue;
-			actionProgresses += action.Progress;
+		for(int i=0; i<actions.Count; i++){
+			actionsStr += actions[i].Id;
+			
+			if(i<actions.Count-1){
+				actionsStr += SEPARATOR_ACTIONS_IDS;
+			}
 		}
 		
-		res = (actionProgresses * 100f) / totalProgressToComplete;
-		
-		return res;
-	}
-	
-	public override int getProgressIntegerValue ()
-	{
-		int res = 0;
-		
-		//check total active actions
-		foreach(GameAction action in Actions){
-			res += action.Progress;
-		}
-		
-		return res;
+		return actionsStr;
 	}
 }

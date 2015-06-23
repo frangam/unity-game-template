@@ -47,6 +47,41 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 	#endregion
 	
 	//--------------------------------------
+	// Overriden Methods
+	//--------------------------------------
+	public override bool loadGameActionsContentFromGameSettingsAsset ()
+	{
+		bool loaded = GameSettings.Instance.CurrentAchievementsActions != null && GameSettings.Instance.CurrentAchievementsActions.Count > 0;
+		
+		if(!loaded){
+			Debug.LogError("Could not load any Action");
+		}
+		else{
+			actions = GameSettings.Instance.CurrentAchievementsActions;
+		}
+		
+		return loaded;
+	}
+	
+	public override bool loadQuestsContentFromGameSettingsAsset ()
+	{
+		bool loaded = GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0;
+		
+		if(!loaded){
+			Debug.LogWarning("Could not load any Quest");
+		}
+		else{
+			foreach(Achievement a in GameSettings.Instance.CurrentAchievements){
+				BaseQuest quest = new Achievement(a);
+				Quests = new List<BaseQuest>();
+				Quests.Add(quest);
+			}
+		}
+		
+		return loaded;
+	}
+	
+	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
 	

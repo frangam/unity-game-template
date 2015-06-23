@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
+[System.Serializable]
 public class BaseQuest {
 	//--------------------------------------
 	// Constants
@@ -28,7 +28,7 @@ public class BaseQuest {
 	protected int level;
 	
 	[SerializeField]
-	private List<GameAction> actions;
+	public List<GameAction> actions;
 	
 	//--------------------------------------
 	// Private Attributes
@@ -53,11 +53,17 @@ public class BaseQuest {
 		get {
 			return this.description;
 		}
+		set{
+			this.description = value;
+		}
 	}
 	
 	public string Id {
 		get {
 			return this.id;
+		}
+		set{
+			this.id = value;
 		}
 	}
 	
@@ -65,11 +71,17 @@ public class BaseQuest {
 		get {
 			return this.level;
 		}
+		set{
+			this.level = value;
+		}
 	}
 	
 	public List<GameAction> Actions {
 		get {
 			return this.actions;
+		}
+		set{
+			this.actions = value;
 		}
 	}
 	
@@ -91,6 +103,26 @@ public class BaseQuest {
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
+	public BaseQuest(){
+		id = "";
+		actions = new List<GameAction>();
+		description = "";
+	}
+	
+	public BaseQuest(BaseQuest aQuest){
+		id = aQuest.Id;
+		actions = aQuest.Actions;
+		description = aQuest.Description;
+	}
+	
+	public BaseQuest(string pID, List<GameAction> pActions, int pLevel, string locDescriptionKey = ""){
+		id = pID;
+		actions = pActions;
+		
+		if(!string.IsNullOrEmpty(locDescriptionKey))
+			description = Localization.Get(locDescriptionKey);
+	}
+	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BaseQuest`1"/> class.
 	/// 
@@ -155,9 +187,10 @@ public class BaseQuest {
 		//Description
 		if(atts.Length > 3){
 			string[] desc = atts[3].Split(SEPARATOR_LOCALIZED_DESC);
+			string locKey = desc[0]; //localization key for a localized description
 			
-			//TODO get the localized version
-			description = desc[0];
+			if(!string.IsNullOrEmpty(locKey))
+				description = Localization.Get(locKey);
 		}
 	}
 	
@@ -165,26 +198,32 @@ public class BaseQuest {
 	// Overriden Methods
 	//--------------------------------------
 	public override string ToString (){
+		return string.Format ("[BaseQuest: id={0}, level={1} actions={2} name={3}, description={4}, completed={5}]", id, level, actionsToString(),name, description, completed);
+	}
+	
+	
+	//--------------------------------------
+	// Private Methods
+	//--------------------------------------
+	
+	
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public virtual string actionsToString(){
 		string actionsStr = "";
 		
 		for(int i=0; i<actions.Count; i++){
 			actionsStr += actions[i];
 			
 			if(i<actions.Count-1){
-				actionsStr += ".";
+				actionsStr += SEPARATOR_ACTIONS_IDS;
 			}
 		}
 		
-		return string.Format ("[BaseQuest: id={0}, level={1} actions={2} name={3}, description={4}, completed={5}]", id, level, actionsStr,name, description, completed);
+		return actionsStr;
 	}
 	
-	//--------------------------------------
-	// Private Methods
-	//--------------------------------------
-	
-	//--------------------------------------
-	// Public Methods
-	//--------------------------------------
 	public virtual bool loadedCorrectly(){
 		return (id != null && actions.Count > 0 && level > 0);
 	}
@@ -201,7 +240,7 @@ public class BaseQuest {
 	/// Gets the progress percentage.
 	/// </summary>
 	/// <returns>The progress percentage.</returns>
-	public virtual float getProgressPercentage(){
+	public float getProgressPercentage(){
 		float res = 0f;
 		int activeActions = 0;
 		
@@ -222,7 +261,7 @@ public class BaseQuest {
 	/// The total completed actions
 	/// </summary>
 	/// <returns>The progress integer value.</returns>
-	public virtual int getProgressIntegerValue(){
+	public int getProgressIntegerValue(){
 		int res = 0;
 		
 		//check total active actions

@@ -14,7 +14,6 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	public const string GAME_PROPERTY_CHANGED = "gt_game_property_changed";
 	public const string GAME_PROPERTY_RESETED = "gt_game_property_reseted";
 	public const string ACTION_COMPLETED = "gt_action_completed";
-	public const string ACTION_PROGRESS_CHANGED = "gt_action_progress_changed";
 	public const string QUEST_COMPLETED = "gt_quest_completed";
 	public const string ALL_QUESTS_COMPLETED = "gt_all_quests_completed";
 	
@@ -31,6 +30,10 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private List<GameMode> validIn = new List<GameMode>(){GameMode.CAMPAIGN};
+	
+	[SerializeField]
+	[Tooltip("True if you want to load the content from the GameSettings asset. False if you want to load from the text file")]
+	private bool loadFromGameSettings = false;
 	
 	[SerializeField]
 	private string questsFile = "Quests";
@@ -65,6 +68,9 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		get {
 			return this.quests;
 		}
+		set{
+			this.quests = value;
+		}
 	}
 	
 	
@@ -89,7 +95,6 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		dispatcher.removeEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
 		dispatcher.removeEventListener(GAME_PROPERTY_RESETED, OnGamePropertyReseted); 
 		dispatcher.removeEventListener(ACTION_COMPLETED, OnActionCompleted); 
-		dispatcher.removeEventListener(ACTION_PROGRESS_CHANGED, OnActionProgressChanged); 
 		dispatcher.removeEventListener(QUEST_COMPLETED, OnQuestCompleted); 
 		dispatcher.removeEventListener(ALL_QUESTS_COMPLETED, OnAllQuestsCompleted); 
 	}
@@ -156,16 +161,8 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 				finalValue = value > actionProgress ? value : actionProgress;
 				break;
 				
-			case AchieveCondition.ACTIVE_IF_GREATER_OR_EQUALS:
-				finalValue = value >= actionProgress ? value : actionProgress;
-				break;
-				
 			case AchieveCondition.ACTIVE_IF_LOWER_THAN:
 				finalValue = value < actionProgress ? value : actionProgress;
-				break;
-				
-			case AchieveCondition.ACTIVE_IF_LOWER_OR_EQUALS:
-				finalValue = value <= actionProgress ? value : actionProgress;
 				break;
 			}
 		}
@@ -181,7 +178,8 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		if((typeof(T) != typeof(Achievement) && pSelectedLevel > 0)
 		   || (typeof(T) == typeof(Achievement))){
 			levelSelected = pSelectedLevel;
-			if(loadGameActionsContentFromTextFile() && loadQuestsContentFromTextFile()) { //load quest from text file resource
+			if((loadFromGameSettings && loadGameActionsContentFromGameSettingsAsset() && loadQuestsContentFromGameSettingsAsset()) //load actions and quests from game settings asset resource
+			   || (!loadFromGameSettings && loadGameActionsContentFromTextFile() && loadQuestsContentFromTextFile())) { //load actions and quests from text file resource
 				//update completed flag of all of the previous completed quests
 				if(updateCompletedFlagOfPreviousCompletedQuests){
 					initialUpdateOfPreviousCompletedQuests();
@@ -197,7 +195,6 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 				dispatcher.addEventListener(GAME_PROPERTY_CHANGED, OnGamePropertyChanged); 
 				dispatcher.addEventListener(GAME_PROPERTY_RESETED, OnGamePropertyReseted); 
 				dispatcher.addEventListener(ACTION_COMPLETED, OnActionCompleted); 
-				dispatcher.addEventListener(ACTION_PROGRESS_CHANGED, OnActionProgressChanged); 
 				dispatcher.addEventListener(QUEST_COMPLETED, OnQuestCompleted); 
 				dispatcher.addEventListener(ALL_QUESTS_COMPLETED, OnAllQuestsCompleted); 
 				
@@ -247,6 +244,11 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		return located && loaded;
 	}
 	
+	public virtual bool loadGameActionsContentFromGameSettingsAsset(){
+		bool loaded = false;
+		return loaded;
+	}
+	
 	public bool loadQuestsContentFromTextFile(){
 		bool loaded = false, located = false;
 		string content = "";
@@ -291,6 +293,13 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		}
 		
 		return located && loaded;
+	}
+	
+	
+	public virtual bool loadQuestsContentFromGameSettingsAsset(){
+		bool loaded = false;
+		
+		return loaded;
 	}
 	
 	public void addValue(GameAction action, int value, bool ignoreActivationConstraint = false){
@@ -442,17 +451,6 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 				dispatcher.dispatch(ALL_QUESTS_COMPLETED);
 			}
 			//---
-		}
-	}
-	
-	public virtual void OnActionProgressChanged(CEvent e){
-		GameActionResult result = e.data as GameActionResult;
-		
-		if(result.IsSucceeded){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GameAction " +result.CurrentActionId + " progress is changed");
-			
-			
 		}
 	}
 	
