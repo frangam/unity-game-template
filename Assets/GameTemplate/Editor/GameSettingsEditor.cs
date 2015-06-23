@@ -22,6 +22,11 @@ public class GameSettingsEditor : Editor {
 	GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical quastion, feel free to drop an e-mail");
 	GUIContent showMissionsWinLabel   = new GUIContent("Show missions win [?]:", "True for showing missions window at start.");
 	GUIContent testLanguage   = new GUIContent("Language for test [?]:", "Leave empty for production version");
+	GUIContent templateMultiversion   = new GUIContent("Game MultiVersion for Build [?]:", "Min 0 if this project has multiple versinable games.");
+	GUIContent gameNamesContent   = new GUIContent("Game Names [?]:", "Min set one name. Add more names for each game version in order");
+	GUIContent buildPackageIDsContent   = new GUIContent("Build Package IDs [?]:", "Min set one id. Add more ids for each game version order");
+	GUIContent uniqueRankingIDsContent   = new GUIContent("Unique Ranking IDs [?]:", "Min set one id for a unique game no versinable. Add more ids for each game version order");
+	GUIContent uniqueSurvivalRankingIDsContent   = new GUIContent("Unique Survival Ranking IDs [?]:", "Min set one id for a unique game no versinable. Add more ids for each game version order");
 	
 	private GameSettings settings;
 	
@@ -68,20 +73,20 @@ public class GameSettingsEditor : Editor {
 		
 		GeneralOptions();
 		gameInfo();
-		EditorGUILayout.Space();
-		moneySettings();
-		EditorGUILayout.Space();
-		characterControl();
-		EditorGUILayout.Space();
-		adsSettings();
-		EditorGUILayout.Space();
-		socialNetworksSettings();
-		EditorGUILayout.Space();
+		//		EditorGUILayout.Space();
 		appLinks();
-		EditorGUILayout.Space();
-		inAppBilling();
-		EditorGUILayout.Space();
+		//		EditorGUILayout.Space();
+		moneySettings();
+		//		EditorGUILayout.Space();
+		characterControl();
+		//		EditorGUILayout.Space();
+		adsSettings();
+		//		EditorGUILayout.Space();
+		socialNetworksSettings();
+		//		EditorGUILayout.Space();
 		rankingIdsSettings();
+		//		EditorGUILayout.Space();
+		inAppBilling();
 		
 		
 		EditorGUILayout.Space();
@@ -180,60 +185,188 @@ public class GameSettingsEditor : Editor {
 	
 	protected virtual void gameInfo(){
 		EditorGUILayout.Space();
-		EditorGUILayout.HelpBox("Game Settings", MessageType.Info);
+		EditorGUILayout.HelpBox("Game Info", MessageType.None);
+		EditorGUILayout.BeginVertical();
 		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Game Name");
-		GameSettings.Instance.GAME_NAME	= EditorGUILayout.TextField(GameSettings.Instance.GAME_NAME);
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.Space();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Is a Dev version");
-		GameSettings.Instance.IS_A_DEV_VERSION	= EditorGUILayout.Toggle(GameSettings.Instance.IS_A_DEV_VERSION);
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.Space();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Show Test Logs");
-		GameSettings.Instance.showTestLogs	= EditorGUILayout.Toggle(GameSettings.Instance.showTestLogs);
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.Space();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(testLanguage);
-		GameSettings.Instance.testLanguage	= EditorGUILayout.TextField(GameSettings.Instance.testLanguage);
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.Space();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(musicFXLabel);
-		GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME	= EditorGUILayout.Toggle(GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME);
-		EditorGUILayout.EndHorizontal();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Show Load Indicator in Loading scene");
-		GameSettings.Instance.showLoadIndicatorInLoadingScene	= EditorGUILayout.Toggle(GameSettings.Instance.showLoadIndicatorInLoadingScene);
-		EditorGUILayout.EndHorizontal();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Android Immersive Mode");
-		GameSettings.Instance.ENABLE_ANDROID_IMMERSIVE_MODE	= EditorGUILayout.Toggle(GameSettings.Instance.ENABLE_ANDROID_IMMERSIVE_MODE);
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.Space();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Has Initial Tutorial");
-		GameSettings.Instance.HAS_INITIAL_TUTORIAL	= EditorGUILayout.Toggle(GameSettings.Instance.HAS_INITIAL_TUTORIAL);
-		EditorGUILayout.EndHorizontal();
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(showMissionsWinLabel);
-		GameSettings.Instance.showMissionsWinAtStart = EditorGUILayout.Toggle(GameSettings.Instance.showMissionsWinAtStart);
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.Space();
-		
-		handleDifficulties();
+		GameSettings.Instance.showGameInfo = EditorGUILayout.Foldout(GameSettings.Instance.showGameInfo, "Game Info");
+		if (GameSettings.Instance.showGameInfo) {
+			EditorGUI.indentLevel++;
+			
+			
+			//Current game multiversion
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField(templateMultiversion);
+			GameSettings.Instance.currentGameMultiversion = EditorGUILayout.IntField(GameSettings.Instance.currentGameMultiversion);
+			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.Space();
+			
+			gameNames();
+			buildPackageIDs();
+			appleAppIDs();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Is a Dev version");
+			GameSettings.Instance.IS_A_DEV_VERSION	= EditorGUILayout.Toggle(GameSettings.Instance.IS_A_DEV_VERSION);
+			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.Space();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Show Test Logs");
+			GameSettings.Instance.showTestLogs	= EditorGUILayout.Toggle(GameSettings.Instance.showTestLogs);
+			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.Space();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField(testLanguage);
+			GameSettings.Instance.testLanguage	= EditorGUILayout.TextField(GameSettings.Instance.testLanguage);
+			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.Space();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField(musicFXLabel);
+			GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME	= EditorGUILayout.Toggle(GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Show Load Indicator in Loading scene");
+			GameSettings.Instance.showLoadIndicatorInLoadingScene	= EditorGUILayout.Toggle(GameSettings.Instance.showLoadIndicatorInLoadingScene);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Android Immersive Mode");
+			GameSettings.Instance.ENABLE_ANDROID_IMMERSIVE_MODE	= EditorGUILayout.Toggle(GameSettings.Instance.ENABLE_ANDROID_IMMERSIVE_MODE);
+			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.Space();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Has Initial Tutorial");
+			GameSettings.Instance.HAS_INITIAL_TUTORIAL	= EditorGUILayout.Toggle(GameSettings.Instance.HAS_INITIAL_TUTORIAL);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField(showMissionsWinLabel);
+			GameSettings.Instance.showMissionsWinAtStart = EditorGUILayout.Toggle(GameSettings.Instance.showMissionsWinAtStart);
+			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.Space();
+			
+			handleDifficulties();
+			EditorGUI.indentLevel--;
+		}
+		EditorGUILayout.EndVertical();
+	}
+	
+	protected virtual void gameNames(){
+		GameSettings.Instance.showGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showGameNames, gameNamesContent);
+		if (GameSettings.Instance.showGameNames) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.gameNames.Count == 0) {
+				EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.gameNames) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.gameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.gameNames[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.gameNames.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.gameNames.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		//		EditorGUILayout.Space();
+	}
+	
+	protected virtual void buildPackageIDs(){
+		GameSettings.Instance.showBuildPackageIDs = EditorGUILayout.Foldout(GameSettings.Instance.showBuildPackageIDs, buildPackageIDsContent);
+		if (GameSettings.Instance.showBuildPackageIDs) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.buildPackagesIDs.Count == 0) {
+				EditorGUILayout.HelpBox("No Build Package ID Registred",MessageType.Error);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.buildPackagesIDs) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.buildPackagesIDs[i] = EditorGUILayout.TextField(GameSettings.Instance.buildPackagesIDs[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.buildPackagesIDs.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.buildPackagesIDs.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		//		EditorGUILayout.Space();
+	}
+	
+	protected virtual void appleAppIDs(){
+		GameSettings.Instance.showAppleAppID = EditorGUILayout.Foldout(GameSettings.Instance.showAppleAppID, "Apple App IDs");
+		if (GameSettings.Instance.showAppleAppID) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.appleAppIDs.Count == 0) {
+				EditorGUILayout.HelpBox("No Apple App ID Registred",MessageType.Error);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.appleAppIDs) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.appleAppIDs[i] = EditorGUILayout.TextField(GameSettings.Instance.appleAppIDs[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.appleAppIDs.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.appleAppIDs.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		//		EditorGUILayout.Space();
 	}
 	
 	protected virtual void inAppBilling(){
@@ -245,34 +378,97 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.Space();
 			
-			if(GameSettings.Instance.inAppBillingIDS.Count == 0) {
-				EditorGUILayout.HelpBox("No In App Billing IDs Registred",MessageType.None);
-			}
 			
-			int i = 0;
-			foreach(string d in GameSettings.Instance.inAppBillingIDS) {
+			if(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE){
+				if(GameSettings.Instance.allInAppBillingIDS.Count == 0) {
+					EditorGUILayout.HelpBox("No In App Billing IDs for Game Multiversion Registred",MessageType.None);
+				}
+				else{
+					EditorGUILayout.HelpBox("In App Billing Ids by Each Game Multiversion", MessageType.None);
+				}
+				
+				int i = 0;
+				foreach(InAppBillingIDPack idsPack in GameSettings.Instance.allInAppBillingIDS) {
+					EditorGUI.indentLevel++;
+					
+					EditorGUILayout.BeginHorizontal();
+					if(!GameSettings.Instance.showInAppBillingIDsPack.ContainsKey(GameSettings.Instance.allInAppBillingIDS[i]))
+						GameSettings.Instance.showInAppBillingIDsPack.Add(GameSettings.Instance.allInAppBillingIDS[i], true);
+					
+					GameSettings.Instance.showInAppBillingIDsPack[GameSettings.Instance.allInAppBillingIDS[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showInAppBillingIDsPack[GameSettings.Instance.allInAppBillingIDS[i]], "InApp Billing IDs for Game Version "+i.ToString());
+					
+					
+					if(GUILayout.Button("-",  GUILayout.Width(30))) {
+						GameSettings.Instance.allInAppBillingIDS.Remove(idsPack);
+						break;
+					}
+					EditorGUILayout.EndHorizontal();
+					
+					inAppBillingForEveryGameMultiversion(i);
+					i++;
+				}
+				
+				
 				EditorGUILayout.BeginHorizontal();
-				GameSettings.Instance.inAppBillingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.inAppBillingIDS[i]).Trim();
-				
-				
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GameSettings.Instance.inAppBillingIDS.Remove(d);
-					break;
+				EditorGUILayout.Space();
+				if(GUILayout.Button("+",  GUILayout.Width(60))) {
+					if(GameSettings.Instance.allInAppBillingIDS == null || (GameSettings.Instance.allInAppBillingIDS != null && GameSettings.Instance.allInAppBillingIDS.Count == 0))
+						GameSettings.Instance.allInAppBillingIDS.Add(new InAppBillingIDPack(0, null));
+					else{
+						InAppBillingIDPack lastPack = GameSettings.Instance.allInAppBillingIDS[GameSettings.Instance.allInAppBillingIDS.Count-1];
+						int lastPackId = lastPack.gameVersion;
+						GameSettings.Instance.allInAppBillingIDS.Add(new InAppBillingIDPack(lastPackId+1, null));
+					}
 				}
 				EditorGUILayout.EndHorizontal();
-				i++;
+				
+				//			EditorGUILayout.Space();
+				EditorGUI.indentLevel--;
 			}
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if(GUILayout.Button("+",  GUILayout.Width(60))) {
-				GameSettings.Instance.inAppBillingIDS.Add("");
-			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
 		}
 	}
+	
+	protected virtual void inAppBillingForEveryGameMultiversion(int index){
+		if((GameSettings.Instance.allInAppBillingIDS != null && GameSettings.Instance.allInAppBillingIDS.Count > 0)){
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			
+			if(GameSettings.Instance.showInAppBillingIDsPack[GameSettings.Instance.allInAppBillingIDS[index]]){
+				if(GameSettings.Instance.allInAppBillingIDS[index].ids == null || (GameSettings.Instance.allInAppBillingIDS[index].ids != null && GameSettings.Instance.allInAppBillingIDS[index].ids.Count == 0)) {
+					EditorGUILayout.HelpBox("No In App Billing IDs Registred",MessageType.None);
+				}
+				else{
+					EditorGUILayout.Space();
+					
+					int i = 0;
+					foreach(string d in GameSettings.Instance.allInAppBillingIDS[index].ids) {
+						EditorGUILayout.BeginHorizontal();
+						EditorGUILayout.LabelField("ID "+i.ToString()+":", GUILayout.Width(120));
+						GameSettings.Instance.allInAppBillingIDS[index].ids[i] = EditorGUILayout.TextField(GameSettings.Instance.allInAppBillingIDS[index].ids[i]).Trim();
+						
+						
+						if(GUILayout.Button("-",  GUILayout.Width(30))) {
+							GameSettings.Instance.allInAppBillingIDS[index].ids.Remove(d);
+							break;
+						}
+						EditorGUILayout.EndHorizontal();
+						i++;
+					}
+				}
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.Space();
+				if(GUILayout.Button("+",  GUILayout.Width(60))) {
+					GameSettings.Instance.allInAppBillingIDS[index].ids.Add("");
+				}
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.Space();
+			}
+			EditorGUILayout.EndVertical();
+		}
+	}
+	
+	
 	
 	private void handleDifficulties(){
 		GameSettings.Instance.showGameDifficulties = EditorGUILayout.Foldout(GameSettings.Instance.showGameDifficulties, gameDiffLabel);
@@ -303,147 +499,145 @@ public class GameSettingsEditor : Editor {
 				GameSettings.Instance.gameDifficulties.Add(GameDifficulty.NONE);
 			}
 			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
+			//			EditorGUILayout.Space();
 		}
 	}
 	
 	private void handleWorldLevelRankings(){
-		GameSettings.Instance.showWorldRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showWorldRankingSettings, "Rankings by World Levels");
-		if (GameSettings.Instance.showWorldRankingSettings) {
-			if(GameSettings.Instance.worldLevelRankingIDS.Count == 0) {
-				EditorGUILayout.HelpBox("No World Level Ranking IDs Registred",MessageType.None);
-			}
-			
-			int i = 0;
-			foreach(string d in GameSettings.Instance.worldLevelRankingIDS) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level " + (i+1), GUILayout.Width(60));
-				GameSettings.Instance.worldLevelRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.worldLevelRankingIDS[i]).Trim();
-				
-				
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GameSettings.Instance.worldLevelRankingIDS.Remove(d);
-					break;
-				}
-				EditorGUILayout.EndHorizontal();
-				i++;
-			}
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if(GUILayout.Button("+",  GUILayout.Width(60))) {
-				GameSettings.Instance.worldLevelRankingIDS.Add("");
-			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
-		}
+		//		GameSettings.Instance.showWorldRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showWorldRankingSettings, "Rankings by World Levels");
+		//		if (GameSettings.Instance.showWorldRankingSettings) {
+		//			if(GameSettings.Instance.worldLevelRankingIDS.Count == 0) {
+		//				EditorGUILayout.HelpBox("No World Level Ranking IDs Registred",MessageType.None);
+		//			}
+		//			
+		//			int i = 0;
+		//			foreach(string d in GameSettings.Instance.worldLevelRankingIDS) {
+		//				EditorGUILayout.BeginHorizontal();
+		//				EditorGUILayout.LabelField("Level " + (i+1), GUILayout.Width(60));
+		//				GameSettings.Instance.worldLevelRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.worldLevelRankingIDS[i]).Trim();
+		//				
+		//				
+		//				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+		//					GameSettings.Instance.worldLevelRankingIDS.Remove(d);
+		//					break;
+		//				}
+		//				EditorGUILayout.EndHorizontal();
+		//				i++;
+		//			}
+		//			
+		//			
+		//			EditorGUILayout.BeginHorizontal();
+		//			EditorGUILayout.Space();
+		//			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+		//				GameSettings.Instance.worldLevelRankingIDS.Add("");
+		//			}
+		//			EditorGUILayout.EndHorizontal();
+		//			EditorGUILayout.Space();
+		//		}
 	}
 	
 	private void handleSurvivalLevelRankings(){
-		GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, "Rankings by Survival Levels");
-		if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
-			if(GameSettings.Instance.survivalLevelRankingIDS.Count == 0) {
-				EditorGUILayout.HelpBox("No Survival Level Ranking IDs Registred",MessageType.None);
-			}
-			
-			int i = 0;
-			foreach(string d in GameSettings.Instance.survivalLevelRankingIDS) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Level " + (i+1), GUILayout.Width(60));
-				GameSettings.Instance.survivalLevelRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.survivalLevelRankingIDS[i]).Trim();
-				
-				
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GameSettings.Instance.survivalLevelRankingIDS.Remove(d);
-					break;
-				}
-				EditorGUILayout.EndHorizontal();
-				i++;
-			}
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if(GUILayout.Button("+",  GUILayout.Width(60))) {
-				GameSettings.Instance.survivalLevelRankingIDS.Add("");
-			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
-		}
+		//		GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, "Rankings by Survival Levels");
+		//		if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
+		//			if(GameSettings.Instance.survivalLevelRankingIDS.Count == 0) {
+		//				EditorGUILayout.HelpBox("No Survival Level Ranking IDs Registred",MessageType.None);
+		//			}
+		//			
+		//			int i = 0;
+		//			foreach(string d in GameSettings.Instance.survivalLevelRankingIDS) {
+		//				EditorGUILayout.BeginHorizontal();
+		//				EditorGUILayout.LabelField("Level " + (i+1), GUILayout.Width(60));
+		//				GameSettings.Instance.survivalLevelRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.survivalLevelRankingIDS[i]).Trim();
+		//				
+		//				
+		//				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+		//					GameSettings.Instance.survivalLevelRankingIDS.Remove(d);
+		//					break;
+		//				}
+		//				EditorGUILayout.EndHorizontal();
+		//				i++;
+		//			}
+		//			
+		//			
+		//			EditorGUILayout.BeginHorizontal();
+		//			EditorGUILayout.Space();
+		//			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+		//				GameSettings.Instance.survivalLevelRankingIDS.Add("");
+		//			}
+		//			EditorGUILayout.EndHorizontal();
+		//			EditorGUILayout.Space();
+		//		}
 	}
 	
 	protected virtual void moneySettings(){
+		EditorGUILayout.HelpBox("Game Settings", MessageType.None);
 		GameSettings.Instance.showMoneySettings = EditorGUILayout.Foldout(GameSettings.Instance.showMoneySettings, "Money");
 		if (GameSettings.Instance.showMoneySettings) {
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("1 Gem value in coins:");
-			GameSettings.Instance.ONE_GEM_VALUE_IN_COINS	= EditorGUILayout.IntField(GameSettings.Instance.ONE_GEM_VALUE_IN_COINS);
-			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginVertical(GUI.skin.box);
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Initial Money:");
+			EditorGUILayout.LabelField("Initial Money:", GUILayout.Width(180));
 			GameSettings.Instance.INITIAL_MONEY	= EditorGUILayout.LongField(GameSettings.Instance.INITIAL_MONEY);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Max Money:");
-			GameSettings.Instance.MAX_MONEY	= EditorGUILayout.LongField(GameSettings.Instance.MAX_MONEY);
+			EditorGUILayout.LabelField("Use max long value", GUILayout.Width(180));
+			GameSettings.Instance.USE_MAX_LONG_VALUE_TO_MAX_MONEY = EditorGUILayout.Toggle(GameSettings.Instance.USE_MAX_LONG_VALUE_TO_MAX_MONEY);
+			EditorGUILayout.EndHorizontal();
+			
+			if(!GameSettings.Instance.USE_MAX_LONG_VALUE_TO_MAX_MONEY){
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Max Money:", GUILayout.Width(165));
+				GameSettings.Instance.MAX_MONEY	= EditorGUILayout.LongField(GameSettings.Instance.MAX_MONEY);
+				EditorGUILayout.EndHorizontal();
+				EditorGUI.indentLevel--;
+			}
+			else{
+				GameSettings.Instance.MAX_MONEY = long.MaxValue;
+			}
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField(rewardPercentageLabel, GUILayout.Width(180));
+			GameSettings.Instance.PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED	= EditorGUILayout.FloatField(GameSettings.Instance.PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.Separator();
+			EditorGUILayout.Separator();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("1 Gem value in money:", GUILayout.Width(180));
+			GameSettings.Instance.ONE_GEM_VALUE_IN_COINS	= EditorGUILayout.IntField(GameSettings.Instance.ONE_GEM_VALUE_IN_COINS);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Initial Gems:");
+			EditorGUILayout.LabelField("Initial Gems:", GUILayout.Width(180));
 			GameSettings.Instance.INITIAL_GEMS	= EditorGUILayout.LongField(GameSettings.Instance.INITIAL_GEMS);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Max Gems:");
-			GameSettings.Instance.MAX_GEMS	= EditorGUILayout.LongField(GameSettings.Instance.MAX_GEMS);
+			EditorGUILayout.LabelField("Use max long value", GUILayout.Width(180));
+			GameSettings.Instance.USE_MAX_LONG_VALUE_TO_MAX_GEMS = EditorGUILayout.Toggle(GameSettings.Instance.USE_MAX_LONG_VALUE_TO_MAX_GEMS);
 			EditorGUILayout.EndHorizontal();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField(rewardPercentageLabel);
-			GameSettings.Instance.PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED	= EditorGUILayout.FloatField(GameSettings.Instance.PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED);
-			EditorGUILayout.EndHorizontal();
+			if(!GameSettings.Instance.USE_MAX_LONG_VALUE_TO_MAX_GEMS){
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Max Gems:", GUILayout.Width(165));
+				GameSettings.Instance.MAX_GEMS	= EditorGUILayout.LongField(GameSettings.Instance.MAX_GEMS);
+				EditorGUILayout.EndHorizontal();
+				EditorGUI.indentLevel--;
+			}
+			else{
+				GameSettings.Instance.MAX_GEMS = long.MaxValue;
+			}
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("% Gems Reward");
+			EditorGUILayout.LabelField("% Gems Reward", GUILayout.Width(180));
 			GameSettings.Instance.PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED	= EditorGUILayout.FloatField(GameSettings.Instance.PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED);
 			EditorGUILayout.EndHorizontal();
 			
-			//			
-			//			EditorGUILayout.BeginHorizontal();
-			//			EditorGUILayout.LabelField("Max Loaded Image Size");
-			//			GameSettings.Instance.MaxImageLoadSize	 	= EditorGUILayout.IntField(GameSettings.Instance.MaxImageLoadSize);
-			//			EditorGUILayout.EndHorizontal();
-			//			
-			//			
-			//			
-			//			GUI.enabled = !GameSettings.Instance.UseProductNameAsFolderName;
-			//			if(GameSettings.Instance.UseProductNameAsFolderName) {
-			//				if(PlayerSettings.productName.Length > 0) {
-			//					GameSettings.Instance.GalleryFolderName = PlayerSettings.productName.Trim();
-			//				}
-			//				
-			//				
-			//			}
-			//			
-			//			EditorGUILayout.BeginHorizontal();
-			//			EditorGUILayout.LabelField("App Gallery Folder");
-			//			GameSettings.Instance.GalleryFolderName	 	= EditorGUILayout.TextField(GameSettings.Instance.GalleryFolderName);
-			//			if(GameSettings.Instance.GalleryFolderName.Length > 0) {
-			//				GameSettings.Instance.GalleryFolderName		= GameSettings.Instance.GalleryFolderName.Trim();
-			//				GameSettings.Instance.GalleryFolderName		= GameSettings.Instance.GalleryFolderName.Trim('/');
-			//			}
-			//			
-			//			EditorGUILayout.EndHorizontal();
-			//			
-			//			GUI.enabled = true;
-			//			
-			//			EditorGUILayout.BeginHorizontal();
-			//			EditorGUILayout.LabelField("Use Product Name As Folder Name");
-			//			GameSettings.Instance.UseProductNameAsFolderName	 	= EditorGUILayout.Toggle(GameSettings.Instance.UseProductNameAsFolderName);
-			//			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.EndVertical();
 		}
 	}
 	
@@ -455,59 +649,66 @@ public class GameSettingsEditor : Editor {
 			GameSettings.Instance.IS_PRO_VERSION	= EditorGUILayout.Toggle(GameSettings.Instance.IS_PRO_VERSION);
 			EditorGUILayout.EndHorizontal();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField(whenShowInitialAd);
-			GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START	= EditorGUILayout.IntField(GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START);
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Default num GameOvers:");
-			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT);
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Default num Wins:");
-			GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT);
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Survival mode num GameOvers:");
-			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE);
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Survival mode num Wins:");
-			GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE);
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.Space();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Easy mode num GameOvers:");
-			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE);
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Easy mode num Wins:");
-			GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE);
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Normal mode num GameOvers:");
-			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE);
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Normal mode num Wins:");
-			GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE);
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Hard mode num GameOvers:");
-			GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE);
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Hard mode num Wins:");
-			GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE);
-			EditorGUILayout.EndHorizontal();
-			
+			if(!GameSettings.Instance.IS_PRO_VERSION){
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField(whenShowInitialAd);
+				GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START	= EditorGUILayout.IntField(GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Default num GameOvers:");
+				GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT);
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Default num Wins:");
+				GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Survival mode num GameOvers:");
+				GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Survival mode num Wins:");
+				GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE);
+				EditorGUILayout.EndHorizontal();
+				
+				//				EditorGUILayout.Space();
+				EditorGUILayout.Separator();
+				EditorGUILayout.Separator();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Easy mode num GameOvers:");
+				GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE);
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Easy mode num Wins:");
+				GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Normal mode num GameOvers:");
+				GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE);
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Normal mode num Wins:");
+				GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Hard mode num GameOvers:");
+				GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE);
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Hard mode num Wins:");
+				GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE	= EditorGUILayout.IntField(GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.EndVertical();
+			}
 			
 		}
 	}
@@ -526,18 +727,27 @@ public class GameSettingsEditor : Editor {
 			EditorGUI.indentLevel--;
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Facebook");
+			EditorGUILayout.LabelField("Facebook", GUILayout.Width(80));
 			GameSettings.Instance.USE_FACEBOOK	= EditorGUILayout.Toggle(GameSettings.Instance.USE_FACEBOOK);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Twitter");
+			EditorGUILayout.LabelField("Twitter", GUILayout.Width(80));
 			GameSettings.Instance.USE_TWITTER	= EditorGUILayout.Toggle(GameSettings.Instance.USE_TWITTER);
 			EditorGUILayout.EndHorizontal();
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("#Hashtag:");
-			GameSettings.Instance.HASHTAG	= EditorGUILayout.TextField(GameSettings.Instance.HASHTAG).Trim();
+			GUIStyle style = new GUIStyle(EditorStyles.label);
+			
+			Color prev = GUI.color;
+			GUI.color = Color.blue;
+			string hashtag = "#"+GameSettings.Instance.CurrentGameName.Replace(" ", "");
+			GameSettings.Instance.HASHTAG = hashtag;
+			EditorGUILayout.LabelField(hashtag, EditorStyles.whiteLabel);
+			
+			//			GameSettings.Instance.HASHTAG = EditorGUILayout.TextField(GameSettings.Instance.HASHTAG).Trim();
+			GUI.color = prev;
 			EditorGUILayout.EndHorizontal();
 		}
 	}
@@ -546,20 +756,23 @@ public class GameSettingsEditor : Editor {
 		GameSettings.Instance.showGooglePlayServicesSettings = EditorGUILayout.Foldout(GameSettings.Instance.showGooglePlayServicesSettings, "Google Play Services");
 		if (GameSettings.Instance.showGooglePlayServicesSettings) {
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Enabled");
+			EditorGUILayout.LabelField("Enabled", GUILayout.Width(80));
 			GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES	= EditorGUILayout.Toggle(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES);
 			EditorGUILayout.EndHorizontal();
 			
 			if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
+				EditorGUILayout.BeginVertical(GUI.skin.box);
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Show login window first opening");
-				GameSettings.Instance.SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING	= EditorGUILayout.Toggle(GameSettings.Instance.SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING);
+				GameSettings.Instance.SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING	= EditorGUILayout.Toggle(GameSettings.Instance.SHOW_LOGIN_GOOGLE_PLAY_SERVICES_THE_FIRST_OPENING, GUILayout.Width(120));
 				EditorGUILayout.EndHorizontal();
+				
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Game openings to show login window");
-				GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES);
+				GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GOOLGE_PLAY_SERVICES, GUILayout.Width(120));
 				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.EndVertical();
 			}
 		}
 	}
@@ -568,20 +781,22 @@ public class GameSettingsEditor : Editor {
 		GameSettings.Instance.showGameCenterSettings = EditorGUILayout.Foldout(GameSettings.Instance.showGameCenterSettings, "Game Center");
 		if (GameSettings.Instance.showGameCenterSettings) {
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Enabled");
+			EditorGUILayout.LabelField("Enabled", GUILayout.Width(80));
 			GameSettings.Instance.USE_GAMECENTER	= EditorGUILayout.Toggle(GameSettings.Instance.USE_GAMECENTER);
 			EditorGUILayout.EndHorizontal();
 			
 			if(GameSettings.Instance.USE_GAMECENTER){
+				EditorGUILayout.BeginVertical(GUI.skin.box);
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Show login window first opening");
-				GameSettings.Instance.SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING	= EditorGUILayout.Toggle(GameSettings.Instance.SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING);
+				GameSettings.Instance.SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING	= EditorGUILayout.Toggle(GameSettings.Instance.SHOW_LOGIN_GAME_CENTER_THE_FIRST_OPENING, GUILayout.Width(120));
 				EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Game openings to show login window");
-				GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER);
+				GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER	= EditorGUILayout.IntField(GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER, GUILayout.Width(120));
 				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.EndVertical();
 			}
 		}
 	}
@@ -589,200 +804,321 @@ public class GameSettingsEditor : Editor {
 	protected virtual  void appLinks(){
 		GameSettings.Instance.showAppLinksSettings = EditorGUILayout.Foldout(GameSettings.Instance.showAppLinksSettings, "App Links");
 		if (GameSettings.Instance.showAppLinksSettings) {
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Android Link:");
-			GameSettings.Instance.LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_ANDROID_APP).Trim();
-			EditorGUILayout.EndHorizontal();
+			EditorGUI.indentLevel++;
+			//			EditorGUILayout.BeginHorizontal();
+			//			EditorGUILayout.LabelField("Android Link path:");
+			//			GameSettings.Instance.LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_ANDROID_APP).Trim();
+			//			EditorGUILayout.EndHorizontal();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Android Short Link:");
-			GameSettings.Instance.SHORT_LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_ANDROID_APP).Trim();
-			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.BeginHorizontal();
+			//			EditorGUILayout.LabelField("Android Short Link:");
+			//			GameSettings.Instance.SHORT_LINK_ANDROID_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_ANDROID_APP).Trim();
+			//			EditorGUILayout.EndHorizontal();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("iOS Link:");
-			GameSettings.Instance.LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_IOS_APP).Trim();
-			EditorGUILayout.EndHorizontal();
+			androidLinks();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("iOS Short Link:");
-			GameSettings.Instance.SHORT_LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_IOS_APP).Trim();
-			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.BeginHorizontal();
+			//			EditorGUILayout.LabelField("iOS Link:");
+			//			GameSettings.Instance.LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_IOS_APP).Trim();
+			//			EditorGUILayout.EndHorizontal();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Amazon Link:");
-			GameSettings.Instance.LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_AMAZON_APP).Trim();
-			EditorGUILayout.EndHorizontal();
+			iOSLinks();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Amazon Short Link:");
-			GameSettings.Instance.SHORT_LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_AMAZON_APP).Trim();
-			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.BeginHorizontal();
+			//			EditorGUILayout.LabelField("iOS Short Link:");
+			//			GameSettings.Instance.SHORT_LINK_IOS_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_IOS_APP).Trim();
+			//			EditorGUILayout.EndHorizontal();
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Game Logo Link:");
-			GameSettings.Instance.LOGO_APP_LINK	= EditorGUILayout.TextField(GameSettings.Instance.LOGO_APP_LINK).Trim();
-			EditorGUILayout.EndHorizontal();
+			//			EditorGUILayout.BeginHorizontal();
+			//			EditorGUILayout.LabelField("Amazon Link:");
+			//			GameSettings.Instance.LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.LINK_AMAZON_APP).Trim();
+			//			EditorGUILayout.EndHorizontal();
+			
+			//			EditorGUILayout.BeginHorizontal();
+			//			EditorGUILayout.LabelField("Amazon Short Link:");
+			//			GameSettings.Instance.SHORT_LINK_AMAZON_APP	= EditorGUILayout.TextField(GameSettings.Instance.SHORT_LINK_AMAZON_APP).Trim();
+			//			EditorGUILayout.EndHorizontal();
+			
+			gameLogoLinks();
+			
+			EditorGUI.indentLevel--;
 		}
+	}
+	
+	protected virtual void androidLinks(){
+		GameSettings.Instance.showAndroidLinks = EditorGUILayout.Foldout(GameSettings.Instance.showAndroidLinks, "Android Short Links");
+		if (GameSettings.Instance.showAndroidLinks) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.androidShortLinks.Count == 0) {
+				EditorGUILayout.HelpBox("No Android Short Link Registred",MessageType.Warning);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.androidShortLinks) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Link for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.androidShortLinks[i] = EditorGUILayout.TextField(GameSettings.Instance.androidShortLinks[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.androidShortLinks.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.androidShortLinks.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		//		EditorGUILayout.Space();
+	}
+	
+	protected virtual void iOSLinks(){
+		GameSettings.Instance.showiOSLinks = EditorGUILayout.Foldout(GameSettings.Instance.showiOSLinks, "iOS Short Links");
+		if (GameSettings.Instance.showiOSLinks) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.iOSShortLinks.Count == 0) {
+				EditorGUILayout.HelpBox("No iOS Short Link Registred",MessageType.Warning);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.iOSShortLinks) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Link for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.iOSShortLinks[i] = EditorGUILayout.TextField(GameSettings.Instance.iOSShortLinks[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.iOSShortLinks.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.iOSShortLinks.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		//		EditorGUILayout.Space();
+	}
+	
+	protected virtual void gameLogoLinks(){
+		GameSettings.Instance.showLogoLinksIDS = EditorGUILayout.Foldout(GameSettings.Instance.showLogoLinksIDS, "Game Logo Links");
+		if (GameSettings.Instance.showLogoLinksIDS) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.logoLinks.Count == 0) {
+				EditorGUILayout.HelpBox("No Game Logo Link Registred",MessageType.Info);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.logoLinks) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Link for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.logoLinks[i] = EditorGUILayout.TextField(GameSettings.Instance.logoLinks[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.logoLinks.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.logoLinks.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		//		EditorGUILayout.Space();
 	}
 	
 	protected virtual void rankingIdsSettings(){
 		GameSettings.Instance.showRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showRankingSettings, rankingIDs);
 		if (GameSettings.Instance.showRankingSettings) {
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Unique Ranking");
-			GameSettings.Instance.ID_UNIQUE_RANKING	= EditorGUILayout.TextField(GameSettings.Instance.ID_UNIQUE_RANKING).Trim();
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Survival Ranking");
-			GameSettings.Instance.ID_RANKING_SURVIVAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL).Trim();
-			EditorGUILayout.EndHorizontal();
-			
 			EditorGUI.indentLevel++;
-			GameSettings.Instance.showDifficultiesRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showDifficultiesRankingSettings, "Rankings by Difficulty");
-			if (GameSettings.Instance.showDifficultiesRankingSettings) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Easy Mode Ranking");
-				GameSettings.Instance.ID_RANKING_EASY	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_EASY).Trim();
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Normal Mode Ranking");
-				GameSettings.Instance.ID_RANKING_NORMAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_NORMAL).Trim();
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Hard Mode Ranking");
-				GameSettings.Instance.ID_RANKING_HARD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_HARD).Trim();
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("PRO Mode Ranking");
-				GameSettings.Instance.ID_RANKING_PRO	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_PRO).Trim();
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("God Mode Ranking");
-				GameSettings.Instance.ID_RANKING_GOD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_GOD).Trim();
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Impossible Ranking");
-				GameSettings.Instance.ID_RANKING_IMPOSSIBLE	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_IMPOSSIBLE).Trim();
-				EditorGUILayout.EndHorizontal();
+			uniqueRankingIDs();
+			uniquesurvivalRankingIDs();
+			
+			//			EditorGUI.indentLevel++;
+			//			GameSettings.Instance.showDifficultiesRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showDifficultiesRankingSettings, "Rankings by Difficulty");
+			//			if (GameSettings.Instance.showDifficultiesRankingSettings) {
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Easy Mode Ranking");
+			//				GameSettings.Instance.ID_RANKING_EASY	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_EASY).Trim();
+			//				EditorGUILayout.EndHorizontal();
+			//				
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Normal Mode Ranking");
+			//				GameSettings.Instance.ID_RANKING_NORMAL	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_NORMAL).Trim();
+			//				EditorGUILayout.EndHorizontal();
+			//				
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Hard Mode Ranking");
+			//				GameSettings.Instance.ID_RANKING_HARD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_HARD).Trim();
+			//				EditorGUILayout.EndHorizontal();
+			//				
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("PRO Mode Ranking");
+			//				GameSettings.Instance.ID_RANKING_PRO	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_PRO).Trim();
+			//				EditorGUILayout.EndHorizontal();
+			//				
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("God Mode Ranking");
+			//				GameSettings.Instance.ID_RANKING_GOD	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_GOD).Trim();
+			//				EditorGUILayout.EndHorizontal();
+			//				
+			//				EditorGUILayout.BeginHorizontal();
+			//				EditorGUILayout.LabelField("Impossible Ranking");
+			//				GameSettings.Instance.ID_RANKING_IMPOSSIBLE	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_IMPOSSIBLE).Trim();
+			//				EditorGUILayout.EndHorizontal();
+			//			}
+			//			
+			//			handleWorldLevelRankings();
+			//			handleSurvivalLevelRankings();
+			//			EditorGUI.indentLevel--;
+			EditorGUI.indentLevel--;
+		}
+	}
+	
+	protected virtual void uniqueRankingIDs(){
+		GameSettings.Instance.showUniqueRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showUniqueRankingSettings, uniqueRankingIDsContent);
+		if (GameSettings.Instance.showUniqueRankingSettings) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.uniqueRankingIDS.Count == 0) {
+				EditorGUILayout.HelpBox("No Unique Ranking ID Registred",MessageType.Info);
 			}
 			
-			handleWorldLevelRankings();
-			handleSurvivalLevelRankings();
-			EditorGUI.indentLevel--;
+			int i = 0;
+			foreach(string d in GameSettings.Instance.uniqueRankingIDS) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.uniqueRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.uniqueRankingIDS[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.uniqueRankingIDS.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
 			
-			//			GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, "Rankings by Survival Levels");
-			//			if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 1 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 2 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 3 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 4 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 5 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 6 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 7 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 8 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 9 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("Level 10 Survival Ranking");
-			//				GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10);
-			//				EditorGUILayout.EndHorizontal();
-			//			}
 			
-			//			GameSettings.Instance.showWorldRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showWorldRankingSettings, "Rankings by Game Worlds");
-			//			if (GameSettings.Instance.showWorldRankingSettings) {
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 1 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_1	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_1);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 2 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_2	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_2);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 3 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_3	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_3);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 4 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_4	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_4);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 5 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_5	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_5);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 6 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_6	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_6);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 7 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_7	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_7);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 8 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_8	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_8);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 9 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_9	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_9);
-			//				EditorGUILayout.EndHorizontal();
-			//
-			//				EditorGUILayout.BeginHorizontal();
-			//				EditorGUILayout.LabelField("World 10 Ranking");
-			//				GameSettings.Instance.ID_RANKING_WORLD_10	= EditorGUILayout.TextField(GameSettings.Instance.ID_RANKING_WORLD_10);
-			//				EditorGUILayout.EndHorizontal();
-			//			}
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.uniqueRankingIDS.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
 		}
+		EditorGUILayout.Space();
+	}
+	
+	protected virtual void uniquesurvivalRankingIDs(){
+		GameSettings.Instance.showUniqueSurvivalRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showUniqueSurvivalRankingSettings, uniqueSurvivalRankingIDsContent);
+		if (GameSettings.Instance.showUniqueSurvivalRankingSettings) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.uniqueSurvivalRankingIDS.Count == 0) {
+				EditorGUILayout.HelpBox("No Unique Survival Ranking ID Registred",MessageType.Info);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.uniqueSurvivalRankingIDS) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.uniqueSurvivalRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.uniqueSurvivalRankingIDS[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.uniqueSurvivalRankingIDS.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.uniqueSurvivalRankingIDS.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		EditorGUILayout.Space();
+	}
+	
+	protected virtual void survivalLevelRankingIDs(){
+		GameSettings.Instance.showSurvivalLevelsRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSurvivalLevelsRankingSettings, uniqueSurvivalRankingIDsContent);
+		if (GameSettings.Instance.showSurvivalLevelsRankingSettings) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.uniqueSurvivalRankingIDS.Count == 0) {
+				EditorGUILayout.HelpBox("No Unique Survival Ranking ID Registred",MessageType.Info);
+			}
+			
+			int i = 0;
+			foreach(string d in GameSettings.Instance.uniqueSurvivalRankingIDS) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.uniqueSurvivalRankingIDS[i] = EditorGUILayout.TextField(GameSettings.Instance.uniqueSurvivalRankingIDS[i]).Trim();
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.uniqueSurvivalRankingIDS.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.uniqueSurvivalRankingIDS.Add("");
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+		}
+		EditorGUILayout.Space();
 	}
 	
 	protected virtual void characterControl(){
@@ -841,7 +1177,7 @@ public class GameSettingsEditor : Editor {
 		SelectableLabelField(SdkVersion,   GameSettings.VERSION_NUMBER);
 		
 		
-		SelectableLabelField(SupportEmail, "pukepixel@gmail.com");
+		SelectableLabelField(SupportEmail, "frillsgamesstudio@gmail.com");
 		
 		
 	}

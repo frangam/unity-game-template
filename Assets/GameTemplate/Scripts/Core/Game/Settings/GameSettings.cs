@@ -12,19 +12,30 @@ public class GameSettings : ScriptableObject {
 	//--------------------------------------
 	// Flags to control showing in editor
 	//--------------------------------------
-	public bool showGameDifficulties			 		= false;
-	public bool showMoneySettings 						= false;
-	public bool showAdsSettings 						= false;
-	public bool showSocialNetworksSettings 				= false;
-	public bool showAppLinksSettings 					= false;
-	public bool showCharacterControlSettings 			= false;
-	public bool showRankingSettings 					= false;
-	public bool showWorldRankingSettings 				= false;
-	public bool showSurvivalLevelsRankingSettings 		= false;
-	public bool showDifficultiesRankingSettings 		= false;
-	public bool showInAppBillingSettings 				= false;
-	public bool showGooglePlayServicesSettings 			= false;
-	public bool showGameCenterSettings 					= false;
+	public bool showGameInfo												= false;
+	public bool showGameNames 												= false;
+	public bool showBuildPackageIDs											= false;
+	public bool showAppleAppID												= false;
+	public bool showGameDifficulties			 							= false;
+	public bool showMoneySettings 											= false;
+	public bool showAdsSettings 											= false;
+	public bool showSocialNetworksSettings 									= false;
+	public bool showAppLinksSettings 										= false;
+	public bool showAndroidLinks											= false;
+	public bool showiOSLinks												= false;
+	public bool showAmazonLinks												= false;
+	public bool showLogoLinksIDS											= false;
+	public bool showCharacterControlSettings 								= false;
+	public bool showRankingSettings 										= false;
+	public bool showUniqueRankingSettings 									= false;
+	public bool showUniqueSurvivalRankingSettings 							= false;
+	public bool showWorldRankingSettings 									= false;
+	public bool showSurvivalLevelsRankingSettings 							= false;
+	public bool showDifficultiesRankingSettings 							= false;
+	public bool showInAppBillingSettings 									= false;
+	public bool showGooglePlayServicesSettings 								= false;
+	public bool showGameCenterSettings 										= false;
+	public Dictionary<InAppBillingIDPack, bool> showInAppBillingIDsPack		= new Dictionary<InAppBillingIDPack, bool>();
 	
 	
 	//--------------------------------------
@@ -41,21 +52,33 @@ public class GameSettings : ScriptableObject {
 	public static int 	maxLevels 						= 10;
 	
 	
+	//STATIC SETTINGS
+	public static float				musicVolume						= 1f;
+	public static float 			soundVolume 					= 1f;
+	public static float 			graphicsDetails					= 1f;
+	
 	//SETTINGS
-	public static float	musicVolume						= 1f;
-	public static float soundVolume 					= 1f;
-	public static float graphicsDetails					= 1f;
-	public List<GameDifficulty> gameDifficulties 		= new List<GameDifficulty>(){GameDifficulty.NONE};
-	public List<string> survivalLevelRankingIDS 		= new List<string>();
-	public List<string> worldLevelRankingIDS 			= new List<string>();
-	public List<string> inAppBillingIDS 				= new List<string>();
-	public bool FX_AND_MUSIC_ARE_THE_SAME 				= true;
-	public bool HAS_INITIAL_TUTORIAL 					= false;
-	public bool 	showMissionsWinAtStart				= false;
-	public bool 	showLoadIndicatorInLoadingScene		= true;
-	public bool USE_IN_APP_PURCHASES_SERVICE 			= true;
-	public bool ENABLE_ANDROID_IMMERSIVE_MODE			= true;
-	public bool 	showTestLogs						= false; //show debug log for test or not
+	public List<GameDifficulty> 	gameDifficulties 				= new List<GameDifficulty>(){GameDifficulty.NONE};
+	public List<string> 			appleAppIDs				 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 			gameNames				 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 			buildPackagesIDs		 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 			androidShortLinks		 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 			iOSShortLinks			 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 			amazonShortLinks		 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 			logoLinks				 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 			uniqueRankingIDS 				= new List<string>(); //for every game version (versinable game)
+	public List<string> 			uniqueSurvivalRankingIDS 		= new List<string>(); //for every game version (versinable game)
+	public List<List<string>>		worldLevelRankingIDS 			= new List<List<string>>(); //for every game version (versinable game)
+	public List<List<string>>		survivalLevelRankingIDS 		= new List<List<string>>(); //for every game version (versinable game)
+	//	public List<string> 			inAppBillingIDS 				= new List<string>();
+	public List<InAppBillingIDPack> allInAppBillingIDS 				= new List<InAppBillingIDPack>();
+	public bool 					FX_AND_MUSIC_ARE_THE_SAME 		= true;
+	public bool 					HAS_INITIAL_TUTORIAL 			= false;
+	public bool 					showMissionsWinAtStart			= false;
+	public bool 					showLoadIndicatorInLoadingScene	= true;
+	public bool 					USE_IN_APP_PURCHASES_SERVICE 	= true;
+	public bool 					ENABLE_ANDROID_IMMERSIVE_MODE	= true;
+	public bool 					showTestLogs					= false; //show debug log for test or not
 	
 	//--------------------------------------
 	// Constants
@@ -70,9 +93,12 @@ public class GameSettings : ScriptableObject {
 	public long 	INITIAL_GEMS = 5;
 	public long		MAX_MONEY = long.MaxValue;
 	public long 	MAX_GEMS = long.MaxValue;
+	public bool 	USE_MAX_LONG_VALUE_TO_MAX_MONEY = true;
+	public bool 	USE_MAX_LONG_VALUE_TO_MAX_GEMS = true;
 	public float	PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED 		= 0.3f;
 	public float	PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED 		= 0f;
 	public string	testLanguage = "English";
+	public int		currentGameMultiversion = 0;
 	
 	//ADS 
 	public bool 	IS_A_DEV_VERSION = true; 
@@ -101,13 +127,10 @@ public class GameSettings : ScriptableObject {
 	public bool USE_FACEBOOK 							= true;
 	
 	//APP LINKS
-	public string GAME_NAME	 						= "Game Template";
-	public string LINK_ANDROID_APP 					= "https://play.google.com/store/apps/details?id=com.pukepixel.";
-	public string SHORT_LINK_ANDROID_APP 			= "";
-	public string LINK_AMAZON_APP 					= "http://www.amazon.com/gp/mas/dl/android?p=com.pukepixel.";
-	public string SHORT_LINK_AMAZON_APP				= "";
-	public string LINK_IOS_APP						= "https://itunes.apple.com/app/id";
-	public string SHORT_LINK_IOS_APP				= "";
+	private string LINK_ANDROID_APP 					= "https://play.google.com/store/apps/details?id=";
+	private string LINK_AMAZON_APP 						= "http://www.amazon.com/gp/mas/dl/android?p=";
+	private string LINK_IOS_APP							= "https://itunes.apple.com/app/id";
+	
 	
 	//CHARACTER CONTROL
 	public float INITIAL_CHAR_CONTROL_SENSITIVITY 		= 2f;
@@ -196,34 +219,12 @@ public class GameSettings : ScriptableObject {
 	public const string PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE = "pp_last_opening_user_connected_to_store_service"; //1 or 0 y playerprefs to know if user conneted to the gps or gc in the last opening
 	
 	//GooglePlay Services
-	public string ID_UNIQUE_RANKING 				= "";
-	public string ID_RANKING_SURVIVAL				= "";
 	public string ID_RANKING_EASY 					= "";
 	public string ID_RANKING_NORMAL 				= "";
 	public string ID_RANKING_HARD 					= "";
 	public string ID_RANKING_PRO 					= "";
 	public string ID_RANKING_GOD 					= "";
 	public string ID_RANKING_IMPOSSIBLE 			= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_1		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_2		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_3		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_4		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_5		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_6		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_7		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_8		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_9		= "";
-	//	public string ID_RANKING_SURVIVAL_LEVEL_10		= "";
-	//	public string ID_RANKING_WORLD_1				= "";
-	//	public string ID_RANKING_WORLD_2				= "";
-	//	public string ID_RANKING_WORLD_3				= "";
-	//	public string ID_RANKING_WORLD_4				= "";
-	//	public string ID_RANKING_WORLD_5				= "";
-	//	public string ID_RANKING_WORLD_6				= "";
-	//	public string ID_RANKING_WORLD_7				= "";
-	//	public string ID_RANKING_WORLD_8				= "";
-	//	public string ID_RANKING_WORLD_9				= "";
-	//	public string ID_RANKING_WORLD_10				= "";
 	
 	//Facebook
 	public string LOGO_APP_LINK 	= "";
@@ -232,6 +233,52 @@ public class GameSettings : ScriptableObject {
 	public string HASHTAG 		= "#GAME";
 	
 	#endregion
+	
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public string CurrentGameName{
+		get{ return gameNames[currentGameMultiversion];}
+	}
+	public string CurrentBuildPackageID{
+		get{ return buildPackagesIDs[currentGameMultiversion];}
+	}
+	public string CurrentAppleAppID{
+		get{ return appleAppIDs[currentGameMultiversion];}
+	}
+	public string CurrentAndroidAppLink{
+		get{ return LINK_ANDROID_APP+CurrentBuildPackageID;}
+	}
+	public string CurrentAmazonAppLink{
+		get{ return LINK_AMAZON_APP+CurrentBuildPackageID;}
+	}
+	public string CurrentIOSAppLink{
+		get{ return LINK_IOS_APP+CurrentAppleAppID;}
+	}
+	public string CurrentAndroidAppShortLink{
+		get{ return androidShortLinks[currentGameMultiversion];}
+	}
+	public string CurrentAmazonAppShortLink{
+		get{ return amazonShortLinks[currentGameMultiversion];}
+	}
+	public string CurrentIOSAppShortLink{
+		get{ return iOSShortLinks[currentGameMultiversion];}
+	}
+	public string CurrentUniqueRankingID{
+		get{ return uniqueRankingIDS[currentGameMultiversion];}
+	}
+	public string CurrentUniqueSurvivalRankingID{
+		get{ return uniqueSurvivalRankingIDS[currentGameMultiversion];}
+	}
+	public List<string> CurrentSurvivalLevelRankingIDs{
+		get{ return survivalLevelRankingIDS[currentGameMultiversion];}
+	}
+	public List<string> CurrentWorldLevelRankingIDs{
+		get{ return worldLevelRankingIDS[currentGameMultiversion];}
+	}
+	public List<string> CurrentInAppBillingIDs{
+		get{ return allInAppBillingIDS[currentGameMultiversion].ids;}
+	}
 	
 	
 	//--------------------------------------

@@ -356,8 +356,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	public string idRankingByGameWorld(int world){
 		string res = "";//GameSettings.Instance.ID_RANKING_WORLD_1;
 		
-		if(world > 0 && GameSettings.Instance.worldLevelRankingIDS != null && GameSettings.Instance.worldLevelRankingIDS.Count > world-1){
-			res = GameSettings.Instance.worldLevelRankingIDS[world-1];
+		if(world > 0 && GameSettings.Instance.CurrentWorldLevelRankingIDs != null && GameSettings.Instance.CurrentWorldLevelRankingIDs.Count > world-1){
+			res = GameSettings.Instance.CurrentWorldLevelRankingIDs[world-1];
 		}
 		
 		//		switch(world){
@@ -384,8 +384,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	public string idRankingBySurvivalLevels(int level){
 		string res = "";//GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1;
 		
-		if(level > 0 && GameSettings.Instance.survivalLevelRankingIDS != null && GameSettings.Instance.survivalLevelRankingIDS.Count > level-1){
-			res = GameSettings.Instance.worldLevelRankingIDS[level-1];
+		if(level > 0 && GameSettings.Instance.CurrentSurvivalLevelRankingIDs != null && GameSettings.Instance.CurrentSurvivalLevelRankingIDs.Count > level-1){
+			res = GameSettings.Instance.CurrentSurvivalLevelRankingIDs[level-1];
 		}
 		
 		//		switch(level){

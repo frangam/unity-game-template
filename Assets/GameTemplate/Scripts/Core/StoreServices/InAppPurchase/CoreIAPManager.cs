@@ -234,8 +234,8 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("CoreIAPManager - initializing");
 		
-		if(GameSettings.Instance.inAppBillingIDS != null && GameSettings.Instance.inAppBillingIDS.Count > 0)
-			Init(GameSettings.Instance.inAppBillingIDS);
+		if(GameSettings.Instance.CurrentInAppBillingIDs != null && GameSettings.Instance.CurrentInAppBillingIDs.Count > 0)
+			Init(GameSettings.Instance.CurrentInAppBillingIDs);
 		else
 			Debug.LogError("Not found any In App Billing ID");
 	}

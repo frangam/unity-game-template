@@ -490,11 +490,11 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	// Metodos privados
 	// --------------------------------------
 	private void postear(SocialNetwork red, bool shareLevelCompleted = false, bool captura = false){
-		string linkAPP = GameSettings.Instance.SHORT_LINK_ANDROID_APP;
+		string linkAPP = GameSettings.Instance.CurrentAndroidAppShortLink;
 		#if UNITY_ANDROID
-		linkAPP = GameSettings.Instance.SHORT_LINK_ANDROID_APP;
+		linkAPP = GameSettings.Instance.CurrentAndroidAppShortLink;
 		#elif UNITY_IPHONE
-		linkAPP = GameSettings.Instance.SHORT_LINK_IOS_APP;
+		linkAPP = GameSettings.Instance.CurrentIOSAppShortLink;
 		#endif
 		
 		string mensajeTwitter = shareLevelCompleted ? Localization.Localize(ExtraLocalizations.SHARE_LEVEL_COMPLETED)+" "+PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_PLAYED)
@@ -523,7 +523,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 				
 				SPFacebook.instance.Post (
 					link: linkAPP,
-					linkName: GameSettings.Instance.GAME_NAME + " (iPhone/iPad & Android & WP8)",
+					linkName: GameSettings.Instance.CurrentGameName + " (iPhone/iPad & Android & WP8)",
 					linkCaption: "Ranking",
 					linkDescription: mensajeFB,
 					picture: urlIcono
@@ -555,7 +555,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		//Publicacion del mensaje con imagen
 		
 		#if UNITY_ANDROID
-		string linkAPP = GameSettings.Instance.SHORT_LINK_ANDROID_APP;
+		string linkAPP = GameSettings.Instance.CurrentAndroidAppShortLink;
 		
 		if(red == SocialNetwork.FACEBOOK){
 			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+linkAPP;
@@ -567,12 +567,14 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		}
 		
 		#elif UNITY_IPHONE
+		linkAPP = GameSettings.Instance.CurrentIOSAppShortLink;
+		
 		if(red == SocialNetwork.FACEBOOK){
-			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion() +" "+GameSettings.Instance.SHORT_LINK_IOS_APP;
+			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion() +" "+linkAPP;
 			IOSSocialManager.instance.FacebookPost(mensaje, tex);
 		}
 		else if(red == SocialNetwork.TWITTER){
-			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+hashtag+" "+GameSettings.Instance.SHORT_LINK_IOS_APP;
+			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion()+hashtag+" "++linkAPP;
 			IOSSocialManager.instance.TwitterPost(mensaje, tex);
 		}
 		#endif

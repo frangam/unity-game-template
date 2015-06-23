@@ -167,7 +167,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			loadLeaderBoards();
 		}
 		
-		GooglePlayManager.instance.LoadPlayerCenteredScores(GameSettings.Instance.ID_UNIQUE_RANKING, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
+		GooglePlayManager.instance.LoadPlayerCenteredScores(GameSettings.Instance.CurrentUniqueRankingID, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
 	}
 	
 	private void OnPlayerInfoLoaded(CEvent e) {
@@ -237,7 +237,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			Debug.Log("GPSConnect - Leader boards loaded result success: " +result.isSuccess + ". Result code: " +result.response);
 		
 		if(result.isSuccess) {
-			string id = GameSettings.Instance.ID_UNIQUE_RANKING;
+			string id = GameSettings.Instance.CurrentUniqueRankingID;
 			GooglePlayManager.instance.LoadPlayerCenteredScores(id, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
 			GPLeaderBoard leaderboard = GooglePlayManager.instance.GetLeaderBoard(id);
 			

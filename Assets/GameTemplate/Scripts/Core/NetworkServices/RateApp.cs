@@ -55,7 +55,7 @@ public class RateApp : Singleton<RateApp>{
 	//--------------------------------------
 	private void rate(){
 		#if UNITY_IPHONE
-		IOSRateUsPopUp rate = IOSRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.GAME_NAME
+		IOSRateUsPopUp rate = IOSRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.CurrentGameName
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_MESSAGE)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_VOTE_BUTTON)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_REMEMBER_BUTTON)
@@ -63,15 +63,15 @@ public class RateApp : Singleton<RateApp>{
 		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
 		
 		#elif UNITY_ANDROID
-		string link = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.LINK_AMAZON_APP : GameSettings.Instance.LINK_ANDROID_APP;
-		AndroidRateUsPopUp rate = AndroidRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.GAME_NAME
+		string link = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.CurrentAmazonAppLink : GameSettings.Instance.CurrentAndroidAppLink;
+		AndroidRateUsPopUp rate = AndroidRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.CurrentGameName
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_MESSAGE)
 		                                                    ,link,Localization.Get(ExtraLocalizations.RATE_POPUP_VOTE_BUTTON)
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_REMEMBER_BUTTON)
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_REFUSE_BUTTON));
 		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
 		#elif UNITY_WP8
-		WP8RateUsPopUp rate = WP8RateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.GAME_NAME
+		WP8RateUsPopUp rate = WP8RateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.CurrentGameName
 		                                            , Localization.Get(ExtraLocalizations.RATE_POPUP_MESSAGE));
 		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
 		#endif
@@ -81,7 +81,7 @@ public class RateApp : Singleton<RateApp>{
 		#if UNITY_IPHONE
 		IOSNativeUtility.RedirectToAppStoreRatingPage();
 		#elif UNITY_ANDROID
-		string url = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.LINK_AMAZON_APP : GameSettings.Instance.LINK_ANDROID_APP;
+		string url = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.CurrentAmazonAppLink : GameSettings.Instance.CurrentAndroidAppLink;
 		AN_PoupsProxy.OpenAppRatePage(url);
 		#elif UNITY_WP8
 		WP8PopUps.PopUp.ShowRateWindow();
