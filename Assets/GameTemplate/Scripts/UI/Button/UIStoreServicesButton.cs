@@ -10,8 +10,11 @@ public class UIStoreServicesButton : UIBaseButton {
 	private StoreService service;
 	
 	[SerializeField]
-	[Tooltip("Leave empty if you want to show all items. Don't leave empty if you want to show an specific item")]
-	private string id;
+	private ScoreType scoreType;
+	//
+	//	[SerializeField]
+	//	[Tooltip("Leave empty if you want to show all items. Don't leave empty if you want to show an specific item")]
+	//	private string id;
 	
 	[SerializeField]
 	[Tooltip("True if we want to get the ranking id from de GameManager")]
@@ -26,10 +29,16 @@ public class UIStoreServicesButton : UIBaseButton {
 		
 		switch(service){
 		case StoreService.SCORES:
-			string rankId = id;
+			string rankId = "";
 			
 			if(handledByGameManager)
 				rankId = GameController.Instance.Manager.getRankingID();
+			else{
+				switch(scoreType){
+				case ScoreType.UNIQUE:	rankId = GameSettings.Instance.CurrentUniqueRankingID;	break;
+				case ScoreType.SURVIVAL:	rankId = GameSettings.Instance.CurrentUniqueSurvivalRankingID;	break;
+				}
+			}
 			
 			ScoresHandler.Instance.showRanking(rankId);
 			break;

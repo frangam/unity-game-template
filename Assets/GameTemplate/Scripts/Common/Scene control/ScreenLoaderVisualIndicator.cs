@@ -22,11 +22,15 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		//		finCarga ();
 		
 		AsyncOperation async = Application.LoadLevelAsync(escena);
+		if(async == null)
+			async.allowSceneActivation = false;
 		while (!async.isDone) {
 			//			Debug.Log("%: " + async.progress);
 			UILoadingPanel.Instance.changeProgress(async.progress);
 			yield return null;
 		}
+		if(async != null && async.progress >= 0.9f)
+			async.allowSceneActivation = true;
 		//
 		//		yield return async;
 		//		Debug.Log("Loading complete");
@@ -50,11 +54,16 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		//		finCarga ();
 		//		Application.LoadLevel (escena);
 		AsyncOperation async = Application.LoadLevelAsync(escena);
+		if(async == null)
+			async.allowSceneActivation = false;
 		while (!async.isDone) {
 			//			Debug.Log("%: " + async.progress);
 			UILoadingPanel.Instance.changeProgress(async.progress);
 			yield return null;
 		}
+		if(async != null && async.progress >= 0.9f)
+			async.allowSceneActivation = true;
+		
 		
 		//		yield return null;
 		//		Debug.Log("Loading complete");

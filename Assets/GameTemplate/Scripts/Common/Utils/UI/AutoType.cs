@@ -30,52 +30,69 @@ public class AutoType : UIBaseButton {
 	
 	
 	void Start(){
+		if(!managedByWindow)
+			init();
+		
 		if(!initStoped && !managedByWindow)
 			initType();
 	}
 	
-	private void init(){
-		lbMessage = GetComponent<Text>();
-		message = !string.IsNullOrEmpty(localizationMessageKey) ? Localization.Get(localizationMessageKey): lbMessage.text;
-		stoppedMessage = !string.IsNullOrEmpty(localForStopped) ? Localization.Get(localForStopped) : "";
-		lbMessage.text = "";
-		stopType = false;
+	
+	
+	private void init(string putThisMessage = null){
+		if(!lbMessage)
+			lbMessage = GetComponent<Text>();
 		
-		if(initStoped){
-			lbMessage.text = stoppedMessage;
+		if(!string.IsNullOrEmpty(putThisMessage) || !string.IsNullOrEmpty(lbMessage.text) || !string.IsNullOrEmpty(localizationMessageKey)){
+			if(string.IsNullOrEmpty(putThisMessage) && (!string.IsNullOrEmpty(lbMessage.text) || !string.IsNullOrEmpty(localizationMessageKey))){
+				message = !string.IsNullOrEmpty(localizationMessageKey) ? Localization.Get(localizationMessageKey): lbMessage.text;
+			}
+			else if(!string.IsNullOrEmpty(putThisMessage)){
+				message = putThisMessage;
+			}
+			
+			stoppedMessage = !string.IsNullOrEmpty(localForStopped) ? Localization.Get(localForStopped) : "";
+			lbMessage.text = "";
+			stopType = false;
+			
+			if(initStoped){
+				lbMessage.text = stoppedMessage;
+			}
 		}
 	}
 	
 	IEnumerator TypeText () {
-		if(emptyWhenLoop)
-			lbMessage.text = "";
-		
-		foreach (char letter in message.ToCharArray()) {
-			lbMessage.text += letter;
+		if(!string.IsNullOrEmpty(message)){
+			if(emptyWhenLoop)
+				lbMessage.text = "";
 			
-			if (soundIDs != null && soundIDs.Count > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
-				int soundIndex = Random.Range(0, soundIDs.Count);
-				string id = soundIDs[soundIndex];
-				BaseSoundManager.Instance.play(id);
+			foreach (char letter in message.ToCharArray()) {
+				lbMessage.text += letter;
+				
+				if (soundIDs != null && soundIDs.Count > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
+					int soundIndex = Random.Range(0, soundIDs.Count);
+					string id = soundIDs[soundIndex];
+					BaseSoundManager.Instance.play(id);
+				}
+				else if (sounds != null && sounds.Length > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
+					GetComponent<AudioSource>().PlayOneShot(sounds[Random.Range(0, sounds.Length)]);
+				}
+				
+				yield return 0;
+				yield return new WaitForSeconds (letterPause);
+				
+				if(stopType)
+					break;
+			}      
+			
+			if(loopMessage && !stopType){
+				StartCoroutine(TypeText ());
 			}
-			else if (sounds != null && sounds.Length > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
-				audio.PlayOneShot(sounds[Random.Range(0, sounds.Length)]);
-			}
-			
-			yield return 0;
-			yield return new WaitForSeconds (letterPause);
-			
-			if(stopType)
-				break;
-		}      
-		
-		if(loopMessage && !stopType){
-			StartCoroutine(TypeText ());
 		}
 	}
 	
-	public virtual void initType(){
-		init();
+	public virtual void initType(string putThisMessage = null){
+		init(putThisMessage);
 		
 		stopType = false;
 		StartCoroutine(TypeText ());
@@ -90,7 +107,7 @@ public class AutoType : UIBaseButton {
 			lbMessage.text = whenStopPutMessageForStopped ? stoppedMessage : message;
 			
 			if (sounds != null && sounds.Length > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
-				audio.PlayOneShot(sounds[Random.Range(0, sounds.Length)]);
+				GetComponent<AudioSource>().PlayOneShot(sounds[Random.Range(0, sounds.Length)]);
 			}
 		}
 	}

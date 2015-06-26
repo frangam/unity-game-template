@@ -54,7 +54,7 @@ public class UILoadingPanel : Singleton<UILoadingPanel> {
 	
 	public void changeProgress(float pProgress){
 		if(slider)
-			slider.value = pProgress;
+			slider.value = pProgress/0.9f;
 		
 		if(lbProgress)
 			lbProgress.text = ((int)(pProgress*100)).ToString()+"%";
