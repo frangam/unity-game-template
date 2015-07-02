@@ -95,6 +95,7 @@
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SunShaftsComposite.shader" />
      <None Include="Assets\Plugins\Android\facebook\res\values\styles.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurves.shader" />
+     <None Include="Assets\Plugins\Android\AndroidManifest_AdColony.xml" />
      <None Include="Assets\Plugins\Android\facebook\res\drawable\com_facebook_picker_list_selector.xml" />
      <None Include="Assets\GameTemplate\Examples\GamesDemo\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ScreenSpaceAmbientObscurance.shader" />
      <None Include="Assets\Plugins\Android\facebook\res\layout\com_facebook_usersettingsfragment.xml" />
@@ -313,12 +314,13 @@
  <Reference Include="WP8PopUps">
  <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/Plugins/WP8PopUps.dll</HintPath>
  </Reference>
- <Reference Include="IFacebook 1">
- <HintPath>/Users/frangarcia/Proyectos/GameTemplate/Assets/Facebook/Scripts/IFacebook 1.dll</HintPath>
- </Reference>
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
  <HintPath>/Applications/Unity/Unity.app/Contents/PlaybackEngines/iossupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
  </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass-vs.csproj">
+      <Project>{DB2B5628-362A-2D45-0E7D-C1EC2A228F96}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
