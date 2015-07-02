@@ -60,6 +60,7 @@ lb_info_mission = INFORMATION
 lb_infinite = INFINITE
 lb_wave = WAVE:
 lb_next_wave = NEXT WAVE:
+ad_in = AD IN
 
 rate_popup_title = Rate
 rate_popup_message = If you like this game leave us a comment and rate it now!

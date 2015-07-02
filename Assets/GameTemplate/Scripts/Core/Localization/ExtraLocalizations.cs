@@ -62,4 +62,6 @@ public class ExtraLocalizations{
 	
 	public const string LB_PLAY_BUTTON								= "play";
 	public const string LB_PURCHASE_BUTTON							= "purchase";
+
+	public const string AD_IN										= "ad_in";
 }

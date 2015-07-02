@@ -87,6 +87,7 @@ public class GameSettings : ScriptableObject {
 	public bool 								USE_IN_APP_PURCHASES_SERVICE 	= true;
 	public bool 								ENABLE_ANDROID_IMMERSIVE_MODE	= true;
 	public bool 								showTestLogs					= false; //show debug log for test or not
+
 	
 	//--------------------------------------
 	// Constants
@@ -115,6 +116,7 @@ public class GameSettings : ScriptableObject {
 	public int 		NUM_GAMEOVERS_SHOW_AD_HARD_MODE 						= 5; //number of gameovers to show an ad in hard mode
 	public int 		NUM_WINS_SHOW_AD_HARD_MODE 								= 5; //number of WINS to show an ad in hard mode
 	public int		SECONDS_DURING_GAME_PLAYING_SHOW_AD						= 180; // (0 for not show) seconds will pass during game playing to show an ad 
+	public int 		NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS	= 3; //launch an event to notifice it will be shown an ad in the next X seconds specified in this attribute
 	public int 		NUM_GAMEOVERS_SHOW_AD_EASY_MODE 						= 3; 
 	public int 		NUM_WINS_SHOW_AD_EASY_MODE 								= 3; 
 	public int 		NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE 						= 2;

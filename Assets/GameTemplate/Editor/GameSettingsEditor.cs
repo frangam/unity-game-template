@@ -12,6 +12,8 @@ public class GameSettingsEditor : Editor {
 	//--------------------------------------
 	GUIContent whenShowInitialAd   = new GUIContent("When show Initial Ad [?]:", "Number of times the game starts to show ads. Value of 1 indicates that in every game start we show an interstitial ad.");
 	GUIContent proVersionLabel   = new GUIContent("Is Pro Version [?]:", "True for not show ads. False if we are going to show ads.");
+	GUIContent secDuringGP   = new GUIContent("Sec during Game Play [?]:", "Seconds will pass during game playing to show an ad");
+	GUIContent notifyAdDuringGP   = new GUIContent("Notify before than (secs) [?]:", "Launch an event to notify an ad will show in the next specified seconds");
 	GUIContent buildForAmazon   = new GUIContent("Build for Amazon [?]:", "If we are building for amazon (only change when the build is only for amazon, change it after building)");
 	GUIContent rankingIDs   = new GUIContent("Rankins IDs [?]:", "All of the Ranking IDs that must be equals in the different platforms.");
 	GUIContent rewardPercentageLabel   = new GUIContent("% Money Reward [?]:", "This is the percentage of a money reward applied when a level was completed previously to get the reward.");
@@ -1050,6 +1052,17 @@ public class GameSettingsEditor : Editor {
 				EditorGUILayout.LabelField(whenShowInitialAd);
 				GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START	= EditorGUILayout.IntField(GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START);
 				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField(secDuringGP);
+				GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD	= EditorGUILayout.IntField(GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD);
+				EditorGUILayout.EndHorizontal();
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField(notifyAdDuringGP);
+				GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS	= EditorGUILayout.IntField(GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS);
+				EditorGUILayout.EndHorizontal();
+				EditorGUI.indentLevel--;
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("Default num GameOvers:");

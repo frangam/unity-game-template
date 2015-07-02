@@ -8,6 +8,7 @@ public class BaseGameManager : MonoBehaviour {
 	// Constants
 	//--------------------------------------
 	public const string GAME_FINISHED = "gt_game_finished";
+	public const string LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS = "gt_launching_ad_during_gameplay_in_x_secs";
 	
 	//--------------------------------------
 	// Static Attributes
@@ -17,6 +18,9 @@ public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
+	[SerializeField]
+	private bool 		startGameAtTheStartMoment = false;
+
 	[SerializeField]
 	private bool 		pauseTimeAtStart = false;
 	
@@ -169,6 +173,17 @@ public class BaseGameManager : MonoBehaviour {
 		//GA
 		//TODO Analytics
 	}
+	protected virtual void Start(){
+		if(startGameAtTheStartMoment)
+			startGame();
+	}
+	protected virtual void Update(){
+
+	}
+
+	protected virtual void LateUpdate(){
+	}
+
 	protected virtual void OnDestroy(){
 		if(gameMode == GameMode.CAMPAIGN){
 			BaseLevelLoaderController.dispatcher.removeEventListener(BaseLevelLoaderController.LEVEL_LOADED, OnLevelLoaded);
@@ -180,6 +195,28 @@ public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
+	/// <summary>
+	/// Checks the ad showing during game play.
+	/// 
+	/// We use WaitForSeconds because we want to pause this process when game is paused
+	/// </summary>
+	/// <returns>The ad showing during game play.</returns>
+	private IEnumerator checkAdShowingDuringGamePlay(){
+		int secsToNotify = GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD - GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS;
+
+		//launch event to notify an ad will be shown in the next seconds
+		yield return new WaitForSeconds(secsToNotify);
+		dispatcher.dispatch(LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS);
+
+		//wait the next seconds to show an ad
+		yield return new WaitForSeconds(GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS);
+		AdsHandler.Instance.mostrarPantallazo(); 
+
+		//repeat again
+		if(!isGameOver && !finished)
+			StartCoroutine(checkAdShowingDuringGamePlay());
+	}
+
 	private void handleGameOverAdShowing(){
 		int numGameovers = 0, numWins = 0;
 		int numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT, numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT;
@@ -435,6 +472,10 @@ public class BaseGameManager : MonoBehaviour {
 	public virtual void startGame(){
 		started = true;
 		Paused = false;
+
+		//checks if initing coroutine to check the ad showing during the game play
+		if(!GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD > 0)
+			StartCoroutine(checkAdShowingDuringGamePlay());
 	}
 	
 	/// <summary>

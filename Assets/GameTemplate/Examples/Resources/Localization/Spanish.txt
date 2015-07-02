@@ -59,6 +59,7 @@ lb_info_mission = INFORMACION
 lb_infinite = INFINITO
 lb_wave = OLEADA:
 lb_next_wave = PRÓXIMA OLEADA:
+ad_in = PUBLI EN
 
 rate_popup_title = Vota
 rate_popup_message = Si te gusta el juego déjanos un comentario y valóralo ahora!
