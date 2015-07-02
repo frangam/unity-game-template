@@ -34,7 +34,7 @@ public class ScreenBounds : MonoBehaviour {
 		}
 		if(top2D){
 			top2D.size = new Vector2 (Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
-			top2D.center = new Vector2 (0f, Camera.main.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y + 0.5f);
+			top2D.offset = new Vector2 (0f, Camera.main.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f)).y + 0.5f);
 		}
 		
 		//bottom bound
@@ -44,7 +44,7 @@ public class ScreenBounds : MonoBehaviour {
 		}
 		if(bottom2D){
 			bottom2D.size = new Vector2 (Camera.main.ScreenToWorldPoint(new Vector3(Screen.width * 2f, 0f, 0f)).x, 1f);
-			bottom2D.center = new Vector2 (0f, Camera.main.ScreenToWorldPoint(Vector3.zero).y - 0.5f);
+			bottom2D.offset = new Vector2 (0f, Camera.main.ScreenToWorldPoint(Vector3.zero).y - 0.5f);
 		}
 //
 //		//right bound

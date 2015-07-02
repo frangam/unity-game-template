@@ -31,7 +31,7 @@ public class Floater : MonoBehaviour {
 
 		Vector3 force = waterNormal * forceFactor * LiftAcceleration * Body.mass;
 //		Debug.Log ("force: " + force);
-		transform.parent.rigidbody.AddForceAtPosition(force, p);
+		transform.parent.GetComponent<Rigidbody>().AddForceAtPosition(force, p);
 		
 		if (!Debug.isDebugBuild)
 			return;

@@ -18,8 +18,15 @@ public abstract class ISN_Singleton<T> : EventDispatcher where T : MonoBehaviour
 	private static T _instance = null;
 	private static bool applicationIsQuitting = false;
 	
-	
+	[System.Obsolete("instance is deprecated, please use Instance instead.")]
 	public static T instance {
+		get {
+			return Instance;
+		}
+	}
+
+
+	public static T Instance {
 		
 		get {
 			if(applicationIsQuitting) {

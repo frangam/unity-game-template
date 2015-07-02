@@ -122,9 +122,23 @@ public class iAdBannerController : EventDispatcher {
 				interstitialdidFailWithError("");
 				return;
 			}
+
+		#else
+
+
+
+		if(UnityEngine.iOS.Device.generation.ToString().IndexOf("iPhone") == -1 && (UnityEngine.iOS.Device.generation.ToString()).IndexOf("iPad") == -1) {
+			if(!IOSNativeSettings.Instance.DisablePluginLogs) 	
+				Debug.Log("Device: " + UnityEngine.iOS.Device.generation.ToString() + " is not supported by iAd");
+
+			interstitialdidFailWithError("");
+			return;
+		}
 		#endif
-			_IADStartInterstitialAd();
+
+		_IADStartInterstitialAd();
 		#endif
+
 	}
 	
 	public void LoadInterstitialAd() {
@@ -137,9 +151,18 @@ public class iAdBannerController : EventDispatcher {
 				interstitialdidFailWithError("");
 				return;
 			}
+		#else
+
+		if(UnityEngine.iOS.Device.generation.ToString().IndexOf("iPhone") == -1 && (UnityEngine.iOS.Device.generation.ToString()).IndexOf("iPad") == -1) {
+				if(!IOSNativeSettings.Instance.DisablePluginLogs) 	
+				Debug.Log("Device: " + UnityEngine.iOS.Device.generation.ToString() + " is not supported by iAd");
+				
+				interstitialdidFailWithError("");
+				return;
+			}
 		#endif
 
-			_IADLoadInterstitialAd();
+		_IADLoadInterstitialAd();
 		#endif
 	}
 	

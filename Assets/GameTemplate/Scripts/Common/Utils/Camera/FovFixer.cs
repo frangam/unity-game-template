@@ -30,7 +30,7 @@ public class FovFixer : MonoBehaviour {
 	public virtual void Awake () {
 		originalAspectRatio = originalWidth / originalHeight;
 		
-		cam = camera;
+		cam = GetComponent<Camera>();
 		if(cam == null)
 			Debug.LogError("FovFixer in " + gameObject.name + " needs a camera");
 		
@@ -114,7 +114,7 @@ public class FovFixer : MonoBehaviour {
 			ar = cam.pixelRect.width / cam.pixelRect.height;
 		}else {
 			//we don't have camera cached yet con cam, so let's do it here
-			cam = camera;
+			cam = GetComponent<Camera>();
 			if(cam == null)
 				return;
 			
@@ -123,7 +123,7 @@ public class FovFixer : MonoBehaviour {
 		
 		//Cam.near plane dimensions
 		float nW, nH;
-		if(cam.isOrthoGraphic) {
+		if(cam.orthographic) {
 			nH = cam.orthographicSize * 2.0f;
 		} else {
 			nH = Mathf.Tan(cam.fieldOfView * Mathf.Deg2Rad / 2.0f) * cam.nearClipPlane * 2.0f;

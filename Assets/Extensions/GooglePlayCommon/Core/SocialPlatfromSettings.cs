@@ -9,8 +9,8 @@ using UnityEditor;
 
 public class SocialPlatfromSettings : ScriptableObject {
 
-	public const string VERSION_NUMBER = "4.3";
-	public const string FB_SDK_VERSION_NUMBER = "6.1.0";
+	public const string VERSION_NUMBER = "6.4";
+	public const string FB_SDK_VERSION_NUMBER = "6.2.2";
 
 	public bool showPermitions = true;
 	public bool ShowActions = true;
@@ -22,6 +22,11 @@ public class SocialPlatfromSettings : ScriptableObject {
 
 	public string TWITTER_CONSUMER_KEY 	= "REPLACE_WITH_YOUR_CONSUMER_KEY";
 	public string TWITTER_CONSUMER_SECRET 	= "REPLACE_WITH_YOUR_CONSUMER_SECRET";
+
+	public string TWITTER_ACCESS_TOKEN 	= "";
+	public string TWITTER_ACCESS_TOKEN_SECRET 	= "";
+
+	public bool ShowEditorOauthTestingBlock = false;
 	
 
 	private const string ISNSettingsAssetName = "SocialSettings";
@@ -32,6 +37,7 @@ public class SocialPlatfromSettings : ScriptableObject {
 	public bool TwitterAPI = true;
 	public bool NativeSharingAPI = true;
 	public bool InstagramAPI = true;
+	public bool EnableImageSharing = true;
 
 
 	public bool KeepManifestClean = true;

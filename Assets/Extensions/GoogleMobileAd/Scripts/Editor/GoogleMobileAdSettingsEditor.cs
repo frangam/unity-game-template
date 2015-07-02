@@ -152,8 +152,8 @@ public class GoogleMobileAdSettingsEditor : Editor {
 				Color c = GUI.color;
 				GUI.color = Color.cyan;
 				if(GUILayout.Button("Update to " + GoogleMobileAdSettings.VERSION_NUMBER,  GUILayout.Width(250))) {
-					PluginsInstalationUtil.Android_UpdatePlugin();
-					PluginsInstalationUtil.IOS_UpdatePlugin();
+					PluginsInstalationUtil.Android_InstallPlugin();
+					PluginsInstalationUtil.IOS_InstallPlugin();
 					UpdateVersionInfo();
 				}
 				
@@ -210,18 +210,26 @@ public class GoogleMobileAdSettingsEditor : Editor {
 			if(GUILayout.Button("Open Manifest ",  GUILayout.Width(160))) {
 				UnityEditorInternal.InternalEditorUtility.OpenFileAtLineExternal("Assets" + AN_ManifestManager.MANIFEST_FILE_PATH, 1);
 			}
+
+			if(GUILayout.Button("Reset Settings",  GUILayout.Width(160))) {
+				ResetSettings();
+			}
 			
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.Space();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if(GUILayout.Button("Reset Settings",  GUILayout.Width(160))) {
-				ResetSettings();
-			}
+
 			
 			if(GUILayout.Button("Load Example Settings",  GUILayout.Width(160))) {
 				LoadExampleSettings();
+			}
+
+			if(GUILayout.Button("Reinstall",  GUILayout.Width(160))) {
+				PluginsInstalationUtil.Android_InstallPlugin();
+				PluginsInstalationUtil.IOS_InstallPlugin();
+				UpdateVersionInfo();
 			}
 			
 			
@@ -457,7 +465,7 @@ public class GoogleMobileAdSettingsEditor : Editor {
 
 
 		AN_PropertyTemplate games_version = application.GetOrCreatePropertyWithName("meta-data",  "com.google.android.gms.version");
-	    games_version.SetValue("android:value", "@integer/google_play_services_version");
+		games_version.SetValue("android:value", GoogleMobileAdSettings.PLAY_SERVICE_VERSION);
 
 
 		AN_ManifestManager.SaveManifest();

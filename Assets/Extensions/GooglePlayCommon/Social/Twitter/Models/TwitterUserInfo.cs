@@ -127,7 +127,7 @@ public class TwitterUserInfo : EventDispatcherBase {
 
 
 		WWWTextureLoader loader = WWWTextureLoader.Create();
-		loader.addEventListener(BaseEvent.LOADED, OnProfileImageLoaded);
+		loader.OnLoad += OnProfileImageLoaded;
 		loader.LoadTexture(_profile_image_url_https);
 	}
 
@@ -139,7 +139,7 @@ public class TwitterUserInfo : EventDispatcherBase {
 		}
 
 		WWWTextureLoader loader = WWWTextureLoader.Create();
-		loader.addEventListener(BaseEvent.LOADED, OnProfileBackgroundLoaded);
+		loader.OnLoad += OnProfileBackgroundLoaded;
 		loader.LoadTexture(_profile_background_image_url_https);
 	}
 
@@ -271,16 +271,14 @@ public class TwitterUserInfo : EventDispatcherBase {
 	// EVENTS
 	//--------------------------------------
 
-	private void OnProfileImageLoaded(CEvent e) {
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnProfileImageLoaded);
-		_profile_image = e.data as Texture2D;
+	private void OnProfileImageLoaded(Texture2D img) {
+		_profile_image = img;
 
 		dispatch(PROFILE_IMAGE_LOADED);
 	}
 
-	private void OnProfileBackgroundLoaded(CEvent e) {
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnProfileBackgroundLoaded);
-		_profile_background = e.data as Texture2D;
+	private void OnProfileBackgroundLoaded(Texture2D img) {
+		_profile_background = img;
 
 		dispatch(PROFILE_BACKGROUND_LOADED);
 	}

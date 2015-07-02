@@ -50,6 +50,7 @@ public class FBAppRequest {
 
 	public void Delete() {
 		FB.API(Id, Facebook.HttpMethod.DELETE, OnDeleteActionFinish);  
+		State = FBAppRequestState.Deleted;
 	}
 
 

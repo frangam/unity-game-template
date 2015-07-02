@@ -1,17 +1,24 @@
-﻿using UnityEngine;
+//#define ATC_SUPPORT_ENABLED
+
+using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 
+#if ATC_SUPPORT_ENABLED
+using CodeStage.AntiCheat.ObscuredTypes;
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
 [InitializeOnLoad]
 #endif
 
+
+
 public class AndroidNativeSettings : ScriptableObject {
 
-	public const string VERSION_NUMBER = "6.0";
-	public const string GOOGLE_PLAY_SDK_VERSION_NUMBER = "6171000";
+	public const string VERSION_NUMBER = "6.6";
+	public const string GOOGLE_PLAY_SDK_VERSION_NUMBER = "7571000";
 
 
 	public bool EnablePlusAPI 		= true;
@@ -24,9 +31,14 @@ public class AndroidNativeSettings : ScriptableObject {
 	public bool LoadQuestsImages 	= true;
 	public bool LoadQuestsIcons 	= true;
 	public bool LoadEventsIcons 	= true;
+	public bool ShowConnectingPopup = true;
 
 
+	//ATC:
+	public bool EnableATCSupport = false;
 
+
+	public bool SaveCameraImageToGallery = false;
 	public bool UseProductNameAsFolderName = true;
 	public string GalleryFolderName = string.Empty;
 	public int MaxImageLoadSize = 512;
@@ -54,6 +66,7 @@ public class AndroidNativeSettings : ScriptableObject {
 	public bool ShowCameraAndGalleryParams = false;
 	public bool ShowLocalNotificationParams = false;
 	public bool ShowPushNotificationParams = false;
+	public bool ThirdPartyParams = false;
 	public bool ShowPSSettings = false;
 	public bool ShowPSSettingsResources = false;
 	public bool ShowActions = false;
@@ -88,9 +101,19 @@ public class AndroidNativeSettings : ScriptableObject {
 
 	public string GCM_SenderId = "YOUR_SENDER_ID_HERE";
 
+
 	public string GooglePlayServiceAppID = "0";
 
-	public string base64EncodedPublicKey = "REPLACE_WITH_YOUR_PUBLIC_KEY";
+
+	#if ATC_SUPPORT_ENABLED
+	public  ObscuredString base64EncodedPublicKey = "REPLACE_WITH_YOUR_PUBLIC_KEY";
+	#else
+	public  string base64EncodedPublicKey = "REPLACE_WITH_YOUR_PUBLIC_KEY";
+	#endif
+
+
+
+	
 	public List<string> InAppProducts = new List<string>();
 
 	public bool ShowWhenAppIsForeground = true;
@@ -98,10 +121,14 @@ public class AndroidNativeSettings : ScriptableObject {
 	public Texture2D LocalNotificationIcon = null;
 	public AudioClip LocalNotificationSound = null;
 
+	public bool UseGameThrivePushNotifications = false;
+	public string GameThriveAppID = "YOUR_ONESIGNAL_APP_ID";
+
 	public bool UseParsePushNotifications = false;
 	public string ParseAppId = "YOUR_PARSE_APP_ID";
 	public string DotNetKey = "YOUR_PARSE_DOT_NET_KEY";
 
+	public bool ShowPushWhenAppIsForeground = true;
 	public bool EnableVibrationPush = false;
 	public Texture2D PushNotificationIcon = null;
 	public AudioClip PushNotificationSound = null;

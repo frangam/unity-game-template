@@ -106,7 +106,7 @@ public abstract class TW_APIRequest : EventDispatcher {
 		if(TwitterApplicationOnlyToken.instance.currentToken != null) {
 			StartCoroutine(Request());
 		} else {
-			dispatch(BaseEvent.COMPLETE, new TW_APIRequstResult(false, "Retirving auth tocen failed"));
+			dispatch(BaseEvent.COMPLETE, new TW_APIRequstResult(false, "Retirving auth token failed"));
 		}
 
 	}

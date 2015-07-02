@@ -10,14 +10,13 @@
 
 using System;
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
-public class WWWTextureLoader : EventDispatcher {
+public class WWWTextureLoader : MonoBehaviour {
 
 	private string _url;
 
-	public Action<Texture2D> OnLoad = delegate{}; 
+	public event Action<Texture2D> OnLoad = delegate{}; 
 
 	public static WWWTextureLoader Create() {
 		return new GameObject("WWWTextureLoader").AddComponent<WWWTextureLoader>();
@@ -37,11 +36,9 @@ public class WWWTextureLoader : EventDispatcher {
 		yield return www;
 
 		if(www.error == null) {
-			dispatch(BaseEvent.LOADED, www.texture);
 			OnLoad(www.texture);
 
 		} else {
-			dispatch(BaseEvent.LOADED, null);
 			OnLoad(null);
 		}
 

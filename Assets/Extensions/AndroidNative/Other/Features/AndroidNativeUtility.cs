@@ -10,7 +10,14 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 
 
 	//Actions
-	public Action<AN_PackageCheckResult> OnPackageCheckResult = delegate{};
+	public event Action<AN_PackageCheckResult> OnPackageCheckResult = delegate{};
+	public event Action<string> OnAndroidIdLoaded = delegate{};
+
+	public event Action<string> InternalStoragePathLoaded = delegate{};
+	public event Action<string> ExternalStoragePathLoaded = delegate{};
+
+
+	public event Action<AN_Locale> LocaleInfoLoaded = delegate{};
 
 	
 	//--------------------------------------
@@ -32,6 +39,23 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 
 	public void RunPackage(string packageName) {
 		AndroidNative.runPackage(packageName);
+	}
+
+	public void LoadAndroidId() {
+		AndroidNative.LoadAndroidId();
+	}
+
+
+	public void GetInternalStoragePath() {
+		AndroidNative.GetInternalStoragePath();
+	}
+	
+	public void GetExternalStoragePath() {
+		AndroidNative.GetExternalStoragePath();
+	}
+
+	public void LoadLocaleInfo() {
+		AndroidNative.LoadLocaleInfo();
 	}
 
 
@@ -63,6 +87,10 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 	// Events
 	//--------------------------------------
 
+	private void OnAndroidIdLoadedEvent(string id) {
+		OnAndroidIdLoaded(id);
+	}
+
 	private void OnPacakgeFound(string packageName) {
 		AN_PackageCheckResult result = new AN_PackageCheckResult(packageName, true);
 		OnPackageCheckResult(result);
@@ -76,6 +104,29 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 	}
 
 
+	private void OnExternalStoragePathLoaded(string path) {
+		ExternalStoragePathLoaded(path);
+	}
+
+	private void OnInternalStoragePathLoaded(string path) {
+		InternalStoragePathLoaded(path);
+	}
+
+
+	private void OnLocaleInfoLoaded(string data) {
+		string[] storeData;
+		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
+
+		AN_Locale locale =  new AN_Locale();
+		locale.CountryCode = storeData[0];
+		locale.DisplayCountry = storeData[1];
+
+		locale.LanguageCode = storeData[2];
+		locale.DisplayLanguage = storeData[3];
+
+		LocaleInfoLoaded(locale);
+
+	}
 
 
 }

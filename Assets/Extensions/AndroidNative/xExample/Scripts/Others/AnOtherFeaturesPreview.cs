@@ -36,6 +36,11 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 	}
 
 
+	public void CheckForTV() {
+		TVAppController.DeviceTypeChecked += OnDeviceTypeChecked;
+		TVAppController.instance.CheckForATVDevice();
+	}
+
 
 	public void CheckAppInstalation() {
 		AndroidNativeUtility.instance.OnPackageCheckResult += OnPackageCheckResult;
@@ -65,7 +70,15 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 	}
 	
 
-
+	public void GetAndroidId() {
+		AndroidNativeUtility.instance.OnAndroidIdLoaded += OnAndroidIdLoaded;
+		AndroidNativeUtility.instance.LoadAndroidId();
+	}
+	
+	void OnAndroidIdLoaded (string id) {
+		AndroidNativeUtility.instance.OnAndroidIdLoaded -= OnAndroidIdLoaded;
+		AndroidMessage.Create("Android Id Loaded", id);
+	}
 
 	private void LoadAppInfo() {
 
@@ -81,6 +94,11 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 	}
 
 
+
+	void OnDeviceTypeChecked () {
+		AN_PoupsProxy.showMessage("Check for a TV Device Result" , TVAppController.instance.IsRuningOnTVDevice.ToString());
+		TVAppController.DeviceTypeChecked -= OnDeviceTypeChecked;
+	}
 
 
 
@@ -104,8 +122,11 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 
 	private void OnImagePicked(AndroidImagePickResult result) {
 		Debug.Log("OnImagePicked");
-		if(result.IsSucceeded) {
-			image.GetComponent<Renderer>().material.mainTexture = result.image;
+		if (result.IsSucceeded) {
+			AN_PoupsProxy.showMessage ("Image Pick Rsult", "Succeeded, path: " + result.ImagePath);
+			image.GetComponent<Renderer> ().material.mainTexture = result.Image;
+		} else {
+			AN_PoupsProxy.showMessage ("Image Pick Rsult", "Failed");
 		}
 
 		AndroidCamera.instance.OnImagePicked -= OnImagePicked;
@@ -123,6 +144,8 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 			SA_StatusBar.text =  "Image save to gallery failed";
 		}
 
+
+
 	}
 
 	private void OnPackageInfoLoaded() {
@@ -139,4 +162,41 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 		AN_PoupsProxy.showMessage("App Info Loaded", msg);
 	}
 
+
+
+
+	public void LoadInternal() {
+		AndroidNativeUtility.instance.InternalStoragePathLoaded += InternalStoragePathLoaded;
+		AndroidNativeUtility.instance.GetInternalStoragePath();
+
+	}
+
+	public void LoadExternal() {
+		AndroidNativeUtility.instance.ExternalStoragePathLoaded += ExternalStoragePathLoaded;
+		AndroidNativeUtility.instance.GetExternalStoragePath();
+	}
+
+	public void LoadLocaleInfo() {
+		AndroidNativeUtility.instance.LocaleInfoLoaded += LocaleInfoLoaded;
+		AndroidNativeUtility.instance.LoadLocaleInfo();
+	}
+
+	void LocaleInfoLoaded (AN_Locale locale){
+		AN_PoupsProxy.showMessage("Locale Indo:", locale.CountryCode + "/" 
+		                          + locale.DisplayCountry + "  :   "
+		                          + locale.LanguageCode + "/" 
+		                          + locale.DisplayLanguage);
+		AndroidNativeUtility.instance.LocaleInfoLoaded -= LocaleInfoLoaded;
+	}
+
+
+	void ExternalStoragePathLoaded (string path) {
+		AN_PoupsProxy.showMessage("External Storage Path:", path);
+		AndroidNativeUtility.instance.ExternalStoragePathLoaded -= ExternalStoragePathLoaded;
+	}
+
+	void InternalStoragePathLoaded (string path) {
+		AN_PoupsProxy.showMessage("Internal Storage Path:", path);
+		AndroidNativeUtility.instance.InternalStoragePathLoaded -= InternalStoragePathLoaded;
+	}
 }

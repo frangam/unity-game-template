@@ -50,8 +50,8 @@ public class AN_NotificationProxy {
 	// Google Cloud Message
 	// --------------------------------------
 
-	public static void InitPushNotifications(string icon, string sound, bool vibration) {
-		CallActivityFunction ("InitPushNotifications", icon, sound, vibration.ToString());
+	public static void InitPushNotifications(string icon, string sound, bool vibration, bool showWhenAppForeground) {
+		CallActivityFunction ("InitPushNotifications", icon, sound, vibration.ToString(), showWhenAppForeground.ToString());
 	}
 
 	public static void InitParsePushNotifications(string appId, string dotNetKey) {
@@ -64,5 +64,9 @@ public class AN_NotificationProxy {
 	
 	public static void GCMLoadLastMessage() {
 		CallActivityFunction("GCMLoadLastMessage");
+	}
+
+	public static void GCMRemoveLastMessageInfo() {
+		CallActivityFunction("GCMRemoveLastMessageInfo");
 	}
 }

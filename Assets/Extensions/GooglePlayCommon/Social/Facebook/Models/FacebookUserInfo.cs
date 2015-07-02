@@ -10,11 +10,11 @@
  
 
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class FacebookUserInfo : EventDispatcherBase {
+public class FacebookUserInfo {
 
 	private string _id 			= string.Empty;
 	private string _name 		= string.Empty;
@@ -36,7 +36,7 @@ public class FacebookUserInfo : EventDispatcherBase {
 	private Dictionary<FacebookProfileImageSize, Texture2D> profileImages =  new Dictionary<FacebookProfileImageSize, Texture2D>();
 
 
-	public const string PROFILE_IMAGE_LOADED		 = "profile_image_loaded";
+	public event Action<FacebookUserInfo> OnProfileImageLoaded = delegate {};
 
 
 
@@ -133,7 +133,7 @@ public class FacebookUserInfo : EventDispatcherBase {
 	public void LoadProfileImage(FacebookProfileImageSize size) {
 		if(GetProfileImage(size) != null) {
 			Debug.LogWarning("Profile image already loaded, size: " + size);
-			dispatch(PROFILE_IMAGE_LOADED);
+			OnProfileImageLoaded(this);
 		}
 
 
@@ -141,16 +141,16 @@ public class FacebookUserInfo : EventDispatcherBase {
 
 		switch(size) {
 		case FacebookProfileImageSize.large:
-			loader.addEventListener(BaseEvent.LOADED, OnLargeImageLoaded);
+			loader.OnLoad += OnLargeImageLoaded;
 			break;
 		case FacebookProfileImageSize.normal:
-			loader.addEventListener(BaseEvent.LOADED, OnNormalImageLoaded);
+			loader.OnLoad += OnNormalImageLoaded;
 			break;
 		case FacebookProfileImageSize.small:
-			loader.addEventListener(BaseEvent.LOADED, OnSmallImageLoaded);
+			loader.OnLoad += OnSmallImageLoaded;
 			break;
 		case FacebookProfileImageSize.square:
-			loader.addEventListener(BaseEvent.LOADED, OnSquareImageLoaded);
+			loader.OnLoad += OnSquareImageLoaded;
 			break;
 
 		}
@@ -242,46 +242,38 @@ public class FacebookUserInfo : EventDispatcherBase {
 	//  EVENTS
 	//--------------------------------------
 
-	private void OnSquareImageLoaded(CEvent e) {
-		Debug.Log("OnSquareImageLoaded");
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnSquareImageLoaded);
-		Texture2D image = e.data as Texture2D;
+	private void OnSquareImageLoaded(Texture2D image) {
+
 		if(image != null && !profileImages.ContainsKey(FacebookProfileImageSize.square)) {
 			profileImages.Add(FacebookProfileImageSize.square, image);
 		}
 		
-		dispatch(PROFILE_IMAGE_LOADED);
+		OnProfileImageLoaded(this);
 	}
 
-	private void OnLargeImageLoaded(CEvent e) {
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnLargeImageLoaded);
-		Texture2D image = e.data as Texture2D;
+	private void OnLargeImageLoaded(Texture2D image) {
 		if(image != null && !profileImages.ContainsKey(FacebookProfileImageSize.large)) {
 			profileImages.Add(FacebookProfileImageSize.large, image);
 		}
 		
-		dispatch(PROFILE_IMAGE_LOADED);
+		OnProfileImageLoaded(this);
 	}
 
 
-	private void OnNormalImageLoaded(CEvent e) {
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnNormalImageLoaded);
-		Texture2D image = e.data as Texture2D;
+	private void OnNormalImageLoaded(Texture2D image) {
 		if(image != null && !profileImages.ContainsKey(FacebookProfileImageSize.normal)) {
 			profileImages.Add(FacebookProfileImageSize.normal, image);
 		}
 		
-		dispatch(PROFILE_IMAGE_LOADED);
+		OnProfileImageLoaded(this);
 	}
 
-	private void OnSmallImageLoaded(CEvent e) {
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnSmallImageLoaded);
-		Texture2D image = e.data as Texture2D;
+	private void OnSmallImageLoaded(Texture2D image) {
 		if(image != null && !profileImages.ContainsKey(FacebookProfileImageSize.small)) {
 			profileImages.Add(FacebookProfileImageSize.small, image);
 		}
 		
-		dispatch(PROFILE_IMAGE_LOADED);
+		OnProfileImageLoaded(this);
 	}
 
 

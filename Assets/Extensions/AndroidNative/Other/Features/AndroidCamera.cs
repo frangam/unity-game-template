@@ -56,7 +56,7 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 	
 	
 	public void GetImageFromCamera() {
-		AndroidNative.GetImageFromCamera();
+		AndroidNative.GetImageFromCamera(AndroidNativeSettings.Instance.SaveCameraImageToGallery);
 	}
 
 
@@ -68,7 +68,11 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 		string[] storeData;
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 
-		AndroidImagePickResult result =  new AndroidImagePickResult(storeData[0], storeData[1]);
+		string codeString = storeData[0];
+		string ImagePathInfo = storeData[1];
+		string ImageData = storeData[2];
+
+		AndroidImagePickResult result =  new AndroidImagePickResult(codeString, ImageData, ImagePathInfo);
 
 		dispatch(IMAGE_PICKED, result);
 		if(OnImagePicked != null) {

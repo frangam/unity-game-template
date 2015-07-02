@@ -8,5 +8,7 @@ public enum IOSTransactionErrorCode  {
 	SKErrorPaymentCancelled = 2,            // user cancelled the request, etc.
 	SKErrorPaymentInvalid = 3,              // purchase identifier was invalid, etc.
 	SKErrorPaymentNotAllowed = 4,           // this device is not allowed to make the payment
-	SKErrorStoreProductNotAvailable = 5     // Product is not available in the current storefront
+	SKErrorStoreProductNotAvailable = 5,    // Product is not available in the current storefront
+	SKErrorPaymentNoPurchasesToRestore = 6,  // No purchases to restore"
+	SKErrorPaymentServiceNotInitialized = 7  //StoreKit initialization required
 }

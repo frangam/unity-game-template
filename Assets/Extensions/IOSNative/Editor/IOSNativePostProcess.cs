@@ -43,6 +43,13 @@ public class IOSNativePostProcess  {
 			ISDSettings.Instance.frameworks.Add(MobileCoreServices);
 		}
 
+		string GameKit = "GameKit.framework";
+		if(!ISDSettings.Instance.frameworks.Contains(GameKit)) {
+			ISDSettings.Instance.frameworks.Add(GameKit);
+		}
+
+
+		Debug.Log("ISN Postprocess Done");
 
 	
 	}

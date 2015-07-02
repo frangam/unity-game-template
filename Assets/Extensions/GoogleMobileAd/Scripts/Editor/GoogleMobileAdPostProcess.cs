@@ -46,10 +46,12 @@ public class GoogleMobileAdPostProcess  {
 			ISDSettings.Instance.frameworks.Add(EventKitUI);
 		}
 
+		/*
 		string linkerFlasg = "-ObjC";
 		if(!ISDSettings.Instance.linkFlags.Contains(linkerFlasg)) {
 			ISDSettings.Instance.linkFlags.Add(linkerFlasg);
 		}
+		*/
 		#endif
 	}
 

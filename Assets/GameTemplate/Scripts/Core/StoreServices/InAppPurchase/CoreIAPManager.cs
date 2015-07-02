@@ -556,19 +556,19 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	{
 		if(success && !deferred){
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INAPP_ITEM_PURCHASED +":"+ SKU);
+			//TODO Analytics GAEvents.INAPP_ITEM_PURCHASED +":"+ SKU
 			
 			dispatcher.dispatch(PURCHASE_COMPLETED, getProductByID(SKU));
 		}
 		else if(!success && !deferred){
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INAPP_ITEM_PURCHASE_FAILED +":"+ SKU);
+			//TODO Analytics GAEvents.INAPP_ITEM_PURCHASE_FAILED +":"+ SKU
 			
 			dispatcher.dispatch(PURCHASE_FAILED, getProductByID(SKU));
 		}
 		else if(deferred){
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INAPP_ITEM_PURCHASE_CANCELED +":"+ SKU);
+			//TODO Analytics GAEvents.INAPP_ITEM_PURCHASE_CANCELED +":"+ SKU
 			
 			dispatcher.dispatch(DEFERRED_PURCHASE_COMPLETED, getProductByID(SKU));
 		}
@@ -578,13 +578,13 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	{
 		if(success){
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INAPP_PURCHASES_RESTORED);
+			//TODO Analytics GAEvents.INAPP_PURCHASES_RESTORED
 			
 			dispatcher.dispatch(RESTORE_PURCHASE_COMPLETED);
 		}
 		else{
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INAPP_PURCHASES_NO_RESTORED);
+			//TODO Analytics GAEvents.INAPP_PURCHASES_NO_RESTORED
 			
 			dispatcher.dispatch(RESTORE_PURCHASE_FAILED);
 		}

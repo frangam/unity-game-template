@@ -16,10 +16,11 @@ public class IOSNativeUtility {
 
 	[DllImport ("__Internal")]
 	private static extern void _ISN_ShowPreloader();
-
-
+	
 	[DllImport ("__Internal")]
 	private static extern void _ISN_HidePreloader();
+	
+
 	#endif
 
 
@@ -45,4 +46,6 @@ public class IOSNativeUtility {
 			_ISN_HidePreloader();
 		#endif
 	}
+
+
 }

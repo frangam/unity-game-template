@@ -11,15 +11,21 @@ using UnityEditor;
 public class ISDSettings : ScriptableObject
 {
 
-	public const string VERSION_NUMBER = "1.0";
+	public const string VERSION_NUMBER = "1.5";
 
 	public bool IsfwSettingOpen;
+	public bool IsLibSettingOpen;
 	public bool IslinkerSettingOpne;
-	public bool IscompilerSettingsOpen = true;
+	public bool IscompilerSettingsOpen;
+	public bool IsPlistSettingsOpen = true;
 
 	public List<string> frameworks =  new List<string>();
+	public List<string> libraries =  new List<string>();
 	public List<string> compileFlags =  new List<string>();
 	public List<string> linkFlags =  new List<string>();
+	public List<string> plistkeys = new List<string> ();
+	public List<string> plisttags = new List<string> ();
+	public List<string> plistvalues = new List<string> ();
 
 
 	private const string ISDAssetPath = "Extensions/IOSDeploy/Resources";

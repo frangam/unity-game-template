@@ -8,7 +8,7 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 public class GoogleCloudMessageService : SA_Singleton<GoogleCloudMessageService> {
 
@@ -20,9 +20,9 @@ public class GoogleCloudMessageService : SA_Singleton<GoogleCloudMessageService>
 
 	//Actions
 
-	public static Action<string> ActionCouldMessageLoaded 						 =  delegate {};
-	public static Action<GP_GCM_RegistrationResult> ActionCMDRegistrationResult  =  delegate {};
-
+	public static Action<string> ActionCouldMessageLoaded 						 						= delegate {};
+	public static Action<GP_GCM_RegistrationResult> ActionCMDRegistrationResult  						= delegate {};
+	public static Action<string, Dictionary<string, object>, bool> ActionGameThriveNotificationReceived	= delegate {};
 
 
 	private string _lastMessage = string.Empty;
@@ -44,15 +44,24 @@ public class GoogleCloudMessageService : SA_Singleton<GoogleCloudMessageService>
 	// PUBLIC METHODS
 	//--------------------------------------
 
+	public void InitOneSignalNotifications() {
+		OneSignal.Init(AndroidNativeSettings.Instance.GameThriveAppID, AndroidNativeSettings.Instance.GCM_SenderId, HandleNotification);
+	}
+
+	// Gets called when the player opens the notification.
+	private static void HandleNotification(string message, Dictionary<string, object> additionalData, bool isActive) {
+		ActionGameThriveNotificationReceived (message, additionalData, isActive);
+	}
+
 	public void InitPushNotifications() {
 		AN_NotificationProxy.InitPushNotifications (
 			AndroidNativeSettings.Instance.PushNotificationIcon == null ? string.Empty : AndroidNativeSettings.Instance.PushNotificationIcon.name,
 		    AndroidNativeSettings.Instance.PushNotificationSound == null ? string.Empty : AndroidNativeSettings.Instance.PushNotificationSound.name,
-		    AndroidNativeSettings.Instance.EnableVibrationPush);
+		    AndroidNativeSettings.Instance.EnableVibrationPush, AndroidNativeSettings.Instance.ShowPushWhenAppIsForeground);
 	}
 
-	public void InitPushNotifications(string icon, string sound, bool enableVibrationPush) {
-		AN_NotificationProxy.InitPushNotifications (icon, sound,enableVibrationPush);
+	public void InitPushNotifications(string icon, string sound, bool enableVibrationPush, bool showWhenAppForeground) {
+		AN_NotificationProxy.InitPushNotifications (icon, sound,enableVibrationPush, showWhenAppForeground);
 	}
 
 	public void InitParsePushNotifications() {
@@ -66,6 +75,12 @@ public class GoogleCloudMessageService : SA_Singleton<GoogleCloudMessageService>
 	public void LoadLastMessage() {
 		AN_NotificationProxy.GCMLoadLastMessage();
 	}
+
+	public void RemoveLastMessageInfo() {
+		AN_NotificationProxy.GCMRemoveLastMessageInfo();
+	}
+
+
 	
 	//--------------------------------------
 	// GET / SET

@@ -101,7 +101,7 @@ public class BaseAIController : ExtendedCustomMonoBehaviour {
 			rotateTransform= myTransform;
 		
 		// cache a ref to our rigidbody
-		myBody= myTransform.rigidbody;
+		myBody= myTransform.GetComponent<Rigidbody>();
 		
 		// init done!
 		didInit= true;

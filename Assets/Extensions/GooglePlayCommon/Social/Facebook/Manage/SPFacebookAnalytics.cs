@@ -55,7 +55,7 @@ public static class SPFacebookAnalytics  {
 
 		FB.AppEvents.LogEvent (FBAppEventName.AddedPaymentInfo, null, EventParams);
 		
-		
+
 	}
 	
 	
@@ -193,7 +193,15 @@ public static class SPFacebookAnalytics  {
 		FB.AppEvents.LogEvent (FBAppEventName.UnlockedAchievement, null, EventParams);
 	}
 
-	
+
+
+	public static void LogEvent(
+		string logEvent,
+		float? valueToSum = null,
+		Dictionary<string, object> parameters = null) {
+
+		FB.AppEvents.LogEvent(logEvent, valueToSum, parameters);
+	}
 
 
 	public static void ViewedContent(float price,  string ContentType, string ContentId,  string Currency = "USD") {

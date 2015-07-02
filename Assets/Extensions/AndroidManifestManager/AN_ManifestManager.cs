@@ -76,7 +76,13 @@ static public class AN_ManifestManager {
 		foreach (XmlNode childNode in applicationNode.ChildNodes) {
 			if(childNode.Name.Equals("activity")
 			   && !childNode.Name.Equals("#comment")) {
-				string activityName = childNode.Attributes["android:name"].Value;
+
+				string activityName = "";
+				if(childNode.Attributes["android:name"] != null) {
+					activityName = childNode.Attributes["android:name"].Value;
+				} else {
+					Debug.LogWarning("Android Manifest contains activity tag without android:name attribute.");
+				}
 					
 				XmlNode launcher = null;
 				bool isLauncher = false;
@@ -184,7 +190,9 @@ static public class AN_ManifestManager {
 		}
 		//Get Properties
 		foreach (XmlNode n in node.ChildNodes) {
-			property.AddProperty(n.Name, ParseProperty(n));
+			if (!n.Name.Equals("#comment")) {
+				property.AddProperty(n.Name, ParseProperty(n));
+			}
 		}
 
 		return property;

@@ -39,6 +39,6 @@ public class Auto_Shooter : BaseWeaponScript {
 		theProjectile.LookAt( myTransform.position + fireDirection );
 		
 		// add some force to move our projectile
-		theProjectile.rigidbody.AddRelativeForce(theProjectile.forward * projectileSpeed,ForceMode.VelocityChange);
+		theProjectile.GetComponent<Rigidbody>().AddRelativeForce(theProjectile.forward * projectileSpeed,ForceMode.VelocityChange);
 	}
 }

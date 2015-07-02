@@ -11,7 +11,6 @@ public class AndroidSocialNativeExample : MonoBehaviour {
 	}
 
 	public void ShareText() {
-		Debug.Log("ShareText");
 		AndroidSocialGate.StartShareIntent("Hello Share Intent", "This is my text to share");
 
 	}
@@ -33,7 +32,7 @@ public class AndroidSocialNativeExample : MonoBehaviour {
 
 
 	public void ShareMail() {
-		AndroidSocialGate.SendMail("Hello Share Intent", "This is my text to share", "My E-mail Subject", "mail1@gmail.com, mail2@gmail.com", shareTexture);
+		AndroidSocialGate.SendMail("Hello Share Intent", "This is my text to share <br> <strong> html text </strong> ", "My E-mail Subject", "mail1@gmail.com, mail2@gmail.com", shareTexture);
 	}
 
 
@@ -48,7 +47,9 @@ public class AndroidSocialNativeExample : MonoBehaviour {
 
 	public void ShareFB() {
 		StartCoroutine(PostFBScreenshot());
+
 	}
+
 
 
 

@@ -47,7 +47,7 @@ public class CarController_MVD : BaseVehicle
 		Debug.Log ("CarController_MVD Init called.");
 		
 		// cache the usual suspects
-		myBody= rigidbody;
+		myBody= GetComponent<Rigidbody>();
 		myGO= gameObject;
 		myTransform= transform;
 		

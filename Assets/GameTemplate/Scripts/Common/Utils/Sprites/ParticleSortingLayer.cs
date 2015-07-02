@@ -27,9 +27,9 @@ public class ParticleSortingLayer : MonoBehaviour {
 			partRenderer.sortingLayerName = layer;
 			partRenderer.sortingOrder = order;
 		}
-		else if(particleSystem != null){
-			particleSystem.renderer.sortingLayerName = layer;
-			particleSystem.renderer.sortingOrder = order;
+		else if(GetComponent<ParticleSystem>() != null){
+			GetComponent<ParticleSystem>().GetComponent<Renderer>().sortingLayerName = layer;
+			GetComponent<ParticleSystem>().GetComponent<Renderer>().sortingOrder = order;
 		}
 	}
 

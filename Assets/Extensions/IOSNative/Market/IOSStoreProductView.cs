@@ -8,6 +8,7 @@
 /// 
 using UnityEngine;
 using UnionAssets.FLE;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 #if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
@@ -21,6 +22,14 @@ public class IOSStoreProductView : EventDispatcherBase {
 	public const string PRODUCT_VIEW_LOAD_FAILED 			= "product_view_load_failed";
 	public const string PRODUCT_VIEW_APPEARED 				= "product_view_appeared";
 	public const string PRODUCT_VIEW_DISMISSED 				= "product_view_dismissed";
+
+	public Action Loaded = delegate {};
+	public Action LoadFailed = delegate {};
+	public Action Appeared = delegate {};
+	public Action Disnissed = delegate {};
+
+
+
 
 	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 	[DllImport ("__Internal")]
@@ -46,7 +55,7 @@ public class IOSStoreProductView : EventDispatcherBase {
 			addProductId(pid);
 		}
 
-		IOSInAppPurchaseManager.instance.RegisterProductView(this);
+		IOSInAppPurchaseManager.Instance.RegisterProductView(this);
 	}
 
 	public IOSStoreProductView(params string[] ids) {
@@ -54,7 +63,7 @@ public class IOSStoreProductView : EventDispatcherBase {
 			addProductId(pid);
 		}
 
-		IOSInAppPurchaseManager.instance.RegisterProductView(this);
+		IOSInAppPurchaseManager.Instance.RegisterProductView(this);
 	}
 
 

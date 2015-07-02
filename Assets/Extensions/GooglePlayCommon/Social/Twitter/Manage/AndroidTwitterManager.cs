@@ -16,6 +16,9 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 	private bool _IsAuthed = false;
 	private bool _IsInited = false;
 
+	private string _AccessToken = string.Empty;
+	private string _AccessTokenSecret = string.Empty;
+
 	private TwitterUserInfo _userInfo;
 
 
@@ -24,6 +27,9 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 	public Action<TWResult> OnAuthCompleteAction 				= delegate {};
 	public Action<TWResult> OnPostingCompleteAction 			= delegate {};
 	public Action<TWResult> OnUserDataRequestCompleteAction 	= delegate {};
+
+
+
 
 
 	// --------------------------------------
@@ -144,7 +150,17 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 		}
 	}
 
+	public string AccessToken {
+		get {
+			return _AccessToken;
+		}
+	}
 
+	public string AccessTokenSecret {
+		get {
+			return _AccessTokenSecret;
+		}
+	}
 	
 	// --------------------------------------
 	// EVENTS
@@ -207,6 +223,17 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 		OnUserDataRequestCompleteAction(res);
 	}
 
+	private void OnAuthInfoReceived(string data) {
+
+		Debug.Log("OnAuthInfoReceived");
+
+		string[] storeData;
+		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
+
+		_AccessToken = storeData[0];
+		_AccessTokenSecret = storeData[1];
+
+	}
 
 }
 

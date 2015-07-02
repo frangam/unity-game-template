@@ -18,7 +18,7 @@ public class ThreeWay_Shooter : BaseWeaponScript
 		theProjectile.LookAt( theProjectile.position + fireDirection );
 		
 		// add some force to move our projectile
-		theProjectile.rigidbody.velocity= fireDirection * projectileSpeed;
+		theProjectile.GetComponent<Rigidbody>().velocity= fireDirection * projectileSpeed;
 		
 		// -----------------------------------------------------
 		
@@ -34,7 +34,7 @@ public class ThreeWay_Shooter : BaseWeaponScript
 		theProjectile.Rotate(0,25,0);
 		
 		// add some force to move our projectile
-		theProjectile.rigidbody.velocity= offsetSideFireVector + fireDirection * projectileSpeed;
+		theProjectile.GetComponent<Rigidbody>().velocity= offsetSideFireVector + fireDirection * projectileSpeed;
 		
 		// -----------------------------------------------------
 
@@ -48,7 +48,7 @@ public class ThreeWay_Shooter : BaseWeaponScript
 		theProjectile.Rotate(0,-25,0);
 		
 		// add some force to move our projectile
-		theProjectile.rigidbody.velocity= -offsetSideFireVector + fireDirection * projectileSpeed;
+		theProjectile.GetComponent<Rigidbody>().velocity= -offsetSideFireVector + fireDirection * projectileSpeed;
 		
 		// -----------------------------------------------------
 		

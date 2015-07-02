@@ -56,7 +56,12 @@ public class AndroidInventory  {
 
 	public bool IsProductPurchased(string SKU) {
 		if(_purchases.ContainsKey(SKU)) {
-			return true;
+			GooglePurchaseTemplate tpl = GetPurchaseDetails(SKU);
+			if(tpl.state == GooglePurchaseState.PURCHASED) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}

@@ -19,7 +19,7 @@ public class PretendFriction : MonoBehaviour
 	void Start () 
 	{
 		// cache some references to our rigidbody, mass and transform
-		myBody=rigidbody;
+		myBody=GetComponent<Rigidbody>();
 		myMass=myBody.mass;
 		myTransform=transform;
 	}

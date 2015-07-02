@@ -38,7 +38,7 @@ public class BaseTopDownSpaceShip : ExtendedCustomMonoBehaviour
 		// cache refs to our transform and gameObject
 		myTransform= transform;
 		myGO= gameObject;
-		myBody= rigidbody;
+		myBody= GetComponent<Rigidbody>();
 
 		// add default keyboard input
 		default_input= myGO.AddComponent<Keyboard_Input>();

@@ -39,10 +39,12 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 
 	//Actinos
 	public Action OnInitCompleteAction = delegate {};
+	public Action<FBPostResult> OnPostingCompleteAction = delegate {};
+
+
 	public Action<bool> OnFocusChangedAction = delegate {};
 	public Action<FBResult> OnAuthCompleteAction = delegate {};
 	public Action<FBResult> OnPaymentCompleteAction = delegate {};
-	public Action<FBResult> OnPostingCompleteAction = delegate {};
 	public Action<FBResult> OnUserDataRequestCompleteAction = delegate {};
 	public Action<FBResult> OnFriendsDataRequestCompleteAction = delegate {};
 
@@ -92,6 +94,8 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 
 	private bool IsLoginRequestSent = false;
 	public void Login(string scopes) {
+
+		Debug.Log("SPFacebook: making login with teh scopes: "  + scopes);
 		if(!IsLoginRequestSent) {
 			Debug.Log("AndroidNative login");
 			IsLoginRequestSent = true;
@@ -218,8 +222,9 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 			Debug.LogWarning("Auth user before posting, fail event generated");
 
 			FBResult res = new FBResult("","User isn't authed");
-			dispatch(FacebookEvents.POST_FAILED, res);
-			OnPostingCompleteAction(res);
+			FBPostResult pr =  new FBPostResult(res);
+			dispatch(FacebookEvents.POST_FAILED, pr);
+			OnPostingCompleteAction(pr);
 			return;
 		}
 
@@ -258,6 +263,10 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 		FB.AppRequest(message, OGActionType.AskFor, objectId,  to, data, title, AppRequestCallBack);
 	}
 
+	public void SendInvite(string title, string message, string data = "", string[] to = null) {
+		FB.AppRequest(message, to, null, null, default(int?), data, title, AppRequestCallBack);
+	}
+
 
 	private void AppRequestCallBack(FBResult result) {
 
@@ -272,18 +281,19 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 			}
 
 
-			List<object> Users = JSON["to"]  as List<object>;
-			foreach(object userId in  Users) {
-				r.Recipients.Add(System.Convert.ToString(userId));
+			if(JSON.ContainsKey("to")) {
+				List<object> Users = JSON["to"]  as List<object>;
+				foreach(object userId in  Users) {
+					r.Recipients.Add(System.Convert.ToString(userId));
+				}
 			}
-
 
 		}
 
 		dispatch(FacebookEvents.APP_REQUEST_COMPLETE, r);
 		OnAppRequestCompleteAction(r);
 
-		Debug.Log("GiftRequestCallBack");
+		Debug.Log("AppRequestCallBack");
 		Debug.Log(result.Text);
 	}
 
@@ -373,6 +383,8 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 
 		FB.AppRequest(message, actionType, objectId, filters, excludeIds, maxRecipients, data, title, AppRequestCallBack);
 	}
+	
+
 	
 	public void AppRequest(
 		string message,
@@ -634,6 +646,14 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 			return _appScores[userId].value;
 		} else {
 			return 0;
+		}
+	}
+
+	public FBScore GetScoreObjectByUserId(string userId) {
+		if(_appScores.ContainsKey(userId)) {
+			return _appScores[userId];
+		} else {
+			return null;
 		}
 	}
 
@@ -1071,8 +1091,8 @@ public class SPFacebook : SA_Singleton<SPFacebook> {
 		}  else {
 			dispatch(FacebookEvents.POST_SUCCEEDED, result);
 		}         
-
-		OnPostingCompleteAction(result);
+		FBPostResult pr = new FBPostResult(result);
+		OnPostingCompleteAction(pr);
 
 	}
 

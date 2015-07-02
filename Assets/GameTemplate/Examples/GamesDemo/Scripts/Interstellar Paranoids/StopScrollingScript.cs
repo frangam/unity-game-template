@@ -11,7 +11,7 @@ public class StopScrollingScript : MonoBehaviour {
 	
 	void Start ()
 	{
-		myRenderer=renderer;
+		myRenderer=GetComponent<Renderer>();
 		
 		// the camera may be set in the editor, or we'll just use the main camera
 		if(theCamera==null)

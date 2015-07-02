@@ -69,7 +69,7 @@ public class BaseVehicle : ExtendedCustomMonoBehaviour
 		Debug.Log ("BaseVehicle Init called.");
 		
 		// cache the usual suspects
-		myBody= rigidbody;
+		myBody= GetComponent<Rigidbody>();
 		myGO= gameObject;
 		myTransform= transform;
 		

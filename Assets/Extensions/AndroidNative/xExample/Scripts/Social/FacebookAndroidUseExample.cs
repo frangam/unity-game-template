@@ -269,9 +269,8 @@ public class FacebookAndroidUseExample : MonoBehaviour {
 			SPFacebook.instance.LoadLikes(SPFacebook.instance.UserId, UNION_ASSETS_PAGE_ID);
 
 		}
-		
+
 	}
-	
 	
 	
 	// --------------------------------------
@@ -291,6 +290,9 @@ public class FacebookAndroidUseExample : MonoBehaviour {
 	
 	
 	private void OnFocusChanged(bool focus) {
+
+		Debug.Log("FB OnFocusChanged: " + focus);
+
 		if (!focus)  {                                                                                        
 			// pause the game - we will need to hide                                             
 			Time.timeScale = 0;                                                                  
@@ -364,11 +366,11 @@ public class FacebookAndroidUseExample : MonoBehaviour {
 
 	}
 	
-	private void OnPost(FBResult res) {
-		if(res.Error == null) {
-			Debug.Log("Posting complete");
-			Debug.Log(res.Text);
+	private void OnPost(FBPostResult res) {
 
+		if(res.IsSucceeded) {
+			Debug.Log("Posting complete");
+			Debug.Log("Posy id: " + res.PostId);
 			SA_StatusBar.text = "Posting complete";
 		} else {
 			SA_StatusBar.text = "Oops, post failed, something was wrong";

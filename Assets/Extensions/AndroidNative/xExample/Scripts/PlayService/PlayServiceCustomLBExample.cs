@@ -67,7 +67,7 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 
 
 
-		GooglePlayManager.ActionSoreSubmited += OnScoreSbumitted;
+		GooglePlayManager.ActionScoreSubmited += OnScoreSbumitted;
 
 
 		//Same events, one with C# actions, one with FLE
@@ -373,5 +373,19 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 	void OnScoreSbumitted (GP_GamesResult result) {
 		SA_StatusBar.text = "Score Submit Resul:  " + result.message;
 		LoadScore();
+	}
+
+	void OnDestroy() {
+
+		if(GooglePlayConnection.HasInstance) {
+			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
+			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
+			GooglePlayConnection.instance.removeEventListener(GooglePlayConnection.CONNECTION_RESULT_RECEIVED, OnConnectionResult);
+		}
+
+		
+		GooglePlayManager.ActionScoreSubmited -= OnScoreSbumitted;
+		GooglePlayManager.ActionScoreRequestReceived -= ActionScoreRequestReceived;
+
 	}
 }

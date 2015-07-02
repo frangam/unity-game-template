@@ -52,7 +52,9 @@ public class BaseGameManager : MonoBehaviour {
 	private long 			currentScore;
 	private int				currentLevelSelected;
 	private bool			isGameOver;
-	
+	private bool 			isLocalMultiplayerGame;
+	private bool 			isOnlineMultiplayerGame;
+
 	/// <summary>
 	/// True if we are going to handle scores in the current game mode. Recommended to its value in a child class.
 	/// </summary>
@@ -120,6 +122,18 @@ public class BaseGameManager : MonoBehaviour {
 			isGameOver = value;
 		}
 	}
+
+	public bool IsLocalMultiplayerGame {
+		get {
+			return this.isLocalMultiplayerGame;
+		}
+	}
+	
+	public bool IsOnlineMultiplayerGame {
+		get {
+			return this.isOnlineMultiplayerGame;
+		}
+	}
 	
 	
 	//--------------------------------------
@@ -128,7 +142,8 @@ public class BaseGameManager : MonoBehaviour {
 	#region Unity
 	protected virtual void Awake(){
 		initGame();
-		
+
+		//Game Analytics event name
 		string gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
 		switch(gameMode){
 		case GameMode.QUICKGAME:
@@ -146,9 +161,13 @@ public class BaseGameManager : MonoBehaviour {
 			break;
 			
 		}
+
+		//multiplayer options
+		isLocalMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_LOCAL_MULTIPLAYER) != 0 ? true:false;
+		isOnlineMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_ONLINE_MULTIPLAYER) != 0 ? true:false;
 		
 		//GA
-		GA.API.Design.NewEvent(gaEvent);
+		//TODO Analytics
 	}
 	protected virtual void OnDestroy(){
 		if(gameMode == GameMode.CAMPAIGN){
@@ -311,7 +330,7 @@ public class BaseGameManager : MonoBehaviour {
 			AdsHandler.Instance.mostrarPantallazo();
 			
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
+			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
 		}
 	}
 	
@@ -334,7 +353,7 @@ public class BaseGameManager : MonoBehaviour {
 				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_FAILED);
 				
 				//GA
-				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries);
+				//TODO Analytics	GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries)
 			}
 			else{
 				int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString()); //get the previous completed times
@@ -346,7 +365,7 @@ public class BaseGameManager : MonoBehaviour {
 				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted); //update completed times
 				
 				//GA
-				GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted);
+				//TODO Analytics GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted
 			}
 			break;
 			
@@ -362,7 +381,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 		
 		//GA
-		GA.API.Design.NewEvent(gaEvent);
+		//TODO Analytics		gaEvent
 		
 		//handle ad showing
 		handleGameOverAdShowing();
@@ -406,7 +425,7 @@ public class BaseGameManager : MonoBehaviour {
 			AdsHandler.Instance.mostrarPantallazo();
 			
 			//GA
-			GA.API.Design.NewEvent(GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO);
+			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
 		}
 	}
 	
@@ -557,7 +576,7 @@ public class BaseGameManager : MonoBehaviour {
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, nextLevel);
 			
 			//GA
-			GA.API.Design.NewEvent(GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString());
+			//TODO Analytics GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString()
 		}
 		
 		finishGame();

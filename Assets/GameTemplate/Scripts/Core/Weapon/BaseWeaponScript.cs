@@ -114,7 +114,7 @@ public class BaseWeaponScript : MonoBehaviour
 		theProjectile.LookAt( theProjectile.position + fireDirection );
 	
 		// add some force to move our projectile
-		theProjectile.rigidbody.velocity= fireDirection * projectileSpeed;
+		theProjectile.GetComponent<Rigidbody>().velocity= fireDirection * projectileSpeed;
 	}
 	
 	public virtual Transform MakeProjectile( int ownerID )
@@ -139,7 +139,7 @@ public class BaseWeaponScript : MonoBehaviour
 		if( parentCollider!=null )
 		{
 			// disable collision between 'us' and our projectile so as not to hit ourselves with it!
-			Physics.IgnoreCollision( theProjectile.collider, parentCollider );
+			Physics.IgnoreCollision( theProjectile.GetComponent<Collider>(), parentCollider );
 		}
 		
 		// return this projectile incase we want to do something else to it

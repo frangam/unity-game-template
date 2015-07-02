@@ -39,7 +39,7 @@ public static class RuntimePlatformUtils {
 	}
 	
 	public static bool IsBlackberry(){
-		return Application.platform == RuntimePlatform.BB10Player;
+		return Application.platform == RuntimePlatform.BlackBerryPlayer;
 	}
 	#endregion
 
@@ -66,7 +66,7 @@ public static class RuntimePlatformUtils {
 	}
 
 	public static bool IsPlaystationMobile(){
-		return _platform == RuntimePlatform.PSMPlayer;
+		return _platform == RuntimePlatform.PSM;
 	}
 	#endregion
 

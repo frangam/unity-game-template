@@ -101,8 +101,8 @@ public class Player_LBS : BaseTopDown
 		{
 			// stop movement, as long as rigidbody is not kinematic (otherwise it will have no velocity and we
 			// will generate an error message trying to set it)
-			if( !myPlayerController.rigidbody.isKinematic )
-				myPlayerController.rigidbody.velocity=Vector3.zero;
+			if( !myPlayerController.GetComponent<Rigidbody>().isKinematic )
+				myPlayerController.GetComponent<Rigidbody>().velocity=Vector3.zero;
 			
 			// hide ship body
 			theMeshGO.SetActive(false);

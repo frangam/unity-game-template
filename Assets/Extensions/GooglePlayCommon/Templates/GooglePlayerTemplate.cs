@@ -73,7 +73,7 @@ public class GooglePlayerTemplate {
 		
 		
 		WWWTextureLoader loader = WWWTextureLoader.Create();
-		loader.addEventListener(BaseEvent.LOADED, OnProfileImageLoaded);
+		loader.OnLoad += OnProfileImageLoaded;
 		loader.LoadTexture(_hiResImageUrl);
 	}
 
@@ -86,7 +86,7 @@ public class GooglePlayerTemplate {
 
 
 		WWWTextureLoader loader = WWWTextureLoader.Create();
-		loader.addEventListener(BaseEvent.LOADED, OnProfileIconLoaded);
+		loader.OnLoad += OnProfileIconLoaded;
 		loader.LoadTexture(_iconImageUrl);
 	}
 
@@ -152,19 +152,12 @@ public class GooglePlayerTemplate {
 	//--------------------------------------
 
 
-	private void OnProfileImageLoaded(CEvent e) {
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnProfileImageLoaded);
-		if(e.data != null) {
-			_image = e.data as Texture2D;
-		}
-
+	private void OnProfileImageLoaded(Texture2D tex) {
+		_image = tex;
 	}
 
-	private void OnProfileIconLoaded(CEvent e) {
-		e.dispatcher.removeEventListener(BaseEvent.LOADED, OnProfileIconLoaded);
-		if(e.data != null) {
-			_icon = e.data as Texture2D;
-		}
+	private void OnProfileIconLoaded(Texture2D tex) {
+		_icon = tex;
 
 	}
 

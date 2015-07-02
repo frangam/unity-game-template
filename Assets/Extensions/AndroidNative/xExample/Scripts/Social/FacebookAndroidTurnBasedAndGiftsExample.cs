@@ -95,7 +95,13 @@ public class FacebookAndroidTurnBasedAndGiftsExample : MonoBehaviour {
 
 			//Printing all pending request's id's
 			foreach(FBAppRequest request in SPFacebook.instance.AppRequests) {
+				Debug.Log("--------------------------");
 				Debug.Log(request.Id);
+				Debug.Log(request.Message);
+				Debug.Log(request.ActionType);
+				Debug.Log(request.State);
+				Debug.Log(request.Data);
+				Debug.Log("--------------------------");
 			}
 		}
 
@@ -110,8 +116,13 @@ public class FacebookAndroidTurnBasedAndGiftsExample : MonoBehaviour {
 
 	public void SendTrunhRequestToSpecifiedFriend() {
 		string FriendId = "1405568046403868";
-		SPFacebook.instance.SendTrunRequest("Sample Titile", "Sample message", "some_request_dara", new string[]{FriendId, "716261781804613"});
+		SPFacebook.instance.SendTrunRequest("Sample Titile", "Sample message", "some_request_data", new string[]{FriendId, "716261781804613"});
 		SPFacebook.instance.OnAppRequestCompleteAction += OnAppRequestCompleteAction;
+
+
+
+		SPFacebook.instance.AppRequest("Play with me", new string[]{FriendId, "716261781804613"});
+
 	}
 
 
@@ -120,8 +131,33 @@ public class FacebookAndroidTurnBasedAndGiftsExample : MonoBehaviour {
 	}
 
 	public void SendItem() {
+
 		SPFacebook.instance.SendGift("Sample Titile", "Sample message", BombItemId);
 	}
+
+
+	public void SendInv() {
+		string title = "Hello";
+		string message = "Play with me";
+
+		SPFacebook.instance.SendInvite(title, message);
+		SPFacebook.instance.OnAppRequestCompleteAction += OnAppRequestCompleteAction;
+	}
+
+	public void SendInvToSpecifayedFirend() {
+		string FriendId = "1405568046403868";
+
+
+		string title = "Hello";
+		string message = "Play with me";
+
+		//Additional freeform data you may pass for tracking. This will be stored as part of the request objects created. The maximum length is 255 characters. (Optional) 
+		string requestDate = "some_request_data";
+
+		SPFacebook.instance.SendInvite(title, message, requestDate, new string[]{FriendId});
+		SPFacebook.instance.OnAppRequestCompleteAction += OnAppRequestCompleteAction;
+	}
+
 
 	public void SendToSpecifiedFriend() {
 		string FriendId = "1405568046403868";

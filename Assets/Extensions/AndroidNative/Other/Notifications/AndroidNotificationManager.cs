@@ -85,6 +85,7 @@ public class AndroidNotificationManager : SA_Singleton<AndroidNotificationManage
 	
 	
 	public void CancelAllLocalNotifications() {
+
 		List<LocalNotificationTemplate> scheduled = LoadPendingNotifications();
 		
 		foreach(LocalNotificationTemplate n in scheduled) {
@@ -93,7 +94,28 @@ public class AndroidNotificationManager : SA_Singleton<AndroidNotificationManage
 		
 		SaveNotifications(new List<LocalNotificationTemplate>());
 	}
+
+
+	// --------------------------------------
+	// Get / Set
+	// --------------------------------------
+
 	
+	public int GetNextId {
+		get {
+			int id = 1;
+			if(PlayerPrefs.HasKey(PP_ID_KEY)) {
+				id = PlayerPrefs.GetInt(PP_ID_KEY);
+				id++;
+			} 
+			
+			PlayerPrefs.SetInt(PP_ID_KEY, id);
+			return id;
+		}
+		
+	}
+
+
 	// --------------------------------------
 	// Events
 	// --------------------------------------
@@ -111,20 +133,7 @@ public class AndroidNotificationManager : SA_Singleton<AndroidNotificationManage
 	//  PRIVATE METHODS
 	//--------------------------------------
 	
-	
-	private int GetNextId {
-		get {
-			int id = 1;
-			if(PlayerPrefs.HasKey(PP_ID_KEY)) {
-				id = PlayerPrefs.GetInt(PP_ID_KEY);
-				id++;
-			} 
-			
-			PlayerPrefs.SetInt(PP_ID_KEY, id);
-			return id;
-		}
-		
-	}
+
 	
 	private void SaveNotifications(List<LocalNotificationTemplate> notifications) {
 		
@@ -161,11 +170,17 @@ public class AndroidNotificationManager : SA_Singleton<AndroidNotificationManage
 			foreach(string n in notifications) {
 				
 				String templateData = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(n) );
-				
-				LocalNotificationTemplate notification = new LocalNotificationTemplate(templateData);
-				if(!notification.IsFired|| includeAll) {
-					tpls.Add(notification);
+		
+				try {
+					LocalNotificationTemplate notification = new LocalNotificationTemplate(templateData);
+
+					if(!notification.IsFired|| includeAll) {
+						tpls.Add(notification);
+					}
+				} catch(Exception e) {
+					Debug.Log("AndroidNative. AndroidNotificationManager loading notification data failed: " + e.Message);
 				}
+
 			}
 		}
 		return tpls;

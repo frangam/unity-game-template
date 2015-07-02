@@ -38,8 +38,8 @@ public class DisconnectButton : MonoBehaviour {
 	//--------------------------------------
 
 	void OnGUI() {
-		if(GUI.Button(r, "Disonnect")) {
-			GameCenterMultiplayer.instance.disconnect ();
+		if(GUI.Button(r, "Disconnect")) {
+			GameCenter_RTM.Instance.Disconnect();
 		}
 	}
 	//--------------------------------------

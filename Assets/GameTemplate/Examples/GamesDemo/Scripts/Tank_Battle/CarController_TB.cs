@@ -54,7 +54,7 @@ public class CarController_TB : BaseVehicle
 		// we are overriding the Start function of BaseVehicle because we do not want to
 		// initialize from here! Game controller will call Init when it is ready
 		
-		myBody= rigidbody;
+		myBody= GetComponent<Rigidbody>();
 		myGO= gameObject;
 		myTransform= transform;
 	}
@@ -63,7 +63,7 @@ public class CarController_TB : BaseVehicle
 		Debug.Log ("CarController_TB Init called.");
 		
 		// cache the usual suspects
-		myBody= rigidbody;
+		myBody= GetComponent<Rigidbody>();
 		myGO= gameObject;
 		myTransform= transform;
 		
@@ -129,7 +129,7 @@ public class CarController_TB : BaseVehicle
 		MakeVulnerable();
 		
 		// grab volume from sound controller for our engine sound
-		audio.volume= BaseSoundController.Instance.volume;
+		GetComponent<AudioSource>().volume= BaseSoundController.Instance.volume;
 	}	
 	
 	void InitAI()

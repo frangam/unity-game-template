@@ -18,7 +18,7 @@ public class PTPGameController : MonoBehaviour {
 	public GameObject pref;
 
 	private DisconnectButton d;
-	private ConectionButton b;
+	private ConnectionButton b;
 	private ClickManager m;
 
 	public static PTPGameController instance;
@@ -40,7 +40,7 @@ public class PTPGameController : MonoBehaviour {
 
 
 
-		b = gameObject.AddComponent<ConectionButton> ();
+		b = gameObject.AddComponent<ConnectionButton> ();
 		b.enabled = false;
 
 		d = gameObject.AddComponent<DisconnectButton> ();
@@ -50,10 +50,18 @@ public class PTPGameController : MonoBehaviour {
 		m.enabled = false;
 
 
-		GameCenterMultiplayer.instance.addEventListener (GameCenterMultiplayer.PLAYER_DISCONNECTED, OnGCPlayerDisconnected);
-		GameCenterMultiplayer.instance.addEventListener (GameCenterMultiplayer.MATCH_STARTED, OnGCMatchStart);
+		GameCenter_RTM.ActionPlayerStateChanged += HandleActionPlayerStateChanged;;
+		GameCenter_RTM.ActionMatchStarted += HandleActionMatchStarted;
 
 	}
+
+
+
+
+
+
+
+
 
 	//--------------------------------------
 	//  PUBLIC METHODS
@@ -92,32 +100,57 @@ public class PTPGameController : MonoBehaviour {
 
 	void OnAuthFinished (ISN_Result res) {
 		if (res.IsSucceeded) {
-			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.player.playerId + "\n" + "Name: " + GameCenterManager.player.displayName);
+			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.Player.Id + "\n" + "Name: " + GameCenterManager.Player.DisplayName);
 			cleanUpScene ();
 		}
 
 	}
 
+	
 
+	void HandleActionPlayerStateChanged (GK_Player player, GK_PlayerConnectionState state, GK_RTM_Match macth) {
+		if(state == GK_PlayerConnectionState.Disconnected) {
+			IOSNativePopUpManager.showMessage ("Disconnect", "Game finished");
+			GameCenter_RTM.Instance.Disconnect();
+			cleanUpScene ();
+		} else {
+			CheckMatchState(macth);
+		}
+	}
+	
 
-	private void OnGCPlayerDisconnected(CEvent e) {
-		IOSNativePopUpManager.showMessage ("Disconnect", "Game finished");
-		cleanUpScene ();
+	void HandleActionMatchStarted (GK_RTM_MatchStartedResult result) {
+		if(result.IsSucceeded) {
+			CheckMatchState(result.Match);
+
+		} else {
+			IOSNativePopUpManager.showMessage ("Match Start Error", result.error.description);
+		}
 	}
 
-	private void OnGCMatchStart(CEvent e) {
-		GameCenterMatchData match = e.data as GameCenterMatchData;
-
-		IOSNativePopUpManager.showMessage ("OnMatchStart", "let's playe now \n  Other player count: " + match.playerIDs.Count);
-
-
-
-
-		m.enabled = true;
-		b.enabled = false;
-		d.enabled = true;
-
+	private void CheckMatchState(GK_RTM_Match macth) {
+		IOSNativePopUpManager.dismissCurrentAlert();
+		if(macth != null) {
+			if(macth.ExpectedPlayerCount == 0) {
+				IOSNativePopUpManager.showMessage ("Match Started", "let's play now\n   Macth.ExpectedPlayerCount): " + macth.ExpectedPlayerCount);
+				
+				
+				
+				m.enabled = true;
+				b.enabled = false;
+				d.enabled = true;
+				
+				
+				Debug.Log("Sending HelloPackage ");
+				HelloPackage p =  new HelloPackage();
+				p.send();
+			} else {
+				IOSNativePopUpManager.showMessage ("Match Created", "Macth.ExpectedPlayerCount): " + macth.ExpectedPlayerCount);
+			}
+		}
 	}
+
+
 	
 	//--------------------------------------
 	//  PRIVATE METHODS

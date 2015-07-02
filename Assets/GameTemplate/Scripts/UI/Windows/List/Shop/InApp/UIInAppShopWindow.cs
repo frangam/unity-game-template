@@ -23,7 +23,7 @@ public class UIInAppShopWindow : UIBaseWindow {
 	public override void open ()
 	{
 		//GA
-		GA.API.Design.NewEvent(GAEvents.INAPP_WIN_OPEN);
+		//TODO Analytics GAEvents.INAPP_WIN_OPEN
 		
 		base.open ();
 		

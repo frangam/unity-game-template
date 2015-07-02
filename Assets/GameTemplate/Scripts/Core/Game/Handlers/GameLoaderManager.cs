@@ -379,7 +379,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAME_OPENINGS, totalOpenings);
 		
 		//GA
-		GA.API.Design.NewEvent(GAEvents.GAME_OPENING);
+		//TODO Analytics GAEvents.GAME_OPENING
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("GameLoaderManager - total openings: " + totalOpenings);

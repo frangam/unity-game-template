@@ -27,7 +27,9 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 
 	//Events
 	public const string  IMAGE_PICKED = "image_picked";
-	public const string  IMAGE_SAVED = "image_picked";
+	public const string  IMAGE_SAVED = "image_saved";
+
+	private bool IsWaitngForResponce = false;
 
 
 
@@ -48,7 +50,7 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_InitCamerAPI(float compressionRate, int maxSize, int encodingType);
+	private static extern void _ISN_InitCameraAPI(float compressionRate, int maxSize, int encodingType);
 
 
 	#endif
@@ -58,7 +60,7 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 		DontDestroyOnLoad(gameObject);
 
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_InitCamerAPI(IOSNativeSettings.Instance.JPegCompressionRate, IOSNativeSettings.Instance.MaxImageLoadSize, (int) IOSNativeSettings.Instance.GalleryImageFormat);
+		_ISN_InitCameraAPI(IOSNativeSettings.Instance.JPegCompressionRate, IOSNativeSettings.Instance.MaxImageLoadSize, (int) IOSNativeSettings.Instance.GalleryImageFormat);
 		#endif
 	}
 
@@ -86,12 +88,21 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 	}
 
 	public void GetImageFromCamera() {
+		if(IsWaitngForResponce) {
+			return;
+		}
+		IsWaitngForResponce = true;
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 		_ISN_GetImageFromCamera();
 		#endif
 	}
 
 	public void GetImageFromAlbum() {
+		if(IsWaitngForResponce) {
+			return;
+		}
+		IsWaitngForResponce = true;
+
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 		_ISN_GetImageFromAlbum();
 		#endif
@@ -101,7 +112,7 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 
 	private void OnImagePickedEvent(string data) {
 
-
+		IsWaitngForResponce = false;
 
 		IOSImagePickResult result =  new IOSImagePickResult(data);
 

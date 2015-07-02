@@ -10,8 +10,8 @@ using UnityEditor;
 
 public class GoogleMobileAdSettings : ScriptableObject {
 
-	public const string VERSION_NUMBER = "5.0";
-
+	public const string VERSION_NUMBER = "6.6";
+	public const string PLAY_SERVICE_VERSION = "7571000";
 
 	public string IOS_InterstisialsUnitId = "";
 	public string IOS_BannersUnitId = "";

@@ -94,7 +94,7 @@ public class BaseTopDown : ExtendedCustomMonoBehaviour
 	public virtual void Init ()
 	{
 		// cache the usual suspects
-		myBody= rigidbody;
+		myBody= GetComponent<Rigidbody>();
 		myGO= gameObject;
 		myTransform= transform;
 		
