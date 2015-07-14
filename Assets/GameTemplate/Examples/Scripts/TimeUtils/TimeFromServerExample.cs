@@ -2,12 +2,13 @@
 using System.Collections;
 
 public class TimeFromServerExample : MonoBehaviour {
-	
-	void Start () {
-		string dateTime = "";
-		StartCoroutine(TimeUtils.getDateTimeFromServer(out dateTime));
+	public string serverURL = "http://www.frillsgames.com/gettime.php";
 
-		Debug.Log("Time on the server is now: " + dateTime);
+	IEnumerator Start () {
+		CoroutineWithData cd = new CoroutineWithData(this, TimeUtils.getDateTimeFromServer(serverURL));
+		yield return cd.coroutine;
+		Debug.Log("result is " + cd.result);
+//		StartCoroutine(TimeUtils.getDateTimeFromServer());
 	}
 
 }

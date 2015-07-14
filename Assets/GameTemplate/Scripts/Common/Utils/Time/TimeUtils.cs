@@ -18,15 +18,17 @@ public class TimeUtils{
 		}
 	}
 
-	public static IEnumerator getDateTimeFromServer()
+	public static IEnumerator getDateTimeFromServer(string serverURL)
 	{
-		WWW www = new WWW("http://www.frillsgames.com/gettime.php");
+		WWW www = new WWW(serverURL);
 		yield return www;
 
 		string response = www.text;
-		dateTime = response;
 
-//		Debug.Log("Current Time zone: " + TimeZone.CurrentTimeZone.StandardName);
-
+		if (string.IsNullOrEmpty(www.error)){
+			yield return response;
+		} else {
+			yield return "fail";
+		}
 	}
 }
