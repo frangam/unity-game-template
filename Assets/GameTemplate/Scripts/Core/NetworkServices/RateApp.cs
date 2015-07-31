@@ -21,7 +21,7 @@ public class RateApp : Singleton<RateApp>{
 	#region Unity
 	void Start(){
 		//we ask for rate after player plays its first game opening
-		if (PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAME_OPENINGS) > 1){
+		if (PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAME_OPENINGS) > 2){
 			if (!PlayerPrefs.HasKey(PP_RATE_DONE) || PlayerPrefs.GetInt(PP_RATE_DONE) == 0){
 				if (!PlayerPrefs.HasKey(PP_RATE_LATER)){
 					rate();

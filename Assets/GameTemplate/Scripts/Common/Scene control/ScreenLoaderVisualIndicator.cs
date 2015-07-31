@@ -26,14 +26,15 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 			async.allowSceneActivation = false;
 		while (!async.isDone) {
 			//			Debug.Log("%: " + async.progress);
-			UILoadingPanel.Instance.changeProgress(async.progress);
+			UILoadingPanel.Instance.changeProgress(async.progress, false, 1f);
 			yield return null;
 		}
-		if(async != null && async.progress >= 0.9f)
-			async.allowSceneActivation = true;
-		//
+		//		if(async != null && async.progress >= 1f)
+		//			async.allowSceneActivation = true;
+		//		//
 		//		yield return async;
-		//		Debug.Log("Loading complete");
+		//		if(GameSettings.Instance.showTestLogs)
+		//			Debug.Log("Loading complete");
 	}
 	
 	private IEnumerator Load(int escena, bool showLoadIndicator = true,  bool showLoadingPanel = true){
@@ -58,14 +59,15 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 			async.allowSceneActivation = false;
 		while (!async.isDone) {
 			//			Debug.Log("%: " + async.progress);
-			UILoadingPanel.Instance.changeProgress(async.progress);
+			UILoadingPanel.Instance.changeProgress(async.progress, false, 1);
 			yield return null;
 		}
-		if(async != null && async.progress >= 0.9f)
-			async.allowSceneActivation = true;
+		//		if(async != null && async.progress >= 1)
+		//			async.allowSceneActivation = true;
 		
 		
-		//		yield return null;
+		//		yield return async;
+		
 		//		Debug.Log("Loading complete");
 	}
 	

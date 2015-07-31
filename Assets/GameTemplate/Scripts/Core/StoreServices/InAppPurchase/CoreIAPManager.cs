@@ -205,6 +205,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE
 				   && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)){
 					AndroidInAppPurchaseManager.instance.consume(product.Id);
+					
+					if(GameSettings.Instance.showTestLogs)
+						Debug.Log(name+" - RestorePurchase() Consuming product we forget to consume previously. Id: "+ product.Id);
 				}
 				
 				
@@ -214,12 +217,19 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				else if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE 
 				        && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)) {
 					restore = true;
+					
+					if(GameSettings.Instance.showTestLogs)
+						Debug.Log(name+" - RestorePurchase() Must restore, so we are going to apply rewards. Id: "+ product.Id);
+				}
+				else{
+					if(GameSettings.Instance.showTestLogs)
+						Debug.Log(name+" - RestorePurchase() No restore any thing. Purchased previously? "
+						          +AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)+". Id: "+ product.Id);
 				}
 			}
 			
 			//if it needed to apply restoring products
-			if(restore)
-				OnProcessingRestorePurchases();
+			OnProcessingRestorePurchases(restore);
 		}
 		#elif UNITY_IPHONE
 		if(IOSInAppPurchaseManager.instance != null && IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
@@ -247,11 +257,13 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		_products = new List<UIBaseInAppItem>();
 		
 		//add products
+		int i=0;
 		foreach(string id in productIDs){
-			UIBaseInAppItem item = new UIBaseInAppItem(getInAppFileContent(id));
+			UIBaseInAppItem item = new UIBaseInAppItem(getInAppFileContent(i, id));
 			
 			if(item != null && !_products.Contains(item))
 				_products.Add(item);
+			i++;
 		}
 		
 		if(_products != null && _products.Count > 0){
@@ -304,12 +316,16 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(result.isSuccess){
 			UIBaseInAppItem product = getProductByID(result.purchase.SKU); //get the product purchase info
 			
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log("CoreIAPManager - OnProductPurchased id: "+result.purchase.SKU + ", type: " + product.IaType);
+			
 			//consume the purchase if the inapp product type is consumable
 			if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE)
 				AndroidInAppPurchaseManager.instance.consume(result.purchase.SKU);
 			
 			//event to process this purchase
-			OnProcessingPurchaseProduct (result.purchase.SKU);
+			OnProcessingPurchaseProduct (result.purchase.SKU, product != null);
+			
 		} 
 		else{
 			OnProcessingPurchaseProduct (result.purchase.SKU, false);
@@ -358,13 +374,13 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			OnRetrievedProducts(true);
 			
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Inited successfully, Avaliable products cound: " + AndroidInAppPurchaseManager.instance.inventory.products.Count.ToString());
+				Debug.Log(name+" - Inited successfully, Avaliable products count: " + AndroidInAppPurchaseManager.instance.inventory.products.Count.ToString());
 		}
 		else{
 			//			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
 			OnRetrievedProducts(false);
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Failed in init Stoke Kit :(");
+				Debug.Log(name+"- Failed in init Stoke Kit :(");
 		}
 		
 		//igual que antes ya no nos hace falta estar suscritos al evento.
@@ -380,7 +396,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		
 		if(result.IsSucceeded) {
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
+				Debug.Log(name+" - Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
 			GameLoaderManager.Instance.InAppInited = true;
 			
@@ -390,7 +406,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			OnRetrievedProducts(true);
 		} else {
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Failed in init Stoke Kit :(");
+				Debug.Log(name+" - Failed in init Stoke Kit :(");
 			
 			//			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
 			OnRetrievedProducts(false);
@@ -487,13 +503,13 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			OnRetrievedProducts(true);
 			
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Inited successfully, Avaliable products cound: " + WP8InAppPurchasesManager.instance.products.Count.ToString());
+				Debug.Log(name+" - Inited successfully, Avaliable products cound: " + WP8InAppPurchasesManager.instance.products.Count.ToString());
 		}
 		else{
 			//			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
 			OnRetrievedProducts(false);
 			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("Failed in init Stoke Kit :(");
+				Debug.Log(name+" - Failed in init Stoke Kit :(");
 		}
 		
 		//check if have a durable object but no its assigned yet.
@@ -534,8 +550,8 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	private void FillProducts(List<string> productsIDs){
 		#if UNITY_ANDROID
 		if(GameSettings.Instance.showTestLogs && productsIDs != null){
-			Debug.Log("Filling products. count: " + productsIDs.Count);
-			productsIDs.ForEach(x => Debug.Log("product id: " + x));
+			Debug.Log(name+" - Filling products. count: " + productsIDs.Count);
+			productsIDs.ForEach(x => Debug.Log(name+" - product id: " + x));
 		}
 		productsIDs.ForEach(x => AndroidInAppPurchaseManager.instance.addProduct(x));
 		#elif UNITY_IPHONE
@@ -592,6 +608,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	
 	public virtual void OnRetrievedProducts (bool success = true)
 	{
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log(name+" - OnRetrievedProducts(). Succes? "+success);
+		
 		if(success){
 			#if UNITY_ANDROID
 			List<GoogleProductTemplate> products = AndroidInAppPurchaseManager.instance.inventory.products;
@@ -604,6 +623,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE
 				   && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)){
 					AndroidInAppPurchaseManager.instance.consume(product.Id);
+					
+					if(GameSettings.Instance.showTestLogs)
+						Debug.Log(name+" - OnRetrievedProducts(success) consuming previous product not consumed. Id: "+product.Id);
 				}
 				
 				
@@ -615,7 +637,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				        && !product.RewardedNonConsumable //not was rewarded
 				        && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)) {
 					if(GameSettings.Instance.showTestLogs)
-						Debug.Log("CoreIAPManager - restoring purchase of non consumable product: " + product.ItemType);
+						Debug.Log("CoreIAPManager - restoring purchase of non consumable product: " + product.ItemType + ". ID: "+product.Id);
 					
 					if(!needRestore)
 						GameLoaderManager.Instance.InAppNeedRestoreProducts = true;
@@ -625,9 +647,13 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				}
 			}
 			
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log(name+" - OnRetrievedProducts(). Need to restore products? "+needRestore);
+			
 			if(needRestore){
 				GameLoaderManager.Instance.InAppAllProductsRestored = true;
 				GameLoaderManager.Instance.InAppInited = true;
+				OnProcessingRestorePurchases(true);
 			}
 			
 			IsInited = true;
@@ -648,7 +674,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	
 	
 	
-	public virtual string getInAppFileContent(string productID){
+	public virtual string getInAppFileContent(int index, string productID){
 		string stats = "";
 		
 		//Try to load list item from file
@@ -663,8 +689,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			foreach(string w in allItems){
 				string[] atts = w.Split(',');
 				
-				if(atts.Length > 0 && atts[0] == productID){
-					stats = w;
+				if(atts.Length > 0 && atts[0].Equals(index.ToString())){
+					string newStats = w.Replace(atts[0]+",", productID+",");
+					stats = newStats;
 					break;
 				}
 			}
@@ -676,15 +703,22 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	private UIBaseInAppItem getProductByID(string id){
 		UIBaseInAppItem product = null;
 		
-		foreach(UIBaseInAppItem p in _products){
-			if(p.Id.Equals(id)){
-				product = p;
-				break;
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log("CoreIAPManager - getProductByID " + id + ". Products? "+_products != null);
+		
+		if(_products != null){
+			foreach(UIBaseInAppItem p in _products){
+				if(p.Id.Equals(id)){
+					product = p;
+					break;
+				}
 			}
 		}
 		
 		return product;
 	}
+	
+	
 	
 	//	public bool purchased(string productId){
 	//		return AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(productId);

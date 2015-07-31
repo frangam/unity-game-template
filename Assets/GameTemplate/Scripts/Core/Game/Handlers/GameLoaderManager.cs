@@ -13,12 +13,19 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private const float DUMMY_WAIT_TIME = 3.5f;
-	private const float TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION = 10;
-	private const float TIEMPO_ESPERA_COMPROBAR_GC_CONEXION = 10;
-	private const float TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION = 8; 
-	private const float TIEMPO_ESPERA_COMPROBAR_INAPPS_INITED = 8; 
+	private const int totalLoadingSteps 						= 5;
+	private const float DUMMY_WAIT_TIME 						= 3.5f;
+	private const float TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION 	= 10;
+	private const float TIEMPO_ESPERA_COMPROBAR_GC_CONEXION 	= 10;
+	private const float TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION 	= 8; 
+	public const float 	WAIT_TIME_TO_INIT_INAPP 				= 15; 
 	private const float TIEMPO_ESPERA_COMPROBAR_FACEBOOK_INITED = 5; 
+	private const float MAX_WAIT_TIME_TO_RESTORE_PURCHASES 		= 15; 
+	
+	
+	private UILoadingPanel loadingPanel;
+	private bool showLoadingPanel;
+	private int  currentLoadingStepProgress = 1;
 	private bool gpsPrepared = false;
 	private bool gcPrepared = false;
 	private bool twInited = false;
@@ -28,6 +35,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private bool inAppAllProductsRestored = false;
 	private bool initedGralServices = false;
 	private bool showLoginWindowGameServices = false;
+	private bool loadingNextScene = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -100,6 +108,9 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake () {
+		loadingPanel = FindObjectOfType<UILoadingPanel>();
+		showLoadingPanel = loadingPanel != null;
+		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("GameLoaderManager - initializing");
 		
@@ -107,6 +118,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			PlayerPrefs.DeleteAll();
 		
 		loadLanguage (); //idioma
+		
 		//		Localization.language = GameSettings.LOC_ENGLISH;
 		
 		loadInitialMoneyOnlyFirstTime();
@@ -125,7 +137,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	}
 	
 	public virtual void LateUpdate(){
-		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN) return;
+		if(BaseGameScreenController.Instance.Section != GameSection.LOAD_SCREEN || loadingNextScene) return;
 		
 		initedGralServices =
 			//inapp
@@ -153,6 +165,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		if(initedAllSevices){
 			handleInitialAdShowing();
+			loadingNextScene = true;
 			
 			if(GameSettings.mandatoryTutorial)
 				ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL, GameSettings.Instance.showLoadIndicatorInLoadingScene);
@@ -161,6 +174,35 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 	}
 	#endregion
+	
+	/*--------------------------------
+	 * Show loading progress by second
+	 -------------------------------*/
+	private void incProgressAndShow(){
+		float loadingProgressForEverySecond = currentLoadingStepProgress / totalLoadingSteps;
+		
+		if(showLoadingPanel){
+			loadingPanel.show();
+			UILoadingPanel.Instance.changeProgress(loadingProgressForEverySecond, true);
+		}
+		currentLoadingStepProgress++;
+	}
+	
+	private IEnumerator showProgressBySeconds(int totalSeconds){
+		float loadingProgressForEverySecond = (currentLoadingStepProgress*1.0f/totalSeconds) / (totalLoadingSteps*1.0f);
+		
+		if(showLoadingPanel){
+			loadingPanel.show();
+			
+			for(int i=0; i<totalSeconds; i++){
+				yield return new WaitForSeconds(1);
+				
+				UILoadingPanel.Instance.changeProgress(loadingProgressForEverySecond, true);
+			}
+		}
+		
+		currentLoadingStepProgress++;
+	}
 	
 	//	/*--------------------------------
 	//	 * In App Billing
@@ -186,19 +228,65 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		
 		///-----
+		//Wait time if INAPP is not inited
+		///-----
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log(name+" - INAPP inited ? "+inAppInited);
+		if(!inAppInited){
+			float startTime = 0, currentTime = 0, elapsedTime = 0;
+			startTime = Time.realtimeSinceStartup;
+			StartCoroutine(showProgressBySeconds((int)WAIT_TIME_TO_INIT_INAPP));
+			do{
+				currentTime = Time.realtimeSinceStartup;
+				elapsedTime = currentTime-startTime;
+				yield return null;
+			}
+			while(!inAppInited && elapsedTime<WAIT_TIME_TO_INIT_INAPP);
+			
+			if(GameSettings.Instance.showTestLogs){
+				Debug.Log(name+" - INAPP inited ? "+inAppInited);
+				Debug.Log(name+" - InApp inited Check time out ? "+(elapsedTime>=WAIT_TIME_TO_INIT_INAPP));
+			}
+		}
+		
+		///-----
+		//Wait time if we are restoring purchases
+		///-----
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log(name+" - Wait time if wa are restoring purchases ? "+InAppNeedRestoreProducts);
+		
+		if(InAppNeedRestoreProducts){
+			float startTime = 0, currentTime = 0, elapsedTime = 0;
+			startTime = Time.realtimeSinceStartup;
+			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_RESTORE_PURCHASES));
+			do{
+				currentTime = Time.realtimeSinceStartup;
+				elapsedTime = currentTime-startTime;
+				yield return null;
+			}
+			while(!inAppAllProductsRestored && elapsedTime<MAX_WAIT_TIME_TO_RESTORE_PURCHASES);
+			
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log(name+" - All purchases restored ? "+inAppAllProductsRestored);
+		}
+		
+		///-----
 		/// Wait time for each platform
 		///-----
 		#if UNITY_ANDROID
 		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
+			StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION));
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
 			loadSceneAfterChecking();
 		}
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER){
+			StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_GC_CONEXION));
 			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GC_CONEXION);
 			loadSceneAfterChecking();
 		}
 		#else
+		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
 		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
 		loadSceneAfterChecking();
 		#endif
@@ -212,9 +300,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		///-----
 		if(twNotInited ||  fbNotInited || inappNotInited){
 			if(inappNotInited)
-				wait += TIEMPO_ESPERA_COMPROBAR_INAPPS_INITED;
+				wait += WAIT_TIME_TO_INIT_INAPP;
 			else if(twNotInited || fbNotInited)
 				wait += TIEMPO_ESPERA_COMPROBAR_FACEBOOK_INITED;
+			
 			
 			yield return new WaitForSeconds (wait);
 			loadSceneAfterChecking();
@@ -226,14 +315,20 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 	}
 	
+	
+	
 	private void loadSceneAfterChecking(){
-		//finally load the scene: tutorial or menu
-		if(GameSettings.mandatoryTutorial){
-			ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL, GameSettings.Instance.showLoadIndicatorInLoadingScene);
-		}
-		else{
-			handleInitialAdShowing();
-			ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU, GameSettings.Instance.showLoadIndicatorInLoadingScene);
+		if(!loadingNextScene){
+			loadingNextScene = true;
+			
+			//finally load the scene: tutorial or menu
+			if(GameSettings.mandatoryTutorial){
+				ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL, GameSettings.Instance.showLoadIndicatorInLoadingScene);
+			}
+			else{
+				handleInitialAdShowing();
+				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU, GameSettings.Instance.showLoadIndicatorInLoadingScene);
+			}
 		}
 	}
 	
@@ -441,7 +536,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 					eachOpening = GameSettings.Instance.NUM_GAME_OPENING_TO_INIT_GAME_CENTER;
 					#endif
 					
-					showLoginWindowGameServices =  totalOpenings % eachOpening == 0;
+					showLoginWindowGameServices =  eachOpening > 0 && totalOpenings % eachOpening == 0;
 				}
 			}//end_if_loadGameSettings
 		}//end_if_loadGameSettings

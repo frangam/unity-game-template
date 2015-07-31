@@ -37,10 +37,14 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		
 		currentTime = Time.timeSinceLevelLoad;
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("AdsHandler handleInitialization() - current time: " + currentTime);
+		//		if(GameSettings.Instance.showTestLogs)
+		//			Debug.Log("AdsHandler handleInitialization() - current time: " + currentTime);
 		
-		if(currentTime < IN_APP_WAIT_INITIALIZATION_TIME && !CoreIAPManager.Instance.IsInited)
+		
+		
+		if((GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && currentTime < IN_APP_WAIT_INITIALIZATION_TIME 
+		    && (!CoreIAPManager.Instance.IsInited 
+		    || (CoreIAPManager.Instance.IsInited && GameLoaderManager.Instance.InAppNeedRestoreProducts && !GameLoaderManager.Instance.InAppAllProductsRestored))))
 			StartCoroutine(handleInitializationWhenUsingInAppBilling());
 		
 		//long time waiting to init, now we can init ads handler

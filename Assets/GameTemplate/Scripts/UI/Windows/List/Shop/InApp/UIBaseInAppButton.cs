@@ -8,6 +8,10 @@ public class UIBaseInAppButton : UIBaseButton {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	[Tooltip("The corresponding index of the inappIDs list from GameTemplate Settings depending on the game multiversion")]
+	private int inAppIndexPackFromGameTemplate = 0;
+	
+	[SerializeField]
 	private UIBaseInAppWin window;
 	
 	[SerializeField]
@@ -55,7 +59,18 @@ public class UIBaseInAppButton : UIBaseButton {
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("UIBaseInAppButton - active ? " + active);
 		
+		//get the id from GameSettings based on the given index
+		if(GameSettings.Instance.CurrentInAppBillingIDs != null && GameSettings.Instance.CurrentInAppBillingIDs.Count > 0 
+		   && inAppIndexPackFromGameTemplate < GameSettings.Instance.CurrentInAppBillingIDs.Count){
+			Item.Id = GameSettings.Instance.CurrentInAppBillingIDs[inAppIndexPackFromGameTemplate];
+		}
+		
 		if(active){
+			//get the id from GameSettings based on the given index
+			//			if(GameSettings.Instance.CurrentInAppBillingIDs != null && GameSettings.Instance.CurrentInAppBillingIDs.Count > 0 
+			//			   && inAppIndexPackFromGameTemplate < GameSettings.Instance.CurrentInAppBillingIDs.Count){
+			//				Item.Id = GameSettings.Instance.CurrentInAppBillingIDs[inAppIndexPackFromGameTemplate];
+			//			}
 			
 			Item.load();
 			
@@ -116,8 +131,8 @@ public class UIBaseInAppButton : UIBaseButton {
 		if(lbRealMoneyPrice){
 			lbRealMoneyPrice.text = price.ToString();
 			
-			//TODO Poner moneda que corresponda
-			lbRealMoneyPrice.text += priceCurrencyCode;
+			//			//TODO Poner moneda que corresponda
+			//			lbRealMoneyPrice.text += priceCurrencyCode;
 		}
 	}
 	

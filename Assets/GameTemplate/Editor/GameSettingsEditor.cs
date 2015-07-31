@@ -411,6 +411,7 @@ public class GameSettingsEditor : Editor {
 					
 					inAppBillingForEveryGameMultiversion(i);
 					i++;
+					EditorGUI.indentLevel--;
 				}
 				
 				
@@ -1052,7 +1053,7 @@ public class GameSettingsEditor : Editor {
 				EditorGUILayout.LabelField(whenShowInitialAd);
 				GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START	= EditorGUILayout.IntField(GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START);
 				EditorGUILayout.EndHorizontal();
-
+				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(secDuringGP);
 				GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD	= EditorGUILayout.IntField(GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD);

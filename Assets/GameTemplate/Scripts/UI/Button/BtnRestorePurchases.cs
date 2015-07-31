@@ -14,6 +14,8 @@ public class BtnRestorePurchases : UIBaseButton {
 	public override void Awake ()
 	{
 		base.Awake ();
+		bool active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+		gameObject.SetActive(active);
 		
 		if(!window)
 			window = GetComponentInParent<UIBaseInAppWin>();

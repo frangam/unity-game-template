@@ -567,7 +567,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		}
 		
 		#elif UNITY_IPHONE
-		linkAPP = GameSettings.Instance.CurrentIOSAppShortLink;
+		string linkAPP = GameSettings.Instance.CurrentIOSAppShortLink;
 		
 		if(red == SocialNetwork.FACEBOOK){
 			//			string mensaje = Localization.Localize(ExtraLocalizations.SOCIAL_POST_BEST_SCORE)+" "+PlayerPrefs.GetInt(GameSettings.PP_BEST_SCORE)+" "+Localization.Localize(ExtraLocalizations.SOCIAL_POST_CURRENT_SCORE)+" "+ScoresHandler.Instance.mejorPuntuacion() +" "+linkAPP;

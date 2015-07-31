@@ -41,6 +41,10 @@ public class ExtraLocalizations{
 	public const string POPUP_DESC_GPS_LOGIN 						= "popup_desc_gps_login";
 	public const string OK_BUTTON_GPS_LOGIN_POPUP 					= "ok_button_gps_login_popup";
 	public const string CANCEL_BUTTON_GPS_LOGIN_POPUP 				= "cancel_button_gps_login_popup";
+	public const string POPUP_TITLE_GC_LOGIN 						= "popup_title_gc_login";
+	public const string POPUP_DESC_GC_LOGIN 						= "popup_desc_gc_login";
+	public const string OK_BUTTON_GC_LOGIN_POPUP 					= "ok_button_gc_login_popup";
+	public const string CANCEL_BUTTON_GC_LOGIN_POPUP 				= "cancel_button_gc_login_popup";
 	
 	public const string SIMPLE_LOGIN_BUTTON 						= "simple_login_button";
 	public const string SIMPLE_LOGOUT_BUTTON 						= "simple_logout_button";
@@ -62,6 +66,6 @@ public class ExtraLocalizations{
 	
 	public const string LB_PLAY_BUTTON								= "play";
 	public const string LB_PURCHASE_BUTTON							= "purchase";
-
+	
 	public const string AD_IN										= "ad_in";
 }

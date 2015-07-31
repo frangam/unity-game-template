@@ -19,8 +19,11 @@ public class BaseGameManager : MonoBehaviour {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	private string 		playerTag = "Player";
+	
+	[SerializeField]
 	private bool 		startGameAtTheStartMoment = false;
-
+	
 	[SerializeField]
 	private bool 		pauseTimeAtStart = false;
 	
@@ -47,6 +50,7 @@ public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	private GameObject 		player;
 	private bool 			paused;
 	private bool 			started;
 	private bool 			inited;
@@ -58,7 +62,7 @@ public class BaseGameManager : MonoBehaviour {
 	private bool			isGameOver;
 	private bool 			isLocalMultiplayerGame;
 	private bool 			isOnlineMultiplayerGame;
-
+	
 	/// <summary>
 	/// True if we are going to handle scores in the current game mode. Recommended to its value in a child class.
 	/// </summary>
@@ -70,6 +74,12 @@ public class BaseGameManager : MonoBehaviour {
 	public static EventDispatcherBase dispatcher {
 		get {
 			return _dispatcher;
+		}
+	}
+	
+	public GameObject Player {
+		get {
+			return this.player;
 		}
 	}
 	
@@ -126,7 +136,7 @@ public class BaseGameManager : MonoBehaviour {
 			isGameOver = value;
 		}
 	}
-
+	
 	public bool IsLocalMultiplayerGame {
 		get {
 			return this.isLocalMultiplayerGame;
@@ -146,7 +156,7 @@ public class BaseGameManager : MonoBehaviour {
 	#region Unity
 	protected virtual void Awake(){
 		initGame();
-
+		
 		//Game Analytics event name
 		string gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
 		switch(gameMode){
@@ -165,7 +175,7 @@ public class BaseGameManager : MonoBehaviour {
 			break;
 			
 		}
-
+		
 		//multiplayer options
 		isLocalMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_LOCAL_MULTIPLAYER) != 0 ? true:false;
 		isOnlineMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_ONLINE_MULTIPLAYER) != 0 ? true:false;
@@ -178,12 +188,12 @@ public class BaseGameManager : MonoBehaviour {
 			startGame();
 	}
 	protected virtual void Update(){
-
+		
 	}
-
+	
 	protected virtual void LateUpdate(){
 	}
-
+	
 	protected virtual void OnDestroy(){
 		if(gameMode == GameMode.CAMPAIGN){
 			BaseLevelLoaderController.dispatcher.removeEventListener(BaseLevelLoaderController.LEVEL_LOADED, OnLevelLoaded);
@@ -203,20 +213,20 @@ public class BaseGameManager : MonoBehaviour {
 	/// <returns>The ad showing during game play.</returns>
 	private IEnumerator checkAdShowingDuringGamePlay(){
 		int secsToNotify = GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD - GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS;
-
+		
 		//launch event to notify an ad will be shown in the next seconds
 		yield return new WaitForSeconds(secsToNotify);
 		dispatcher.dispatch(LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS);
-
+		
 		//wait the next seconds to show an ad
 		yield return new WaitForSeconds(GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS);
 		AdsHandler.Instance.mostrarPantallazo(); 
-
+		
 		//repeat again
 		if(!isGameOver && !finished)
 			StartCoroutine(checkAdShowingDuringGamePlay());
 	}
-
+	
 	private void handleGameOverAdShowing(){
 		int numGameovers = 0, numWins = 0;
 		int numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT, numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT;
@@ -433,6 +443,12 @@ public class BaseGameManager : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public virtual void initGame(){
+		//find the player gameobject
+		GameObject[] players = GameObject.FindGameObjectsWithTag(playerTag);
+		if(players != null && players.Length > 0 && players.Length > GameSettings.Instance.currentGameMultiversion){
+			player = players[GameSettings.Instance.currentGameMultiversion];
+		}
+		
 		difficulty = (GameDifficulty) PlayerPrefs.GetInt(GameSettings.PP_GAME_DIFFICULTY); //get the selected game difficulty
 		gameMode = (GameMode) PlayerPrefs.GetInt(GameSettings.PP_GAME_MODE); //get the selected game mode
 		currentScore = 0;
@@ -472,7 +488,7 @@ public class BaseGameManager : MonoBehaviour {
 	public virtual void startGame(){
 		started = true;
 		Paused = false;
-
+		
 		//checks if initing coroutine to check the ad showing during the game play
 		if(!GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD > 0)
 			StartCoroutine(checkAdShowingDuringGamePlay());

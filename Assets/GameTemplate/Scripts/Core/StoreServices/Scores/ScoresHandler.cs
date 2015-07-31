@@ -244,7 +244,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				Debug.Log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
 			
 			if(GameCenterManager.GetLeaderboard(id) != null){
-				serverScore = GameCenterManager.GetLeaderboard(id).GetCurrentPlayerScore(GCBoardTimeSpan.ALL_TIME, GCCollectionType.GLOBAL).GetLongScore();
+				serverScore = GameCenterManager.GetLeaderboard(id).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).GetLongScore();
 				
 				if(serverScore < scoreToSend)
 					GameCenterManager.ReportScore(scoreToSend, id);
