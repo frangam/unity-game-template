@@ -655,7 +655,7 @@ public class GameSettingsEditor : Editor {
 				EditorGUILayout.BeginVertical(GUI.skin.box);
 				
 				if(GameSettings.Instance.achievementsPacks[packIndex].achievements == null || (GameSettings.Instance.achievementsPacks[packIndex].achievements != null && GameSettings.Instance.achievementsPacks[packIndex].achievements.Count == 0)) {
-					EditorGUILayout.HelpBox("No In App Billing IDs Registred",MessageType.None);
+					EditorGUILayout.HelpBox("No Achievements Registred",MessageType.None);
 				}
 				else{
 					EditorGUILayout.Space();
@@ -866,6 +866,130 @@ public class GameSettingsEditor : Editor {
 	//		}
 	
 	//	}
+	
+	protected virtual void scoresMultiGameVersion(){
+		GameSettings.Instance.showScoresPacksSettings = EditorGUILayout.Foldout(GameSettings.Instance.showScoresPacksSettings, "Scores Packs");
+		if (GameSettings.Instance.showScoresPacksSettings) {	
+			Color prevCol = GUI.color;
+			
+			if(GameSettings.Instance.scoresPacks.Count == 0) {
+				EditorGUILayout.HelpBox("No Scores for Game Multiversion Registred",MessageType.None);
+			}
+			else{
+				EditorGUILayout.HelpBox("Scores by Each Game Multiversion", MessageType.None);
+			}
+			
+			int i = 0;
+			EditorGUI.indentLevel++;
+			foreach(ScoresPack pack in GameSettings.Instance.scoresPacks) {
+				EditorGUILayout.BeginHorizontal();
+				if(!GameSettings.Instance.showScoresPack.ContainsKey(GameSettings.Instance.scoresPacks[i]))
+					GameSettings.Instance.showScoresPack.Add(GameSettings.Instance.scoresPacks[i], true);
+				
+				GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[i]], "Scores for Game Version "+i.ToString());
+				
+				GUI.color = Color.red;
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.scoresPacks.Remove(pack);
+					break;
+				}
+				GUI.color = prevCol;
+				EditorGUILayout.EndHorizontal();
+				
+				scoresForEveryGameMultiversion(i);
+				i++;
+			}
+			EditorGUI.indentLevel--;
+			
+			EditorGUILayout.Space();
+			EditorGUILayout.BeginHorizontal();
+			GUI.color = Color.green;
+			if(GUILayout.Button("New Pack")) {
+				if(GameSettings.Instance.scoresPacks == null || (GameSettings.Instance.scoresPacks != null && GameSettings.Instance.scoresPacks.Count == 0))
+					GameSettings.Instance.scoresPacks.Add(new ScoresPack(0, null));
+				else{
+					ScoresPack lastPack = GameSettings.Instance.scoresPacks[GameSettings.Instance.scoresPacks.Count-1];
+					int lastPackId = lastPack.gameVersion;
+					GameSettings.Instance.scoresPacks.Add(new ScoresPack(lastPackId+1, lastPack.scoreIDs));
+				}
+			}
+			GUI.color = prevCol;
+			EditorGUILayout.EndHorizontal();
+			
+			//			EditorGUILayout.Space();
+		}
+	}
+	
+	protected virtual void scoresForEveryGameMultiversion(int packIndex){
+		if((GameSettings.Instance.scoresPacks != null && GameSettings.Instance.scoresPacks.Count > 0)){
+			
+			Color prevCol = GUI.color;
+			
+			
+			if(GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[packIndex]]){
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
+				if(GameSettings.Instance.scoresPacks[packIndex].scoreIDs == null || (GameSettings.Instance.scoresPacks[packIndex].scoreIDs != null && GameSettings.Instance.scoresPacks[packIndex].scoreIDs.Count == 0)) {
+					EditorGUILayout.HelpBox("No Scores Registred",MessageType.None);
+				}
+				else{
+					EditorGUILayout.Space();
+					
+					int i = 0;
+					
+					
+					foreach(string scoreID in GameSettings.Instance.scoresPacks[packIndex].scoreIDs) {
+						
+						
+						if(!GameSettings.Instance.showSpecificScoreOfAPack.ContainsKey(GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]))
+							GameSettings.Instance.showSpecificScoreOfAPack.Add(GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i], true);
+						
+						GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]], "Score "+(i+1).ToString());
+						if(GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]]){
+							EditorGUILayout.BeginVertical(GUI.skin.box);
+							
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField("ID:", GUILayout.Width(120));
+							GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i] = EditorGUILayout.TextField(GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]).Trim();
+							EditorGUILayout.EndHorizontal();
+							
+							
+							
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.Space();
+							
+							if(GUILayout.Button("Remove Score",  GUILayout.Width(180))) {
+								GameSettings.Instance.scoresPacks[packIndex].scoreIDs.Remove(scoreID);
+								break;
+							}
+							
+							EditorGUILayout.EndHorizontal();
+							EditorGUILayout.Space();
+							
+							
+							EditorGUILayout.EndVertical();
+						}
+						
+						i++;
+					}
+				}
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.Space();
+				GUI.color = Color.cyan;
+				if(GUILayout.Button("New Score",  GUILayout.Width(120))) {
+					GameSettings.Instance.scoresPacks[packIndex].scoreIDs.Add("");
+				}
+				GUI.color = prevCol;
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.Space();
+				
+				
+				EditorGUILayout.EndVertical();
+			}
+		}
+	}
+	
 	
 	private void handleDifficulties(){
 		GameSettings.Instance.showGameDifficulties = EditorGUILayout.Foldout(GameSettings.Instance.showGameDifficulties, gameDiffLabel);
@@ -1373,6 +1497,7 @@ public class GameSettingsEditor : Editor {
 			EditorGUI.indentLevel++;
 			uniqueRankingIDs();
 			uniquesurvivalRankingIDs();
+			scoresMultiGameVersion();
 			
 			//			EditorGUI.indentLevel++;
 			//			GameSettings.Instance.showDifficultiesRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showDifficultiesRankingSettings, "Rankings by Difficulty");

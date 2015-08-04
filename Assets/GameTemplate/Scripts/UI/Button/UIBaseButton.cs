@@ -24,6 +24,10 @@ public class UIBaseButton : MonoBehaviour {
 	private string soundId = BaseSoundIDs.UI_BUTTON_CLICK_FX;
 	
 	[SerializeField]
+	[Tooltip("Time to wait before to do the press effect if we want to wait a while. 0 if not wait and doing press effect inmediately.")]
+	private float timeToWaitBeforeDoPress = 0;
+	
+	[SerializeField]
 	[Tooltip("Time to stop the button pressing. 0 if not stopd")]
 	private float timeToStopPressing = 0;
 	
@@ -90,7 +94,10 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	
+	private IEnumerator doPressBeforeAWhile(){
+		yield return new WaitForSeconds(timeToWaitBeforeDoPress);
+		doPress();
+	}
 	
 	//--------------------------------------
 	// Public Methods
@@ -102,7 +109,7 @@ public class UIBaseButton : MonoBehaviour {
 		
 		if(canPress()){
 			lastSuccesfulPressingTime = Time.time;
-			doPress();
+			StartCoroutine(doPressBeforeAWhile());
 		}
 	}
 	
@@ -126,8 +133,6 @@ public class UIBaseButton : MonoBehaviour {
 				BaseSoundManager.Instance.play(soundId);
 			}
 		}
-		
-		
 	}
 	
 	/// <summary>

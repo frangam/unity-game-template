@@ -38,10 +38,13 @@ public class GameSettings : ScriptableObject {
 	public bool 								showAchievementsSettings 									= false;
 	public bool 								showAchievementsActionsSettings 							= false;
 	public bool 								showAchievementsPacksSettings 								= false;
+	public bool 								showScoresPacksSettings 									= false;
 	public Dictionary<InAppBillingIDPack, bool> showInAppBillingIDsPack										= new Dictionary<InAppBillingIDPack, bool>();
 	public Dictionary<AchievementsPack, bool> 	showAchievementsPack										= new Dictionary<AchievementsPack, bool>();
+	public Dictionary<ScoresPack, bool> 		showScoresPack												= new Dictionary<ScoresPack, bool>();
 	public Dictionary<Achievement, bool> 		showAchActionsPack											= new Dictionary<Achievement, bool>();
 	public Dictionary<Achievement, bool> 		showSpecificAchievementsOfAPack								= new Dictionary<Achievement, bool>();
+	public Dictionary<string, bool> 			showSpecificScoreOfAPack									= new Dictionary<string, bool>();
 	public Dictionary<GameAction, bool> 		showAchievementsActions										= new Dictionary<GameAction, bool>();
 	
 	//--------------------------------------
@@ -77,6 +80,7 @@ public class GameSettings : ScriptableObject {
 	public List<List<string>>					worldLevelRankingIDS 			= new List<List<string>>(); //for every game version (versinable game)
 	public List<List<string>>					survivalLevelRankingIDS 		= new List<List<string>>(); //for every game version (versinable game)
 	public List<AchievementsPack> 				achievementsPacks 				= new List<AchievementsPack>(); //for every game version (versinable game)
+	public List<ScoresPack> 					scoresPacks 					= new List<ScoresPack>(); //for every game version (versinable game)
 	public List<GameAction> 					achievementsActions				= new List<GameAction>(); //for every game version (versinable game)
 	public Dictionary<Achievement, int> 		achPackActionsSelected 			= new Dictionary<Achievement, int>();
 	public List<InAppBillingIDPack> 			allInAppBillingIDS 				= new List<InAppBillingIDPack>(); //for every game version (versinable game)
@@ -87,7 +91,7 @@ public class GameSettings : ScriptableObject {
 	public bool 								USE_IN_APP_PURCHASES_SERVICE 	= true;
 	public bool 								ENABLE_ANDROID_IMMERSIVE_MODE	= true;
 	public bool 								showTestLogs					= false; //show debug log for test or not
-
+	
 	
 	//--------------------------------------
 	// Constants
@@ -151,7 +155,7 @@ public class GameSettings : ScriptableObject {
 	//LOCALIZATION
 	public const string LOC_ENGLISH 										= "English";
 	public const string LOC_SPANISH 										= "Spanish";
-														
+	
 	//TAGS									  			
 	public const string TAG_PLAYER 											= "Player";
 	public const string TAG_ENEMY 											= "Enemy";
@@ -231,7 +235,7 @@ public class GameSettings : ScriptableObject {
 	public const string PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE 	= "pp_last_opening_user_connected_to_store_service"; //1 or 0 y playerprefs to know if user conneted to the gps or gc in the last opening
 	public const string PP_LOCAL_MULTIPLAYER 								= "pp_local_multiplayer";
 	public const string PP_ONLINE_MULTIPLAYER 								= "pp_online_multiplayer";
-
+	
 	//GooglePlay Services
 	public string ID_RANKING_EASY 											= "";
 	public string ID_RANKING_NORMAL 										= "";
@@ -353,6 +357,10 @@ public class GameSettings : ScriptableObject {
 	
 	public List<Achievement> CurrentAchievements{
 		get{return achievementsPacks[currentGameMultiversion].achievements;}
+	}
+	
+	public List<string> CurrentScoresIDs{
+		get{return scoresPacks[currentGameMultiversion].scoreIDs;}
 	}
 	
 	

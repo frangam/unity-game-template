@@ -9,12 +9,17 @@ public class BtnRestorePurchases : UIBaseButton {
 	private UIBaseInAppWin window;
 	
 	//--------------------------------------
+	// Private Attributes
+	//--------------------------------------
+	private bool active = false;
+	
+	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	public override void Awake ()
 	{
 		base.Awake ();
-		bool active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+		active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 		gameObject.SetActive(active);
 		
 		if(!window)
@@ -23,6 +28,19 @@ public class BtnRestorePurchases : UIBaseButton {
 		if(window == null)
 			Debug.LogError("Not found UIBaseInAppWin");
 	}
+	
+	public override void Update ()
+	{
+		base.Update ();
+		
+		if(!active){
+			active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+			
+			if(active)
+				gameObject.SetActive(true);
+		}
+	}
+	
 	protected override void doPress ()
 	{
 		base.doPress ();

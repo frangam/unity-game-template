@@ -30,6 +30,11 @@ public class UIBaseInAppButton : UIBaseButton {
 	private bool restartWhenNonConsumableItemWasPurchased = false;
 	
 	//--------------------------------------
+	// Private Attributes
+	//--------------------------------------
+	private bool active = false;
+	
+	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
 	public UIBaseInAppItem Item {
@@ -54,7 +59,7 @@ public class UIBaseInAppButton : UIBaseButton {
 	{
 		base.Awake ();
 		
-		bool active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+		active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("UIBaseInAppButton - active ? " + active);
@@ -90,6 +95,32 @@ public class UIBaseInAppButton : UIBaseButton {
 		}
 		else
 			gameObject.SetActive(false);
+	}
+	
+	public override void Update ()
+	{
+		base.Update ();
+		
+		if(!active){
+			active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+			
+			if(active){
+				if(item != null){
+					bool rewardedNonConsumable = item.RewardedNonConsumable;
+					
+					if(!rewardedNonConsumable){
+						showInformation();
+						
+						getWindow();
+						gameObject.SetActive(true);
+					}
+					//hide if the item is non consumable and user was rewarded yet after purchase it
+					else{
+						gameObject.SetActive(false);
+					}
+				}
+			}
+		}
 	}
 	
 	protected override void doPress ()
