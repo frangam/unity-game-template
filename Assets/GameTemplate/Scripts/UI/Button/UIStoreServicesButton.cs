@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 
@@ -54,8 +54,8 @@ public class UIStoreServicesButton : UIBaseButton {
 				case ScoreType.UNIQUE:	rankId = GameSettings.Instance.CurrentUniqueRankingID;	break;
 				case ScoreType.SURVIVAL:	rankId = GameSettings.Instance.CurrentUniqueSurvivalRankingID;	break;
 				case ScoreType.BY_INDEX_MULTIGAME: 
-					if(GameSettings.Instance.CurrentScoresIDs.Count > scoreIndexForGameMultiversion)
-						rankId = GameSettings.Instance.CurrentScoresIDs[scoreIndexForGameMultiversion];
+					if(GameSettings.Instance.CurrentScores.Count > scoreIndexForGameMultiversion)
+						rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].Id;
 					else
 						Debug.LogError("UIStoreServicesButton ("+name+") - score index out of range");
 					break;

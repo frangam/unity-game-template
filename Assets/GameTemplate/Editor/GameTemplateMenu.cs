@@ -14,6 +14,14 @@ public class GameTemplateMenu : EditorWindow {
 	public static void Edit() {
 		Selection.activeObject = GameSettings.Instance;
 	}
+	[MenuItem("Window/Game Template/Ads Settings/Admob", false, 1)]
+	public static void EditAdmob() {
+		Selection.activeObject = GoogleAdmobSettings.Instance;
+	}
+	[MenuItem("Window/Game Template/Ads Settings/AdColony", false, 1)]
+	public static void EditAdColony() {
+		Selection.activeObject = AdColonySettings.Instance;
+	}
 	[MenuItem("Window/Game Template/Level Packs Settings", false, 1)]
 	public static void EditLevelPacks() {
 		Selection.activeObject = LevelPacks.Instance;
@@ -36,7 +44,7 @@ public class GameTemplateMenu : EditorWindow {
 	}
 	
 	//--------------------------------------
-	//  Achievemente Documentation
+	//  Achievements Documentation
 	//--------------------------------------
 	
 	[MenuItem("Window/Game Template/Documentation/Achievements/Getting Started")]

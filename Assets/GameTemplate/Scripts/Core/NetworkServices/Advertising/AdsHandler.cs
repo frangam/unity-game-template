@@ -17,11 +17,27 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	private bool IsInterstisialsAdReady = false;
 	private static Dictionary<string, GoogleMobileAdBanner> _registerdBanners = null;
 	private float currentTime;
+	private bool googleAdmobInited = false;
+	private bool adcolonyInited = false;
 	
 	//--------------------------------------
 	// INITIALIZE
 	//--------------------------------------
 	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR)
+	private bool canShowAd(AdNetwork network){
+		bool canShow = !GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0;
+		
+		if(canShow){
+			switch(network){
+			case AdNetwork.GOOGLE_ADMOB:
+				canShow = GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB) && googleAdmobInited; break;
+			case AdNetwork.ADCOLONY: canShow = GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) && adcolonyInited; break;
+			}
+		}
+		
+		return canShow;
+	}
+	
 	protected void Start(){
 		//	protected override void Awake (){
 		//		base.Awake ();
@@ -53,18 +69,43 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	}
 	
 	private void init(){
-		if(!GameSettings.Instance.IS_PRO_VERSION){
+		if(!GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0){
 			if(GameSettings.Instance.showTestLogs)
 				Debug.Log("AdsHandler - initializing");
 			
+			//AdColony
+			if(GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY))
+				initAdColony();
+			
+			//Admob
+			if(GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB)){
+				initGoogleAdmob();
+				
+				//create and show banner ad
+				CreateBanner ();
+			}
+		}
+	}
+	
+	private void initGoogleAdmob(){
+		AdmobIDsPack pack =  GoogleAdmobSettings.Instance.CurrentIDsPack;
+		if(pack != null){
 			//Required
 			GoogleMobileAd.Init();
+			
+			//set ids
+			GoogleMobileAd.SetBannersUnitID(pack.android_BannerID, pack.iOS_BannerID, pack.wp_BannerID);
+			GoogleMobileAd.SetInterstisialsUnitID(pack.android_InterstitialID, pack.iOS_InterstitialID, pack.wp_InterstitialID);
+			
 			
 			//		//Optional, add data for better ad targeting
 			//		GoogleMobileAd.SetGender(GoogleGenger.Male);
 			//		GoogleMobileAd.AddKeyword("game");
 			//		GoogleMobileAd.SetBirthday(1989, AndroidMonth.MARCH, 18);
 			//		GoogleMobileAd.TagForChildDirectedTreatment(false);
+			
+			
+			
 			
 			//More eventts ot explore under GoogleMobileAdEvents class
 			GoogleMobileAd.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_LOADED, OnInterstisialsLoaded);
@@ -75,9 +116,28 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			//		//You will only receive in-app purchase (IAP) ads if you specifically configure an IAP ad campaign in the AdMob front end.
 			//		GoogleMobileAd.addEventListener(GoogleMobileAdEvents.ON_AD_IN_APP_REQUEST, OnInAppRequest);
 			
-			//create a show banner ad
-			CreateBanner ();
-			//			mostrarBanner ();
+			googleAdmobInited = true;
+		}
+	}
+	
+	private void initAdColony(){
+		AdColonyIDsPack pack = AdColonySettings.Instance.CurrentIDsPack;
+		if(pack != null){
+			AdColony.OnVideoStarted = OnVideoStarted;
+			AdColony.OnVideoFinished = OnVideoFinished;
+			AdColony.OnV4VCResult = OnV4VCResult;
+			//     	AdColony.OnAdAvailabilityChange = OnAdAvailabilityChange;
+			
+			string[] zoneIDs = null;
+			string appID = "";
+			switch(Application.platform){
+			case RuntimePlatform.Android: appID = pack.android_appID; zoneIDs = pack.android_adZoneIDs.ToArray(); break;
+			case RuntimePlatform.IPhonePlayer: appID = pack.iOS_appID; zoneIDs = pack.iOS_adZoneIDs.ToArray(); break;
+			}
+			
+			AdColony.Configure( "1.0", appID, zoneIDs );
+			
+			adcolonyInited = true;
 		}
 	}
 	
@@ -122,43 +182,122 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//		
 	//	}
 	
+	void OnVideoStarted(){
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log( "AdsHandler OnVideoStarted() - Ad video playing." );
+	}
 	
+	void OnVideoFinished( bool ad_shown ){
+		if(GameSettings.Instance.showTestLogs)
+			Debug.Log( "AdsHandler OnVideoFinished() Ad video finished." );
+	}
+	
+	void OnV4VCResult( bool success, string name, int amount ){
+		if (success){
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log( "AdsHandler OnV4VCResult() - Awarded " + amount + " " + name );
+			// e.g. "Awarded 100 Gold"
+		}
+		else{
+			if(GameSettings.Instance.showTestLogs)
+				Debug.Log( "AdsHandler OnV4VCResult() - not Awarded " + amount + " " + name );
+		}
+	}
 	
 	
 	//--------------------------------------
 	//  PUBLIC METHODS
 	//--------------------------------------
+	public void showRandomGameplayInterstitialOrVideoAd(int adZoneIndex = 0){
+		int videoPercentage = Mathf.Clamp(1,100,GameSettings.Instance.videoPercentageInRandomShow);
+		int election = Random.Range(0, 100);
+		bool canShowAdmobAd = canShowAd(AdNetwork.GOOGLE_ADMOB);
+		bool canShowAdColonyAd = canShowAd(AdNetwork.ADCOLONY);
+		
+		if(canShowAdmobAd && canShowAdColonyAd){
+			//show adcolony video
+			if(election >= 0 && election < videoPercentage){
+				PlayAVideo(adZoneIndex);
+			}
+			//admob interstitial
+			else{
+				showInterstitial();
+			}
+		}
+		else if(canShowAdmobAd && !canShowAdColonyAd){
+			showInterstitial();
+		}
+		else if(!canShowAdmobAd && canShowAdColonyAd){
+			PlayAVideo(adZoneIndex);
+		}
+	}
+	
 	public void quitAds(){
 		PlayerPrefs.SetInt(GameSettings.PP_PURCHASED_QUIT_ADS, 1);
 		GameSettings.Instance.IS_PRO_VERSION = true;
 		DestroyAllBanners();
 	}
 	
-	public void ocultarBanner(){
-		if (!GameSettings.Instance.IS_PRO_VERSION)
+	public void hideBanner(){
+		if (canShowAd(AdNetwork.GOOGLE_ADMOB))
 			HideBanner();
 	}
 	
 	
 	
-	public void mostrarPantallazo(){
+	public void showInterstitial(){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(!GameSettings.Instance.IS_PRO_VERSION){
+		if(canShowAd(AdNetwork.GOOGLE_ADMOB)){
 			//loadin ad:
 			GoogleMobileAd.LoadInterstitialAd ();
 		}
 		#endif
 	}
 	
-	public void refrescarBanner(){
+	public void refrescarBanner(AdNetwork network = AdNetwork.GOOGLE_ADMOB){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(!GameSettings.Instance.IS_PRO_VERSION)
+		if(canShowAd(AdNetwork.GOOGLE_ADMOB))
 			RefreshBanner();
 		#endif
 	}
 	
+	/// <summary>
+	/// Play A video related with list index
+	/// </summary>
+	/// <param name="zoneIndex">Zone index.</param>
+	public void PlayAVideo( int zoneIndex = 0){
+		PlayAVideo(AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex));
+	}
+	
+	// When a video is available, you may choose to play it in any fashion you like.
+	// Generally you will play them automatically during breaks in your game,
+	// or in response to a user action like clicking a button.
+	// Below is a method that could be called, or attached to a GUI action.
+	public void PlayAVideo( string zoneID )
+	{
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+		if(canShowAd(AdNetwork.ADCOLONY)){
+			// Check to see if a video is available in the zone.
+			if(AdColony.IsVideoAvailable(zoneID)){
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("AdsHandler PlayAVideo() - Play AdColony Video in this zone ID " + zoneID);
+				
+				// Call AdColony.ShowVideoAd with that zone to play an interstitial video.
+				// Note that you should also pause your game here (audio, etc.) AdColony will not
+				// pause your app for you.
+				AdColony.ShowVideoAd(zoneID); 
+			}
+			else{
+				if(GameSettings.Instance.showTestLogs)
+					Debug.Log("AdsHandler PlayAVideo() - Video Not Available in this zone ID "+zoneID);
+			}
+		}
+		#endif
+	}
+	
 	private void CreateBanner(){
-		if(!GameSettings.Instance.IS_PRO_VERSION){
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+		if(canShowAd(AdNetwork.GOOGLE_ADMOB)){
 			GoogleMobileAdBanner banner;
 			
 			if (registerdBanners.ContainsKey(UniqueBannerID)){
@@ -178,6 +317,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 				banner.ShowOnLoad = false;
 			}
 		}
+		#endif
 	}
 	
 	private void DestroyAllBanners(){

@@ -39,13 +39,15 @@ public class GameSettings : ScriptableObject {
 	public bool 								showAchievementsActionsSettings 							= false;
 	public bool 								showAchievementsPacksSettings 								= false;
 	public bool 								showScoresPacksSettings 									= false;
+	public bool									showAdsNetworks												= false;
 	public Dictionary<InAppBillingIDPack, bool> showInAppBillingIDsPack										= new Dictionary<InAppBillingIDPack, bool>();
 	public Dictionary<AchievementsPack, bool> 	showAchievementsPack										= new Dictionary<AchievementsPack, bool>();
 	public Dictionary<ScoresPack, bool> 		showScoresPack												= new Dictionary<ScoresPack, bool>();
 	public Dictionary<Achievement, bool> 		showAchActionsPack											= new Dictionary<Achievement, bool>();
 	public Dictionary<Achievement, bool> 		showSpecificAchievementsOfAPack								= new Dictionary<Achievement, bool>();
-	public Dictionary<string, bool> 			showSpecificScoreOfAPack									= new Dictionary<string, bool>();
+	public Dictionary<Score, bool> 				showSpecificScoreOfAPack									= new Dictionary<Score, bool>();
 	public Dictionary<GameAction, bool> 		showAchievementsActions										= new Dictionary<GameAction, bool>();
+	
 	
 	//--------------------------------------
 	// Static Attributes
@@ -77,6 +79,9 @@ public class GameSettings : ScriptableObject {
 	public List<string> 						logoLinks				 		= new List<string>(); //for every game version (versinable game)
 	public List<string> 						uniqueRankingIDS 				= new List<string>(); //for every game version (versinable game)
 	public List<string> 						uniqueSurvivalRankingIDS 		= new List<string>(); //for every game version (versinable game)
+	public List<AdNetwork>						adsNetworks						= new List<AdNetwork>(){AdNetwork.GOOGLE_ADMOB}; //for ALL game version
+	public AdType								adTypeDuringGamePlay			= AdType.RANDOM_INTERSTITIAL_VIDEO;
+	public int									videoPercentageInRandomShow    	= 40;
 	public List<List<string>>					worldLevelRankingIDS 			= new List<List<string>>(); //for every game version (versinable game)
 	public List<List<string>>					survivalLevelRankingIDS 		= new List<List<string>>(); //for every game version (versinable game)
 	public List<AchievementsPack> 				achievementsPacks 				= new List<AchievementsPack>(); //for every game version (versinable game)
@@ -359,8 +364,8 @@ public class GameSettings : ScriptableObject {
 		get{return achievementsPacks[currentGameMultiversion].achievements;}
 	}
 	
-	public List<string> CurrentScoresIDs{
-		get{return scoresPacks[currentGameMultiversion].scoreIDs;}
+	public List<Score> CurrentScores{
+		get{return scoresPacks[currentGameMultiversion].scores;}
 	}
 	
 	

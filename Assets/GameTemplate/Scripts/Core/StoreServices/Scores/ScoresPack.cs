@@ -8,18 +8,18 @@ public class ScoresPack {
 	// Public Attributes
 	//--------------------------------------
 	public int 					gameVersion;
-	public List<string>			scoreIDs;
+	public List<Score>			scores;
 	
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
-	public ScoresPack(int pGameVersion, List<string> pScoresIDs = null){
+	public ScoresPack(int pGameVersion, List<Score> pScores = null){
 		gameVersion = pGameVersion;
 		
-		if(pScoresIDs != null)
-			scoreIDs = pScoresIDs;
+		if(pScores != null)
+			scores = pScores;
 		else
-			scoreIDs = new List<string>();
+			scores = new List<Score>();
 	}
 	
 	//--------------------------------------
@@ -27,7 +27,7 @@ public class ScoresPack {
 	//--------------------------------------
 	public override string ToString ()
 	{
-		return string.Format ("[ScoresPack: gameVersion={0}, scoreIDs={1}]", gameVersion, scoresToString());
+		return string.Format ("[ScoresPack: gameVersion={0}, scores={1}]", gameVersion, scoresToString());
 	}
 	
 	//--------------------------------------
@@ -36,10 +36,10 @@ public class ScoresPack {
 	public string scoresToString(){
 		string res = "";
 		
-		for(int i=0; i<scoreIDs.Count; i++){
-			res += scoreIDs[i].ToString();
+		for(int i=0; i<scores.Count; i++){
+			res += scores[i].ToString();
 			
-			if(i<scoreIDs.Count-1)
+			if(i<scores.Count-1)
 				res += ",";
 		}
 		

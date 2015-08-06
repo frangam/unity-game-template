@@ -220,7 +220,7 @@ public class BaseGameManager : MonoBehaviour {
 		
 		//wait the next seconds to show an ad
 		yield return new WaitForSeconds(GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS);
-		AdsHandler.Instance.mostrarPantallazo(); 
+		showAdDuringGamePlay();
 		
 		//repeat again
 		if(!isGameOver && !finished)
@@ -374,7 +374,7 @@ public class BaseGameManager : MonoBehaviour {
 		
 		//show interstitial ad
 		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0)){
-			AdsHandler.Instance.mostrarPantallazo();
+			AdsHandler.Instance.showInterstitial();
 			
 			//GA
 			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
@@ -473,9 +473,17 @@ public class BaseGameManager : MonoBehaviour {
 		return last;
 	}
 	
+	public virtual void showAdDuringGamePlay(){
+		switch(GameSettings.Instance.adTypeDuringGamePlay){
+		case AdType.VIDEO: AdsHandler.Instance.PlayAVideo(); break;
+		case AdType.RANDOM_INTERSTITIAL_VIDEO: AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd(); break;
+		default: AdsHandler.Instance.showInterstitial(); break; 
+		}
+	}
+	
 	public void playerForcesFinishGame(){
 		if(showAdWhenPlayerForcesFinishGame){
-			AdsHandler.Instance.mostrarPantallazo();
+			AdsHandler.Instance.showInterstitial();
 			
 			//GA
 			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
@@ -512,11 +520,11 @@ public class BaseGameManager : MonoBehaviour {
 	public virtual void manageScores(){
 		//send score to the server
 		if(sendScoresToServer){
-			ScoresHandler.Instance.sendScoreToServer(getRankingID(), currentScore);
+			ScoresHandler.Instance.sendScoreToServerByID(getRankingID(), currentScore);
 		}
 		//save only locally
 		else{
-			ScoresHandler.Instance.saveScoreOnlyLocally(getRankingID(), currentScore);
+			ScoresHandler.Instance.saveScoreOnlyLocallyByID(getRankingID(), currentScore);
 		}
 	}
 	
@@ -612,7 +620,7 @@ public class BaseGameManager : MonoBehaviour {
 		//first load info of completed mission window
 		if(gameMode == GameMode.CAMPAIGN){
 			UIBaseMIssionCompletedWin w = (UIBaseMIssionCompletedWin) UIController.Instance.Manager.getWindow(UIBaseWindowIDs.MISSION_COMPLETED);
-			w.init(BaseLevelLoaderController.Instance.CurrentLevel);
+			w.initBestTime(BaseLevelLoaderController.Instance.CurrentLevel);
 			
 			if(w.LoadInfoWhenQuesCompleted)
 				w.showInfo();

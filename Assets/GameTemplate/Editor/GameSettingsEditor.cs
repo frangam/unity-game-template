@@ -910,7 +910,7 @@ public class GameSettingsEditor : Editor {
 				else{
 					ScoresPack lastPack = GameSettings.Instance.scoresPacks[GameSettings.Instance.scoresPacks.Count-1];
 					int lastPackId = lastPack.gameVersion;
-					GameSettings.Instance.scoresPacks.Add(new ScoresPack(lastPackId+1, lastPack.scoreIDs));
+					GameSettings.Instance.scoresPacks.Add(new ScoresPack(lastPackId+1, lastPack.scores));
 				}
 			}
 			GUI.color = prevCol;
@@ -929,7 +929,7 @@ public class GameSettingsEditor : Editor {
 			if(GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[packIndex]]){
 				EditorGUILayout.BeginVertical(GUI.skin.box);
 				
-				if(GameSettings.Instance.scoresPacks[packIndex].scoreIDs == null || (GameSettings.Instance.scoresPacks[packIndex].scoreIDs != null && GameSettings.Instance.scoresPacks[packIndex].scoreIDs.Count == 0)) {
+				if(GameSettings.Instance.scoresPacks[packIndex].scores == null || (GameSettings.Instance.scoresPacks[packIndex].scores != null && GameSettings.Instance.scoresPacks[packIndex].scores.Count == 0)) {
 					EditorGUILayout.HelpBox("No Scores Registred",MessageType.None);
 				}
 				else{
@@ -938,28 +938,79 @@ public class GameSettingsEditor : Editor {
 					int i = 0;
 					
 					
-					foreach(string scoreID in GameSettings.Instance.scoresPacks[packIndex].scoreIDs) {
+					foreach(Score score in GameSettings.Instance.scoresPacks[packIndex].scores) {
 						
 						
-						if(!GameSettings.Instance.showSpecificScoreOfAPack.ContainsKey(GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]))
-							GameSettings.Instance.showSpecificScoreOfAPack.Add(GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i], true);
+						if(!GameSettings.Instance.showSpecificScoreOfAPack.ContainsKey(GameSettings.Instance.scoresPacks[packIndex].scores[i]))
+							GameSettings.Instance.showSpecificScoreOfAPack.Add(GameSettings.Instance.scoresPacks[packIndex].scores[i], true);
 						
-						GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]], "Score "+(i+1).ToString());
-						if(GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]]){
+						GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scores[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scores[i]], "Score "+(i+1).ToString());
+						if(GameSettings.Instance.showSpecificScoreOfAPack[GameSettings.Instance.scoresPacks[packIndex].scores[i]]){
 							EditorGUILayout.BeginVertical(GUI.skin.box);
 							
 							EditorGUILayout.BeginHorizontal();
-							EditorGUILayout.LabelField("ID:", GUILayout.Width(120));
-							GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i] = EditorGUILayout.TextField(GameSettings.Instance.scoresPacks[packIndex].scoreIDs[i]).Trim();
+							EditorGUILayout.LabelField("Name Loc Key:", GUILayout.Width(120));
+							GameSettings.Instance.scoresPacks[packIndex].scores[i].NameLocKey = EditorGUILayout.TextField(GameSettings.Instance.scoresPacks[packIndex].scores[i].NameLocKey).Trim();
 							EditorGUILayout.EndHorizontal();
 							
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField("ID:", GUILayout.Width(120));
+							GameSettings.Instance.scoresPacks[packIndex].scores[i].Id = EditorGUILayout.TextField(GameSettings.Instance.scoresPacks[packIndex].scores[i].Id).Trim();
+							EditorGUILayout.EndHorizontal();
+							
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField("Order:", GUILayout.Width(120));
+							GameSettings.Instance.scoresPacks[packIndex].scores[i].Order = (ScoreOrder) EditorGUILayout.EnumPopup(GameSettings.Instance.scoresPacks[packIndex].scores[i].Order);
+							EditorGUILayout.EndHorizontal();
+							
+							//---------------------------------------
+							//Greater Limit
+							//--------------------------------------
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField("Greater Limit ?", GUILayout.Width(180));
+							GameSettings.Instance.scoresPacks[packIndex].scores[i].UseGreaterLimit = EditorGUILayout.Toggle(GameSettings.Instance.scoresPacks[packIndex].scores[i].UseGreaterLimit);
+							EditorGUILayout.EndHorizontal();
+							
+							if(GameSettings.Instance.scoresPacks[packIndex].scores[i].UseGreaterLimit){
+								EditorGUI.indentLevel++;
+								EditorGUILayout.BeginHorizontal();
+								EditorGUILayout.LabelField("Greater Limit:", GUILayout.Width(165));
+								GameSettings.Instance.scoresPacks[packIndex].scores[i].GreaterLimit	= EditorGUILayout.LongField(GameSettings.Instance.scoresPacks[packIndex].scores[i].GreaterLimit);
+								EditorGUILayout.EndHorizontal();
+								EditorGUI.indentLevel--;
+							}
+							else{
+								GameSettings.Instance.scoresPacks[packIndex].scores[i].GreaterLimit = long.MaxValue;
+							}
+							//---------------------------------------
+							//Lower Limit
+							//--------------------------------------
+							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField("Lower Limit ?", GUILayout.Width(180));
+							GameSettings.Instance.scoresPacks[packIndex].scores[i].UseLowerLimit = EditorGUILayout.Toggle(GameSettings.Instance.scoresPacks[packIndex].scores[i].UseLowerLimit);
+							EditorGUILayout.EndHorizontal();
+							
+							if(GameSettings.Instance.scoresPacks[packIndex].scores[i].UseLowerLimit){
+								EditorGUI.indentLevel++;
+								EditorGUILayout.BeginHorizontal();
+								EditorGUILayout.LabelField("Lower Limit:", GUILayout.Width(165));
+								GameSettings.Instance.scoresPacks[packIndex].scores[i].LowerLimit	= EditorGUILayout.LongField(GameSettings.Instance.scoresPacks[packIndex].scores[i].LowerLimit);
+								EditorGUILayout.EndHorizontal();
+								EditorGUI.indentLevel--;
+							}
+							else{
+								GameSettings.Instance.scoresPacks[packIndex].scores[i].LowerLimit = long.MinValue;
+							}
 							
 							
+							//---------------------------------------
+							//Remove Score
+							//--------------------------------------
 							EditorGUILayout.BeginHorizontal();
 							EditorGUILayout.Space();
 							
 							if(GUILayout.Button("Remove Score",  GUILayout.Width(180))) {
-								GameSettings.Instance.scoresPacks[packIndex].scoreIDs.Remove(scoreID);
+								GameSettings.Instance.scoresPacks[packIndex].scores.Remove(score);
 								break;
 							}
 							
@@ -974,11 +1025,14 @@ public class GameSettingsEditor : Editor {
 					}
 				}
 				
+				//---------------------------------------
+				//Add New Score
+				//--------------------------------------
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
 				GUI.color = Color.cyan;
 				if(GUILayout.Button("New Score",  GUILayout.Width(120))) {
-					GameSettings.Instance.scoresPacks[packIndex].scoreIDs.Add("");
+					GameSettings.Instance.scoresPacks[packIndex].scores.Add(new Score());
 				}
 				GUI.color = prevCol;
 				EditorGUILayout.EndHorizontal();
@@ -1173,15 +1227,28 @@ public class GameSettingsEditor : Editor {
 			if(!GameSettings.Instance.IS_PRO_VERSION){
 				EditorGUILayout.BeginVertical(GUI.skin.box);
 				
+				adsNetworks();
+				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(whenShowInitialAd);
 				GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START	= EditorGUILayout.IntField(GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START);
 				EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Video % for Random Showing (max 100)");
+				GameSettings.Instance.videoPercentageInRandomShow = EditorGUILayout.IntField(GameSettings.Instance.videoPercentageInRandomShow);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Ad Type during Gameplay");
+				GameSettings.Instance.adTypeDuringGamePlay	=  (AdType) EditorGUILayout.EnumPopup(GameSettings.Instance.adTypeDuringGamePlay);
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(secDuringGP);
 				GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD	= EditorGUILayout.IntField(GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD);
 				EditorGUILayout.EndHorizontal();
+				
 				EditorGUI.indentLevel++;
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(notifyAdDuringGP);
@@ -1242,6 +1309,43 @@ public class GameSettingsEditor : Editor {
 				EditorGUILayout.EndVertical();
 			}
 			
+		}
+	}
+	
+	protected virtual  void adsNetworks(){
+		GameSettings.Instance.showAdsNetworks = EditorGUILayout.Foldout(GameSettings.Instance.showAdsNetworks, "Ads Networks");
+		if (GameSettings.Instance.showAdsNetworks) {
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.androidShortLinks.Count == 0) {
+				EditorGUILayout.HelpBox("No Ads Networks to use",MessageType.None);
+			}
+			
+			int i = 0;
+			foreach(AdNetwork d in GameSettings.Instance.adsNetworks) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Ad Network"+(i+1).ToString()+":",GUILayout.Width(120));
+				GameSettings.Instance.adsNetworks[i] = (AdNetwork)EditorGUILayout.EnumPopup(GameSettings.Instance.adsNetworks[i]);
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.adsNetworks.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.adsNetworks.Add(AdNetwork.GOOGLE_ADMOB);
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
 		}
 	}
 	
