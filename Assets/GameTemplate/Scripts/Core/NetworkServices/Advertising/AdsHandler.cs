@@ -19,6 +19,16 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	private float currentTime;
 	private bool googleAdmobInited = false;
 	private bool adcolonyInited = false;
+	private bool isShowingFullScreenAd = false;
+	
+	//--------------------------------------
+	// Getters & Setters
+	//--------------------------------------
+	public bool IsShowingFullScreenAd {
+		get {
+			return this.isShowingFullScreenAd;
+		}
+	}
 	
 	//--------------------------------------
 	// INITIALIZE
@@ -141,6 +151,17 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		}
 	}
 	
+	private void pauseGame(bool pause = true){
+		//pausing the game
+		if(BaseGameScreenController.Instance.Section == GameSection.GAME)
+			GameController.Instance.Manager.Paused = pause;
+		else
+			Time.timeScale = pause ? 0f: 1f;
+		
+		//mute or active sounds
+		BaseSoundManager.Instance.muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter(true);
+	}
+	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
@@ -156,17 +177,20 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	}
 	
 	private void OnInterstisialsOpen() {
+		isShowingFullScreenAd = true;
 		IsInterstisialsAdReady = false;
-		
-		//pausing the game
-		if(BaseGameScreenController.Instance.Section == GameSection.GAME)
-			GameController.Instance.Manager.Paused = true;
+		pauseGame();
+		//		//pausing the game
+		//		if(BaseGameScreenController.Instance.Section == GameSection.GAME)
+		//			GameController.Instance.Manager.Paused = true;
 	}
 	
 	private void OnInterstisialsClosed(){
-		//un-pausing the game
-		if (BaseGameScreenController.Instance.Section == GameSection.GAME)
-			GameController.Instance.Manager.Paused = false;
+		isShowingFullScreenAd = false;
+		pauseGame(false);
+		//		//un-pausing the game
+		//		if (BaseGameScreenController.Instance.Section == GameSection.GAME)
+		//			GameController.Instance.Manager.Paused = false;
 	}
 	
 	//	private void OnInAppRequest(CEvent e) {
@@ -183,13 +207,21 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//	}
 	
 	void OnVideoStarted(){
+		isShowingFullScreenAd = true;
+		pauseGame();
+		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log( "AdsHandler OnVideoStarted() - Ad video playing." );
 	}
 	
 	void OnVideoFinished( bool ad_shown ){
+		pauseGame(false);
+		isShowingFullScreenAd = false;
+		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log( "AdsHandler OnVideoFinished() Ad video finished." );
+		
+		
 	}
 	
 	void OnV4VCResult( bool success, string name, int amount ){

@@ -571,6 +571,7 @@ public class BaseGameManager : MonoBehaviour {
 		ScreenLoaderVisualIndicator.Instance.LoadScene(Application.loadedLevelName);
 	}
 	
+	
 	public virtual bool Paused
 	{
 		get 
@@ -588,13 +589,13 @@ public class BaseGameManager : MonoBehaviour {
 			
 			if (paused)
 			{
-				if(started)
+				if(!AdsHandler.Instance.IsShowingFullScreenAd && started)
 					UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
 				
 				// pause time
 				Time.timeScale= 0f;
 			} else {
-				if(started)
+				if(!AdsHandler.Instance.IsShowingFullScreenAd && started)
 					UIController.Instance.Manager.close(UIBaseWindowIDs.PAUSE);
 				
 				// unpause Unity
