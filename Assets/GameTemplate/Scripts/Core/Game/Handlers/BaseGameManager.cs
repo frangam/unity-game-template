@@ -211,22 +211,45 @@ public class BaseGameManager : MonoBehaviour {
 	/// We use WaitForSeconds because we want to pause this process when game is paused
 	/// </summary>
 	/// <returns>The ad showing during game play.</returns>
+	float timerForCheckAdShowingDuringGameplay = 0;
 	private IEnumerator checkAdShowingDuringGamePlay(){
-		int secsToNotify = GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD - GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS;
+		yield return null;
+		bool canShowAd = canShowAdDuringGamePlay();
 		
-		//launch event to notify an ad will be shown in the next seconds
-		yield return new WaitForSeconds(secsToNotify);
-		if(canShowAdDuringGamePlay()){
-			dispatcher.dispatch(LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS);
+		if(canShowAd){
+			int secsToNotify = GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD - GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS;
 			
-			//wait the next seconds to show an ad
-			yield return new WaitForSeconds(GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS);
-			showAdDuringGamePlay();
+			//wait time for notify ad will be shown in the next seconds
+			while(canShowAd && timerForCheckAdShowingDuringGameplay < secsToNotify){
+				canShowAd = canShowAdDuringGamePlay(); 
+				timerForCheckAdShowingDuringGameplay += Time.deltaTime;
+				yield return null;
+			}
+			
+			if(canShowAd){
+				//launch event to notify an ad will be shown in the next seconds
+				dispatcher.dispatch(LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS);
+			}
+			
+			//wait the next seconds to show the ad
+			while(canShowAd && timerForCheckAdShowingDuringGameplay < GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS){
+				canShowAd = canShowAdDuringGamePlay(); 
+				timerForCheckAdShowingDuringGameplay += Time.deltaTime;
+				yield return null;
+			}
+			
+			//finally show the ad
+			if(canShowAd){			
+				showAdDuringGamePlay();
+			}
 		}
-		
 		//repeat again
-		if(!isGameOver && !finished)
+		else if(!isGameOver && !finished)
 			StartCoroutine(checkAdShowingDuringGamePlay());
+	}
+	
+	public virtual void resetTimerForAdShowingDuringGameplay(){
+		timerForCheckAdShowingDuringGameplay = 0;
 	}
 	
 	public virtual bool canShowAdDuringGamePlay(){

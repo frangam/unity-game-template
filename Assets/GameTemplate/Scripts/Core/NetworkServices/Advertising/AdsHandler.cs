@@ -65,11 +65,15 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		
 		//		GTDebug.log("Current time: " + currentTime);
 		
-		
-		
-		if((GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && currentTime < IN_APP_WAIT_INITIALIZATION_TIME 
+		if(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE 
+		   && (currentTime < IN_APP_WAIT_INITIALIZATION_TIME 
 		    && (!CoreIAPManager.Instance.IsInited 
-		    || (CoreIAPManager.Instance.IsInited && GameLoaderManager.Instance.InAppNeedRestoreProducts && !GameLoaderManager.Instance.InAppAllProductsRestored))))
+		    || (CoreIAPManager.Instance.IsInited 
+		    && GameLoaderManager.Instance.InAppNeedRestoreProducts && !GameLoaderManager.Instance.InAppAllProductsRestored
+		    )
+		    )
+		    )
+		   )
 			StartCoroutine(handleInitializationWhenUsingInAppBilling());
 		
 		//long time waiting to init, now we can init ads handler
@@ -259,25 +263,32 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//  PUBLIC METHODS
 	//--------------------------------------
 	public void showRandomGameplayInterstitialOrVideoAd(int adZoneIndex = 0){
-		int videoPercentage = Mathf.Clamp(1,100,GameSettings.Instance.videoPercentageInRandomShow);
+		int videoPercentage = Mathf.Clamp(GameSettings.Instance.videoPercentageInRandomShow, 1, 100);
 		int election = Random.Range(0, 100);
 		bool canShowAdmobAd = canShowAd(AdNetwork.GOOGLE_ADMOB);
 		bool canShowAdColonyAd = canShowAd(AdNetwork.ADCOLONY);
 		
+		GTDebug.log("Can show admob ads ? " +canShowAdmobAd + ", can show adcolony ads ? "+ canShowAdColonyAd);
+		GTDebug.log("Random percentage for video electo: "+ videoPercentage+election + ". Election %: " + election);
+		
 		if(canShowAdmobAd && canShowAdColonyAd){
 			//show adcolony video
 			if(election >= 0 && election < videoPercentage){
+				GTDebug.log("Playing video");
 				PlayAVideo(adZoneIndex);
 			}
 			//admob interstitial
 			else{
+				GTDebug.log("Showing Interstitial");
 				showInterstitial();
 			}
 		}
 		else if(canShowAdmobAd && !canShowAdColonyAd){
+			GTDebug.log("Showing Interstitial");
 			showInterstitial();
 		}
 		else if(!canShowAdmobAd && canShowAdColonyAd){
+			GTDebug.log("Playing video");
 			PlayAVideo(adZoneIndex);
 		}
 	}

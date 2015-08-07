@@ -278,7 +278,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		else{
 			GTDebug.log("Leader board id " + score.Id + " current player "+gpScore.playerId + " rank: " +gpScore.rank + " score value: " + gpScore.score);
 			
-			ScoresHandler.Instance.loadBestScore(score.Id, scoreValue);
+			ScoresHandler.Instance.loadBestScoreFromStore(score.Id, scoreValue);
 		}
 	}
 	

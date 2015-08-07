@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GCConnect : PersistentSingleton<GCConnect> {
 	private static bool IsInited = false;
@@ -8,6 +9,8 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	private bool achievementsLoaded = false;
 	private bool achievementsChecked = false; //it has checked if there are achievements that need to be updated in server side beacuse they were unlocked locally
 	private bool notifiedLoader = false;
+	private int totalScoresToLoad = 0;
+	private int scoresLoaded = 0;
 	
 	void Update(){
 		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN && !notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
@@ -33,10 +36,10 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	
 	public void init (bool showLoginWindowGameServices = true) {
 		if(!IsInited) {
-			
+			GameCenterManager.OnAuthFinished += OnAuthFinished;
 			
 			//--
-			// Logros
+			// Achievements
 			//--
 			//Achievement registration. If you will skipt this step GameCenterManager.achievements array will contain only achievements with reported progress 
 			
@@ -45,19 +48,19 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			//			}
 			
 			
-			
 			//Listen for the Game Center events
 			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_LOADED, OnAchievementsLoaded);
 			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENT_PROGRESS, OnAchievementProgress);
 			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_RESET, OnAchievementsReset);
 			
 			//--
-			// Puntos
+			// Player Scores
 			//--
-			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_LEADERBOARD_SCORE_LOADED, OnLeaderBoarScoreLoaded);
 			
 			
-			GameCenterManager.OnAuthFinished += OnAuthFinished;
+			GameCenterManager.OnPlayerScoreLoaded += OnPlayerScoreLoaded;
+			
+			
 			
 			//		DontDestroyOnLoad (gameObject);
 			
@@ -74,18 +77,46 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		}
 	}
 	
+	private void loadScores(){
+		List<Score> scoresToLoad = new List<Score>();
+		
+		Score uniqueScore = new Score(GameSettings.Instance.CurrentUniqueRankingID);
+		if(uniqueScore != null && !string.IsNullOrEmpty(uniqueScore.Id)){
+			scoresToLoad.Add(uniqueScore);
+		}
+		
+		Score uniqueSurvivalScore = new Score(GameSettings.Instance.CurrentUniqueRankingID);
+		if(uniqueSurvivalScore != null && !string.IsNullOrEmpty(uniqueSurvivalScore.Id)){
+			scoresToLoad.Add(uniqueSurvivalScore);
+		}
+		
+		//the rest of scores
+		if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0){
+			foreach(Score score in GameSettings.Instance.CurrentScores){
+				if(score != null && !string.IsNullOrEmpty(score.Id)){
+					scoresToLoad.Add(score);
+				}
+			}
+		}
+		
+		//finaly load scores
+		totalScoresToLoad = scoresToLoad.Count;
+		foreach(Score score in scoresToLoad)
+			GameCenterManager.LoadCurrentPlayerScore(score.Id);
+	}
+	
 	/*--------------------------------
 	 * Eventos Game Center
 	 -------------------------------*/
-	private void OnLeaderBoarScoreLoaded(CEvent e) {
-		//		LeaderBoardScoreData data = e.data as LeaderBoardScoreData;
-		//		IOSNative.showMessage("Leader Board " + data.leaderBoardId, "Score: " + data.leaderBoardScore);
-		
-		GK_PlayerScoreLoadedResult result = e.data as GK_PlayerScoreLoadedResult;
-		
+	private void OnPlayerScoreLoaded (GK_PlayerScoreLoadedResult result) {
 		if(result.IsSucceeded) {
+			scoresLoaded++;
+			
+			if(scoresLoaded >= totalScoresToLoad)
+				GameCenterManager.OnPlayerScoreLoaded -= OnPlayerScoreLoaded;
+			
 			GK_Score score = result.loadedScore;
-			GTDebug.log("Leaderboard " + score.leaderboardId+ ", Score: " + score.score + ", Rank:" + score.rank);
+			ScoresHandler.Instance.loadBestScoreFromStore(score);
 		}
 	}
 	
@@ -96,6 +127,8 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			GTDebug.log("Player connected");
 			
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 1);
+			
+			loadScores();
 			
 			//			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.player.playerId + "\n" + "Alias: " + GameCenterManager.player.alias);
 		} else {
@@ -118,7 +151,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		//			Debug.Log (tpl.id + ":  " + tpl.progress);
 		//		}
 		
-		GTDebug.log("Achievements loaded");
+		
 		
 		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
 			GTDebug.log("Starting initial checking in server side");

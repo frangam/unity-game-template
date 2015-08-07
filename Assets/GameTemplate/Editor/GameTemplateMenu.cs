@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
@@ -10,16 +10,16 @@ public class GameTemplateMenu : EditorWindow {
 	
 	#if UNITY_EDITOR
 	
-	[MenuItem("Window/Game Template/Game Settings", false, 1)]
+	[MenuItem("Window/Game Template/Game Settings", false, 0)]
 	public static void Edit() {
 		Selection.activeObject = GameSettings.Instance;
 	}
 	[MenuItem("Window/Game Template/Other Settings/Ads Settings/Admob", false, 1)]
-	public static void EditAdmob() {
+	public static void SettingsAdmob() {
 		Selection.activeObject = GoogleAdmobSettings.Instance;
 	}
 	[MenuItem("Window/Game Template/Other Settings/Ads Settings/AdColony", false, 1)]
-	public static void EditAdColony() {
+	public static void SettingsAdColony() {
 		Selection.activeObject = AdColonySettings.Instance;
 	}
 	[MenuItem("Window/Game Template/Other Settings/Level Packs Settings", false, 1)]

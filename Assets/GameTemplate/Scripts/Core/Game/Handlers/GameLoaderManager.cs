@@ -516,7 +516,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 * Scores
 	 -------------------------------*/
 	public virtual void loadScoresWithDifficulty(){
-		if(GameSettings.Instance.gameDifficulties != null){
+		if(GameSettings.Instance.gameDifficulties != null && GameSettings.Instance.gameDifficulties.Count > 0){
 			foreach(GameDifficulty dif in GameSettings.Instance.gameDifficulties){
 				string difString = ((int) dif).ToString();
 				string key = GameSettings.PP_LAST_SCORE + difString; //ultima_puntuacion_0 (en facil) , _1 (normal)...
