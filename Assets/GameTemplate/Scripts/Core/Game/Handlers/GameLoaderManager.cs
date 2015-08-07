@@ -111,8 +111,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		loadingPanel = FindObjectOfType<UILoadingPanel>();
 		showLoadingPanel = loadingPanel != null;
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GameLoaderManager - initializing");
+		GTDebug.log("initializing");
 		
 		if(deletePlayerPrefs)
 			PlayerPrefs.DeleteAll();
@@ -230,8 +229,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		///-----
 		//Wait time if INAPP is not inited
 		///-----
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log(name+" - INAPP inited ? "+inAppInited);
+		GTDebug.log("InApp Billing inited ? "+inAppInited);
+		
 		if(!inAppInited){
 			float startTime = 0, currentTime = 0, elapsedTime = 0;
 			startTime = Time.realtimeSinceStartup;
@@ -243,17 +242,15 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			}
 			while(!inAppInited && elapsedTime<WAIT_TIME_TO_INIT_INAPP);
 			
-			if(GameSettings.Instance.showTestLogs){
-				Debug.Log(name+" - INAPP inited ? "+inAppInited);
-				Debug.Log(name+" - InApp inited Check time out ? "+(elapsedTime>=WAIT_TIME_TO_INIT_INAPP));
-			}
+			GTDebug.log("InApp Billing inited ? "+inAppInited);
+			GTDebug.log("InApp Billing inited Check time out ? "+(elapsedTime>=WAIT_TIME_TO_INIT_INAPP));
+			
 		}
 		
 		///-----
 		//Wait time if we are restoring purchases
 		///-----
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log(name+" - Wait time if wa are restoring purchases ? "+InAppNeedRestoreProducts);
+		GTDebug.log("Wait time if wa are restoring purchases ? "+InAppNeedRestoreProducts);
 		
 		if(InAppNeedRestoreProducts){
 			float startTime = 0, currentTime = 0, elapsedTime = 0;
@@ -266,8 +263,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			}
 			while(!inAppAllProductsRestored && elapsedTime<MAX_WAIT_TIME_TO_RESTORE_PURCHASES);
 			
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log(name+" - All purchases restored ? "+inAppAllProductsRestored);
+			GTDebug.log("All purchases restored ? "+inAppAllProductsRestored);
 		}
 		
 		///-----
@@ -372,54 +368,31 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if(!PlayerPrefs.HasKey(GameSettings.PP_MUSIC)){
 			//inicializacion de sonido y musica activos
 			if (GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME) {
-				PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, 1f);
-				PlayerPrefs.SetFloat(GameSettings.PP_SOUND, 1f);	
-				GameSettings.musicVolume = 1f;
-				GameSettings.soundVolume = 1f;
+				BaseSoundManager.Instance.SetCurrentGeneralMusicVolume();
+				BaseSoundManager.Instance.SetCurrentGeneralSoundVolume();
 			}
 			//inicializacion de musica activa
 			else{
-				PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, 1f);
-				GameSettings.musicVolume = 1f;
+				BaseSoundManager.Instance.SetCurrentGeneralMusicVolume();
 			}
 		}
-		else{
-			//carga de valores de sonido y musica activos
-			if (GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME) {
-				GameSettings.musicVolume = PlayerPrefs.GetFloat(GameSettings.PP_MUSIC);
-				GameSettings.soundVolume = PlayerPrefs.GetFloat(GameSettings.PP_SOUND);
-			}
-			//carga solo de valor de musica activa
-			else{
-				GameSettings.musicVolume = PlayerPrefs.GetFloat(GameSettings.PP_MUSIC);
-			}
-		}
-		
 		
 		//sonidoActivo
 		if(!PlayerPrefs.HasKey(GameSettings.PP_SOUND)){
 			//inicializacion de sonido y musica activos
 			if (GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME) {
-				PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, 1f);
-				PlayerPrefs.SetFloat(GameSettings.PP_SOUND, 1f);	
-				GameSettings.musicVolume = 1f;
-				GameSettings.soundVolume = 1f;
+				BaseSoundManager.Instance.SetCurrentGeneralMusicVolume();
+				BaseSoundManager.Instance.SetCurrentGeneralSoundVolume();
 			}
 			//inicializacion de musica activa
 			else{
-				PlayerPrefs.SetFloat(GameSettings.PP_SOUND, 1f);
-				GameSettings.soundVolume = 1f;
+				BaseSoundManager.Instance.SetCurrentGeneralSoundVolume();
 			}
 		}
 		else{
 			//inicializacion solo de valor del sonido activo
 			if(!GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME && !PlayerPrefs.HasKey(GameSettings.PP_SOUND)){
-				PlayerPrefs.SetFloat(GameSettings.PP_SOUND, 1f);	
-				GameSettings.soundVolume = 1f;
-			}
-			//carga de valor del sonido activo
-			else if(!GameSettings.Instance.FX_AND_MUSIC_ARE_THE_SAME){
-				GameSettings.soundVolume = PlayerPrefs.GetFloat(GameSettings.PP_SOUND);	
+				BaseSoundManager.Instance.SetCurrentGeneralSoundVolume();
 			}
 		}
 	}
@@ -439,8 +412,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		bool purchasedQuitAds = PlayerPrefs.GetInt(GameSettings.PP_PURCHASED_QUIT_ADS) == 1;
 		if(purchasedQuitAds) GameSettings.Instance.IS_PRO_VERSION = true;
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GameLoaderManager - pro version: " + GameSettings.Instance.IS_PRO_VERSION);
+		GTDebug.log("Is Pro version ? " + GameSettings.Instance.IS_PRO_VERSION);
 		
 		//graphics details
 		if(!PlayerPrefs.HasKey(GameSettings.PP_GRAPHICS_DETAILS)){
@@ -476,8 +448,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		//GA
 		//TODO Analytics GAEvents.GAME_OPENING
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GameLoaderManager - total openings: " + totalOpenings);
+		GTDebug.log("Total openings: " + totalOpenings);
 		
 		//game store services
 		storeGameServicesSettings(totalOpenings);
@@ -505,8 +476,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	public virtual void storeGameServicesSettings(int totalOpenings){
 		bool lastOpeningWasConnected = PlayerPrefs.GetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE) != 0 ? true : false;
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GameLoaderManager - last opening was connected to store services ? " + lastOpeningWasConnected);
+		GTDebug.log("Was Last opening connected to store services ? " + lastOpeningWasConnected);
 		
 		bool loadGameSettings = !lastOpeningWasConnected;
 		showLoginWindowGameServices = lastOpeningWasConnected;
@@ -623,9 +593,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		//show initial Add
 		if(totalOpenings % openingsForShowInitialAd == 0){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GameLoaderManager - showing interstitial ad when start game");
-			AdsHandler.Instance.mostrarPantallazo();
+			GTDebug.log("Showing interstitial ad when start game");
+			AdsHandler.Instance.showInterstitial();
 		}
 	}
 }

@@ -216,15 +216,21 @@ public class BaseGameManager : MonoBehaviour {
 		
 		//launch event to notify an ad will be shown in the next seconds
 		yield return new WaitForSeconds(secsToNotify);
-		dispatcher.dispatch(LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS);
-		
-		//wait the next seconds to show an ad
-		yield return new WaitForSeconds(GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS);
-		showAdDuringGamePlay();
+		if(canShowAdDuringGamePlay()){
+			dispatcher.dispatch(LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS);
+			
+			//wait the next seconds to show an ad
+			yield return new WaitForSeconds(GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS);
+			showAdDuringGamePlay();
+		}
 		
 		//repeat again
 		if(!isGameOver && !finished)
 			StartCoroutine(checkAdShowingDuringGamePlay());
+	}
+	
+	public virtual bool canShowAdDuringGamePlay(){
+		return true;
 	}
 	
 	private void handleGameOverAdShowing(){
@@ -589,14 +595,20 @@ public class BaseGameManager : MonoBehaviour {
 			
 			if (paused)
 			{
-				if(!AdsHandler.Instance.IsShowingFullScreenAd && started)
+				if(!AdsHandler.Instance.HasPausedGame && started)
 					UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
+				
+				//				//mute fx
+				//				BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX, true, true);
 				
 				// pause time
 				Time.timeScale= 0f;
 			} else {
-				if(!AdsHandler.Instance.IsShowingFullScreenAd && started)
+				if(!AdsHandler.Instance.HasPausedGame && started)
 					UIController.Instance.Manager.close(UIBaseWindowIDs.PAUSE);
+				
+				//				//unmute fx
+				//				BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX, true, true);
 				
 				// unpause Unity
 				Time.timeScale = 1f;

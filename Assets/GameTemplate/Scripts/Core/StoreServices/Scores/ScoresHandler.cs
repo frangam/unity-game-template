@@ -22,7 +22,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			res = GameSettings.Instance.CurrentScores[scoreIndex];
 		}
 		else{
-			Debug.LogError("ScoresHandler getScoreByIndex() - the index " + scoreIndex + "is out of range");
+			GTDebug.logErrorAlways("The index " + scoreIndex + "is out of range");
 		}
 		
 		return res;
@@ -39,11 +39,11 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			}
 		}
 		else{
-			Debug.LogError("ScoresHandler getScoreByID() - need to fill scores in GameSettings asset");
+			GTDebug.logErrorAlways("Must to fill scores in GameSettings asset");
 		}
 		
 		if(res == null)
-			Debug.LogError("ScoresHandler getScoreByID() - not found score ID " + scoreID + " in GameSettings asset");
+			GTDebug.logErrorAlways("Not found score ID " + scoreID + " in GameSettings asset");
 		
 		return res;
 	}
@@ -53,33 +53,28 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			loadBestScore(GameSettings.Instance.CurrentScores[leaderboardIndex].Id, score);
 		}
 		else{
-			Debug.LogError("ScoresHandler - the index " + leaderboardIndex + "is out of range");
+			GTDebug.logErrorAlways("The index " + leaderboardIndex + "is out of range");
 		}
 	}
 	public void loadBestScore(string leaderboardID, long score){
 		if(!string.IsNullOrEmpty(leaderboardID)){
-			if(GameSettings.Instance.showTestLogs){
-				Debug.Log(leaderboardID + "  long score saved on the Store: "+  score.ToString());
-			}
+			GTDebug.log("Leaderboard ID: " + leaderboardID + " with score saved on the Store: "+  score.ToString());
+			
 			
 			long scoreFromStore = score; //the score saved on the online store
 			long savedLocally = getBestScoreByID (leaderboardID); //the score saved on the device (locally)
 			
-			if(GameSettings.Instance.showTestLogs){
-				Debug.Log(leaderboardID + " int score saved on the Store: "+  scoreFromStore.ToString());
-				Debug.Log(leaderboardID + "  score saved on the device: "+  savedLocally.ToString());
-			}
+			GTDebug.log("Leaderboard ID: " + leaderboardID + " with score saved on the Store: "+  scoreFromStore.ToString());
+			GTDebug.log("Leaderboard ID: " + leaderboardID + " with score saved on the device: "+  savedLocally.ToString());
 			
 			//update the score saved on the device by the online score is greater
 			if(scoreFromStore > savedLocally){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - saving locally score from store because is greater than the previous saved on the device. From Store: "+scoreFromStore+", SavedLocally: "+savedLocally);
+				GTDebug.log("Saving locally score from store because is greater than the previous saved on the device. From Store: "+scoreFromStore+", SavedLocally: "+savedLocally);
 				saveScoreOnlyLocallyByID(leaderboardID, scoreFromStore);
 			}
 			//send to server the greatest score that is the saved score locally
 			else if(scoreFromStore < savedLocally){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - sending to server the best score saved locally: " +savedLocally +". From Store: " + scoreFromStore);
+				GTDebug.log("Sending to server the best score saved locally: " +savedLocally +". From Store: " + scoreFromStore);
 				
 				ScoresHandler.Instance.sendScoreToServerByID(leaderboardID, savedLocally);
 			}
@@ -92,7 +87,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			showRanking(GameSettings.Instance.CurrentScores[rankingIndex].Id);
 		}
 		else{
-			Debug.LogError("ScoresHandler - the index " + rankingIndex + "is out of range");
+			GTDebug.logErrorAlways("The index " + rankingIndex + "is out of range");
 		}
 	}
 	public void showRanking(string rankingID = ""){
@@ -198,7 +193,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			saveScoreOnlyLocallyByID(GameSettings.Instance.CurrentScores[rankingIndex].Id, score);
 		}
 		else{
-			Debug.LogError("ScoresHandler - the index " + rankingIndex + "is out of range");
+			GTDebug.logErrorAlways("The index " + rankingIndex + "is out of range");
 		}
 	}
 	
@@ -208,6 +203,13 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	public void saveScoreOnlyLocallyByID(string scoreID, long newScoreValue){
 		Score score = getScoreByID(scoreID);
 		if(score == null) return;
+		
+		//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
+		//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
+		if(Application.platform == RuntimePlatform.IPhonePlayer && score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
+			System.TimeSpan timeSpan = System.TimeSpan.FromMilliseconds(newScoreValue);
+			newScoreValue = ((long) timeSpan.TotalSeconds)*100;
+		}
 		
 		long best = getBestScoreByID (scoreID);
 		bool save = false;
@@ -236,13 +238,26 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			sendScoreToServerByID(GameSettings.Instance.CurrentScores[rankingIndex].Id, score);
 		}
 		else{
-			Debug.LogError("ScoresHandler - the index " + rankingIndex + "is out of range");
+			GTDebug.log("The index " + rankingIndex + "is out of range");
 		}
 	}
 	
 	public void sendScoreToServerByID(string scoreID, long newScoreValue){
 		Score score = getScoreByID(scoreID); //get the score by its id from gamesettings asset
 		if(score == null) return;
+		
+		//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
+		//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
+		if(Application.platform == RuntimePlatform.IPhonePlayer && score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
+			System.TimeSpan timeSpan = System.TimeSpan.FromMilliseconds(newScoreValue);
+			long convertedValue = ((long) timeSpan.TotalSeconds)*100;
+			
+			GTDebug.log("Converting Ms to Seconds score. Before Conversion: "+newScoreValue+". After: "+ convertedValue);
+			
+			newScoreValue = convertedValue;
+		}
+		
+		GTDebug.log("New score: "+newScoreValue);
 		
 		bool sendScoreToServer = false;
 		long best = getBestScoreByID (scoreID);
@@ -264,8 +279,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				if(GooglePlayManager.instance.GetLeaderBoard (id) != null){
 					scoreSavedInServer = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).score;
 					
-					if(GameSettings.Instance.showTestLogs)
-						Debug.Log("ScoresHandler - Server score: "+scoreSavedInServer + ". Score to send to the server: "+scoreToSend);
+					GTDebug.log("ScoresHandler - Server score: "+scoreSavedInServer + ". Score to send to the server: "+scoreToSend);
 					
 					
 					//criteria order to know which is a best score to send to the server or not
@@ -282,8 +296,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				if(sendScoreToServer)
 					GooglePlayManager.instance.SubmitScoreById (id, scoreToSend);
 				
-				if(GameSettings.Instance.showTestLogs && sendScoreToServer)
-					Debug.Log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+				if(sendScoreToServer)
+					GTDebug.log("Sending score to the server: " + scoreToSend + " a ranking: " + id);
 			}
 			
 			
@@ -294,6 +308,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			
 			if(GameCenterManager.GetLeaderboard(id) != null){
 				scoreSavedInServer = GameCenterManager.GetLeaderboard(id).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).GetLongScore();
+				
+				GTDebug.log("ScoresHandler - Server score: "+scoreSavedInServer + ". Score to send to the server: "+scoreToSend);
 				
 				//criteria order to know which is a best score to send to the server or not
 				switch(score.Order){
@@ -309,8 +325,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			if(sendScoreToServer)
 				GameCenterManager.ReportScore(scoreToSend, id);
 			
-			if(GameSettings.Instance.showTestLogs && sendScoreToServer)
-				Debug.Log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+			if(sendScoreToServer)
+				GTDebug.log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
 		}
 		#endif
 		
@@ -322,14 +338,12 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		switch(score.Order){
 		case ScoreOrder.DESCENDING:
 			if(scoreSavedInServer > 0 && scoreSavedInServer > best && scoreSavedInServer > scoreToSend){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - saving locally best score is in the server side: "+scoreSavedInServer);
+				GTDebug.log("Saving locally best score is in the server side: "+scoreSavedInServer);
 				
 				saveBestScoreByID(scoreID, scoreSavedInServer);
 			}
 			else if(newScoreValue> 0 && newScoreValue > best){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - saving locally best score player has got now: "+newScoreValue);
+				GTDebug.log("Saving locally best score player has got now: "+newScoreValue);
 				
 				saveBestScoreByID(scoreID, newScoreValue);
 			}
@@ -337,14 +351,12 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			
 		case ScoreOrder.ASCENDING:
 			if(scoreSavedInServer > 0 && (best == 0 || (scoreSavedInServer < best && scoreSavedInServer < scoreToSend))){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - saving locally best score is in the server side: "+scoreSavedInServer);
+				GTDebug.log("Saving locally best score is in the server side: "+scoreSavedInServer);
 				
 				saveBestScoreByID(scoreID, scoreSavedInServer);
 			}
 			else if(newScoreValue > 0 && (best == 0 || newScoreValue < best)){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("ScoresHandler - saving locally best score player has got now: "+newScoreValue);
+				GTDebug.log("Saving locally best score player has got now: "+newScoreValue);
 				
 				saveBestScoreByID(scoreID, newScoreValue);
 			}
@@ -404,7 +416,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			saveLastScoreByID(GameSettings.Instance.CurrentScores[scoreIndex].Id, score);
 		}
 		else{
-			Debug.LogError("ScoresHandler - the index " + scoreIndex + "is out of range");
+			GTDebug.logErrorAlways("The index " + scoreIndex + "is out of range");
 		}
 	}
 	public void saveLastScoreByID(string id, long score){
@@ -417,7 +429,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			saveBestScoreByID(GameSettings.Instance.CurrentScores[scoreIndex].Id, score);
 		}
 		else{
-			Debug.LogError("ScoresHandler - the index " + scoreIndex + "is out of range");
+			GTDebug.logErrorAlways("The index " + scoreIndex + "is out of range");
 		}
 	}
 	

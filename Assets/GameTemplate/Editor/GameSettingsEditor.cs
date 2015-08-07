@@ -959,6 +959,11 @@ public class GameSettingsEditor : Editor {
 							EditorGUILayout.EndHorizontal();
 							
 							EditorGUILayout.BeginHorizontal();
+							EditorGUILayout.LabelField("Format:", GUILayout.Width(120));
+							GameSettings.Instance.scoresPacks[packIndex].scores[i].Format = (ScoreFormat) EditorGUILayout.EnumPopup(GameSettings.Instance.scoresPacks[packIndex].scores[i].Format);
+							EditorGUILayout.EndHorizontal();
+							
+							EditorGUILayout.BeginHorizontal();
 							EditorGUILayout.LabelField("Order:", GUILayout.Width(120));
 							GameSettings.Instance.scoresPacks[packIndex].scores[i].Order = (ScoreOrder) EditorGUILayout.EnumPopup(GameSettings.Instance.scoresPacks[packIndex].scores[i].Order);
 							EditorGUILayout.EndHorizontal();

@@ -11,18 +11,24 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	private bool submittedScoreZeroAtInit = false;
 	
 	void Update(){
-		if(!notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
+		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN && !notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
 			GameLoaderManager.Instance.GPSPrepared = true;
 			notifiedLoader = true;
 		}
 	}
 	
 	void OnEnable(){
-		BaseAchievementsManager.dispatcher.addEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);			
+		GTDebug.log("Enabling");
+		
+		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
+			BaseAchievementsManager.dispatcher.addEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);			
 	}
 	
 	void OnDisable(){
-		BaseAchievementsManager.dispatcher.removeEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);	
+		GTDebug.log("Disabling");
+		
+		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
+			BaseAchievementsManager.dispatcher.removeEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);	
 	}
 	
 	//--------------------------------------
@@ -76,15 +82,13 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		
 		
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GPSConnect - connected");
+			GTDebug.log("Player connected");
 			
 			//checking if player already connected
 			OnPlayerConnected ();
 		} 
 		else{
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GPSConnect - not connected. Show Login Window ? " + showLoginWindowGameServices);
+			GTDebug.log("Player not connected. Show Login Window ? " + showLoginWindowGameServices);
 			
 			
 			if(showLoginWindowGameServices){
@@ -111,8 +115,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	//	}
 	private void OnDestroy() {
 		if(!GooglePlayConnection.IsDestroyed) {
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GPSConnect - destroying events");
+			GTDebug.log("Destroying events");
 			
 			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
 			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
@@ -143,13 +146,11 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	private void ActionConnectionResultReceived(GooglePlayConnectionResult result) {
 		
 		if(result.IsSuccess) {
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GPSConnect - Connected! ActionConnectionResultReceived");
+			GTDebug.log("Connected! ActionConnectionResultReceived");
 			
 			OnConnectionEstablished();
 		} else {
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GPSConnect - Connection failed with code: " + result.code.ToString());
+			GTDebug.log("Connection failed with code: " + result.code.ToString());
 		}
 	}
 	
@@ -160,8 +161,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		
 		//try to load scores if we submitted a dummy zero score previously
 		if(submittedScoreZeroAtInit){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GPSConnect - Dyummy zero score submitted");
+			GTDebug.log("Dummy zero score submitted");
 			
 			submittedScoreZeroAtInit = false;
 			loadLeaderBoards();
@@ -180,13 +180,14 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		} 
 		else {
 			jugadorConectado = false;
-			GameLoaderManager.Instance.GPSPrepared = false;
+			
+			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
+				GameLoaderManager.Instance.GPSPrepared = false;
 		}
 	}
 	
 	private void OnPlayerDisconnected() {
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GPSConnect - player disconnected");
+		GTDebug.log("Player disconnected");
 		
 		PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
 		
@@ -195,8 +196,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	
 	private void OnPlayerConnected() {
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GPSConnect - OnPlayerConnected - player connected");
+		GTDebug.log("Player connected");
 	}
 	
 	private void OnConnectionEstablished(){
@@ -204,8 +204,11 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		
 		GooglePlayManager.instance.LoadConnectedPlayers ();
 		
-		loadLeaderBoards ();
-		loadAchievements ();
+		if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0)
+			loadLeaderBoards ();
+		
+		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
+			loadAchievements ();
 	}
 	
 	private void OnAchivmentUpdated(CEvent e) {
@@ -214,8 +217,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	}
 	
 	private void loadLeaderBoards() {
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GPSConnect - loading leaderboards");
+		GTDebug.log("Loading leaderboards");
 		
 		//listening for load event 
 		GooglePlayManager.instance.addEventListener (GooglePlayManager.LEADERBOARDS_LOADED, OnLeaderBoardsLoaded);
@@ -233,44 +235,53 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		GooglePlayManager.instance.removeEventListener (GooglePlayManager.LEADERBOARDS_LOADED, OnLeaderBoardsLoaded);
 		GooglePlayResult result = e.data as GooglePlayResult;
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log("GPSConnect - Leader boards loaded result success: " +result.isSuccess + ". Result code: " +result.response);
+		GTDebug.log("Leader boards loaded result success: " +result.isSuccess + ". Result code: " +result.response);
 		
 		if(result.isSuccess) {
-			string id = GameSettings.Instance.CurrentUniqueRankingID;
-			GooglePlayManager.instance.LoadPlayerCenteredScores(id, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
-			GPLeaderBoard leaderboard = GooglePlayManager.instance.GetLeaderBoard(id);
+			initialLeaderboardsLoad(new Score(GameSettings.Instance.CurrentUniqueRankingID));
+			initialLeaderboardsLoad(new Score(GameSettings.Instance.CurrentUniqueSurvivalRankingID));
 			
-			if( leaderboard == null) {
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("GPSConnect - Leader boards loaded " + id + " not found in leader boards list");
-				return;
-			}
-			
-			GPScore gpScore = leaderboard.GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL);
-			long score = gpScore.score;
-			
-			//a tricky to get a previous score
-			//<0 means not configured good
-			if(score < 0){
-				//				ScoresHandler.Instance.showRanking(id);
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("GPSConnect - Submitting dummy zero score to store because score from store is "+score);
-				
-				submittedScoreZeroAtInit = true;
-				ScoresHandler.Instance.sendScoreToServer(id, 0);
-			}
-			else{
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("GPSConnect - Leader board id " + id + " current player "+gpScore.playerId + " rank: " +gpScore.rank + " score: " + gpScore.score);
-				
-				ScoresHandler.Instance.loadBestScore(id, score);
+			if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0){
+				foreach(Score score in GameSettings.Instance.CurrentScores){
+					initialLeaderboardsLoad(score);
+				}
 			}
 		} else {
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GPSConnect - Leader-Boards Loaded error: "+ result.message);
+			GTDebug.log("Leader-Boards Loaded error: "+ result.message);
 		}
 	}
+	
+	private void initialLeaderboardsLoad(Score score){
+		if(score == null || (score != null && string.IsNullOrEmpty(score.Id))) return;
+		
+		GooglePlayManager.instance.LoadPlayerCenteredScores(score.Id, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
+		GPLeaderBoard leaderboard = GooglePlayManager.instance.GetLeaderBoard(score.Id);
+		
+		if( leaderboard == null) {
+			GTDebug.log("Leader boards loaded " + score.Id + " not found in leader boards list");
+			return;
+		}
+		
+		
+		GPScore gpScore = leaderboard.GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL);
+		long scoreValue = gpScore.score;
+		
+		//a tricky to get a previous score
+		//<0 means not configured good
+		if(scoreValue < 0){
+			//				ScoresHandler.Instance.showRanking(id);
+			GTDebug.log("Submitting dummy zero score to store because score value from store is "+scoreValue);
+			
+			submittedScoreZeroAtInit = true;
+			ScoresHandler.Instance.sendScoreToServerByID(score.Id, 0);
+		}
+		else{
+			GTDebug.log("Leader board id " + score.Id + " current player "+gpScore.playerId + " rank: " +gpScore.rank + " score value: " + gpScore.score);
+			
+			ScoresHandler.Instance.loadBestScore(score.Id, scoreValue);
+		}
+	}
+	
 	
 	private void OnAchivmentsLoaded(CEvent e) {
 		GooglePlayManager.instance.removeEventListener (GooglePlayManager.ACHIEVEMENTS_LOADED, OnAchivmentsLoaded);

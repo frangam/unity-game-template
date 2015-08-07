@@ -29,11 +29,11 @@ public class UISoundActivationButton : UIBaseButton {
 	public override void Awake(){
 		switch(type){
 		case SoundType.FX:
-			active = GameSettings.soundVolume > 0;
+			active = BaseSoundManager.Instance.IsSoundActive();
 			break;
 			
 		case SoundType.MUSIC:
-			active = GameSettings.musicVolume > 0;
+			active = BaseSoundManager.Instance.IsMusicActive();
 			break;
 		}
 		
@@ -50,7 +50,7 @@ public class UISoundActivationButton : UIBaseButton {
 	{
 		base.doPress ();
 		
-		active = BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(type, false, true);
+		active = BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(type);
 		
 		if(hideActive)
 			imgActive.gameObject.SetActive(active);

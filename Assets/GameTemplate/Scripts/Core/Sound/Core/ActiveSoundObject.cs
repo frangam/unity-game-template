@@ -6,7 +6,7 @@ using System.Collections;
 /// </summary>
 public class ActiveSoundObject : MonoBehaviour {
 	void Awake(){
-		if(GetComponent<AudioSource>() && GameSettings.soundVolume > 0f){
+		if(GetComponent<AudioSource>() && BaseSoundManager.Instance.IsSoundActive()){
 			GetComponent<AudioSource>().Play();
 		}
 	}

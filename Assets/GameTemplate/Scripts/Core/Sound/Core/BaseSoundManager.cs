@@ -65,14 +65,35 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 	//--------------------------------------
 	// Metodos publicos
 	//--------------------------------------
+	public bool IsSoundActive(){
+		return CurrentGeneralSoundVolume() > 0;
+	}
+	public bool IsMusicActive(){
+		return CurrentGeneralMusicVolume() > 0;
+	}
+	public float CurrentGeneralSoundVolume(){
+		return PlayerPrefs.GetFloat(GameSettings.PP_SOUND);
+	}
+	public float CurrentGeneralMusicVolume(){
+		return PlayerPrefs.GetFloat(GameSettings.PP_MUSIC);
+	}
+	public void SetCurrentGeneralSoundVolume(float newVol = 1f){
+		PlayerPrefs.SetFloat(GameSettings.PP_SOUND, newVol);
+	}
+	public void SetCurrentGeneralMusicVolume(float newVol = 1f){
+		PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, newVol);
+	}
+	
+	
+	
 	/// <summary>
 	/// Mutes the or active all onces mute onces active.
 	/// </summary>
 	/// <returns><c>true</c>, if sound or music is active, <c>false</c> otherwise.</returns>
 	/// <param name="excludeIfIsMuted">If set to <c>true</c> exclude if is muted.</param>
-	public void muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter(bool excludeIfIsMuted = false){
-		muteOrActiveOncesMuteOncesActive(SoundType.FX, excludeIfIsMuted, true);
-		muteOrActiveOncesMuteOncesActive(SoundType.MUSIC, excludeIfIsMuted, true);
+	public void muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter(bool forceMute = true){
+		muteOrActiveOncesMuteOncesActive(SoundType.FX, false, forceMute);
+		muteOrActiveOncesMuteOncesActive(SoundType.MUSIC, true, forceMute);
 	}
 	
 	/// <summary>
@@ -81,24 +102,36 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 	/// <returns><c>true</c>, if sound or music is active,, <c>false</c> otherwise.</returns>
 	/// <param name="type">Type.</param>
 	/// <param name="excludeIfIsMuted">If set to <c>true</c> exclude if is muted.</param>
-	public bool muteOrActiveOncesMuteOncesActive(SoundType type, bool excludeIfIsMuted = false, bool playOrStop = true){
+	public bool muteOrActiveOncesMuteOncesActive(SoundType type, bool playOrStopMusic = true, bool forceMute = false){
 		bool active = false;
 		
 		switch(type){
 		case SoundType.FX:
-			float soundVolume = GameSettings.soundVolume == 0f && !excludeIfIsMuted ? 1f : 0f; //change to mute or previous sound saved
-			GameSettings.soundVolume = soundVolume; //update volume
-			active = GameSettings.soundVolume > 0;
-			PlayerPrefs.SetFloat(GameSettings.PP_SOUND, soundVolume);
+			bool soundMuteForcedPreviously = PlayerPrefs.GetInt(GameSettings.PP_SOUND_MUTE_FORCED) != 0 ? true : false;
+			if(forceMute && !soundMuteForcedPreviously)
+				PlayerPrefs.SetInt(GameSettings.PP_SOUND_MUTE_FORCED, 1);
+			else if(!forceMute || soundMuteForcedPreviously)
+				PlayerPrefs.SetInt(GameSettings.PP_SOUND_MUTE_FORCED, 0);
+			
+			float curSoundVol = CurrentGeneralSoundVolume();
+			float newSoundVol = (curSoundVol == 0f && (!forceMute || (forceMute && soundMuteForcedPreviously))) ? 1f : 0f; //change to mute or previous sound saved
+			SetCurrentGeneralSoundVolume(newSoundVol); //update volume
+			active = CurrentGeneralSoundVolume() > 0;
 			break;
 			
 		case SoundType.MUSIC:
-			float musicVolume = GameSettings.musicVolume == 0f && !excludeIfIsMuted ? 1f : 0f; //change to mute or previous sound saved
-			GameSettings.musicVolume = musicVolume; //update volume
-			active = GameSettings.musicVolume > 0;
-			PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, musicVolume);
+			bool musicMuteForcedPreviously = PlayerPrefs.GetInt(GameSettings.PP_MUSIC_MUTE_FORCED) != 0 ? true : false;
+			if(forceMute && !musicMuteForcedPreviously)
+				PlayerPrefs.SetInt(GameSettings.PP_MUSIC_MUTE_FORCED, 1);
+			else if(!forceMute || musicMuteForcedPreviously)
+				PlayerPrefs.SetInt(GameSettings.PP_MUSIC_MUTE_FORCED, 0);
 			
-			if(playOrStop)
+			float curMusicVol = CurrentGeneralMusicVolume();
+			float newMusicVol = (curMusicVol == 0f && (!forceMute || (forceMute && musicMuteForcedPreviously))) ? 1f : 0f; //change to mute or previous sound saved
+			SetCurrentGeneralMusicVolume(newMusicVol); //update volume
+			active = CurrentGeneralMusicVolume() > 0;
+			
+			if(playOrStopMusic)
 				playOrStopMusicWasMutedOrActivePreviously(active);
 			
 			break;
@@ -129,7 +162,7 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 		//		if((sonido.Tipo == TipoSonido.FX && !Configuracion.sonidoActivo) || (sonido.Tipo == TipoSonido.MUSIC && !Configuracion.musicaActiva)) return;
 		
 		if(sonidosReproduciendo != null
-		   && ((sonido.Tipo == SoundType.FX && GameSettings.soundVolume > 0f) || (sonido.Tipo == SoundType.MUSIC && GameSettings.musicVolume > 0f))){
+		   && ((sonido.Tipo == SoundType.FX && CurrentGeneralSoundVolume() > 0f) || (sonido.Tipo == SoundType.MUSIC && CurrentGeneralMusicVolume() > 0f))){
 			if(sonido.Tipo != SoundType.MUSIC && sonidosReproduciendo != null 
 			   && ( !sonidosReproduciendo.ContainsKey(id)  || (sonidosReproduciendo.ContainsKey(id) && sonidosReproduciendo[id] != null &&  !sonidosReproduciendo[id].isPlaying))){
 				stop (sonido.Id);

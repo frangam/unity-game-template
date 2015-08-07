@@ -64,8 +64,6 @@ public class GameSettings : ScriptableObject {
 	
 	
 	//STATIC SETTINGS
-	public static float							musicVolume						= 1f;
-	public static float 						soundVolume 					= 1f;
 	public static float 						graphicsDetails					= 1f;
 	
 	//SETTINGS
@@ -184,7 +182,9 @@ public class GameSettings : ScriptableObject {
 	public const string PP_DEFAULT_FIXED_TIMESTEP 							= "pp_defaul_fixed_timestep";
 	public const string PP_FIRST_PLAY 										= "pp_first_play";
 	public const string PP_MUSIC 											= "pp_music";
+	public const string PP_MUSIC_MUTE_FORCED 								= "pp_music_mute_forced";
 	public const string PP_SOUND 											= "pp_sound";
+	public const string PP_SOUND_MUTE_FORCED 								= "pp_sound_mute_forced";
 	public const string PP_GRAPHICS_DETAILS									= "pp_graphics_details";
 	public const string PP_LANGUAGE_CHANGED 								= "pp_language_changed";
 	public const string PP_LAST_SCORE 										= "pp_last_score_"; //followed by game difficulty
@@ -261,13 +261,19 @@ public class GameSettings : ScriptableObject {
 	// Public Methods
 	//--------------------------------------
 	public string CurrentGameName{
-		get{ return gameNames[currentGameMultiversion];}
+		get{ 
+			if(gameNames != null && gameNames.Count > currentGameMultiversion) return gameNames[currentGameMultiversion];
+			else return null;}
 	}
 	public string CurrentBuildPackageID{
-		get{ return buildPackagesIDs[currentGameMultiversion];}
+		get{ 
+			if(buildPackagesIDs != null && buildPackagesIDs.Count > currentGameMultiversion) return buildPackagesIDs[currentGameMultiversion];
+			else return null;}
 	}
 	public string CurrentAppleAppID{
-		get{ return appleAppIDs[currentGameMultiversion];}
+		get{ 
+			if(appleAppIDs != null && appleAppIDs.Count > currentGameMultiversion) return appleAppIDs[currentGameMultiversion];
+			else return null;}
 	}
 	public string CurrentAndroidAppLink{
 		get{ return LINK_ANDROID_APP+CurrentBuildPackageID;}
@@ -279,28 +285,44 @@ public class GameSettings : ScriptableObject {
 		get{ return LINK_IOS_APP+CurrentAppleAppID;}
 	}
 	public string CurrentAndroidAppShortLink{
-		get{ return androidShortLinks[currentGameMultiversion];}
+		get{ 
+			if(androidShortLinks != null && androidShortLinks.Count > currentGameMultiversion) return androidShortLinks[currentGameMultiversion];
+			else return null;}
 	}
 	public string CurrentAmazonAppShortLink{
-		get{ return amazonShortLinks[currentGameMultiversion];}
+		get{ 
+			if(amazonShortLinks != null && amazonShortLinks.Count > currentGameMultiversion) return amazonShortLinks[currentGameMultiversion];
+			else return null;}
 	}
 	public string CurrentIOSAppShortLink{
-		get{ return iOSShortLinks[currentGameMultiversion];}
+		get{ 
+			if(iOSShortLinks != null && iOSShortLinks.Count > currentGameMultiversion) return iOSShortLinks[currentGameMultiversion];
+			else return null;}
 	}
 	public string CurrentUniqueRankingID{
-		get{ return uniqueRankingIDS[currentGameMultiversion];}
+		get{ 
+			if(uniqueRankingIDS != null && uniqueRankingIDS.Count > currentGameMultiversion) return uniqueRankingIDS[currentGameMultiversion];
+			else return null;}
 	}
 	public string CurrentUniqueSurvivalRankingID{
-		get{ return uniqueSurvivalRankingIDS[currentGameMultiversion];}
+		get{ 
+			if(uniqueSurvivalRankingIDS != null && uniqueSurvivalRankingIDS.Count > currentGameMultiversion) return uniqueSurvivalRankingIDS[currentGameMultiversion];
+			else return null;}
 	}
 	public List<string> CurrentSurvivalLevelRankingIDs{
-		get{ return survivalLevelRankingIDS[currentGameMultiversion];}
+		get{ 
+			if(survivalLevelRankingIDS != null && survivalLevelRankingIDS.Count > currentGameMultiversion) return survivalLevelRankingIDS[currentGameMultiversion];
+			else return null;}
 	}
 	public List<string> CurrentWorldLevelRankingIDs{
-		get{ return worldLevelRankingIDS[currentGameMultiversion];}
+		get{ 
+			if(worldLevelRankingIDS != null && worldLevelRankingIDS.Count > currentGameMultiversion) return worldLevelRankingIDS[currentGameMultiversion];
+			else return null;}
 	}
 	public List<string> CurrentInAppBillingIDs{
-		get{ return allInAppBillingIDS[currentGameMultiversion].ids;}
+		get{ 
+			if(allInAppBillingIDS != null && allInAppBillingIDS.Count > currentGameMultiversion) return allInAppBillingIDS[currentGameMultiversion].ids;
+			else return null;}
 	}
 	public List<string> AllAchievementActionsNames(){
 		List<string> res = new List<string>();
@@ -361,11 +383,17 @@ public class GameSettings : ScriptableObject {
 	}
 	
 	public List<Achievement> CurrentAchievements{
-		get{return achievementsPacks[currentGameMultiversion].achievements;}
+		get{ 
+			if(achievementsPacks != null && achievementsPacks.Count > currentGameMultiversion) return achievementsPacks[currentGameMultiversion].achievements;
+			else return null;
+		}
 	}
 	
 	public List<Score> CurrentScores{
-		get{return scoresPacks[currentGameMultiversion].scores;}
+		get{
+			if(scoresPacks != null && scoresPacks.Count > currentGameMultiversion) return scoresPacks[currentGameMultiversion].scores;
+			else return null;
+		}
 	}
 	
 	

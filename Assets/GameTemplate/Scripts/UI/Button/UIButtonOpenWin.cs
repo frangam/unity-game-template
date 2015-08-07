@@ -28,7 +28,5 @@ public class UIButtonOpenWin : UIBaseButton {
 			foreach(UIBaseWindow w in openWindows)
 				UIController.Instance.Manager.open(w);
 		}
-		else
-			Debug.Log("Not found any window to open");
 	}
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
 
-public class GCConnect : Singleton<GCConnect> {
+public class GCConnect : PersistentSingleton<GCConnect> {
 	private static bool IsInited = false;
 	private bool leaderBoardsLoaded = false;
 	private bool achievementsLoaded = false;
@@ -10,18 +10,25 @@ public class GCConnect : Singleton<GCConnect> {
 	private bool notifiedLoader = false;
 	
 	void Update(){
-		if(!notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
+		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN && !notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
+			GTDebug.log("Notifying to GameLoaderManager that GameCenter is prepared");
 			GameLoaderManager.Instance.GCPrepared = true;
 			notifiedLoader = true;
 		}
 	}
 	
 	void OnEnable(){
-		BaseAchievementsManager.dispatcher.addEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);		
+		GTDebug.log("Enabling");
+		
+		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
+			BaseAchievementsManager.dispatcher.addEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);		
 	}
 	
 	void OnDisable(){
-		BaseAchievementsManager.dispatcher.removeEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);	
+		GTDebug.log("Disabling");
+		
+		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
+			BaseAchievementsManager.dispatcher.removeEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);	
 	}
 	
 	public void init (bool showLoginWindowGameServices = true) {
@@ -56,15 +63,13 @@ public class GCConnect : Singleton<GCConnect> {
 			
 			//Initializing Game Cneter class. This action will triger authentication flow
 			if(showLoginWindowGameServices){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("GCConnect - showing authentication flow of Game Center");
+				GTDebug.log("Showing authentication flow of Game Center");
 				
 				GameCenterManager.init();
 				IsInited = true;
 			}
 			else{
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("GCConnect - NOT showing authentication flow of Game Center");
+				GTDebug.log("NOT showing authentication flow of Game Center");
 			}
 		}
 	}
@@ -75,21 +80,26 @@ public class GCConnect : Singleton<GCConnect> {
 	private void OnLeaderBoarScoreLoaded(CEvent e) {
 		//		LeaderBoardScoreData data = e.data as LeaderBoardScoreData;
 		//		IOSNative.showMessage("Leader Board " + data.leaderBoardId, "Score: " + data.leaderBoardScore);
+		
+		GK_PlayerScoreLoadedResult result = e.data as GK_PlayerScoreLoadedResult;
+		
+		if(result.IsSucceeded) {
+			GK_Score score = result.loadedScore;
+			GTDebug.log("Leaderboard " + score.leaderboardId+ ", Score: " + score.score + ", Rank:" + score.rank);
+		}
 	}
 	
 	void OnAuthFinished (ISN_Result res) {
 		
 		
 		if (res.IsSucceeded) {
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GCConnect - player connected");
+			GTDebug.log("Player connected");
 			
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 1);
 			
 			//			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.player.playerId + "\n" + "Alias: " + GameCenterManager.player.alias);
 		} else {
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("GCConnect - player NOT connected");
+			GTDebug.log("Player NOT connected");
 			
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
 			
@@ -108,8 +118,12 @@ public class GCConnect : Singleton<GCConnect> {
 		//			Debug.Log (tpl.id + ":  " + tpl.progress);
 		//		}
 		
-		BaseAchievementsManager.Instance.initialCheckingInServerSide();
+		GTDebug.log("Achievements loaded");
 		
+		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
+			GTDebug.log("Starting initial checking in server side");
+			BaseAchievementsManager.Instance.initialCheckingInServerSide();
+		}
 	}
 	
 	private void OnAchievementsReset() {

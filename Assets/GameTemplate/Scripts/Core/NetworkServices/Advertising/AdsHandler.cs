@@ -19,14 +19,14 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	private float currentTime;
 	private bool googleAdmobInited = false;
 	private bool adcolonyInited = false;
-	private bool isShowingFullScreenAd = false;
+	private bool hasPausedGame = false;
 	
 	//--------------------------------------
 	// Getters & Setters
 	//--------------------------------------
-	public bool IsShowingFullScreenAd {
+	public bool HasPausedGame {
 		get {
-			return this.isShowingFullScreenAd;
+			return this.hasPausedGame;
 		}
 	}
 	
@@ -63,8 +63,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		
 		currentTime = Time.timeSinceLevelLoad;
 		
-		//		if(GameSettings.Instance.showTestLogs)
-		//			Debug.Log("AdsHandler handleInitialization() - current time: " + currentTime);
+		//		GTDebug.log("Current time: " + currentTime);
 		
 		
 		
@@ -80,8 +79,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	
 	private void init(){
 		if(!GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("AdsHandler - initializing");
+			GTDebug.log("initializing");
 			
 			//AdColony
 			if(GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY))
@@ -152,19 +150,44 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	}
 	
 	private void pauseGame(bool pause = true){
-		//pausing the game
-		if(BaseGameScreenController.Instance.Section == GameSection.GAME)
-			GameController.Instance.Manager.Paused = pause;
-		else
-			Time.timeScale = pause ? 0f: 1f;
+		if(pause)
+			hasPausedGame = pause;
 		
-		//mute or active sounds
-		BaseSoundManager.Instance.muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter(true);
+		BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.MUSIC,true,true);
+		BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX,true,true);
+		
+		
+		//pausing the game
+		if(BaseGameScreenController.Instance.Section == GameSection.GAME){
+			GameController.Instance.Manager.Paused = pause;
+		}
+		else{
+			Time.timeScale = pause ? 0f: 1f;
+		}
+		
+		
+		
+		if(!pause)
+			hasPausedGame = pause;
 	}
 	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
+	public void testOnInterstitialOpen(){
+		OnInterstisialsOpen();
+	}
+	public void testOnInterstitialClose(){
+		OnInterstisialsClosed();
+	}
+	public void testOnVideoStarted(){
+		OnVideoStarted();
+	}
+	public void testOnInterstitialFinished(){
+		OnVideoFinished(true);
+	}
+	
+	
 	private void OnBannerLoadedAction (GoogleMobileAdBanner banner) {
 		banner.OnLoadedAction -= OnBannerLoadedAction;
 		banner.Show();
@@ -177,7 +200,6 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	}
 	
 	private void OnInterstisialsOpen() {
-		isShowingFullScreenAd = true;
 		IsInterstisialsAdReady = false;
 		pauseGame();
 		//		//pausing the game
@@ -186,8 +208,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	}
 	
 	private void OnInterstisialsClosed(){
-		isShowingFullScreenAd = false;
 		pauseGame(false);
+		
 		//		//un-pausing the game
 		//		if (BaseGameScreenController.Instance.Section == GameSection.GAME)
 		//			GameController.Instance.Manager.Paused = false;
@@ -207,32 +229,28 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//	}
 	
 	void OnVideoStarted(){
-		isShowingFullScreenAd = true;
+		hasPausedGame = true;
 		pauseGame();
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log( "AdsHandler OnVideoStarted() - Ad video playing." );
+		GTDebug.log( "Ad video playing." );
 	}
 	
 	void OnVideoFinished( bool ad_shown ){
 		pauseGame(false);
-		isShowingFullScreenAd = false;
+		hasPausedGame = false;
 		
-		if(GameSettings.Instance.showTestLogs)
-			Debug.Log( "AdsHandler OnVideoFinished() Ad video finished." );
+		GTDebug.log( "Ad video finished." );
 		
 		
 	}
 	
 	void OnV4VCResult( bool success, string name, int amount ){
 		if (success){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log( "AdsHandler OnV4VCResult() - Awarded " + amount + " " + name );
+			GTDebug.log( "Awarded " + amount + " " + name );
 			// e.g. "Awarded 100 Gold"
 		}
 		else{
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log( "AdsHandler OnV4VCResult() - not Awarded " + amount + " " + name );
+			GTDebug.log( "not Awarded " + amount + " " + name );
 		}
 	}
 	
@@ -311,8 +329,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		if(canShowAd(AdNetwork.ADCOLONY)){
 			// Check to see if a video is available in the zone.
 			if(AdColony.IsVideoAvailable(zoneID)){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("AdsHandler PlayAVideo() - Play AdColony Video in this zone ID " + zoneID);
+				GTDebug.log("Play AdColony Video in this zone ID " + zoneID);
 				
 				// Call AdColony.ShowVideoAd with that zone to play an interstitial video.
 				// Note that you should also pause your game here (audio, etc.) AdColony will not
@@ -320,8 +337,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 				AdColony.ShowVideoAd(zoneID); 
 			}
 			else{
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("AdsHandler PlayAVideo() - Video Not Available in this zone ID "+zoneID);
+				GTDebug.log("Video Not Available in this zone ID "+zoneID);
 			}
 		}
 		#endif
@@ -356,8 +372,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		if(registerdBanners != null && registerdBanners.Count > 0){
 			
 			foreach(GoogleMobileAdBanner b in registerdBanners.Values){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("AdsHandler DestroyBanner() - Found banner with id: " + b.id + " destroying");
+				GTDebug.log("Found banner with id: " + b.id + " destroying");
 				//				b.Hide();
 				GoogleMobileAd.DestroyBanner(b.id);
 			}
@@ -366,31 +381,26 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	
 	private void HideBanner(){
 		if (registerdBanners.ContainsKey(UniqueBannerID)){
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("AdsHandler HideBanner() - Found banner with id: " + UniqueBannerID);
+			GTDebug.log("Found banner with id: " + UniqueBannerID);
 			
 			GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
 			if (banner.IsLoaded){
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " loaded");
+				GTDebug.log("Banner with id: " + UniqueBannerID + " loaded");
 				
 				if (banner.IsOnScreen){
-					if(GameSettings.Instance.showTestLogs)
-						Debug.Log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " hiding");
+					GTDebug.log("Banner with id: " + UniqueBannerID + " hiding");
 					
 					banner.Hide();
 				}
 			}
 			else{
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " not loaded");
+				GTDebug.log("Banner with id: " + UniqueBannerID + " not loaded");
 				
 				banner.ShowOnLoad = false;
 			}
 		}
 		else{
-			if(GameSettings.Instance.showTestLogs)
-				Debug.Log("AdsHandler HideBanner() - No banner found with id: " + UniqueBannerID);
+			GTDebug.log("No banner found with id: " + UniqueBannerID);
 		}
 	}
 	
@@ -399,22 +409,18 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
 			if (banner.IsLoaded){
 				if (banner.IsOnScreen){
-					if(GameSettings.Instance.showTestLogs)
-						Debug.Log("AdsHandler refresh() - banner with id: " + UniqueBannerID + " refreshing");
+					GTDebug.log("Banner with id: " + UniqueBannerID + " refreshing");
 					
-					//					if(GameSettings.Instance.showTestLogs)
-					//						Debug.Log("AdsHandler - refreshing banner ad at position: ");
+					//					GTDebug.log("Refreshing banner ad at position: ");
 					
 					banner.Refresh();
 				}
 				else{
-					if(GameSettings.Instance.showTestLogs)
-						Debug.Log("AdsHandler refresh() - banner with id: " + UniqueBannerID + "not refreshing");
+					GTDebug.log("Banner with id: " + UniqueBannerID + "not refreshing");
 				}
 			}
 			else{
-				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("AdsHandler refresh() - banner with id: " + UniqueBannerID + "not loaded");
+				GTDebug.log("Banner with id: " + UniqueBannerID + "not loaded");
 			}
 			//else
 			//{
