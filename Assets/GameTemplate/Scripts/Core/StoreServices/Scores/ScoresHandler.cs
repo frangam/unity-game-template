@@ -68,7 +68,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 					double scoreSavedInServerDouble = gkScore.GetDoubleScore();
 					System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
 					long convertedValue = ((long) (timeSpan.TotalMilliseconds)); //milliseconds
-					GTDebug.log("Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServerDouble+"Secs. After: "+ convertedValue+"Ms");
+					GTDebug.log("LeaderboardID: "+ score.Id + " Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServerDouble+"Secs. After: "+ convertedValue+"Ms");
 					loadBestScoreFromStore(score.Id, convertedValue);
 				}
 				else{
@@ -88,8 +88,6 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			Score score = getScoreByID(scoreID);
 			if(score == null) return;
 			
-			GTDebug.log("Leaderboard ID: " + scoreID + " with score saved on the Store: "+  scoreFromStore.ToString());
-			
 			long savedLocally = getBestScoreByID (scoreID); //the score saved on the device (locally)
 			
 			GTDebug.log("Leaderboard ID: " + scoreID + " with score saved on the Store: "+  scoreFromStore.ToString());
@@ -97,12 +95,12 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			
 			//update the score saved on the device by the online score is greater
 			if(scoreFromStore > savedLocally){
-				GTDebug.log("Saving locally score from store because is greater than the previous saved on the device. From Store: "+scoreFromStore+", SavedLocally: "+savedLocally);
+				GTDebug.log("LeaderboardID: "+ scoreID + "Saving locally score from store because is greater than the previous saved on the device. From Store: "+scoreFromStore+", SavedLocally: "+savedLocally);
 				saveScoreOnlyLocallyByID(scoreID, scoreFromStore);
 			}
 			//send to server the greatest score that is the saved score locally
 			else if(scoreFromStore < savedLocally){
-				GTDebug.log("Sending to server the best score saved locally: " +savedLocally +". From Store: " + scoreFromStore);
+				GTDebug.log("LeaderboardID: "+ scoreID + "Sending to server the best score saved locally: " +savedLocally +". From Store: " + scoreFromStore);
 				
 				ScoresHandler.Instance.sendScoreToServerByID(scoreID, savedLocally);
 			}
@@ -163,7 +161,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		
 		if(GameCenterManager.IsPlayerAuthenticated){
 			//Show all rankings
-			if(string.IsNullOrEmpty(rankingID))
+			if(string.IsNullOrEmpty(id))
 				GameCenterManager.ShowLeaderboards();
 			//show specific ranking
 			else
@@ -272,7 +270,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		Score score = getScoreByID(scoreID); //get the score by its id from gamesettings asset
 		if(score == null) return;
 		
-		GTDebug.log("New score: "+newScoreValue);
+		GTDebug.log("LeaderboardID: "+ scoreID + ". New score: "+newScoreValue);
 		
 		bool sendScoreToServer = false;
 		long best = getBestScoreByID (scoreID);
@@ -286,6 +284,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		case ScoreOrder.ASCENDING: scoreToSend = best == 0 || newScoreValue <= best ? newScoreValue : best; break;
 		}
 		
+		GTDebug.log("LeaderboardID: "+ id + ". Best Score saved in device: "+best);
+		GTDebug.log("LeaderboardID: "+ id + ". Score to send: "+scoreToSend);
 		
 		
 		#if UNITY_ANDROID
@@ -321,6 +321,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthenticated){
 			id = id.Replace("-","_"); //replace because in iOS it is not supported ids with "-"
 			
+			//get player score saved in server side
 			if(GameCenterManager.GetLeaderboard(id) != null){
 				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
 				//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
@@ -328,23 +329,28 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 					double scoreSavedInServerDouble = GameCenterManager.GetLeaderboard(id).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).GetDoubleScore();
 					System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
 					long convertedValue = ((long) (timeSpan.TotalMilliseconds)); //milliseconds
-					GTDebug.log("Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServer+"Secs. After: "+ convertedValue+"Ms");
+					GTDebug.log("LeaderboardID: "+ id + "Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServer+"Secs. After: "+ convertedValue+"Ms");
 					scoreSavedInServer = convertedValue;
 				}
 				else
 					scoreSavedInServer = GameCenterManager.GetLeaderboard(id).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).GetLongScore();
 				
-				GTDebug.log("Server score: "+scoreSavedInServer + ". Score to send to the server: "+scoreToSend);
+				GTDebug.log("LeaderboardID: "+ id + "Server score: "+scoreSavedInServer + ". Score to send to the server: "+scoreToSend);
+				GTDebug.log("LeaderboardID: "+ id + "Score Order: "+score.Order);
 				
 				//criteria order to know which is a best score to send to the server or not
 				switch(score.Order){
 				case ScoreOrder.DESCENDING: sendScoreToServer = scoreSavedInServer < scoreToSend; break;
-				case ScoreOrder.ASCENDING: sendScoreToServer = scoreSavedInServer > scoreToSend; break;
+				case ScoreOrder.ASCENDING: sendScoreToServer = scoreSavedInServer == 0 || ( scoreSavedInServer > scoreToSend); break;
 				}
+				
+				
 			}
 			else{
 				sendScoreToServer = true;
 			}
+			
+			GTDebug.log("LeaderboardID: " + id + " .Must we send the score " + scoreToSend + "to server ? " + sendScoreToServer); 
 			
 			//send score to the server
 			if(sendScoreToServer){
@@ -353,15 +359,18 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				if(score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
 					System.TimeSpan timeSpan = System.TimeSpan.FromMilliseconds(scoreToSend);
 					double scoreToSendInDouble = timeSpan.TotalSeconds; //seconds to send to Game Center
+					
+					GTDebug.log("LeaderboardID: "+ id + "Reporting Score [" + scoreToSendInDouble + "] (seconds) to server (format elapset time hudredths of a second)");
+					
 					GameCenterManager.ReportScore(scoreToSendInDouble, id); //sending
-					GTDebug.log("Score to send In Secs - Converting Ms to Seconds score."+scoreToSendInDouble);
+					GTDebug.log("LeaderboardID: "+ id + "Score sent In Secs - Converted Ms to Seconds score."+scoreToSendInDouble);
 				}
 				//send long score
 				else{
 					GameCenterManager.ReportScore(scoreToSend, id); //sending
 				}
 				
-				GTDebug.log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+				GTDebug.log ("LeaderboardID: "+ id + "Sending score to the server: " + scoreToSend);
 			}
 		}
 		#endif

@@ -353,7 +353,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(result.isSuccess) {
 			//cambiamos la bandera para avisar que la tienda esta lista
 			IsInited = true;
-			GameLoaderManager.Instance.InAppInited = true;
+			
+			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
+				GameLoaderManager.Instance.InAppInited = true;
 			
 			numProducts = AndroidInAppPurchaseManager.instance.inventory.products.Count;
 			productsGoogle = AndroidInAppPurchaseManager.instance.inventory.products;
@@ -384,7 +386,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(result.IsSucceeded) {
 			GTDebug.log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
-			GameLoaderManager.Instance.InAppInited = true;
+			
+			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
+				GameLoaderManager.Instance.InAppInited = true;
 			
 			numProducts = IOSInAppPurchaseManager.instance.products.Count;
 			productsIOS = IOSInAppPurchaseManager.instance.products;
@@ -473,7 +477,10 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		
 		if(WP8InAppPurchasesManager.instance.products != null){
 			IsInited = true;
-			GameLoaderManager.Instance.InAppInited = true;
+			
+			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
+				GameLoaderManager.Instance.InAppInited = true;
+			
 			numProducts = WP8InAppPurchasesManager.instance.products.Count;
 			productsWP = WP8InAppPurchasesManager.instance.products;
 			//			dispatcher.dispatch(RETRIEVED_PRODUCTS, WP8InAppPurchasesManager.instance.products);
@@ -611,7 +618,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				        && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)) {
 					GTDebug.log("Restoring purchase of non consumable product: " + product.ItemType + ". ID: "+product.Id);
 					
-					if(!needRestore)
+					if(!needRestore && iBaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 						GameLoaderManager.Instance.InAppNeedRestoreProducts = true;
 					
 					needRestore = true;
@@ -621,7 +628,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			
 			GTDebug.log("Need to restore products? "+needRestore);
 			
-			if(needRestore){
+			if(needRestore && BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN){
 				GameLoaderManager.Instance.InAppAllProductsRestored = true;
 				GameLoaderManager.Instance.InAppInited = true;
 				OnProcessingRestorePurchases(true);

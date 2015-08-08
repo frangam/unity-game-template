@@ -592,7 +592,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		int openingsForShowInitialAd = GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START;
 		
 		//show initial Add
-		if(totalOpenings % openingsForShowInitialAd == 0){
+		if(openingsForShowInitialAd > 0 && totalOpenings % openingsForShowInitialAd == 0){
 			GTDebug.log("Showing interstitial ad when start game");
 			AdsHandler.Instance.showInterstitial();
 		}

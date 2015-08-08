@@ -56,10 +56,8 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			//--
 			// Player Scores
 			//--
-			
-			
 			GameCenterManager.OnPlayerScoreLoaded += OnPlayerScoreLoaded;
-			
+			GameCenterManager.OnScoreSubmitted += OnScoreSubmitted;
 			
 			
 			//		DontDestroyOnLoad (gameObject);
@@ -108,18 +106,6 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	/*--------------------------------
 	 * Eventos Game Center
 	 -------------------------------*/
-	private void OnPlayerScoreLoaded (GK_PlayerScoreLoadedResult result) {
-		if(result.IsSucceeded) {
-			scoresLoaded++;
-			
-			if(scoresLoaded >= totalScoresToLoad)
-				GameCenterManager.OnPlayerScoreLoaded -= OnPlayerScoreLoaded;
-			
-			GK_Score score = result.loadedScore;
-			ScoresHandler.Instance.loadBestScoreFromStore(score);
-		}
-	}
-	
 	void OnAuthFinished (ISN_Result res) {
 		
 		
@@ -140,6 +126,31 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			//			GameLoaderManager.Instance.GCPrepared = false;
 		}
 	}
+	
+	private void OnPlayerScoreLoaded (GK_PlayerScoreLoadedResult result) {
+		if(result.IsSucceeded) {
+			scoresLoaded++;
+			
+			if(scoresLoaded >= totalScoresToLoad)
+				GameCenterManager.OnPlayerScoreLoaded -= OnPlayerScoreLoaded;
+			
+			GK_Score score = result.loadedScore;
+			GTDebug.log("Leaderboard ID: "+ score.leaderboardId + " Player score loaded: [Long: " + score.GetLongScore()+"] [Double: "+score.GetDoubleScore()+"]");
+			ScoresHandler.Instance.loadBestScoreFromStore(score);
+		}
+		else{
+			GTDebug.log("Player score load was failed");
+		}
+	}
+	
+	private void OnScoreSubmitted (ISN_Result result) {
+		if(result.IsSucceeded)  {
+			GTDebug.log("Score Submitted");
+		} else {
+			GTDebug.log("Score Submit Failed");
+		}
+	}
+	
 	
 	
 	private void OnAchievementsLoaded() {

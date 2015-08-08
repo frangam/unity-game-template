@@ -1,685 +1,255 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnionAssets.FLE;
-using System;
+using System.Collections.Generic;
 
-public class BaseGameManager : MonoBehaviour {
+public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 	//--------------------------------------
-	// Constants
-	//--------------------------------------
-	public const string GAME_FINISHED = "gt_game_finished";
-	public const string LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS = "gt_launching_ad_during_gameplay_in_x_secs";
-	
-	//--------------------------------------
-	// Static Attributes
-	//--------------------------------------
-	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
-	
-	//--------------------------------------
-	// Setting Attributes
+	// Atributos de configuracion
 	//--------------------------------------
 	[SerializeField]
-	private string 		playerTag = "Player";
-	
-	[SerializeField]
-	private bool 		startGameAtTheStartMoment = false;
-	
-	[SerializeField]
-	private bool 		pauseTimeAtStart = false;
-	
-	[SerializeField]
-	private bool 		pauseTimeWhenFinishedGame = true;
-	
-	[SerializeField]
-	private bool 		sendScoresToServer = true;
-	
-	[SerializeField]
-	private string 		gameoverWindow = UIBaseWindowIDs.GAMEOVER;
-	
-	[SerializeField]
-	private float 		gameOverDelay = 1.5f;
-	
-	[SerializeField]
-	private float 		missionCompletedDelay = 2.5f;
-	
-	public GameObject 	explosionPrefab;
-	
-	public bool 		showAdWhenPlayerForcesFinishGame = true;
-	
+	private BaseSound[] sonidos;
 	
 	//--------------------------------------
-	// Private Attributes
+	// Atributos privados
 	//--------------------------------------
-	private GameObject 		player;
-	private bool 			paused;
-	private bool 			started;
-	private bool 			inited;
-	private bool 			finished;
-	private GameDifficulty 	difficulty;
-	private GameMode 		gameMode;
-	private long 			currentScore;
-	private int				currentLevelSelected;
-	private bool			isGameOver;
-	private bool 			isLocalMultiplayerGame;
-	private bool 			isOnlineMultiplayerGame;
+	static AudioListener mListener;
+	private Dictionary<string, AudioSource> sonidosReproduciendo;
+	
+	//--------------------------------------
+	// Metodos Unity
+	//--------------------------------------
+	protected override void Awake ()
+	{
+		base.Awake ();
+		sonidosReproduciendo = new Dictionary<string, AudioSource> ();
+	}
+	
+	void OnLevelWasLoaded(){
+		List<AudioSource> sonidosEliminar = new List<AudioSource> ();
+		List<string> idssonidosEliminar = new List<string> ();
+		
+		foreach(string idSonido in sonidosReproduciendo.Keys){
+			BaseSound sonido = getSonido(idSonido);
+			
+			if(!sonido.EnBackground){
+				sonidosEliminar.Add(sonidosReproduciendo[idSonido]);
+				idssonidosEliminar.Add(idSonido);
+			}
+		}
+		
+		for(int i=0; i<idssonidosEliminar.Count; i++){
+			sonidosReproduciendo.Remove(idssonidosEliminar[i]);
+			Destroy(sonidosEliminar[i].gameObject);
+		}
+	}
+	
+	//--------------------------------------
+	// Metodos privados
+	//--------------------------------------
+	private BaseSound getSonido(string id){
+		if(sonidos == null)
+			return null;
+		
+		BaseSound res = null;
+		
+		foreach(BaseSound s in sonidos){
+			if(s.Id == id){
+				res = s;
+				break;
+			}
+		}
+		
+		return res;
+	}
+	
+	//--------------------------------------
+	// Metodos publicos
+	//--------------------------------------
+	public bool IsSoundActive(){
+		return CurrentGeneralSoundVolume() > 0;
+	}
+	public bool IsMusicActive(){
+		return CurrentGeneralMusicVolume() > 0;
+	}
+	public float CurrentGeneralSoundVolume(){
+		return PlayerPrefs.GetFloat(GameSettings.PP_SOUND);
+	}
+	public float CurrentGeneralMusicVolume(){
+		return PlayerPrefs.GetFloat(GameSettings.PP_MUSIC);
+	}
+	public void SetCurrentGeneralSoundVolume(float newVol = 1f){
+		PlayerPrefs.SetFloat(GameSettings.PP_SOUND, newVol);
+	}
+	public void SetCurrentGeneralMusicVolume(float newVol = 1f){
+		PlayerPrefs.SetFloat(GameSettings.PP_MUSIC, newVol);
+	}
+	
+	
 	
 	/// <summary>
-	/// True if we are going to handle scores in the current game mode. Recommended to its value in a child class.
+	/// Mutes the or active all onces mute onces active.
 	/// </summary>
-	protected bool 		handleScores = true;
-	
-	//--------------------------------------
-	// Getters/Setters
-	//--------------------------------------
-	public static EventDispatcherBase dispatcher {
-		get {
-			return _dispatcher;
-		}
+	/// <returns><c>true</c>, if sound or music is active, <c>false</c> otherwise.</returns>
+	/// <param name="excludeIfIsMuted">If set to <c>true</c> exclude if is muted.</param>
+	public void muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter(bool forceMute = true){
+		muteOrActiveOncesMuteOncesActive(SoundType.FX, false, forceMute);
+		muteOrActiveOncesMuteOncesActive(SoundType.MUSIC, true, forceMute);
 	}
 	
-	public GameObject Player {
-		get {
-			return this.player;
-		}
-	}
-	
-	public GameDifficulty Difficulty {
-		get {
-			return this.difficulty;
-		}
-	}
-	
-	public GameMode GameMode {
-		get {
-			return this.gameMode;
-		}
-	}
-	
-	public long CurrentScore {
-		get {
-			return this.currentScore;
-		}
-		set {
-			currentScore = value;
-		}
-	}
-	
-	public int CurrentLevelSelected {
-		get {
-			return this.currentLevelSelected;
-		}
-	}
-	
-	public bool Started {
-		get {
-			return this.started;
-		}
-	}
-	
-	public bool Inited {
-		get {
-			return this.inited;
-		}
-	}
-	
-	public bool Finished {
-		get {
-			return this.finished;
-		}
-	}
-	
-	public bool IsGameOver {
-		get {
-			return this.isGameOver;
-		}
-		set {
-			isGameOver = value;
-		}
-	}
-	
-	public bool IsLocalMultiplayerGame {
-		get {
-			return this.isLocalMultiplayerGame;
-		}
-	}
-	
-	public bool IsOnlineMultiplayerGame {
-		get {
-			return this.isOnlineMultiplayerGame;
-		}
-	}
-	
-	
-	//--------------------------------------
-	// Unity Methods
-	//--------------------------------------
-	#region Unity
-	protected virtual void Awake(){
-		initGame();
-		
-		//Game Analytics event name
-		string gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
-		switch(gameMode){
-		case GameMode.QUICKGAME:
-			gaEvent = GAEvents.QUICKGAME_LEVEL_OPENED;
-			break;
-		case GameMode.CAMPAIGN:
-			gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
-			BaseLevelLoaderController.dispatcher.addEventListener(BaseLevelLoaderController.LEVEL_LOADED, OnLevelLoaded);
-			BaseQuestManager.dispatcher.addEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
-			BaseQuestManager.Instance.resetProperties();
-			break;
-			
-		case GameMode.SURVIVAL:
-			gaEvent = GAEvents.SURVIVAL_LEVEL_OPENED;
-			break;
-			
-		}
-		
-		//multiplayer options
-		isLocalMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_LOCAL_MULTIPLAYER) != 0 ? true:false;
-		isOnlineMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_ONLINE_MULTIPLAYER) != 0 ? true:false;
-		
-		//GA
-		//TODO Analytics
-	}
-	protected virtual void Start(){
-		if(startGameAtTheStartMoment)
-			startGame();
-	}
-	protected virtual void Update(){
-		
-	}
-	
-	protected virtual void LateUpdate(){
-	}
-	
-	protected virtual void OnDestroy(){
-		if(gameMode == GameMode.CAMPAIGN){
-			BaseLevelLoaderController.dispatcher.removeEventListener(BaseLevelLoaderController.LEVEL_LOADED, OnLevelLoaded);
-			BaseQuestManager.dispatcher.removeEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
-		}
-	}
-	#endregion
-	
-	//--------------------------------------
-	// Private Methods
-	//--------------------------------------
 	/// <summary>
-	/// Checks the ad showing during game play.
-	/// 
-	/// We use WaitForSeconds because we want to pause this process when game is paused
+	/// Mutes the or active all onces mute onces active.
 	/// </summary>
-	/// <returns>The ad showing during game play.</returns>
-	float timerForCheckAdShowingDuringGameplay = 0;
-	private IEnumerator checkAdShowingDuringGamePlay(){
-		yield return null;
-		bool canShowAd = canShowAdDuringGamePlay();
+	/// <returns><c>true</c>, if sound or music is active,, <c>false</c> otherwise.</returns>
+	/// <param name="type">Type.</param>
+	/// <param name="excludeIfIsMuted">If set to <c>true</c> exclude if is muted.</param>
+	public bool muteOrActiveOncesMuteOncesActive(SoundType type, bool playOrStopMusic = true, bool forceMute = false){
+		bool active = type == SoundType.FX ? IsSoundActive() : IsMusicActive();
+		string forceMutePrevKey = "";
+		bool muteForcedPreviously = false;
+		float curVol = 0;
+		float newVol = 0;
+		bool changeVolume = false;
 		
-		if(canShowAd){
-			int secsToNotify = GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD - GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS;
+		GTDebug.log(type+" Active ? "+active);
+		
+		switch(type){
+		case SoundType.FX:
+			forceMutePrevKey = GameSettings.PP_SOUND_MUTE_FORCED;
+			curVol = CurrentGeneralSoundVolume();
+			break;
 			
-			//wait time for notify ad will be shown in the next seconds
-			while(canShowAd && timerForCheckAdShowingDuringGameplay < secsToNotify){
-				canShowAd = canShowAdDuringGamePlay(); 
-				timerForCheckAdShowingDuringGameplay += Time.deltaTime;
-				yield return null;
+		case SoundType.MUSIC:
+			forceMutePrevKey = GameSettings.PP_MUSIC_MUTE_FORCED;
+			curVol = CurrentGeneralMusicVolume();
+			break;
+		}
+		
+		muteForcedPreviously = PlayerPrefs.GetInt(forceMutePrevKey) != 0 ? true : false;
+		changeVolume = (!forceMute || ((forceMute && !muteForcedPreviously && curVol != 0f) || (forceMute && muteForcedPreviously && curVol == 0f)));
+		
+		GTDebug.log(type+" Current Vol: "+curVol + ". Force change volume ? " +forceMute+ ". Prev Forced ? " +muteForcedPreviously + ". So Change Vol ? " + changeVolume);
+		
+		if(changeVolume){
+			newVol = curVol == 0f ? 1f : 0f; //change to mute or previous sound saved
+			
+			//update volume
+			if(type == SoundType.FX){
+				SetCurrentGeneralSoundVolume(newVol); 
+				active = IsSoundActive();
+			}
+			else if(type == SoundType.MUSIC){
+				SetCurrentGeneralMusicVolume(newVol);
+				active = IsMusicActive();
+				
+				if(playOrStopMusic)
+					playOrStopMusicWasMutedOrActivePreviously(active);
 			}
 			
-			if(canShowAd){
-				//launch event to notify an ad will be shown in the next seconds
-				dispatcher.dispatch(LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS);
-			}
+			GTDebug.log(type+" Changing Vol to: " + newVol + ". Active ? " + active);
 			
-			//wait the next seconds to show the ad
-			while(canShowAd && timerForCheckAdShowingDuringGameplay < GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS){
-				canShowAd = canShowAdDuringGamePlay(); 
-				timerForCheckAdShowingDuringGameplay += Time.deltaTime;
-				yield return null;
+			//set flag PP_SOUND_MUTE_FORCED if we force mute or not
+			if(forceMute){
+				GTDebug.log(type+" Set flag Force Change Vol to True");
+				PlayerPrefs.SetInt(forceMutePrevKey, 1);
 			}
-			
-			//finally show the ad
-			if(canShowAd){			
-				showAdDuringGamePlay();
+			else if(!forceMute){
+				GTDebug.log(type+" Reset flag Force Change Vol to False");
+				PlayerPrefs.SetInt(forceMutePrevKey, 0);
 			}
 		}
-		//repeat again
-		else if(!isGameOver && !finished)
-			StartCoroutine(checkAdShowingDuringGamePlay());
-	}
-	
-	public virtual void resetTimerForAdShowingDuringGameplay(){
-		timerForCheckAdShowingDuringGameplay = 0;
-	}
-	
-	public virtual bool canShowAdDuringGamePlay(){
-		return true;
-	}
-	
-	private void handleGameOverAdShowing(){
-		int numGameovers = 0, numWins = 0;
-		int numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_BY_DEFAULT, numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_BY_DEFAULT;
 		
-		//handle total
 		
-		//update total of gameovers
-		if(isGameOver){
-			numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAMEOVERS);
-			numGameovers++;
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_GAMEOVERS, numGameovers);
+		
+		return active;
+	}
+	
+	public void playOrStopMusicWasMutedOrActivePreviously(bool active = true){
+		if(active){
+			if(BaseGameScreenController.Instance.Section == GameSection.MAIN_MENU)
+				BaseSoundManager.Instance.play(BaseSoundIDs.MENU_MUSIC);
+			else if(BaseGameScreenController.Instance.Section == GameSection.GAME)
+				BaseSoundManager.Instance.play(BaseSoundIDs.GAME_MUSIC);
 		}
-		//update total of wins
 		else{
-			numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_WINS);
-			numWins++;
-			PlayerPrefs.SetInt(GameSettings.PP_TOTAL_WINS, numWins);
-		}
-		
-		
-		//hanlde by each game mode
-		switch(gameMode){
-		case GameMode.CAMPAIGN:
-			//handle campaign gameovers
-			if(isGameOver){
-				//total of campaign
-				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_CAMPAIGN_GAMEOVERS);
-				numGameovers++;
-				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_CAMPAIGN_GAMEOVERS, numGameovers);
-				
-				//specific of this level
-				int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString());
-				go++;
-				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_LEVEL+currentLevelSelected.ToString(), go);
-			}
-			//handle campaign wins
-			else{
-				//total wins
-				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_CAMPAIGN_WINS);
-				numWins++;
-				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_CAMPAIGN_WINS, numWins);
-				
-				//specific wins
-				int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_IN_LEVEL+currentLevelSelected.ToString());
-				w++;
-				PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_IN_LEVEL+currentLevelSelected.ToString(), w);
-			}
-			
-			
-			break;
-		case GameMode.QUICKGAME:
-			//update total of quickgame gameovers
-			if(isGameOver){
-				//total of campaign
-				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_QUICKGAME_GAMEOVERS);
-				numGameovers++;
-				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_QUICKGAME_GAMEOVERS, numGameovers);
-				
-				//specifi by difficulty
-				if(difficulty != GameDifficulty.NONE){
-					int dif = ((int) difficulty);
-					int go  = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString());
-					go++;
-					PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITH_DIFFICULTY+dif.ToString(), go);
-					
-					switch(difficulty){
-					case GameDifficulty.EASY: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_EASY_MODE; break;
-					case GameDifficulty.NORMAL: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_NORMAL_MODE; break;
-					case GameDifficulty.HARD: numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_HARD_MODE; break;
-					}
-				}
-				else if(difficulty == GameDifficulty.NONE){
-					int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY);
-					go++;
-					PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_WITHOUT_DIFFICULTY, go);
-				}
-			}
-			//handle quickgame wins
-			else{
-				//total wins
-				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_QUICKGAME_WINS);
-				numWins++;
-				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_QUICKGAME_WINS, numWins);
-				
-				//specific wins by difficulty
-				if(difficulty != GameDifficulty.NONE){
-					int dif = ((int) difficulty);
-					int w  = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_WITH_DIFFICULTY+dif.ToString());
-					w++;
-					PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_WITH_DIFFICULTY+dif.ToString(), w);
-					
-					switch(difficulty){
-					case GameDifficulty.EASY: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_EASY_MODE; break;
-					case GameDifficulty.NORMAL: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_NORMAL_MODE; break;
-					case GameDifficulty.HARD: numWinsToCheck = GameSettings.Instance.NUM_WINS_SHOW_AD_HARD_MODE; break;
-					}
-				}
-				else if(difficulty == GameDifficulty.NONE){
-					int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_WITHOUT_DIFFICULTY);
-					w++;
-					PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_WITHOUT_DIFFICULTY, w);
-				}
-			}
-			
-			
-			break;
-		case GameMode.SURVIVAL:
-			//update total of survival gameovers
-			if(isGameOver){
-				//total go of SURVIVAL
-				numGameovers = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_SURVIVAL_GAMEOVERS);
-				numGameovers++;
-				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_SURVIVAL_GAMEOVERS, numGameovers);
-				
-				//specific go of survival
-				int go = PlayerPrefs.GetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
-				go++;
-				PlayerPrefs.SetInt(GameSettings.PP_NUM_GAMEOVERS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), go);
-				
-				//num go to check to show ads
-				numGameoversToChek = GameSettings.Instance.NUM_GAMEOVERS_SHOW_AD_SURVIVAL_MODE;
-			}
-			//handle survival wins
-			else{
-				//total wins
-				numWins = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_SURVIVAL_WINS);
-				numWins++;
-				PlayerPrefs.SetInt(GameSettings.PP_TOTAL_SURVIVAL_WINS, numWins);
-				
-				//specific wins
-				int w = PlayerPrefs.GetInt(GameSettings.PP_NUM_WINS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString());
-				w++;
-				PlayerPrefs.SetInt(GameSettings.PP_NUM_WINS_IN_SURVIVAL_LEVEL+currentLevelSelected.ToString(), w);
-				
-				//num WINS to check to show ads
-				numGameoversToChek = GameSettings.Instance.NUM_WINS_SHOW_AD_SURVIVAL_MODE;
-			}
-			
-			
-			break;
-		}
-		
-		//refresh banner ad
-		AdsHandler.Instance.refrescarBanner();
-		
-		//show interstitial ad
-		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0)){
-			AdsHandler.Instance.showInterstitial();
-			
-			//GA
-			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
+			if(BaseGameScreenController.Instance.Section == GameSection.MAIN_MENU)
+				BaseSoundManager.Instance.stop(BaseSoundIDs.MENU_MUSIC);
+			else if(BaseGameScreenController.Instance.Section == GameSection.GAME)
+				BaseSoundManager.Instance.stop(BaseSoundIDs.GAME_MUSIC);
 		}
 	}
 	
-	private IEnumerator finishGameWithDelay(){
-		float delay = isGameOver ? gameOverDelay : missionCompletedDelay;
+	public void play(string id){
+		BaseSound sonido = getSonido (id);
 		
-		yield return new WaitForSeconds(delay);
+		if(sonido == null) return;
+		//		if((sonido.Tipo == TipoSonido.FX && !Configuracion.sonidoActivo) || (sonido.Tipo == TipoSonido.MUSIC && !Configuracion.musicaActiva)) return;
 		
-		PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_PLAYED, currentLevelSelected); //for analytics
-		
-		string gaEvent = GAEvents.CAMPAIGN_LEVEL_PLAYED; //analytics
-		
-		//show gameover windows
-		switch(gameMode){
-		case GameMode.CAMPAIGN:
-			if(isGameOver){
-				int prevTries = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_TRIES_TIMES+currentLevelSelected.ToString()); //get the previous tries
-				prevTries++;
-				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_TRIES_TIMES+currentLevelSelected.ToString(), prevTries); //update tries
-				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_FAILED);
+		if(sonidosReproduciendo != null
+		   && ((sonido.Tipo == SoundType.FX && CurrentGeneralSoundVolume() > 0f) || (sonido.Tipo == SoundType.MUSIC && CurrentGeneralMusicVolume() > 0f))){
+			if(sonido.Tipo != SoundType.MUSIC && sonidosReproduciendo != null 
+			   && ( !sonidosReproduciendo.ContainsKey(id)  || (sonidosReproduciendo.ContainsKey(id) && sonidosReproduciendo[id] != null &&  !sonidosReproduciendo[id].isPlaying))){
+				stop (sonido.Id);
+				play (sonido);
 				
-				//GA
-				//TODO Analytics	GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevTries)
+				//				Debug.Log("reproduciendo: "+sonido.Id);
+			}
+			//se mantiene la musica en reproduccion
+			else if(sonido.Tipo == SoundType.MUSIC && sonidosReproduciendo != null 
+			        && ( (sonidosReproduciendo.ContainsKey(id) && sonidosReproduciendo[id].isPlaying))){
+				
+				//				Debug.Log("ya se esta reproduciendo");
 			}
 			else{
-				int prevCompleted = PlayerPrefs.GetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString()); //get the previous completed times
-				prevCompleted++;
-				//				((UIBaseMIssionCompletedWin) UIController.Instance.Manager.getWindow(UIBaseWindowIDs.MISSION_COMPLETED)).init(BaseLevelLoaderController.Instance.CurrentLevel);
+				play (sonido);
 				
-				//window mission completed is inited in event OnQuestCompleted!!
-				UIController.Instance.Manager.open(UIBaseWindowIDs.MISSION_COMPLETED); //first show window
-				PlayerPrefs.SetInt(GameSettings.PP_LEVEL_COMPLETED_TIMES+currentLevelSelected.ToString(), prevCompleted); //update completed times
-				
-				//GA
-				//TODO Analytics GAEvents.CAMPAIGN_LEVEL_GAMEOVERS +":"+ currentLevelSelected.ToString(), prevCompleted
+				//				Debug.Log("reproduciendo: "+sonido.Id);
 			}
-			break;
 			
-		case GameMode.SURVIVAL:
-			gaEvent = GAEvents.SURVIVAL_LEVEL_PLAYED;
-			UIController.Instance.Manager.open(gameoverWindow);
-			break;
-		case GameMode.QUICKGAME:
-			gaEvent = GAEvents.QUICKGAME_LEVEL_PLAYED;
-			UIController.Instance.Manager.open(gameoverWindow);
-			break;
-			
-		}
-		
-		//GA
-		//TODO Analytics		gaEvent
-		
-		//handle ad showing
-		handleGameOverAdShowing();
-		
-		//pause game if needed
-		if(pauseTimeWhenFinishedGame){
-			Time.timeScale = 0f;
+			//			if(sonidosReproduciendo.ContainsKey(id))
+			//				sonidosReproduciendo[id].Play();
+			//			else{
+			//				AudioSource source = NGUITools.PlaySound (sonido.Clip, sonido.Volumen, sonido.Loop);
+			//				sonidosReproduciendo[id] = source;
+			//			}
 		}
 	}
 	
-	//--------------------------------------
-	// Public Methods
-	//--------------------------------------
-	public virtual void initGame(){
-		//find the player gameobject
-		GameObject[] players = GameObject.FindGameObjectsWithTag(playerTag);
-		if(players != null && players.Length > 0 && players.Length > GameSettings.Instance.currentGameMultiversion){
-			player = players[GameSettings.Instance.currentGameMultiversion];
-		}
-		
-		difficulty = (GameDifficulty) PlayerPrefs.GetInt(GameSettings.PP_GAME_DIFFICULTY); //get the selected game difficulty
-		gameMode = (GameMode) PlayerPrefs.GetInt(GameSettings.PP_GAME_MODE); //get the selected game mode
-		currentScore = 0;
-		inited = true;
-		finished = false;
-		started = false;
-		Paused = pauseTimeAtStart;
-		
-		
-		
-		currentLevelSelected = BaseLevelLoaderController.Instance.LoadTestLevel ? BaseLevelLoaderController.Instance.LevelToLoadTEST //get a test level
-			: lastSelectedLevel(); //get the current level selected
-		
-		if(gameMode == GameMode.CAMPAIGN){
-			BaseQuestManager.Instance.init(currentLevelSelected);
-		}
-	}
-	
-	public int lastSelectedLevel(){
-		int last = gameMode == GameMode.SURVIVAL ? PlayerPrefs.GetInt(GameSettings.PP_SELECTED_SURVIVAL_LEVEL) : PlayerPrefs.GetInt(GameSettings.PP_SELECTED_LEVEL); 
-		
-		return last;
-	}
-	
-	public virtual void showAdDuringGamePlay(){
-		switch(GameSettings.Instance.adTypeDuringGamePlay){
-		case AdType.VIDEO: AdsHandler.Instance.PlayAVideo(); break;
-		case AdType.RANDOM_INTERSTITIAL_VIDEO: AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd(); break;
-		default: AdsHandler.Instance.showInterstitial(); break; 
-		}
-	}
-	
-	public void playerForcesFinishGame(){
-		if(showAdWhenPlayerForcesFinishGame){
-			AdsHandler.Instance.showInterstitial();
-			
-			//GA
-			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
-		}
+	public void stop(string id){
+		if(sonidosReproduciendo != null && sonidosReproduciendo.ContainsKey(id) && sonidosReproduciendo[id].isPlaying)
+			sonidosReproduciendo[id].Stop();
 	}
 	
 	/// <summary>
-	/// Do start game functions
+	///Stops all of the sounds that can be able to stopped when it is game over
 	/// </summary>
-	public virtual void startGame(){
-		started = true;
-		Paused = false;
-		
-		//checks if initing coroutine to check the ad showing during the game play
-		if(!GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD > 0)
-			StartCoroutine(checkAdShowingDuringGamePlay());
-	}
-	
-	/// <summary>
-	/// Do finish game functions
-	/// </summary>
-	public virtual void finishGame(){
-		if(!finished){
-			dispatcher.dispatch(GAME_FINISHED);
-			finished = true;
-			
-			if(handleScores)
-				manageScores();
-			
-			StartCoroutine(finishGameWithDelay());
+	public void stopAllWhenGameOver(){
+		foreach(BaseSound s in sonidos){
+			if(s.StopWhenGameOver)
+				stop(s.Id);
 		}
 	}
 	
-	public virtual void manageScores(){
-		//send score to the server
-		if(sendScoresToServer){
-			ScoresHandler.Instance.sendScoreToServerByID(getRankingID(), currentScore);
-		}
-		//save only locally
-		else{
-			ScoresHandler.Instance.saveScoreOnlyLocallyByID(getRankingID(), currentScore);
-		}
-	}
-	
-	public virtual string getRankingID(){
-		//implement in child
-		throw new NotImplementedException();
-	}
-	
-	public virtual void PlayerLostLife (){
-		// deal with player life lost (update U.I. etc.)
-	}
-	
-	public virtual void SpawnPlayer ()
-	{
-		// the player needs to be spawned
-	}
-	
-	public virtual void Respawn ()
-	{
-		// the player is respawning
-	}
-	
-	
-	
-	public virtual void Explode ( Vector3 aPosition )
-	{		
-		// instantiate an explosion at the position passed into this function
-		Instantiate( explosionPrefab,aPosition, Quaternion.identity );
-	}
-	
-	public virtual void EnemyDestroyed( Vector3 aPosition, int pointsValue, int hitByID )
-	{
-		// deal with a enemy destroyed
-	}
-	
-	public virtual void BossDestroyed()
-	{
-		// deal with the end of a boss battle
-	}
-	
-	public virtual void RestartGameButtonPressed()
-	{
-		// deal with restart button (default behaviour re-loads the currently loaded scene)
-		ScreenLoaderVisualIndicator.Instance.LoadScene(Application.loadedLevelName);
-	}
-	
-	
-	public virtual bool Paused
-	{
-		get 
-		{ 
-			// get paused
-			return paused; 
-		}
-		set
+	private void play(BaseSound sonido){
+		if (sonido.Clip != null && sonido.Volumen > 0.01f)
 		{
-			//set Timemanager fixed timestep
-			BaseGameScreenController.Instance.resetFixedTimeStepOfTimeManager();	
-			
-			// set paused 
-			paused = value;
-			
-			if (paused)
-			{
-				if(!AdsHandler.Instance.HasPausedGame && started)
-					UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
+			if(sonidosReproduciendo != null && sonidosReproduciendo.ContainsKey(sonido.Id))
+				sonidosReproduciendo[sonido.Id].Play();
+			else if(sonidosReproduciendo != null && !sonidosReproduciendo.ContainsKey(sonido.Id)){
+				GameObject go = new GameObject("audio"+sonido.Id);//Instantiate(new GameObject()) as GameObject;
+				go.transform.parent = this.transform;
 				
-				//				//mute fx
-				//				BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX, true, true);
+				//mantenemos sonido en background
+				if(sonido.EnBackground)
+					go.AddComponent<BackgroundSound>();
 				
-				// pause time
-				Time.timeScale= 0f;
-			} else {
-				if(!AdsHandler.Instance.HasPausedGame && started)
-					UIController.Instance.Manager.close(UIBaseWindowIDs.PAUSE);
-				
-				//				//unmute fx
-				//				BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX, true, true);
-				
-				// unpause Unity
-				Time.timeScale = 1f;
-			}
+				AudioSource source = go.AddComponent<AudioSource>();
+				source.clip = sonido.Clip;
+				source.volume = sonido.Volumen;
+				source.pitch = sonido.Pitch;
+				source.loop = sonido.Loop;
+				source.Play();//(sonido.Clip, sonido.Volumen);
+				sonidosReproduciendo[sonido.Id] = source;
+			}				
 		}
-	}
-	
-	//--------------------------------------
-	//  EVENTS
-	//--------------------------------------
-	public virtual void OnLevelLoaded(CEvent e){
-		
-	}
-	
-	public virtual void OnLevelCompleted(int levelCompleted){
-		
-	}
-	
-	public virtual void OnQuestsCompleted(CEvent e){
-		int lastUnlockedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED);
-		
-		//first load info of completed mission window
-		if(gameMode == GameMode.CAMPAIGN){
-			UIBaseMIssionCompletedWin w = (UIBaseMIssionCompletedWin) UIController.Instance.Manager.getWindow(UIBaseWindowIDs.MISSION_COMPLETED);
-			w.initBestTime(BaseLevelLoaderController.Instance.CurrentLevel);
-			
-			if(w.LoadInfoWhenQuesCompleted)
-				w.showInfo();
-		}
-		
-		
-		//save completed level
-		int lastCompletedLevel = PlayerPrefs.GetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED);
-		if(currentLevelSelected > lastCompletedLevel){
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_CAMPAIGN_LEVEL_COMPLETED, currentLevelSelected);
-			
-			OnLevelCompleted(currentLevelSelected);
-		}
-		
-		//unlock the next level
-		if(currentLevelSelected == lastUnlockedLevel && BaseLevelLoaderController.Instance.Levels != null && currentLevelSelected < BaseLevelLoaderController.Instance.Levels.Count){
-			int nextLevel = currentLevelSelected+1;
-			PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_UNLOCKED, nextLevel);
-			
-			//GA
-			//TODO Analytics GAEvents.CAMPAIGN_LEVEL_UNLOCKED +":"+ nextLevel.ToString()
-		}
-		
-		finishGame();
 	}
 }

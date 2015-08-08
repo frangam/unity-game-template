@@ -69,6 +69,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		   && (currentTime < IN_APP_WAIT_INITIALIZATION_TIME 
 		    && (!CoreIAPManager.Instance.IsInited 
 		    || (CoreIAPManager.Instance.IsInited 
+		    && BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN 
 		    && GameLoaderManager.Instance.InAppNeedRestoreProducts && !GameLoaderManager.Instance.InAppAllProductsRestored
 		    )
 		    )
@@ -153,26 +154,38 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		}
 	}
 	
-	private void pauseGame(bool pause = true){
-		if(pause)
-			hasPausedGame = pause;
+	private void pauseGame(bool pause = true, bool alwaysMute = true){
+		//alway mute sound and music when show an ad
+		if(alwaysMute)
+			BaseSoundManager.Instance.muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter();
 		
-		BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.MUSIC,true,true);
-		BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX,true,true);
-		
-		
-		//pausing the game
-		if(BaseGameScreenController.Instance.Section == GameSection.GAME){
+		//pausing / unpausing the game
+		//if we have paused or if we have not paused and game was not paused
+		if(BaseGameScreenController.Instance.Section == GameSection.GAME 
+		   && (hasPausedGame || (!hasPausedGame && !GameController.Instance.Manager.Paused))){
+			if(pause)
+				hasPausedGame = pause;
+			
+			if(!alwaysMute)
+				BaseSoundManager.Instance.muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter();
+			
 			GameController.Instance.Manager.Paused = pause;
+			
+			if(!pause)
+				hasPausedGame = pause;
 		}
-		else{
+		else if(hasPausedGame || (!hasPausedGame && Time.timeScale != 0f)){
+			if(pause)
+				hasPausedGame = pause;
+			
+			if(!alwaysMute)
+				BaseSoundManager.Instance.muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter();
+			
 			Time.timeScale = pause ? 0f: 1f;
+			
+			if(!pause)
+				hasPausedGame = pause;
 		}
-		
-		
-		
-		if(!pause)
-			hasPausedGame = pause;
 	}
 	
 	//--------------------------------------
