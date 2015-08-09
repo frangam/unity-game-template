@@ -55,7 +55,11 @@ public class UIStoreServicesButton : UIBaseButton {
 				case ScoreType.SURVIVAL:	rankId = GameSettings.Instance.CurrentUniqueSurvivalRankingID;	break;
 				case ScoreType.BY_INDEX_MULTIGAME: 
 					if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > scoreIndexForGameMultiversion)
+						#if UNITY_ANDROID
 						rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].Id;
+					#elif UNITY_IPHONE
+					rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].IdForSaveOniOSStore;
+					#endif
 					else
 						Debug.LogError("UIStoreServicesButton ("+name+") - score index out of range");
 					break;

@@ -49,9 +49,29 @@ public class Score {
 		}
 	}
 	
+	public string IdForSaveOniOSStore{
+		get {  
+			string res = this.id.Replace("-", "_");
+			
+			if(GameSettings.Instance.groupScores){ 
+				res = res.Replace(GameSettings.Instance.prefixScoresGroupOnIOS, "");
+				res = res.Insert(0, GameSettings.Instance.prefixScoresGroupOnIOS);
+			}
+			
+			return res;
+		}
+	}
+	
 	public string Id {
 		get {
-			return this.id;
+			string res = this.id;
+			
+			//#if !UNITY_EDITOR && UNITY_IPHONE
+			//			if(GameSettings.Instance.groupScores) 
+			//				res = res.Insert(0, GameSettings.Instance.prefixScoresGroupOnIOS);
+			//#endif
+			
+			return res;
 		}
 		set {
 			id = value;

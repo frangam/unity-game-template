@@ -263,37 +263,123 @@ public class GameSettingsEditor : Editor {
 		if (GameSettings.Instance.showGameNames) {
 			EditorGUILayout.BeginVertical(GUI.skin.box);
 			
-			if(GameSettings.Instance.gameNames.Count == 0) {
-				EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
-			}
-			
-			int i = 0;
-			foreach(string d in GameSettings.Instance.gameNames) {
+			//-------------
+			//for Android
+			//-------------
+			GameSettings.Instance.showAndroidGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showAndroidGameNames, "Android Game Names");
+			if (GameSettings.Instance.showAndroidGameNames) {
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
+				if(GameSettings.Instance.androidGameNames.Count == 0) {
+					EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
+				}
+				
+				int i = 0;
+				foreach(string d in GameSettings.Instance.androidGameNames) {
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
+					GameSettings.Instance.androidGameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.androidGameNames[i]).Trim();
+					
+					
+					if(GUILayout.Button("-",  GUILayout.Width(30))) {
+						GameSettings.Instance.androidGameNames.Remove(d);
+						break;
+					}
+					EditorGUILayout.EndHorizontal();
+					i++;
+				}
+				
+				
 				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
-				GameSettings.Instance.gameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.gameNames[i]).Trim();
-				
-				
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GameSettings.Instance.gameNames.Remove(d);
-					break;
+				EditorGUILayout.Space();
+				if(GUILayout.Button("+",  GUILayout.Width(60))) {
+					GameSettings.Instance.androidGameNames.Add("");
 				}
 				EditorGUILayout.EndHorizontal();
-				i++;
+				EditorGUILayout.Space();
+				
+				EditorGUILayout.EndVertical();
+			}
+			
+			//-------------
+			// for iOS
+			//-------------
+			GameSettings.Instance.showIOSGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showIOSGameNames, "iOS Game Names");
+			if (GameSettings.Instance.showIOSGameNames) {
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
+				if(GameSettings.Instance.iOSGameNames.Count == 0) {
+					EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
+				}
+				
+				int i = 0;
+				foreach(string d in GameSettings.Instance.iOSGameNames) {
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
+					GameSettings.Instance.iOSGameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.iOSGameNames[i]).Trim();
+					
+					
+					if(GUILayout.Button("-",  GUILayout.Width(30))) {
+						GameSettings.Instance.iOSGameNames.Remove(d);
+						break;
+					}
+					EditorGUILayout.EndHorizontal();
+					i++;
+				}
+				
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.Space();
+				if(GUILayout.Button("+",  GUILayout.Width(60))) {
+					GameSettings.Instance.iOSGameNames.Add("");
+				}
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.Space();
+				
+				EditorGUILayout.EndVertical();
 			}
 			
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if(GUILayout.Button("+",  GUILayout.Width(60))) {
-				GameSettings.Instance.gameNames.Add("");
+			//-------------
+			// for WP
+			//-------------
+			GameSettings.Instance.showWPGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showWPGameNames, "WP Game Names");
+			if (GameSettings.Instance.showWPGameNames) {
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				
+				if(GameSettings.Instance.WPGameNames.Count == 0) {
+					EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
+				}
+				
+				int i = 0;
+				foreach(string d in GameSettings.Instance.WPGameNames) {
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
+					GameSettings.Instance.WPGameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.WPGameNames[i]).Trim();
+					
+					
+					if(GUILayout.Button("-",  GUILayout.Width(30))) {
+						GameSettings.Instance.WPGameNames.Remove(d);
+						break;
+					}
+					EditorGUILayout.EndHorizontal();
+					i++;
+				}
+				
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.Space();
+				if(GUILayout.Button("+",  GUILayout.Width(60))) {
+					GameSettings.Instance.WPGameNames.Add("");
+				}
+				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.Space();
+				
+				EditorGUILayout.EndVertical();
 			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
 			
 			EditorGUILayout.EndVertical();
 		}
-		//		EditorGUILayout.Space();
 	}
 	
 	protected virtual void buildPackageIDs(){
@@ -586,13 +672,32 @@ public class GameSettingsEditor : Editor {
 		if (GameSettings.Instance.showAchievementsSettings) {	
 			EditorGUI.indentLevel++;
 			
+			
+			//ACTIONS
 			allAchievementsActions();
 			//			EditorGUILayout.Space();
 			
+			//ACHIEVEMENTS
 			GameSettings.Instance.showAchievementsPacksSettings = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsPacksSettings, "Achievements Packs");
 			if (GameSettings.Instance.showAchievementsPacksSettings) {	
 				
+				//Toggle button to group achievements or not
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Group Achievements ?", GUILayout.Width(120));
+				GameSettings.Instance.groupAchievements = EditorGUILayout.Toggle(GameSettings.Instance.groupAchievements);
+				EditorGUILayout.EndHorizontal();
 				
+				//Prefix for Leaderboard group
+				if(GameSettings.Instance.groupAchievements){
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("Prefix Group Achievements:", GUILayout.Width(120));
+					GameSettings.Instance.prefixAchievementsGroupOnIOS = EditorGUILayout.TextField(GameSettings.Instance.prefixAchievementsGroupOnIOS);
+					EditorGUILayout.EndHorizontal();
+				}
+				
+				
+				
+				//ALL AVIEVEMENTS
 				Color prevCol = GUI.color;
 				
 				if(GameSettings.Instance.achievementsPacks.Count == 0) {
@@ -609,7 +714,8 @@ public class GameSettingsEditor : Editor {
 					if(!GameSettings.Instance.showAchievementsPack.ContainsKey(GameSettings.Instance.achievementsPacks[i]))
 						GameSettings.Instance.showAchievementsPack.Add(GameSettings.Instance.achievementsPacks[i], true);
 					
-					GameSettings.Instance.showAchievementsPack[GameSettings.Instance.achievementsPacks[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsPack[GameSettings.Instance.achievementsPacks[i]], "Achievements for Game Version "+i.ToString());
+					string packName = !GameSettings.Instance.groupAchievements ? "Achievements for Game Version "+i.ToString() : "Achievements Grouped";
+					GameSettings.Instance.showAchievementsPack[GameSettings.Instance.achievementsPacks[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showAchievementsPack[GameSettings.Instance.achievementsPacks[i]], packName);
 					
 					GUI.color = Color.red;
 					if(GUILayout.Button("-",  GUILayout.Width(30))) {
@@ -627,13 +733,16 @@ public class GameSettingsEditor : Editor {
 				EditorGUILayout.Space();
 				EditorGUILayout.BeginHorizontal();
 				GUI.color = Color.green;
-				if(GUILayout.Button("New Pack")) {
-					if(GameSettings.Instance.achievementsPacks == null || (GameSettings.Instance.achievementsPacks != null && GameSettings.Instance.achievementsPacks.Count == 0))
-						GameSettings.Instance.achievementsPacks.Add(new AchievementsPack(0, null));
-					else{
-						AchievementsPack lastPack = GameSettings.Instance.achievementsPacks[GameSettings.Instance.achievementsPacks.Count-1];
-						int lastPackId = lastPack.gameVersion;
-						GameSettings.Instance.achievementsPacks.Add(new AchievementsPack(lastPackId+1, lastPack.achievements));
+				
+				if(!GameSettings.Instance.groupAchievements || (GameSettings.Instance.groupAchievements && GameSettings.Instance.achievementsPacks.Count == 0)){
+					if(GUILayout.Button("New Pack")) {
+						if(GameSettings.Instance.achievementsPacks == null || (GameSettings.Instance.achievementsPacks != null && GameSettings.Instance.achievementsPacks.Count == 0))
+							GameSettings.Instance.achievementsPacks.Add(new AchievementsPack(0, null));
+						else{
+							AchievementsPack lastPack = GameSettings.Instance.achievementsPacks[GameSettings.Instance.achievementsPacks.Count-1];
+							int lastPackId = lastPack.gameVersion;
+							GameSettings.Instance.achievementsPacks.Add(new AchievementsPack(lastPackId+1, lastPack.achievements));
+						}
 					}
 				}
 				GUI.color = prevCol;
@@ -881,12 +990,29 @@ public class GameSettingsEditor : Editor {
 			
 			int i = 0;
 			EditorGUI.indentLevel++;
+			
+			//Toggle button to group leaderboards or not
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Group Scores ?", GUILayout.Width(120));
+			GameSettings.Instance.groupScores = EditorGUILayout.Toggle(GameSettings.Instance.groupScores);
+			EditorGUILayout.EndHorizontal();
+			
+			//Prefix for Leaderboard group
+			if(GameSettings.Instance.groupScores){
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Prefix Group Scores:", GUILayout.Width(120));
+				GameSettings.Instance.prefixScoresGroupOnIOS = EditorGUILayout.TextField(GameSettings.Instance.prefixScoresGroupOnIOS);
+				EditorGUILayout.EndHorizontal();
+			}
+			
+			//All LEADERBOARDS
 			foreach(ScoresPack pack in GameSettings.Instance.scoresPacks) {
 				EditorGUILayout.BeginHorizontal();
 				if(!GameSettings.Instance.showScoresPack.ContainsKey(GameSettings.Instance.scoresPacks[i]))
 					GameSettings.Instance.showScoresPack.Add(GameSettings.Instance.scoresPacks[i], true);
 				
-				GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[i]], "Scores for Game Version "+i.ToString());
+				string packName = !GameSettings.Instance.groupAchievements ? "Scores for Game Version "+i.ToString() : "Scores Grouped";
+				GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[i]] = EditorGUILayout.Foldout(GameSettings.Instance.showScoresPack[GameSettings.Instance.scoresPacks[i]], packName);
 				
 				GUI.color = Color.red;
 				if(GUILayout.Button("-",  GUILayout.Width(30))) {
@@ -904,13 +1030,16 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginHorizontal();
 			GUI.color = Color.green;
-			if(GUILayout.Button("New Pack")) {
-				if(GameSettings.Instance.scoresPacks == null || (GameSettings.Instance.scoresPacks != null && GameSettings.Instance.scoresPacks.Count == 0))
-					GameSettings.Instance.scoresPacks.Add(new ScoresPack(0, null));
-				else{
-					ScoresPack lastPack = GameSettings.Instance.scoresPacks[GameSettings.Instance.scoresPacks.Count-1];
-					int lastPackId = lastPack.gameVersion;
-					GameSettings.Instance.scoresPacks.Add(new ScoresPack(lastPackId+1, lastPack.scores));
+			
+			if(!GameSettings.Instance.groupScores || (GameSettings.Instance.scoresPacks.Count == 0 && GameSettings.Instance.groupScores)){
+				if(GUILayout.Button("New Pack")) {
+					if(GameSettings.Instance.scoresPacks == null || (GameSettings.Instance.scoresPacks != null && GameSettings.Instance.scoresPacks.Count == 0))
+						GameSettings.Instance.scoresPacks.Add(new ScoresPack(0, null));
+					else{
+						ScoresPack lastPack = GameSettings.Instance.scoresPacks[GameSettings.Instance.scoresPacks.Count-1];
+						int lastPackId = lastPack.gameVersion;
+						GameSettings.Instance.scoresPacks.Add(new ScoresPack(lastPackId+1, lastPack.scores));
+					}
 				}
 			}
 			GUI.color = prevCol;
@@ -1322,7 +1451,7 @@ public class GameSettingsEditor : Editor {
 		if (GameSettings.Instance.showAdsNetworks) {
 			EditorGUILayout.BeginVertical(GUI.skin.box);
 			
-			if(GameSettings.Instance.androidShortLinks.Count == 0) {
+			if(GameSettings.Instance.adsNetworks.Count == 0) {
 				EditorGUILayout.HelpBox("No Ads Networks to use",MessageType.None);
 			}
 			

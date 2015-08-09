@@ -100,7 +100,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		//finaly load scores
 		totalScoresToLoad = scoresToLoad.Count;
 		foreach(Score score in scoresToLoad)
-			GameCenterManager.LoadCurrentPlayerScore(score.Id);
+			GameCenterManager.LoadCurrentPlayerScore(score.IdForSaveOniOSStore);
 	}
 	
 	/*--------------------------------

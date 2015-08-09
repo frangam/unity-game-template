@@ -14,6 +14,9 @@ public class GameSettings : ScriptableObject {
 	//--------------------------------------
 	public bool 								showGameInfo												= false;
 	public bool 								showGameNames 												= false;
+	public bool 								showAndroidGameNames										= false;
+	public bool 								showIOSGameNames 											= false;
+	public bool 								showWPGameNames 											= false;
 	public bool 								showBuildPackageIDs											= false;
 	public bool 								showAppleAppID												= false;
 	public bool 								showGameDifficulties			 							= false;
@@ -69,7 +72,9 @@ public class GameSettings : ScriptableObject {
 	//SETTINGS
 	public List<GameDifficulty> 				gameDifficulties 				= new List<GameDifficulty>(){GameDifficulty.NONE};
 	public List<string> 						appleAppIDs				 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 						gameNames				 		= new List<string>(); //for every game version (versinable game)
+	public List<string> 						androidGameNames				= new List<string>(); //for every game version (versinable game)
+	public List<string> 						iOSGameNames				 	= new List<string>(); //for every game version (versinable game)
+	public List<string> 						WPGameNames				 		= new List<string>(); //for every game version (versinable game)
 	public List<string> 						buildPackagesIDs		 		= new List<string>(); //for every game version (versinable game)
 	public List<string> 						androidShortLinks		 		= new List<string>(); //for every game version (versinable game)
 	public List<string> 						iOSShortLinks			 		= new List<string>(); //for every game version (versinable game)
@@ -84,6 +89,10 @@ public class GameSettings : ScriptableObject {
 	public List<List<string>>					survivalLevelRankingIDS 		= new List<List<string>>(); //for every game version (versinable game)
 	public List<AchievementsPack> 				achievementsPacks 				= new List<AchievementsPack>(); //for every game version (versinable game)
 	public List<ScoresPack> 					scoresPacks 					= new List<ScoresPack>(); //for every game version (versinable game)
+	public bool									groupScores						= true; //Group scores for not to set every single id in every game version
+	public string								prefixScoresGroupOnIOS			= "grp.";				
+	public bool									groupAchievements				= true; //Group scores for not to set every single id in every game version
+	public string								prefixAchievementsGroupOnIOS	= "grp.";
 	public List<GameAction> 					achievementsActions				= new List<GameAction>(); //for every game version (versinable game)
 	public Dictionary<Achievement, int> 		achPackActionsSelected 			= new Dictionary<Achievement, int>();
 	public List<InAppBillingIDPack> 			allInAppBillingIDS 				= new List<InAppBillingIDPack>(); //for every game version (versinable game)
@@ -262,8 +271,15 @@ public class GameSettings : ScriptableObject {
 	//--------------------------------------
 	public string CurrentGameName{
 		get{ 
-			if(gameNames != null && gameNames.Count > currentGameMultiversion) return gameNames[currentGameMultiversion];
-			else return null;}
+			string name = "";
+			#if UNITY_ANDROID
+			if(androidGameNames != null && androidGameNames.Count > currentGameMultiversion) name = androidGameNames[currentGameMultiversion];
+			#elif UNITY_IPHONE
+			if(iOSGameNames != null && iOSGameNames.Count > currentGameMultiversion) name = iOSGameNames[currentGameMultiversion];
+			#elif UNITY_WP8
+			if(WPGameNames != null && WPGameNames.Count > currentGameMultiversion) name = WPGameNames[currentGameMultiversion];
+			#endif
+			return name;}
 	}
 	public string CurrentBuildPackageID{
 		get{ 
@@ -384,14 +400,16 @@ public class GameSettings : ScriptableObject {
 	
 	public List<Achievement> CurrentAchievements{
 		get{ 
-			if(achievementsPacks != null && achievementsPacks.Count > currentGameMultiversion) return achievementsPacks[currentGameMultiversion].achievements;
+			if(achievementsPacks != null && groupAchievements && achievementsPacks.Count > 0) return achievementsPacks[0].achievements;
+			else if(achievementsPacks != null && !groupAchievements && achievementsPacks.Count > currentGameMultiversion) return achievementsPacks[currentGameMultiversion].achievements;
 			else return null;
 		}
 	}
 	
 	public List<Score> CurrentScores{
 		get{
-			if(scoresPacks != null && scoresPacks.Count > currentGameMultiversion) return scoresPacks[currentGameMultiversion].scores;
+			if(scoresPacks != null && groupScores && scoresPacks.Count > 0) return scoresPacks[0].scores;
+			else if(scoresPacks != null && !groupScores && scoresPacks.Count > currentGameMultiversion) return scoresPacks[currentGameMultiversion].scores;
 			else return null;
 		}
 	}
