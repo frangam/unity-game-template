@@ -19,8 +19,8 @@ public class GTDebug {
 	public static void log(string message, bool includeMethodCalling = true, bool includeClassNameCalling = true){
 		if(GameSettings.Instance.showTestLogs){
 			StackTrace st = new StackTrace();
-			string mthName = st.FrameCount > 0 && st.GetFrame(0) != null && st.GetFrame(0).GetMethod() != null ? st.GetFrame(0).GetMethod().ToString() : "";
-			string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(0).GetMethod().ReflectedType != null ? st.GetFrame(0).GetMethod().ReflectedType.Name : "";
+			string mthName = st.FrameCount > 0 && st.GetFrame(1) != null && st.GetFrame(1).GetMethod() != null ? st.GetFrame(1).GetMethod().ToString() : "";
+			string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(1).GetMethod().ReflectedType != null ? st.GetFrame(1).GetMethod().ReflectedType.Name : "";
 			string finalMessage = getFinalMessage (message, className, mthName, includeClassNameCalling && !string.IsNullOrEmpty(className), includeMethodCalling && !string.IsNullOrEmpty(mthName)); 
 			showDebugLog(finalMessage, DebugMessageType.NORMAL); //finally show debug log
 		}
@@ -32,8 +32,8 @@ public class GTDebug {
 	public static void logWarning(string message, bool includeMethodCalling = true, bool includeClassNameCalling = true){
 		if(GameSettings.Instance.showTestLogs){
 			StackTrace st = new StackTrace();
-			string mthName = st.FrameCount > 0 && st.GetFrame(0) != null && st.GetFrame(0).GetMethod() != null ? st.GetFrame(0).GetMethod().ToString() : "";
-			string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(0).GetMethod().ReflectedType != null ? st.GetFrame(0).GetMethod().ReflectedType.Name : "";
+			string mthName = st.FrameCount > 0 && st.GetFrame(1) != null && st.GetFrame(1).GetMethod() != null ? st.GetFrame(1).GetMethod().ToString() : "";
+			string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(1).GetMethod().ReflectedType != null ? st.GetFrame(1).GetMethod().ReflectedType.Name : "";
 			string finalMessage = getFinalMessage (message, className, mthName, includeClassNameCalling && !string.IsNullOrEmpty(className), includeMethodCalling && !string.IsNullOrEmpty(mthName)); 
 			showDebugLog(finalMessage, DebugMessageType.WARNING); //finally show debug log
 		}
@@ -45,8 +45,8 @@ public class GTDebug {
 	public static void logError(string message, bool includeMethodCalling = true, bool includeClassNameCalling = true){
 		if(GameSettings.Instance.showTestLogs){
 			StackTrace st = new StackTrace();
-			string mthName = st.FrameCount > 0 && st.GetFrame(0) != null && st.GetFrame(0).GetMethod() != null ? st.GetFrame(0).GetMethod().ToString() : "";
-			string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(0).GetMethod().ReflectedType != null ? st.GetFrame(0).GetMethod().ReflectedType.Name : "";
+			string mthName = st.FrameCount > 0 && st.GetFrame(1) != null && st.GetFrame(1).GetMethod() != null ? st.GetFrame(1).GetMethod().ToString() : "";
+			string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(1).GetMethod().ReflectedType != null ? st.GetFrame(1).GetMethod().ReflectedType.Name : "";
 			string finalMessage = getFinalMessage (message, className, mthName, includeClassNameCalling && !string.IsNullOrEmpty(className), includeMethodCalling && !string.IsNullOrEmpty(mthName)); 
 			showDebugLog(finalMessage, DebugMessageType.ERROR); //finally show debug log
 		}
@@ -61,8 +61,8 @@ public class GTDebug {
 	/// <param name="messageType">Message type.</param>
 	public static void logAlways(string message, bool includeMethodCalling = true, bool includeClassNameCalling = true){
 		StackTrace st = new StackTrace();
-		string mthName = st.FrameCount > 0 && st.GetFrame(0) != null && st.GetFrame(0).GetMethod() != null ? st.GetFrame(0).GetMethod().ToString() : "";
-		string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(0).GetMethod().ReflectedType != null ? st.GetFrame(0).GetMethod().ReflectedType.Name : "";
+		string mthName = st.FrameCount > 0 && st.GetFrame(1) != null && st.GetFrame(1).GetMethod() != null ? st.GetFrame(1).GetMethod().ToString() : "";
+		string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(1).GetMethod().ReflectedType != null ? st.GetFrame(1).GetMethod().ReflectedType.Name : "";
 		string finalMessage = getFinalMessage (message, className, mthName, includeClassNameCalling && !string.IsNullOrEmpty(className), includeMethodCalling && !string.IsNullOrEmpty(mthName)); 
 		showDebugLog(finalMessage, DebugMessageType.NORMAL); //finally show debug log
 	}
@@ -75,8 +75,8 @@ public class GTDebug {
 	/// <param name="messageType">Message type.</param>
 	public static void logWarningAlways(string message, bool includeMethodCalling = true, bool includeClassNameCalling = true){
 		StackTrace st = new StackTrace();
-		string mthName = st.FrameCount > 0 && st.GetFrame(0) != null && st.GetFrame(0).GetMethod() != null ? st.GetFrame(0).GetMethod().ToString() : "";
-		string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(0).GetMethod().ReflectedType != null ? st.GetFrame(0).GetMethod().ReflectedType.Name : "";
+		string mthName = st.FrameCount > 0 && st.GetFrame(1) != null && st.GetFrame(1).GetMethod() != null ? st.GetFrame(1).GetMethod().ToString() : "";
+		string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(1).GetMethod().ReflectedType != null ? st.GetFrame(1).GetMethod().ReflectedType.Name : "";
 		string finalMessage = getFinalMessage (message, className, mthName, includeClassNameCalling && !string.IsNullOrEmpty(className), includeMethodCalling && !string.IsNullOrEmpty(mthName)); 
 		showDebugLog(finalMessage, DebugMessageType.WARNING); //finally show debug log
 	}
@@ -89,8 +89,8 @@ public class GTDebug {
 	/// <param name="messageType">Message type.</param>
 	public static void logErrorAlways(string message, bool includeMethodCalling = true, bool includeClassNameCalling = true){
 		StackTrace st = new StackTrace();
-		string mthName = st.FrameCount > 0 && st.GetFrame(0) != null && st.GetFrame(0).GetMethod() != null ? st.GetFrame(0).GetMethod().ToString() : "";
-		string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(0).GetMethod().ReflectedType != null ? st.GetFrame(0).GetMethod().ReflectedType.Name : "";
+		string mthName = st.FrameCount > 0 && st.GetFrame(1) != null && st.GetFrame(1).GetMethod() != null ? st.GetFrame(1).GetMethod().ToString() : "";
+		string className = !string.IsNullOrEmpty(mthName) && st.GetFrame(1).GetMethod().ReflectedType != null ? st.GetFrame(1).GetMethod().ReflectedType.Name : "";
 		string finalMessage = getFinalMessage (message, className, mthName, includeClassNameCalling && !string.IsNullOrEmpty(className), includeMethodCalling && !string.IsNullOrEmpty(mthName)); 
 		showDebugLog(finalMessage, DebugMessageType.ERROR); //finally show debug log
 	}

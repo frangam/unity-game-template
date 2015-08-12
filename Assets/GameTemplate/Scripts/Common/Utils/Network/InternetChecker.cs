@@ -18,6 +18,9 @@ public class InternetChecker : PersistentSingleton<InternetChecker> {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	private bool checkFromURL = false;
+	
+	[SerializeField]
 	private float CheckTimer = 5f;
 	
 	//--------------------------------------
@@ -36,7 +39,7 @@ public class InternetChecker : PersistentSingleton<InternetChecker> {
 	}
 	public bool IsconnectedToInternet {
 		get {
-			return this.isconnectedToInternet;
+			return (Application.internetReachability != NetworkReachability.NotReachable);
 		}
 	}
 	
@@ -47,7 +50,8 @@ public class InternetChecker : PersistentSingleton<InternetChecker> {
 	{
 		base.Awake ();
 		
-		InvokeRepeating("PingService",0,CheckTimer);
+		if(checkFromURL)
+			InvokeRepeating("PingService",0,CheckTimer);
 	}
 	
 	//--------------------------------------

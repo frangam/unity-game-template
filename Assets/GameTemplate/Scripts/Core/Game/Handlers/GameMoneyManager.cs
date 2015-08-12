@@ -172,6 +172,21 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 		return purchased;
 	}
 	
+	
+	public long howToAdd(long quantity){
+		long total = getTotalMoney();
+		long restToMax = long.MaxValue - total;
+		long moneyToAdd = 0;
+		
+		if(quantity <= restToMax)
+			moneyToAdd = total+quantity;
+		else{			
+			moneyToAdd = total+restToMax;
+		}
+		
+		return moneyToAdd;
+	}
+	
 	public void addMoney(long quantity){
 		long total = getTotalMoney();
 		long restToMax = long.MaxValue - total;

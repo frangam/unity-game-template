@@ -20,6 +20,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	private bool googleAdmobInited = false;
 	private bool adcolonyInited = false;
 	private bool hasPausedGame = false;
+	private bool inited = false;
+	private bool waitingFinishInitInApps = false;
 	
 	//--------------------------------------
 	// Getters & Setters
@@ -34,31 +36,63 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	// INITIALIZE
 	//--------------------------------------
 	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR)
-	private bool canShowAd(AdNetwork network){
-		bool canShow = !GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0;
+	public bool canShowAd(AdNetwork network, int zoneIndex = 0, AdType type = AdType.BANNER){
+		bool hasInternet = InternetChecker.Instance.IsconnectedToInternet;
+		bool canShow = hasInternet && !GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0;
+		
+		GTDebug.log("Has internet ? " + hasInternet);
 		
 		if(canShow){
 			switch(network){
 			case AdNetwork.GOOGLE_ADMOB:
 				canShow = GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB) && googleAdmobInited; break;
-			case AdNetwork.ADCOLONY: canShow = GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) && adcolonyInited; break;
+			case AdNetwork.ADCOLONY: 
+				string zoneId = AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex);
+				canShow = GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) 
+					&& adcolonyInited 
+						&& !string.IsNullOrEmpty(zoneId) 
+						&& ((type == AdType.VIDEO && AdColony.IsVideoAvailable(zoneId))
+						    || (type == AdType.VIDEO_V4VC && AdColony.IsV4VCAvailable(zoneId))); 
+				
+				
+				
+				GTDebug.log("Zone ID: " + zoneId);
+				
+				if(type == AdType.VIDEO)
+					GTDebug.log("Is video available ? " +AdColony.IsVideoAvailable(zoneId));
+				else if(type == AdType.VIDEO_V4VC)
+					GTDebug.log("Is video V4VC available ? " +AdColony.IsV4VCAvailable(zoneId));
+				break;
 			}
 		}
+		
+		GTDebug.log("Can show ad ? " +canShow);
 		
 		return canShow;
 	}
 	
 	protected void Start(){
-		//	protected override void Awake (){
-		//		base.Awake ();
-		
 		if(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE)
 			StartCoroutine(handleInitializationWhenUsingInAppBilling());
-		else
+		
+		StartCoroutine(checkInternetConnection());
+	}
+	
+	private IEnumerator checkInternetConnection(){
+		inited = (!GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) || (GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) && adcolonyInited))
+			&& (!GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB) || (GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB) && googleAdmobInited));
+		
+		//try to init
+		if(!inited && !waitingFinishInitInApps && InternetChecker.Instance.IsconnectedToInternet){
 			init();
+		}
+		
+		yield return new WaitForSeconds(5);
+		StartCoroutine(checkInternetConnection());
 	}
 	
 	private IEnumerator handleInitializationWhenUsingInAppBilling(){
+		waitingFinishInitInApps = true;
 		yield return null;
 		
 		currentTime = Time.timeSinceLevelLoad;
@@ -265,6 +299,12 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		if (success){
 			GTDebug.log( "Awarded " + amount + " " + name );
 			// e.g. "Awarded 100 Gold"
+			
+			BaseSoundManager.Instance.play(BaseSoundIDs.CLAIM_BILLS_FX);
+			
+			if(name.Equals("Bills")){
+				GameMoneyManager.Instance.addMoney(amount);
+			}
 		}
 		else{
 			GTDebug.log( "not Awarded " + amount + " " + name );
@@ -332,6 +372,40 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
 		if(canShowAd(AdNetwork.GOOGLE_ADMOB))
 			RefreshBanner();
+		#endif
+	}
+	
+	public void playVideoV4VC(int zoneIndex = 0){
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+		playVideoV4VC(AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex));
+		#endif
+	}
+	public void playVideoV4VC(string zoneID, bool prePopup = false, bool postPopup = true){
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+		// Check to see if a video for V4VC is available in the zone.
+		if(AdColony.IsV4VCAvailable(zoneID)){
+			GTDebug.log("Play AdColony V4VC Ad");
+			// The AdColony class exposes two methods for showing V4VC Ads.
+			// ---------------------------------------
+			// The first `ShowV4VC`, plays a V4VC Ad and, optionally, displays
+			// a popup when the video is finished.
+			// ---------------------------------------
+			// The second is `OfferV4VC`, which popups a confirmation before
+			// playing the ad and, optionally, displays popup when the video 
+			// is finished.
+			
+			// Call one of the V4VC Video methods:
+			// Note that you should also pause your game here (audio, etc.) AdColony will not
+			// pause your app for you.
+			if(prePopup)
+				AdColony.OfferV4VC(postPopup, zoneID);
+			else
+				AdColony.ShowV4VC(postPopup, zoneID);
+		}
+		else{
+			GTDebug.log("V4VC Ad Not Available in this zone id "+zoneID);
+		}
+		
 		#endif
 	}
 	

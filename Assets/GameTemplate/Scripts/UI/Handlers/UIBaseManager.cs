@@ -217,7 +217,17 @@ public class UIBaseManager : MonoBehaviour {
 		if(window != null && (!handleStart || (handleStart && !window.NotStartWithManager))){
 			//		if(windows.Contains(window)){
 			//first do it visible or not
-			window.gameObject.SetActive(show);
+			
+			//open or close window hidding or activing the gameobject window
+			if(!window.CloseIsSetAlpha){
+				//				window.gameObject.SetActive(show);
+				StartCoroutine(setActiveOrInactive(window, show));
+			}
+			//open or close window changing its alpha value
+			else if(window.CloseIsSetAlpha && window.CanvasGroup){
+				float alpha = show ? window.OpenAlphaValue : window.CloseAlphaValue;
+				window.CanvasGroup.alpha = alpha;
+			}
 			
 			if(show){
 				window.open();
@@ -263,6 +273,29 @@ public class UIBaseManager : MonoBehaviour {
 			
 			
 		}
+	}
+	
+	private IEnumerator setActiveOrInactive(UIBaseWindow win, bool active = true){
+		bool finishedAnim = false;
+		
+		if(active){
+			do{
+				finishedAnim = win.FinishedOpenAnim();
+				yield return null;
+			}
+			while(!finishedAnim);
+		}
+		else{
+			do{
+				finishedAnim = win.FinishedClosedAnim();
+				yield return null;
+			}
+			while(!finishedAnim);
+		}
+		
+		//finally active or inactive the gameobject
+		if(finishedAnim)
+			win.gameObject.SetActive(active);
 	}
 	
 	

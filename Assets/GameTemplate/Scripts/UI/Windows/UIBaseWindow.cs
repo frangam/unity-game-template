@@ -21,6 +21,15 @@ public class UIBaseWindow : MonoBehaviour {
 	private bool startClosed = true;
 	
 	[SerializeField]
+	private bool closeIsSetAlpha = false;
+	
+	[SerializeField]
+	private float closeAlphaValue = 0f;
+	
+	[SerializeField]
+	private float openAlphaValue = 1f;
+	
+	[SerializeField]
 	[Tooltip("True if we not want to start this window with the UIBaseManager in the loadWindows method. This is useful when we want to open or close a window in other window open or close method")]
 	private bool notStartWithManager = false;
 	
@@ -67,11 +76,13 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	private CanvasGroup canvasGroup;
 	private Animator anim;
 	private Image window;
 	private bool isOpen = false;
 	private bool firstOpen = true;
 	private bool firstClose = true;
+	
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -84,6 +95,30 @@ public class UIBaseWindow : MonoBehaviour {
 	public bool StartClosed {
 		get {
 			return this.startClosed;
+		}
+	}
+	
+	public CanvasGroup CanvasGroup {
+		get {
+			return this.canvasGroup;
+		}
+	}
+	
+	public bool CloseIsSetAlpha {
+		get {
+			return this.closeIsSetAlpha;
+		}
+	}
+	
+	public float CloseAlphaValue {
+		get {
+			return this.closeAlphaValue;
+		}
+	}
+	
+	public float OpenAlphaValue {
+		get {
+			return this.openAlphaValue;
 		}
 	}
 	
@@ -163,11 +198,16 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
+		canvasGroup = GetComponent<CanvasGroup>();
 		anim = GetComponent<Animator>();
 		window = GetComponent<Image>();
 		
 		if(!window){
-			Debug.LogWarning("No window attached");
+			GTDebug.logWarningAlways("No window attached");
+		}
+		
+		if(closeIsSetAlpha && !canvasGroup){
+			GTDebug.logErrorAlways("Not found canvas group and cloaseIsSetAlpha is set");
 		}
 	}
 	public virtual void Start(){}
@@ -180,11 +220,30 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
+	private void activeInterectablesChildren(bool active = true){
+		CanvasGroup[] groups =  GetComponentsInChildren<CanvasGroup>();
+		if(groups != null && groups.Length > 0){
+			foreach(CanvasGroup g in groups){
+				g.interactable = active;
+				g.blocksRaycasts = active;
+			}
+		}
+		
+		Button[] buttons = GetComponentsInChildren<Button>();
+		
+		if(buttons != null && buttons.Length > 0){
+			foreach(Button b in buttons){
+				b.interactable = active;
+			}
+		}
+	}
 	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	public virtual void open(){
+		activeInterectablesChildren(); //active button children
+		
 		if(firstOpen)
 			firstOpen = false;
 		
@@ -221,19 +280,43 @@ public class UIBaseWindow : MonoBehaviour {
 		
 		if(Anim != null && !string.IsNullOrEmpty(openAnimTrigger))
 			Anim.ResetTrigger(openAnimTrigger);
-		if(Anim != null && !string.IsNullOrEmpty(closeAnimTrigger))
-			Anim.SetTrigger(closeAnimTrigger);
+		
 	}
 	
 	public virtual void close(){
+		activeInterectablesChildren(false);
+		
 		if(firstClose)
 			firstClose = false;
 		
 		isOpen = false;
+		
+		if(Anim != null && !string.IsNullOrEmpty(closeAnimTrigger))
+			Anim.SetTrigger(closeAnimTrigger);
 	}
 	
-	public virtual void init(bool pStartClosed){
+	public virtual void initBestTime(bool pStartClosed){
 		startClosed = pStartClosed;
+	}
+	
+	public virtual bool FinishedOpenAnim(){
+		bool res = false;
+		
+		if(!Anim || string.IsNullOrEmpty(openAnimTrigger) 
+		   || (Anim != null && !string.IsNullOrEmpty(openAnimTrigger) && anim.GetCurrentAnimatorStateInfo(0).IsName("Open"))) 
+			res = true;
+		
+		return res;
+	}
+	
+	public virtual bool FinishedClosedAnim(){
+		bool res = false;
+		
+		if(!Anim || string.IsNullOrEmpty(closeAnimTrigger) 
+		   || (Anim != null && !string.IsNullOrEmpty(closeAnimTrigger) && anim.GetCurrentAnimatorStateInfo(0).IsName("Closed"))) 
+			res = true;
+		
+		return res;
 	}
 	
 	//--------------------------------------

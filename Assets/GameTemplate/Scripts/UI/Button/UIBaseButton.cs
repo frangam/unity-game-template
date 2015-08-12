@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 [AddComponentMenu("Game Template/UI")]
+[RequireComponent(typeof(Button))]
 public class UIBaseButton : MonoBehaviour {
 	//Button Event When sound will play
 	public enum SoundTrigger{
@@ -15,6 +16,30 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private bool playSoundWhenPress = true;
+	
+	[SerializeField]
+	private bool disableButtonWhenCantPress = false;
+	
+	[SerializeField]
+	private bool changeLbBtnNameWhenCantPress = false;
+	
+	[SerializeField]
+	private float rateForCheckCanPress = 5;
+	
+	[SerializeField]
+	private Animator externalAnim;
+	
+	[SerializeField]
+	private bool hasShowTriggerExtAnim = false;
+	
+	//	[SerializeField]
+	//	private bool hasShowAnimTrigger = false;
+	
+	[SerializeField]
+	private string showExtAnimTrigger = "Show";
+	
+	[SerializeField]
+	private string disableExtAnimTrigger = "Disable";
 	
 	[SerializeField]
 	private SoundTrigger trigger;
@@ -35,6 +60,16 @@ public class UIBaseButton : MonoBehaviour {
 	[Tooltip("Time to wait before press the button again. 0 if not wait.")]
 	private float timeToWaitBeforePressAgain = 0;
 	
+	[SerializeField]
+	private Text lbButtonName;
+	
+	[SerializeField]
+	private string locAvailableAd = "lb_available_ad";
+	
+	[SerializeField]
+	private string locNoAvailableAd = "lb_no_available_ad";
+	
+	
 	
 	//--------------------------------------
 	// Private Attributes
@@ -47,6 +82,8 @@ public class UIBaseButton : MonoBehaviour {
 	private bool pressingStoped = false;
 	private bool pressing = false;
 	private bool firstPress = true;
+	private bool disabled = false;
+	private bool shown = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -62,7 +99,7 @@ public class UIBaseButton : MonoBehaviour {
 		init();
 	}
 	public virtual void Start(){
-		init();
+		StartCoroutine(doCheckAvailability());
 	}
 	public virtual void OnDestroy(){
 		
@@ -94,14 +131,32 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	private IEnumerator doPressBeforeAWhile(){
-		yield return new WaitForSeconds(timeToWaitBeforeDoPress);
-		doPress();
+	private IEnumerator doCheckAvailability(){
+		checkAvailability();
+		yield return new WaitForSeconds(rateForCheckCanPress);
+		StartCoroutine(doCheckAvailability());
 	}
 	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	protected virtual void init(){
+		button = GetComponent<Button>();
+		pressingStoped = false;
+		initialPressingTime = 0;
+		lastSuccesfulPressingTime = 0;
+		pressingTime = 0;
+		pressing = false;
+		disabled = false;
+		shown = false;
+		
+		if(changeLbBtnNameWhenCantPress && !lbButtonName){
+			GTDebug.logErrorAlways("Not found label for button name");
+		}
+		
+		checkAvailability();
+	}
+	
 	public void press(){
 		firstPress = false;
 		pressing = true;
@@ -113,13 +168,62 @@ public class UIBaseButton : MonoBehaviour {
 		}
 	}
 	
-	protected virtual void init(){
-		button = GetComponent<Button>();
-		pressingStoped = false;
-		initialPressingTime = 0;
-		lastSuccesfulPressingTime = 0;
-		pressingTime = 0;
-		pressing = false;
+	public virtual void checkAvailability(){
+		bool canP = canPress();
+		
+		if(button){
+			button.interactable = canP;
+			
+			if(disableButtonWhenCantPress){
+				if(canP && (disabled || !shown) && hasShowTriggerExtAnim && externalAnim && !string.IsNullOrEmpty(showExtAnimTrigger)){		
+					externalAnim.SetTrigger(showExtAnimTrigger);
+					disabled = false;
+					shown = true;
+				}
+				else if(!canP && !disabled && hasShowTriggerExtAnim && externalAnim && !string.IsNullOrEmpty(disableExtAnimTrigger)){
+					externalAnim.SetTrigger(disableExtAnimTrigger);
+					disabled = true;
+					shown = false;
+				}
+				
+				
+				
+				switch(button.transition){
+				case Selectable.Transition.ColorTint: button.targetGraphic.color = canP ? button.colors.normalColor : button.colors.disabledColor; break;
+				case Selectable.Transition.Animation: 
+					if(canP && (disabled || !shown) && button.animator){		
+						button.animator.SetTrigger(button.animationTriggers.normalTrigger);
+						
+						if(!externalAnim){
+							disabled = false;
+							shown = true;
+						}
+					}else if(!canP && !disabled && button.animator){
+						button.animator.SetTrigger(button.animationTriggers.disabledTrigger);
+						
+						if(!externalAnim){
+							disabled = true;
+							shown = false;
+						}
+					}
+					break;
+				}
+			}
+		}
+		
+		
+		if(lbButtonName && changeLbBtnNameWhenCantPress){
+			lbButtonName.text = canP ? Localization.Get(locAvailableAd) : Localization.Get(locNoAvailableAd);
+		}
+		else if(lbButtonName && !changeLbBtnNameWhenCantPress){
+			lbButtonName.text = Localization.Get(locAvailableAd);
+		}
+	}
+	
+	
+	protected virtual IEnumerator doPressBeforeAWhile(){
+		yield return new WaitForSeconds(timeToWaitBeforeDoPress);
+		doPress();
 	}
 	
 	protected virtual void doPress(){

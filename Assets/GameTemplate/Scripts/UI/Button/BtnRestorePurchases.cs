@@ -19,7 +19,7 @@ public class BtnRestorePurchases : UIBaseButton {
 	public override void Awake ()
 	{
 		base.Awake ();
-		active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+		active = InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 		gameObject.SetActive(active);
 		
 		if(!window)
@@ -34,7 +34,7 @@ public class BtnRestorePurchases : UIBaseButton {
 		base.Update ();
 		
 		if(!active){
-			active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+			active = InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 			
 			if(active)
 				gameObject.SetActive(true);

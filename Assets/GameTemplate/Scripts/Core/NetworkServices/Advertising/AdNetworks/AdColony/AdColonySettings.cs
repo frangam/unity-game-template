@@ -11,28 +11,27 @@ using UnityEditor;
 public class AdColonySettings : ScriptableObject {
 	public List<AdColonyIDsPack> idsPacks;
 	public bool showPacks = true;
-
+	
 	public AdColonyIDsPack CurrentIDsPack{
 		get{return idsPacks[GameSettings.Instance.currentGameMultiversion]; }
 	}
 	public string GetZoneIDByIndex(int index){
 		string res = "";
-
+		
 		if(CurrentIDsPack != null){
-			switch(Application.platform){
-			case RuntimePlatform.Android: 
-				if(CurrentIDsPack.android_adZoneIDs != null && CurrentIDsPack.android_adZoneIDs.Count > index){
-					res = CurrentIDsPack.android_adZoneIDs[index];
-				}
-				break;
-			case RuntimePlatform.IPhonePlayer: 
-				if(CurrentIDsPack.iOS_adZoneIDs != null && CurrentIDsPack.iOS_adZoneIDs.Count > index){
-					res = CurrentIDsPack.iOS_adZoneIDs[index];
-				}
-				break;
+			#if UNITY_ANDROID
+			if(CurrentIDsPack.android_adZoneIDs != null && CurrentIDsPack.android_adZoneIDs.Count > index){
+				res = CurrentIDsPack.android_adZoneIDs[index];
 			}
+			
+			#elif UNITY_IPHONE
+			if(CurrentIDsPack.iOS_adZoneIDs != null && CurrentIDsPack.iOS_adZoneIDs.Count > index){
+				res = CurrentIDsPack.iOS_adZoneIDs[index];
+			}
+			#endif
+			
 		}
-
+		
 		return res;
 	}
 	

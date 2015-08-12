@@ -16,8 +16,8 @@ public static class BaseSoundIDs {
 	public const string MISSION_FAILED_MUSIC			 	= "bsi_000006";
 	public const string ALL_MISSIONS_COMPLETED_MUSIC		= "bsi_000007";
 	public const string SHOP_MUSIC							= "bsi_000008";
-
-
+	
+	
 	public const string UI_BUTTON_CLICK_FX			 		= "bsi_000100";
 	public const string UI_CANCEL_BUTTON_CLICK_FX			= "bsi_000101";
 	public const string UI_BACK_BUTTON_CLICK_FX			 	= "bsi_000102";
@@ -29,8 +29,9 @@ public static class BaseSoundIDs {
 	public const string COLLECT_GEMS_FX						= "bsi_000108";
 	public const string GET_A_STAR_FX						= "bsi_000109";
 	public const string PURCHASE_ITEM_FX					= "bsi_000110";
-
-
+	public const string CLAIM_BILLS_FX						= "bsi_000111";
+	
+	
 	public const string BASIC_HIT_FX						= "bsi_000200";
 	public const string BASIC_PLAYER_LOST_LIFE_FX			= "bsi_000201";
 }

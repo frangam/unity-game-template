@@ -59,7 +59,7 @@ public class UIBaseInAppButton : UIBaseButton {
 	{
 		base.Awake ();
 		
-		active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+		active = InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("UIBaseInAppButton - active ? " + active);
@@ -102,7 +102,7 @@ public class UIBaseInAppButton : UIBaseButton {
 		base.Update ();
 		
 		if(!active){
-			active = CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+			active = InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 			
 			if(active){
 				if(item != null){
@@ -122,6 +122,11 @@ public class UIBaseInAppButton : UIBaseButton {
 			}
 		}
 	}
+	
+	//	protected override bool canPress ()
+	//	{
+	//		return base.canPress () && InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+	//	}
 	
 	protected override void doPress ()
 	{
