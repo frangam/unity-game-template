@@ -64,6 +64,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	
 	
 	public virtual void OnApplicationPause(bool paused){
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
 		if(currentSection != GameSection.GAME){
 			Time.timeScale = paused ? 0f : 1f;
 		}
@@ -73,7 +74,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 			GameController.Instance.Manager.Paused = paused;
 		}
 		
-		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
+		
 		if(!paused){ //resume
 			ScreenLoaderVisualIndicator.Instance.finishLoad();
 		}

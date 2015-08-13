@@ -8,7 +8,7 @@ public class UIBasePauseWindow : UIBaseWindow {
 	//--------------------------------------
 	[SerializeField]
 	private Text lbCurrentScore;
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -16,17 +16,17 @@ public class UIBasePauseWindow : UIBaseWindow {
 		if(lbCurrentScore){
 			lbCurrentScore.text = GameController.Instance.Manager.CurrentScore.ToString();
 		}
-
+		
 		base.open ();
 	}
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	public virtual void pause(){
 		GameController.Instance.Manager.Paused = true;
 	}
-
+	
 	public virtual void resume(){
 		GameController.Instance.Manager.Paused = false;
 	}

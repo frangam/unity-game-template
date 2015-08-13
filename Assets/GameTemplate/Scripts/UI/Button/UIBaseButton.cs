@@ -93,13 +93,15 @@ public class UIBaseButton : MonoBehaviour {
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	public virtual void OnEnable(){}
+	public virtual void OnEnable(){
+		StartCoroutine(doCheckAvailability());
+	}
 	public virtual void OnDisable(){}
 	public virtual void Awake(){
 		init();
 	}
 	public virtual void Start(){
-		StartCoroutine(doCheckAvailability());
+		
 	}
 	public virtual void OnDestroy(){
 		
@@ -132,9 +134,11 @@ public class UIBaseButton : MonoBehaviour {
 	// Private Methods
 	//--------------------------------------
 	private IEnumerator doCheckAvailability(){
-		checkAvailability();
-		yield return new WaitForSeconds(rateForCheckCanPress);
-		StartCoroutine(doCheckAvailability());
+		if(disableButtonWhenCantPress){
+			checkAvailability();
+			yield return new WaitForSeconds(rateForCheckCanPress);
+			StartCoroutine(doCheckAvailability());
+		}
 	}
 	
 	//--------------------------------------
@@ -154,7 +158,8 @@ public class UIBaseButton : MonoBehaviour {
 			GTDebug.logErrorAlways("Not found label for button name");
 		}
 		
-		checkAvailability();
+		if(disableButtonWhenCantPress)
+			checkAvailability();
 	}
 	
 	public void press(){

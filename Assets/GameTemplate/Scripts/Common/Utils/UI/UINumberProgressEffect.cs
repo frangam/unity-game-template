@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Text))]
 [RequireComponent(typeof(Button))]
 public class UINumberProgressEffect : UIBaseButton {
+	public bool addThousandPoint = true;
 	public long currentNumber = 0;
 	public long targetNumber = 100;
 	public float percentagIncrement = 0.3f;
@@ -71,7 +73,14 @@ public class UINumberProgressEffect : UIBaseButton {
 			
 			
 			for (int i=0; i<totalSteps; i++) {
-				lbMessage.text = currentNumber.ToString();
+				string msg = "";
+				
+				if(addThousandPoint)
+					msg = currentNumber.ToString("N0", CultureInfo.CurrentCulture);
+				else
+					msg = currentNumber.ToString();
+				
+				lbMessage.text = msg;
 				
 				if (soundIDs != null && soundIDs.Count > 0 && PlayerPrefs.GetFloat(GameSettings.PP_SOUND) > 0f){
 					int soundIndex = Random.Range(0, soundIDs.Count);

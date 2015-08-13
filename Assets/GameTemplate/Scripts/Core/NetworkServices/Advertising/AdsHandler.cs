@@ -1,8 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnionAssets.FLE;
 
 public class AdsHandler : PersistentSingleton<AdsHandler> {
+	//--------------------------------------
+	// Constants
+	//--------------------------------------
+	public const string V4VC_RESULT = "gt_v4vc_result";
+	
+	//--------------------------------------
+	// Static Attributes
+	//--------------------------------------
+	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
+	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -26,11 +37,19 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//--------------------------------------
 	// Getters & Setters
 	//--------------------------------------
+	public static EventDispatcherBase dispatcher {
+		get {
+			return _dispatcher;
+		}
+	}
+	
+	
 	public bool HasPausedGame {
 		get {
 			return this.hasPausedGame;
 		}
 	}
+	
 	
 	//--------------------------------------
 	// INITIALIZE
@@ -297,14 +316,19 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	
 	void OnV4VCResult( bool success, string name, int amount ){
 		if (success){
+			//dispatch event
+			_dispatcher.dispatch(V4VC_RESULT, new V4VCResult(name, amount));
+			
 			GTDebug.log( "Awarded " + amount + " " + name );
 			// e.g. "Awarded 100 Gold"
 			
-			BaseSoundManager.Instance.play(BaseSoundIDs.CLAIM_BILLS_FX);
 			
 			if(name.Equals("Bills")){
+				BaseSoundManager.Instance.play(BaseSoundIDs.CLAIM_BILLS_FX);
 				GameMoneyManager.Instance.addMoney(amount);
 			}
+			
+			
 		}
 		else{
 			GTDebug.log( "not Awarded " + amount + " " + name );
@@ -375,12 +399,12 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		#endif
 	}
 	
-	public void playVideoV4VC(int zoneIndex = 0){
+	public void playVideoV4VC(int zoneIndex = 0, bool prePopup = false, bool postPopup = false){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		playVideoV4VC(AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex));
+		playVideoV4VC(AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex),prePopup,postPopup);
 		#endif
 	}
-	public void playVideoV4VC(string zoneID, bool prePopup = false, bool postPopup = true){
+	public void playVideoV4VC(string zoneID, bool prePopup = false, bool postPopup = false){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
 		// Check to see if a video for V4VC is available in the zone.
 		if(AdColony.IsV4VCAvailable(zoneID)){

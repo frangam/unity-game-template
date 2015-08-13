@@ -76,13 +76,14 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private CanvasGroup canvasGroup;
+	private CanvasGroup myCanvasGroup;
 	private Animator anim;
 	private Image window;
 	private bool isOpen = false;
 	private bool firstOpen = true;
 	private bool firstClose = true;
-	
+	private CanvasGroup[] canvasGroups;
+	private Button[] buttons;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -100,7 +101,7 @@ public class UIBaseWindow : MonoBehaviour {
 	
 	public CanvasGroup CanvasGroup {
 		get {
-			return this.canvasGroup;
+			return this.myCanvasGroup;
 		}
 	}
 	
@@ -198,7 +199,9 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		canvasGroup = GetComponent<CanvasGroup>();
+		canvasGroups = GetComponentsInChildren<CanvasGroup>();
+		myCanvasGroup = GetComponent<CanvasGroup>();
+		buttons = GetComponentsInChildren<Button>();
 		anim = GetComponent<Animator>();
 		window = GetComponent<Image>();
 		
@@ -206,7 +209,7 @@ public class UIBaseWindow : MonoBehaviour {
 			GTDebug.logWarningAlways("No window attached");
 		}
 		
-		if(closeIsSetAlpha && !canvasGroup){
+		if(closeIsSetAlpha && !myCanvasGroup){
 			GTDebug.logErrorAlways("Not found canvas group and cloaseIsSetAlpha is set");
 		}
 	}
@@ -221,15 +224,12 @@ public class UIBaseWindow : MonoBehaviour {
 	// Private Methods
 	//--------------------------------------
 	private void activeInterectablesChildren(bool active = true){
-		CanvasGroup[] groups =  GetComponentsInChildren<CanvasGroup>();
-		if(groups != null && groups.Length > 0){
-			foreach(CanvasGroup g in groups){
+		if(canvasGroups != null && canvasGroups.Length > 0){
+			foreach(CanvasGroup g in canvasGroups){
 				g.interactable = active;
 				g.blocksRaycasts = active;
 			}
 		}
-		
-		Button[] buttons = GetComponentsInChildren<Button>();
 		
 		if(buttons != null && buttons.Length > 0){
 			foreach(Button b in buttons){
