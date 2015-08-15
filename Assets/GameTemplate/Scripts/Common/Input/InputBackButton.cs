@@ -27,6 +27,9 @@ public class InputBackButton : Singleton<InputBackButton> {
 	private string specificScreenToGO;
 	
 	[SerializeField]
+	private UIBaseManager uiManagerToDoAnAction;
+	
+	[SerializeField]
 	private List<UIBaseWindow> openWindows;
 	
 	[SerializeField]
@@ -53,6 +56,15 @@ public class InputBackButton : Singleton<InputBackButton> {
 		}
 		set {
 			specificScreenToGO = value;
+		}
+	}
+	
+	public UIBaseManager UiManagerToDoAnAction {
+		get {
+			return this.uiManagerToDoAnAction;
+		}
+		set {
+			uiManagerToDoAnAction = value;
 		}
 	}
 	
@@ -87,9 +99,12 @@ public class InputBackButton : Singleton<InputBackButton> {
 				EasterEggsController.Instance.resetAllInputs();
 			
 			
-			//logic
+			//logic with priority
 			
-			if(openWindows != null && openWindows.Count > 0){
+			if(uiManagerToDoAnAction != null){
+				uiManagerToDoAnAction.doActionWhenInputBackButtonIsPressed();
+			}
+			else if(openWindows != null && openWindows.Count > 0){
 				//first need close
 				if(closeWindows != null && closeWindows.Count > 0){
 					foreach(UIBaseWindow w in closeWindows)

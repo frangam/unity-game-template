@@ -114,6 +114,10 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	public virtual void doActionWhenInputBackButtonIsPressed(){
+		
+	}
+	
 	public virtual void loadWindows(){
 		if(locateAllWindows){
 			UIBaseWindow[] windowsArr = FindObjectsOfType<UIBaseWindow>() as UIBaseWindow[];

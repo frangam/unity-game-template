@@ -18,6 +18,9 @@ public class ChangeInputBackButtonBehaviour {
 	private string specificScreenToGO;
 	
 	[SerializeField]
+	private UIBaseManager uiManagerToDoAction;
+	
+	[SerializeField]
 	private List<UIBaseWindow> openWindows;
 	
 	[SerializeField]
@@ -70,11 +73,21 @@ public class ChangeInputBackButtonBehaviour {
 		}
 	}
 	
+	public UIBaseManager UiManagerToDoAction {
+		get {
+			return this.uiManagerToDoAction;
+		}
+		set {
+			uiManagerToDoAction = value;
+		}
+	}
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	public void change(){
 		if(active){
+			InputBackButton.Instance.UiManagerToDoAnAction = uiManagerToDoAction;
 			InputBackButton.Instance.OpenWindows = openWindows;
 			InputBackButton.Instance.CloseWindows = closeWindows;
 			InputBackButton.Instance.SpecificScreenToGO = specificScreenToGO;

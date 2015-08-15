@@ -28,14 +28,21 @@ public class AutoType : UIBaseButton {
 	private bool stopType = false;
 	private bool initedTyping = false;
 	
-	
-	void Start(){
+	void OnEnable(){
 		if(!managedByWindow)
 			init();
 		
 		if(!initStoped && !managedByWindow)
 			initType();
 	}
+	
+	//	void Start(){
+	//		if(!managedByWindow)
+	//			init();
+	//		
+	//		if(!initStoped && !managedByWindow)
+	//			initType();
+	//	}
 	
 	
 	

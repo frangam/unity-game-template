@@ -270,6 +270,9 @@ public class UIBaseWindow : MonoBehaviour {
 		//call to close it after a delay time
 		if(waitForcloseAfterOpen > 0)
 			UIController.Instance.Manager.waitForClose(this, waitForcloseAfterOpen);
+		
+		//do something extra actions
+		doSomeThingWhenOpen();
 	}
 	
 	/// <summary>
@@ -293,7 +296,19 @@ public class UIBaseWindow : MonoBehaviour {
 		
 		if(Anim != null && !string.IsNullOrEmpty(closeAnimTrigger))
 			Anim.SetTrigger(closeAnimTrigger);
+		
+		//do something extra actions
+		doSomeThingWhenClose();
 	}
+	
+	/// <summary>
+	/// Do something extra actions when open.
+	/// </summary>
+	public virtual void doSomeThingWhenOpen(){}
+	/// <summary>
+	/// Do something extra actions when close.
+	/// </summary>
+	public virtual void doSomeThingWhenClose(){}
 	
 	public virtual void initBestTime(bool pStartClosed){
 		startClosed = pStartClosed;
