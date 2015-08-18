@@ -22,6 +22,9 @@ public class BaseGameManager : MonoBehaviour {
 	private string 						playerTag = "Player";
 	
 	[SerializeField]
+	private bool						useGameMultiversionForSelectingPlayer = false;
+	
+	[SerializeField]
 	private bool 						startGameAtTheStartMoment = false;
 	
 	[SerializeField]
@@ -480,17 +483,29 @@ public class BaseGameManager : MonoBehaviour {
 	public virtual void initGame(){
 		//find the player gameobject
 		GameObject[] players = GameObject.FindGameObjectsWithTag(playerTag);
-		if(players != null && players.Length > 0 && players.Length > GameSettings.Instance.currentGameMultiversion && players[0].GetComponent<SelectedPlayerOrder>() == null){
-			player = players[GameSettings.Instance.currentGameMultiversion];
-		}
-		else if(players != null && players.Length > 0 && players.Length > GameSettings.Instance.currentGameMultiversion && players[0].GetComponent<SelectedPlayerOrder>() != null){			
-			//get the selected player gameobject by selected player order criteria
-			for(int i=0;i<players.Length; i++){
-				SelectedPlayerOrder so = players[i].GetComponent<SelectedPlayerOrder>();
+		if(players != null && players.Length > 0 && players.Length > 0){
+			if(useGameMultiversionForSelectingPlayer){
+				//get the selected player gameobject by selected player order criteria
+				for(int i=0;i<players.Length; i++){
+					SelectedPlayerOrder so = players[i].GetComponent<SelectedPlayerOrder>();
+					
+					if(so != null && so.Order.Equals(GameSettings.Instance.currentGameMultiversion)){
+						player = so.gameObject;
+						break;
+					}
+				}
 				
-				if(so != null && so.Order == GameSettings.Instance.currentGameMultiversion){
-					player = so.gameObject;
-					break;
+				if(player == null)
+					GTDebug.logErrorAlways("Selected player index from current GameMultiversion index [" + GameSettings.Instance.currentGameMultiversion + "] is not presented in players array");
+			}
+			else{
+				int selected = PlayerPrefs.GetInt(GameSettings.PP_SELECTED_CHARACTER);
+				
+				if(players.Length > selected){
+					player = players[selected];
+				}
+				else{
+					GTDebug.logErrorAlways("Selected player index [" + selected + "] is out of range ["+players.Length+"]");
 				}
 			}
 		}

@@ -342,22 +342,28 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	}
 	
 	/*--------------------------------
-	 * Idioma seleccionado
+	 * Language selected
 	 -------------------------------*/
 	public virtual void loadLanguage(){
-		if(!string.IsNullOrEmpty(GameSettings.Instance.testLanguage)){
+		//load in a list all SystemLanguage
+		Languages.loadAllLanguagesInGameSettings();
+		
+		if(GameSettings.Instance.useTestLanguage){
 			Languages.selectLanguage(GameSettings.Instance.testLanguage);
 		}
 		else{
+			//if not changed language
 			if(!PlayerPrefs.HasKey(GameSettings.PP_LANGUAGE_CHANGED)){
 				PlayerPrefs.SetInt(GameSettings.PP_LANGUAGE_CHANGED, 0);
 			}
 			
-			//si no se ha cambiado el idioma, indicamos el idioma por defecto al del dispositivo
+			// if player has not changed the language, we load the device language if we are supporting it if not we set English by default
 			if(PlayerPrefs.GetInt(GameSettings.PP_LANGUAGE_CHANGED) == 0){
-				Languages.seleccionarIdiomaSegunIdiomaDispositivo();
+				Languages.selectLanguageOfDeviceIfSupported();
 			}
 		}
+		
+		GTDebug.log("Current Language: " + Languages.getCurrentLanguage());
 	}
 	
 	/*--------------------------------

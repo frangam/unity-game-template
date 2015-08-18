@@ -324,7 +324,6 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			
 			
 			if(name.Equals("Bills")){
-				BaseSoundManager.Instance.play(BaseSoundIDs.CLAIM_BILLS_FX);
 				GameMoneyManager.Instance.addMoney(amount);
 			}
 			
@@ -340,7 +339,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//  PUBLIC METHODS
 	//--------------------------------------
 	public void showRandomGameplayInterstitialOrVideoAd(int adZoneIndex = 0){
-		int videoPercentage = Mathf.Clamp(GameSettings.Instance.videoPercentageInRandomShow, 1, 100);
+		int videoPercentage = Mathf.Clamp(GameSettings.Instance.videoPercentageInRandomShow, 0, 100);
 		int election = Random.Range(0, 100);
 		bool canShowAdmobAd = canShowAd(AdNetwork.GOOGLE_ADMOB);
 		bool canShowAdColonyAd = canShowAd(AdNetwork.ADCOLONY);

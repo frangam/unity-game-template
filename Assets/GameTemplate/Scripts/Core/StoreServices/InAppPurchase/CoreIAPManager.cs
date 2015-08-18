@@ -618,7 +618,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				        && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)) {
 					GTDebug.log("Restoring purchase of non consumable product: " + product.ItemType + ". ID: "+product.Id);
 					
-					if(!needRestore && iBaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
+					if(!needRestore && BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 						GameLoaderManager.Instance.InAppNeedRestoreProducts = true;
 					
 					needRestore = true;

@@ -7,7 +7,7 @@ public class UIBaseGameControlButtonsWindow : UIBaseWindow {
 	// Private Attributes
 	//--------------------------------------
 	private AxisTouchButton[] buttons;
-
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -16,7 +16,7 @@ public class UIBaseGameControlButtonsWindow : UIBaseWindow {
 		base.Awake ();
 		buttons = GetComponentsInChildren<AxisTouchButton>();
 	}
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
@@ -26,7 +26,7 @@ public class UIBaseGameControlButtonsWindow : UIBaseWindow {
 	public void releaseTouchDown(){
 		if(buttons != null && buttons.Length > 0){
 			foreach(AxisTouchButton b in buttons){
-				GTDebug.log("Releasing car button " +b.name);
+				GTDebug.log("Releasing button " +b.name);
 				b.OnPointerUp(null);
 			}
 		}

@@ -13,12 +13,7 @@ public class GameSettings : ScriptableObject {
 	// Flags to control showing in editor
 	//--------------------------------------
 	public bool 								showGameInfo												= false;
-	public bool 								showGameNames 												= false;
-	public bool 								showAndroidGameNames										= false;
-	public bool 								showIOSGameNames 											= false;
-	public bool 								showWPGameNames 											= false;
-	public bool 								showBuildPackageIDs											= false;
-	public bool 								showAppleAppID												= false;
+	public bool									showLocalizations											= false;
 	public bool 								showGameDifficulties			 							= false;
 	public bool 								showMoneySettings 											= false;
 	public bool 								showAdsSettings 											= false;
@@ -70,12 +65,9 @@ public class GameSettings : ScriptableObject {
 	public static float 						graphicsDetails					= 1f;
 	
 	//SETTINGS
-	public List<GameDifficulty> 				gameDifficulties 				= new List<GameDifficulty>(){GameDifficulty.NONE};
-	public List<string> 						appleAppIDs				 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 						androidGameNames				= new List<string>(); //for every game version (versinable game)
-	public List<string> 						iOSGameNames				 	= new List<string>(); //for every game version (versinable game)
-	public List<string> 						WPGameNames				 		= new List<string>(); //for every game version (versinable game)
-	public List<string> 						buildPackagesIDs		 		= new List<string>(); //for every game version (versinable game)
+	public List<SystemLanguage>					AllLanguages					= new List<SystemLanguage>();
+	public List<SystemLanguage>					localizations					= new List<SystemLanguage>(){SystemLanguage.English, SystemLanguage.Spanish};
+	public List<GameDifficulty> 				gameDifficulties 				= new List<GameDifficulty>(){GameDifficulty.NONE};	
 	public List<string> 						androidShortLinks		 		= new List<string>(); //for every game version (versinable game)
 	public List<string> 						iOSShortLinks			 		= new List<string>(); //for every game version (versinable game)
 	public List<string> 						amazonShortLinks		 		= new List<string>(); //for every game version (versinable game)
@@ -95,6 +87,7 @@ public class GameSettings : ScriptableObject {
 	public string								prefixAchievementsGroupOnIOS	= "grp.";
 	public List<GameAction> 					achievementsActions				= new List<GameAction>(); //for every game version (versinable game)
 	public Dictionary<Achievement, int> 		achPackActionsSelected 			= new Dictionary<Achievement, int>();
+	public List<List<string>>					excludesResForBuild				= new List<List<string>>(); //for every game version (versinable game)
 	public List<InAppBillingIDPack> 			allInAppBillingIDS 				= new List<InAppBillingIDPack>(); //for every game version (versinable game)
 	public bool 								FX_AND_MUSIC_ARE_THE_SAME 		= true;
 	public bool 								HAS_INITIAL_TUTORIAL 			= false;
@@ -122,7 +115,8 @@ public class GameSettings : ScriptableObject {
 	public bool 	USE_MAX_LONG_VALUE_TO_MAX_GEMS 							= true;
 	public float	PERCENTAGE_MONEY_REWARD_LEVEL_PREV_COMPLETED 			= 0.3f;
 	public float	PERCENTAGE_GEMS_REWARD_LEVEL_PREV_COMPLETED 			= 0f;
-	public string	testLanguage 											= "English";
+	public bool		useTestLanguage											= false;
+	public SystemLanguage	testLanguage 									= SystemLanguage.English;
 	public int		currentGameMultiversion 								= 0;
 	
 	//ADS 
@@ -163,10 +157,6 @@ public class GameSettings : ScriptableObject {
 	public float INITIAL_CHAR_CONTROL_SENSITIVITY 							= 2f;
 	public float MAX_CHAR_CONTROL_SENSITIVITY 								= 5f;
 	public float MIN_CHAR_CONTROL_SENSITIVITY 								= 0.25f;
-	
-	//LOCALIZATION
-	public const string LOC_ENGLISH 										= "English";
-	public const string LOC_SPANISH 										= "Spanish";
 	
 	//TAGS									  			
 	public const string TAG_PLAYER 											= "Player";
@@ -270,35 +260,27 @@ public class GameSettings : ScriptableObject {
 	// Public Methods
 	//--------------------------------------
 	public string CurrentGameName{
-		get{ 
-			string name = "";
-			#if UNITY_ANDROID
-			if(androidGameNames != null && androidGameNames.Count > currentGameMultiversion) name = androidGameNames[currentGameMultiversion];
-			#elif UNITY_IPHONE
-			if(iOSGameNames != null && iOSGameNames.Count > currentGameMultiversion) name = iOSGameNames[currentGameMultiversion];
-			#elif UNITY_WP8
-			if(WPGameNames != null && WPGameNames.Count > currentGameMultiversion) name = WPGameNames[currentGameMultiversion];
-			#endif
-			return name;}
-	}
-	public string CurrentBuildPackageID{
-		get{ 
-			if(buildPackagesIDs != null && buildPackagesIDs.Count > currentGameMultiversion) return buildPackagesIDs[currentGameMultiversion];
-			else return null;}
-	}
-	public string CurrentAppleAppID{
-		get{ 
-			if(appleAppIDs != null && appleAppIDs.Count > currentGameMultiversion) return appleAppIDs[currentGameMultiversion];
-			else return null;}
+		get{
+			if(GTBuildSettingsConfig.Instance.CurrentBuildPack != null){
+				#if UNITY_ANDROID
+				return GTBuildSettingsConfig.Instance.CurrentBuildPack.build.androidGameName;
+				#elif UNITY_IPHONE
+				return GTBuildSettingsConfig.Instance.CurrentBuildPack.build.IOSGameName;
+				#elif WP8
+				return GTBuildSettingsConfig.Instance.CurrentBuildPack.build.WpGameName;
+				#endif
+			}
+			else return null;
+		}
 	}
 	public string CurrentAndroidAppLink{
-		get{ return LINK_ANDROID_APP+CurrentBuildPackageID;}
+		get{ return LINK_ANDROID_APP+GTBuildSettingsConfig.Instance.CurrentBuildPack.build.bundleIdentifier;}
 	}
 	public string CurrentAmazonAppLink{
-		get{ return LINK_AMAZON_APP+CurrentBuildPackageID;}
+		get{ return LINK_AMAZON_APP+GTBuildSettingsConfig.Instance.CurrentBuildPack.build.bundleIdentifier;}
 	}
 	public string CurrentIOSAppLink{
-		get{ return LINK_IOS_APP+CurrentAppleAppID;}
+		get{ return LINK_IOS_APP+GTBuildSettingsConfig.Instance.CurrentBuildPack.build.appleID;}
 	}
 	public string CurrentAndroidAppShortLink{
 		get{ 
@@ -323,6 +305,11 @@ public class GameSettings : ScriptableObject {
 	public string CurrentUniqueSurvivalRankingID{
 		get{ 
 			if(uniqueSurvivalRankingIDS != null && uniqueSurvivalRankingIDS.Count > currentGameMultiversion) return uniqueSurvivalRankingIDS[currentGameMultiversion];
+			else return null;}
+	}
+	public List<string> CurrentResourcesExcludesForBuild{
+		get{ 
+			if(excludesResForBuild != null && excludesResForBuild.Count > currentGameMultiversion) return excludesResForBuild[currentGameMultiversion];
 			else return null;}
 	}
 	public List<string> CurrentSurvivalLevelRankingIDs{

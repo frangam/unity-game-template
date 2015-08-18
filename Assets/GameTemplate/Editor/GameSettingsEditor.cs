@@ -27,6 +27,7 @@ public class GameSettingsEditor : Editor {
 	GUIContent templateMultiversion   = new GUIContent("Game MultiVersion for Build [?]:", "Min 0 if this project has multiple versinable games.");
 	GUIContent gameNamesContent   = new GUIContent("Game Names [?]:", "Min set one name. Add more names for each game version in order");
 	GUIContent buildPackageIDsContent   = new GUIContent("Build Package IDs [?]:", "Min set one id. Add more ids for each game version order");
+	GUIContent bundleVersionsContent   = new GUIContent("Bundle Versions [?]:", "Min set one bundle version. Add more bundle versions for each game version order");
 	GUIContent uniqueRankingIDsContent   = new GUIContent("Unique Ranking IDs [?]:", "Min set one id for a unique game no versinable. Add more ids for each game version order");
 	GUIContent uniqueSurvivalRankingIDsContent   = new GUIContent("Unique Survival Ranking IDs [?]:", "Min set one id for a unique game no versinable. Add more ids for each game version order");
 	
@@ -203,9 +204,9 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.EndHorizontal();
 			//			EditorGUILayout.Space();
 			
-			gameNames();
-			buildPackageIDs();
-			appleAppIDs();
+			localizations();
+			//			excludesResourcesForBuild();
+			
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Is a Dev version");
@@ -220,10 +221,19 @@ public class GameSettingsEditor : Editor {
 			//			EditorGUILayout.Space();
 			
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField(testLanguage);
-			GameSettings.Instance.testLanguage	= EditorGUILayout.TextField(GameSettings.Instance.testLanguage);
+			EditorGUILayout.LabelField("Test a language ?");
+			GameSettings.Instance.useTestLanguage	= EditorGUILayout.Toggle(GameSettings.Instance.useTestLanguage);
 			EditorGUILayout.EndHorizontal();
-			//			EditorGUILayout.Space();
+			
+			if(GameSettings.Instance.useTestLanguage){
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField(testLanguage);
+				GameSettings.Instance.testLanguage	= (SystemLanguage) EditorGUILayout.EnumPopup(GameSettings.Instance.testLanguage);
+				EditorGUILayout.EndHorizontal();
+				EditorGUI.indentLevel--;
+				//			EditorGUILayout.Space();
+			}
 			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField(musicFXLabel);
@@ -256,206 +266,6 @@ public class GameSettingsEditor : Editor {
 			EditorGUI.indentLevel--;
 		}
 		EditorGUILayout.EndVertical();
-	}
-	
-	protected virtual void gameNames(){
-		GameSettings.Instance.showGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showGameNames, gameNamesContent);
-		if (GameSettings.Instance.showGameNames) {
-			EditorGUILayout.BeginVertical(GUI.skin.box);
-			
-			//-------------
-			//for Android
-			//-------------
-			GameSettings.Instance.showAndroidGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showAndroidGameNames, "Android Game Names");
-			if (GameSettings.Instance.showAndroidGameNames) {
-				EditorGUILayout.BeginVertical(GUI.skin.box);
-				
-				if(GameSettings.Instance.androidGameNames.Count == 0) {
-					EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
-				}
-				
-				int i = 0;
-				foreach(string d in GameSettings.Instance.androidGameNames) {
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
-					GameSettings.Instance.androidGameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.androidGameNames[i]).Trim();
-					
-					
-					if(GUILayout.Button("-",  GUILayout.Width(30))) {
-						GameSettings.Instance.androidGameNames.Remove(d);
-						break;
-					}
-					EditorGUILayout.EndHorizontal();
-					i++;
-				}
-				
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.Space();
-				if(GUILayout.Button("+",  GUILayout.Width(60))) {
-					GameSettings.Instance.androidGameNames.Add("");
-				}
-				EditorGUILayout.EndHorizontal();
-				EditorGUILayout.Space();
-				
-				EditorGUILayout.EndVertical();
-			}
-			
-			//-------------
-			// for iOS
-			//-------------
-			GameSettings.Instance.showIOSGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showIOSGameNames, "iOS Game Names");
-			if (GameSettings.Instance.showIOSGameNames) {
-				EditorGUILayout.BeginVertical(GUI.skin.box);
-				
-				if(GameSettings.Instance.iOSGameNames.Count == 0) {
-					EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
-				}
-				
-				int i = 0;
-				foreach(string d in GameSettings.Instance.iOSGameNames) {
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
-					GameSettings.Instance.iOSGameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.iOSGameNames[i]).Trim();
-					
-					
-					if(GUILayout.Button("-",  GUILayout.Width(30))) {
-						GameSettings.Instance.iOSGameNames.Remove(d);
-						break;
-					}
-					EditorGUILayout.EndHorizontal();
-					i++;
-				}
-				
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.Space();
-				if(GUILayout.Button("+",  GUILayout.Width(60))) {
-					GameSettings.Instance.iOSGameNames.Add("");
-				}
-				EditorGUILayout.EndHorizontal();
-				EditorGUILayout.Space();
-				
-				EditorGUILayout.EndVertical();
-			}
-			
-			
-			//-------------
-			// for WP
-			//-------------
-			GameSettings.Instance.showWPGameNames = EditorGUILayout.Foldout(GameSettings.Instance.showWPGameNames, "WP Game Names");
-			if (GameSettings.Instance.showWPGameNames) {
-				EditorGUILayout.BeginVertical(GUI.skin.box);
-				
-				if(GameSettings.Instance.WPGameNames.Count == 0) {
-					EditorGUILayout.HelpBox("No Game Names Registred",MessageType.Error);
-				}
-				
-				int i = 0;
-				foreach(string d in GameSettings.Instance.WPGameNames) {
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.LabelField("Game Name V"+i.ToString()+":",GUILayout.Width(120));
-					GameSettings.Instance.WPGameNames[i] = EditorGUILayout.TextField(GameSettings.Instance.WPGameNames[i]).Trim();
-					
-					
-					if(GUILayout.Button("-",  GUILayout.Width(30))) {
-						GameSettings.Instance.WPGameNames.Remove(d);
-						break;
-					}
-					EditorGUILayout.EndHorizontal();
-					i++;
-				}
-				
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.Space();
-				if(GUILayout.Button("+",  GUILayout.Width(60))) {
-					GameSettings.Instance.WPGameNames.Add("");
-				}
-				EditorGUILayout.EndHorizontal();
-				EditorGUILayout.Space();
-				
-				EditorGUILayout.EndVertical();
-			}
-			
-			EditorGUILayout.EndVertical();
-		}
-	}
-	
-	protected virtual void buildPackageIDs(){
-		GameSettings.Instance.showBuildPackageIDs = EditorGUILayout.Foldout(GameSettings.Instance.showBuildPackageIDs, buildPackageIDsContent);
-		if (GameSettings.Instance.showBuildPackageIDs) {
-			EditorGUILayout.BeginVertical(GUI.skin.box);
-			
-			if(GameSettings.Instance.buildPackagesIDs.Count == 0) {
-				EditorGUILayout.HelpBox("No Build Package ID Registred",MessageType.Error);
-			}
-			
-			int i = 0;
-			foreach(string d in GameSettings.Instance.buildPackagesIDs) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
-				GameSettings.Instance.buildPackagesIDs[i] = EditorGUILayout.TextField(GameSettings.Instance.buildPackagesIDs[i]).Trim();
-				
-				
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GameSettings.Instance.buildPackagesIDs.Remove(d);
-					break;
-				}
-				EditorGUILayout.EndHorizontal();
-				i++;
-			}
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if(GUILayout.Button("+",  GUILayout.Width(60))) {
-				GameSettings.Instance.buildPackagesIDs.Add("");
-			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
-			
-			EditorGUILayout.EndVertical();
-		}
-		//		EditorGUILayout.Space();
-	}
-	
-	protected virtual void appleAppIDs(){
-		GameSettings.Instance.showAppleAppID = EditorGUILayout.Foldout(GameSettings.Instance.showAppleAppID, "Apple App IDs");
-		if (GameSettings.Instance.showAppleAppID) {
-			EditorGUILayout.BeginVertical(GUI.skin.box);
-			
-			if(GameSettings.Instance.appleAppIDs.Count == 0) {
-				EditorGUILayout.HelpBox("No Apple App ID Registred",MessageType.Error);
-			}
-			
-			int i = 0;
-			foreach(string d in GameSettings.Instance.appleAppIDs) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("ID for Vs"+i.ToString()+":",GUILayout.Width(120));
-				GameSettings.Instance.appleAppIDs[i] = EditorGUILayout.TextField(GameSettings.Instance.appleAppIDs[i]).Trim();
-				
-				
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GameSettings.Instance.appleAppIDs.Remove(d);
-					break;
-				}
-				EditorGUILayout.EndHorizontal();
-				i++;
-			}
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if(GUILayout.Button("+",  GUILayout.Width(60))) {
-				GameSettings.Instance.appleAppIDs.Add("");
-			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
-			
-			EditorGUILayout.EndVertical();
-		}
-		//		EditorGUILayout.Space();
 	}
 	
 	protected virtual void inAppBilling(){
@@ -1571,6 +1381,47 @@ public class GameSettingsEditor : Editor {
 		}
 	}
 	
+	protected virtual void localizations(){
+		GameSettings.Instance.showLocalizations = EditorGUILayout.Foldout(GameSettings.Instance.showLocalizations, "Localizations");
+		if (GameSettings.Instance.showLocalizations) {
+			EditorGUI.indentLevel++;
+			
+			EditorGUILayout.BeginVertical(GUI.skin.box);
+			
+			if(GameSettings.Instance.localizations.Count == 0) {
+				EditorGUILayout.HelpBox("No Localizations Registred",MessageType.Warning);
+			}
+			
+			int i = 0;
+			foreach(SystemLanguage d in GameSettings.Instance.localizations) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Language:",GUILayout.Width(120));
+				GameSettings.Instance.localizations[i] = (SystemLanguage) EditorGUILayout.EnumPopup(GameSettings.Instance.localizations[i]);
+				
+				
+				if(GUILayout.Button("-",  GUILayout.Width(30))) {
+					GameSettings.Instance.localizations.Remove(d);
+					break;
+				}
+				EditorGUILayout.EndHorizontal();
+				i++;
+			}
+			
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			if(GUILayout.Button("+",  GUILayout.Width(60))) {
+				GameSettings.Instance.localizations.Add(SystemLanguage.English);
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.Space();
+			
+			EditorGUILayout.EndVertical();
+			
+			EditorGUI.indentLevel--;
+		}
+	}
+	
 	protected virtual  void appLinks(){
 		GameSettings.Instance.showAppLinksSettings = EditorGUILayout.Foldout(GameSettings.Instance.showAppLinksSettings, "App Links");
 		if (GameSettings.Instance.showAppLinksSettings) {
@@ -1777,6 +1628,8 @@ public class GameSettingsEditor : Editor {
 			EditorGUI.indentLevel--;
 		}
 	}
+	
+	
 	
 	protected virtual void uniqueRankingIDs(){
 		GameSettings.Instance.showUniqueRankingSettings = EditorGUILayout.Foldout(GameSettings.Instance.showUniqueRankingSettings, uniqueRankingIDsContent);

@@ -55,7 +55,7 @@ public class RateApp : Singleton<RateApp>{
 	//--------------------------------------
 	private void rate(){
 		#if UNITY_IPHONE
-		IOSRateUsPopUp rate = IOSRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.CurrentGameName
+		IOSRateUsPopUp rate = IOSRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_MESSAGE)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_VOTE_BUTTON)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_REMEMBER_BUTTON)
@@ -64,14 +64,14 @@ public class RateApp : Singleton<RateApp>{
 		
 		#elif UNITY_ANDROID
 		string link = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.CurrentAmazonAppLink : GameSettings.Instance.CurrentAndroidAppLink;
-		AndroidRateUsPopUp rate = AndroidRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.CurrentGameName
+		AndroidRateUsPopUp rate = AndroidRateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_MESSAGE)
 		                                                    ,link,Localization.Get(ExtraLocalizations.RATE_POPUP_VOTE_BUTTON)
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_REMEMBER_BUTTON)
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_REFUSE_BUTTON));
 		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
 		#elif UNITY_WP8
-		WP8RateUsPopUp rate = WP8RateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)+" "+GameSettings.Instance.CurrentGameName
+		WP8RateUsPopUp rate = WP8RateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)
 		                                            , Localization.Get(ExtraLocalizations.RATE_POPUP_MESSAGE));
 		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
 		#endif

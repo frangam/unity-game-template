@@ -45,14 +45,16 @@ public class DailyRewardsInterface : UIBaseWindow {
 	
 	public void initialization(){
 		dailyRewards.CheckRewards ();
-		UpdateUI ();
-		StartCoroutine(doInitialization());
+		UpdateUI (true);
+		
 	}
 	
 	
 	public override void open ()
 	{
 		base.open ();
+		UpdateUI (true);
+		
 		timer = 0;
 		
 		bool inited = InternetChecker.Instance.IsconnectedToInternet 
@@ -62,9 +64,6 @@ public class DailyRewardsInterface : UIBaseWindow {
 			StartCoroutine(tryToInitEverySeconds());
 			UIController.Instance.Manager.open(loadingWin);
 			StartCoroutine(waitForInitRewards());
-		}
-		else{
-			StartCoroutine(centerScrollOntheCurrentDailyAvailable());
 		}
 	}
 	
@@ -129,7 +128,7 @@ public class DailyRewardsInterface : UIBaseWindow {
 		UpdateUI ();
 	}
 	
-	private IEnumerator doUpdate(){
+	private IEnumerator doUpdate(bool centerScroll = false){
 		bool inited = (dailyRewards != null && dailyRewards.IsInitialized && dailyRewards.rewards != null);
 		while(timer < MAX_TIME_WAIT_FOR_INIT && !inited){
 			timer += Time.deltaTime;
@@ -170,11 +169,15 @@ public class DailyRewardsInterface : UIBaseWindow {
 			
 			btnClaim.gameObject.SetActive(isRewardAvailableNow);
 			txtTimeDue.gameObject.SetActive(!isRewardAvailableNow);
+			
+			if(centerScroll)
+				StartCoroutine(doInitialization());
 		}
 	}
 	
-	public void UpdateUI () {
-		StartCoroutine(doUpdate());
+	public void UpdateUI (bool centerScroll = false) {
+		if(isActiveAndEnabled)
+			StartCoroutine(doUpdate(centerScroll));
 	}
 	
 	void FixedUpdate() {

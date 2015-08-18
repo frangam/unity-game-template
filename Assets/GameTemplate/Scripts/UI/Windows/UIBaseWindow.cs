@@ -267,12 +267,13 @@ public class UIBaseWindow : MonoBehaviour {
 		if(Anim != null && !string.IsNullOrEmpty(openAnimTrigger))
 			Anim.SetTrigger(openAnimTrigger);
 		
-		//call to close it after a delay time
-		if(waitForcloseAfterOpen > 0)
-			UIController.Instance.Manager.waitForClose(this, waitForcloseAfterOpen);
 		
 		//do something extra actions
 		doSomeThingWhenOpen();
+		
+		//call to close it after a delay time
+		if(waitForcloseAfterOpen > 0)
+			UIController.Instance.Manager.waitForClose(this, waitForcloseAfterOpen);
 	}
 	
 	/// <summary>

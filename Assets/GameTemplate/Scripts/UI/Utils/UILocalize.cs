@@ -77,6 +77,10 @@ public class UILocalize : MonoBehaviour
 		if (mStarted) OnLocalize();
 	}
 	
+	void OnDisable (){
+		dispatcher.removeEventListener(ON_LOCALIZE_EVENT, OnLocalize);
+	}
+	
 	/// <summary>
 	/// Localize the widget on start.
 	/// </summary>
