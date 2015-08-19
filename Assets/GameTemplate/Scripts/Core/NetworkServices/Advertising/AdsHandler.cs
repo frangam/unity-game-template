@@ -57,7 +57,9 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR)
 	public bool canShowAd(AdNetwork network, int zoneIndex = 0, AdType type = AdType.BANNER){
 		bool hasInternet = InternetChecker.Instance.IsconnectedToInternet;
-		bool canShow = hasInternet && !GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0;
+		bool canShow = hasInternet && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0
+			&& (type == AdType.VIDEO_V4VC //can show if the ad type is video with and a reward 
+			    || (type != AdType.VIDEO_V4VC && !GameSettings.Instance.IS_PRO_VERSION));
 		
 		GTDebug.log("Has internet ? " + hasInternet);
 		
