@@ -645,9 +645,15 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			Debug.Log("UIBaseInAppWin - Restore Purchase Success");
 		
 		//restore non-consumable products (like quit ads)
-		foreach(UIBaseInAppItem i in CoreIAPManager.Instance.Products){
-			if(i.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE){
-				i.applyReward();
+		foreach(UIBaseInAppItem item in CoreIAPManager.Instance.Products){
+			if(item.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE){
+				item.applyReward();
+				
+				//get the corresponding in app button of this in app item
+				UIBaseInAppButton button = getButton(item);
+				if(button != null && item.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE && item.RewardedNonConsumable){
+					button.itemRewarded(item);
+				}
 			}
 		}
 		
