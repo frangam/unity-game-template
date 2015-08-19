@@ -38,6 +38,9 @@ public class UIBaseWindow : MonoBehaviour {
 	private float waitForcloseAfterOpen = 0f;
 	
 	[SerializeField]
+	private bool ignoreTimeScaleInWaitingForCloseAfterOpen = false;
+	
+	[SerializeField]
 	private string openAnimTrigger = "";
 	
 	[SerializeField]
@@ -273,7 +276,7 @@ public class UIBaseWindow : MonoBehaviour {
 		
 		//call to close it after a delay time
 		if(waitForcloseAfterOpen > 0)
-			UIController.Instance.Manager.waitForClose(this, waitForcloseAfterOpen);
+			UIController.Instance.Manager.waitForClose(this, waitForcloseAfterOpen, ignoreTimeScaleInWaitingForCloseAfterOpen);
 	}
 	
 	/// <summary>

@@ -106,8 +106,11 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	private IEnumerator waitForCloseWin(UIBaseWindow win, float wait, bool willClose = true){
-		yield return new WaitForSeconds(wait);
+	private IEnumerator waitForCloseWin(UIBaseWindow win, float wait, bool willClose = true, bool ignoreTimeScale = false){
+		if(!ignoreTimeScale)
+			yield return  new WaitForSeconds(wait);
+		else
+			yield return StartCoroutine(TimeUtils.WaitForRealSeconds( wait ) );
 		
 		if(willClose)
 			close(win);
@@ -158,29 +161,29 @@ public class UIBaseManager : MonoBehaviour {
 		return win;
 	}
 	
-	public virtual void waitForOpen(string id, float wait){
+	public virtual void waitForOpen(string id, float wait, bool ignoreTimeScale = false){
 		UIBaseWindow win = getWindow(id);
 		
 		if(win != null)
-			StartCoroutine(waitForCloseWin(win, wait, false));
+			StartCoroutine(waitForCloseWin(win, wait, false, ignoreTimeScale));
 	}
 	
-	public virtual void waitForOpen(UIBaseWindow win, float wait){
+	public virtual void waitForOpen(UIBaseWindow win, float wait, bool ignoreTimeScale = false){
 		if(windows.Contains(win)){
-			StartCoroutine(waitForCloseWin(win, wait, false));
+			StartCoroutine(waitForCloseWin(win, wait, false, ignoreTimeScale));
 		}
 	}
 	
-	public virtual void waitForClose(string id, float wait){
+	public virtual void waitForClose(string id, float wait, bool ignoreTimeScale = false){
 		UIBaseWindow win = getWindow(id);
 		
 		if(win != null)
-			StartCoroutine(waitForCloseWin(win, wait));
+			StartCoroutine(waitForCloseWin(win, wait, true, ignoreTimeScale));
 	}
 	
-	public virtual void waitForClose(UIBaseWindow win, float wait){
+	public virtual void waitForClose(UIBaseWindow win, float wait, bool ignoreTimeScale = false){
 		if(windows.Contains(win)){
-			StartCoroutine(waitForCloseWin(win, wait));
+			StartCoroutine(waitForCloseWin(win, wait, true, ignoreTimeScale));
 		}
 	}
 	
