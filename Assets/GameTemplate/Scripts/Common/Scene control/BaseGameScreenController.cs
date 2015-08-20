@@ -68,7 +68,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 		if(currentSection != GameSection.GAME){
 			Time.timeScale = paused ? 0f : 1f;
 		}
-		else if(paused && !GameController.Instance.Manager.Finished){
+		else if(paused && !GameController.Instance.Manager.Finished && GameController.Instance.Manager.Started){
 			GTDebug.log("Pausing game in Game Scene");
 			
 			GameController.Instance.Manager.Paused = paused;

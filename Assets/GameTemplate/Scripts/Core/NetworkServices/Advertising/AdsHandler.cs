@@ -73,7 +73,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 					&& adcolonyInited 
 						&& !string.IsNullOrEmpty(zoneId) 
 						&& ((type == AdType.VIDEO && AdColony.IsVideoAvailable(zoneId))
-						    || (type == AdType.VIDEO_V4VC && AdColony.IsV4VCAvailable(zoneId))); 
+						    || (type == AdType.VIDEO_V4VC && AdColony.IsV4VCAvailable(zoneId)))
+						; 
 				
 				
 				
@@ -343,11 +344,11 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	public void showRandomGameplayInterstitialOrVideoAd(int adZoneIndex = 0){
 		int videoPercentage = Mathf.Clamp(GameSettings.Instance.videoPercentageInRandomShow, 0, 100);
 		int election = Random.Range(0, 100);
-		bool canShowAdmobAd = canShowAd(AdNetwork.GOOGLE_ADMOB);
-		bool canShowAdColonyAd = canShowAd(AdNetwork.ADCOLONY);
+		bool canShowAdmobAd = canShowAd(AdNetwork.GOOGLE_ADMOB, adZoneIndex, AdType.INTERSTITIAL);
+		bool canShowAdColonyAd = canShowAd(AdNetwork.ADCOLONY, adZoneIndex, AdType.VIDEO);
 		
 		GTDebug.log("Can show admob ads ? " +canShowAdmobAd + ", can show adcolony ads ? "+ canShowAdColonyAd);
-		GTDebug.log("Random percentage for video electo: "+ videoPercentage+election + ". Election %: " + election);
+		GTDebug.log("Random percentage for video electo: "+ videoPercentage + ". Election %: " + election);
 		
 		if(canShowAdmobAd && canShowAdColonyAd){
 			//show adcolony video
@@ -400,15 +401,14 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		#endif
 	}
 	
-	public void playVideoV4VC(int zoneIndex = 0, bool prePopup = false, bool postPopup = false){
+	
+	public void playVideoV4VC(int zoneIndex = 0, AdNetwork network = AdNetwork.ADCOLONY, AdType type = AdType.VIDEO_V4VC, bool prePopup = false, bool postPopup = false){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		playVideoV4VC(AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex),prePopup,postPopup);
-		#endif
-	}
-	public void playVideoV4VC(string zoneID, bool prePopup = false, bool postPopup = false){
-		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+		string zoneID = AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex);
+		
 		// Check to see if a video for V4VC is available in the zone.
-		if(AdColony.IsV4VCAvailable(zoneID)){
+		//		if(AdColony.IsV4VCAvailable(zoneID)){
+		if(canShowAd(AdNetwork.ADCOLONY, zoneIndex, type)){
 			GTDebug.log("Play AdColony V4VC Ad");
 			// The AdColony class exposes two methods for showing V4VC Ads.
 			// ---------------------------------------
@@ -434,34 +434,29 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		#endif
 	}
 	
-	/// <summary>
-	/// Play A video related with list index
-	/// </summary>
-	/// <param name="zoneIndex">Zone index.</param>
-	public void PlayAVideo( int zoneIndex = 0){
-		PlayAVideo(AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex));
-	}
 	
 	// When a video is available, you may choose to play it in any fashion you like.
 	// Generally you will play them automatically during breaks in your game,
 	// or in response to a user action like clicking a button.
 	// Below is a method that could be called, or attached to a GUI action.
-	public void PlayAVideo( string zoneID )
+	public void PlayAVideo(int zoneIndex = 0, AdNetwork network = AdNetwork.ADCOLONY, AdType type = AdType.VIDEO)
 	{
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(canShowAd(AdNetwork.ADCOLONY)){
-			// Check to see if a video is available in the zone.
-			if(AdColony.IsVideoAvailable(zoneID)){
-				GTDebug.log("Play AdColony Video in this zone ID " + zoneID);
-				
-				// Call AdColony.ShowVideoAd with that zone to play an interstitial video.
-				// Note that you should also pause your game here (audio, etc.) AdColony will not
-				// pause your app for you.
-				AdColony.ShowVideoAd(zoneID); 
-			}
-			else{
-				GTDebug.log("Video Not Available in this zone ID "+zoneID);
-			}
+		string zoneID = AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex);
+		
+		if(canShowAd(AdNetwork.ADCOLONY, zoneIndex, type)){
+			//			// Check to see if a video is available in the zone.
+			//			if(AdColony.IsVideoAvailable(zoneID)){
+			GTDebug.log("Play AdColony Video in this zone ID " + zoneID);
+			
+			// Call AdColony.ShowVideoAd with that zone to play an interstitial video.
+			// Note that you should also pause your game here (audio, etc.) AdColony will not
+			// pause your app for you.
+			AdColony.ShowVideoAd(zoneID); 
+			//			}
+			//			else{
+			//				GTDebug.log("Video Not Available in this zone ID "+zoneID);
+			//			}
 		}
 		#endif
 	}
