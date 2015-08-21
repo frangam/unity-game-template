@@ -26,7 +26,7 @@ public class SplashCorporativeLogo : MonoBehaviour {
 		float delay = GetComponent<AudioSource>().clip ? GetComponent<AudioSource>().clip.length + waitTime : waitTime;
 		yield return new WaitForSeconds(delay);
 		
-		ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_LOADER, false);
+		ScreenLoaderVisualIndicator.Instance.LoadScene(GameSection.LOAD_SCREEN, false);
 		//		Application.LoadLevel(GameSettings.SCENE_LOADER);
 	}
 }

@@ -29,7 +29,7 @@ public class UIBaseGameLogicButton : UIBaseButton {
 			break;
 			
 		case GameLogicAction.EXIT_GAME:
-			ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_MAINMENU);
+			ScreenLoaderVisualIndicator.Instance.LoadScene(GameSection.MAIN_MENU);
 			break;
 		}
 	}

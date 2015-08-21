@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator> {
 	
@@ -94,6 +95,26 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 	
 	public void LoadScene(int scene, bool showLoadIndicator = true, bool showLoadingPanel = true){
 		StartCoroutine(Load(scene, showLoadIndicator, showLoadingPanel));
+	}
+	
+	public bool LoadScene(GameSection section, bool showLoadIndicator = true, bool showLoadingPanel = true){
+		bool valid = false;
+		List<GTBuildScene> scenes = GTBuildSettingsConfig.Instance.CurrentBuildPack.build.scenes;
+		int selectedScene = 0;
+		
+		for(int i=0; i<scenes.Count; i++){
+			if(scenes[i].Section == section){
+				selectedScene = i;
+				break;
+			}
+		}
+		
+		//		if(!string.IsNullOrEmpty(selectedScene)){
+		valid = true;
+		StartCoroutine(Load(selectedScene, showLoadIndicator, showLoadingPanel));
+		//		}
+		
+		return valid;
 	}
 	
 	public void finishLoad(){

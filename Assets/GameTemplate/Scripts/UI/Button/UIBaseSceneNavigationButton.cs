@@ -7,6 +7,9 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	private bool showLoadingPanelImmediately = false;
+	
+	[SerializeField]
 	[Tooltip("Game Section represented")]
 	private GameSection section;
 	
@@ -35,6 +38,14 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	protected override IEnumerator doPressBeforeAWhile ()
+	{
+		if(showLoadingPanelImmediately)
+			UILoadingPanel.Instance.show();
+		
+		return base.doPressBeforeAWhile ();
+	}
+	
 	protected override void doPress ()
 	{
 		base.doPress ();
@@ -58,26 +69,22 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 		
 		//Load scene
 		if(string.IsNullOrEmpty(sceneToGo)){
-			switch(section){
-			case GameSection.MAIN_MENU: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_MAINMENU); break;
-			case GameSection.GAME: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_GAME); break;
-			case GameSection.CREDITS: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_CREDITS); break;
-			case GameSection.LEVEL_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_LEVEL_SELECTION); break;
-			case GameSection.SETTINGS: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_SETTINGS); break;
-			case GameSection.CHARACTER_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_CHARACTER_SELECTION); break;
-			case GameSection.ENVIRONMENT_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_ENVIRONMENT_SELECTION); break;
-			case GameSection.ITEMS_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_ITEMS_SELECTION); break;
-			case GameSection.TUTORIAL: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL); break;
+			if(!ScreenLoaderVisualIndicator.Instance.LoadScene(section)){
+				switch(section){
+				case GameSection.MAIN_MENU: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_MAINMENU, true, !showLoadingPanelImmediately); break;
+				case GameSection.GAME: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_GAME, true, !showLoadingPanelImmediately); break;
+				case GameSection.CREDITS: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_CREDITS, true, !showLoadingPanelImmediately); break;
+				case GameSection.LEVEL_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_LEVEL_SELECTION, true, !showLoadingPanelImmediately); break;
+				case GameSection.SETTINGS: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_SETTINGS, true, !showLoadingPanelImmediately); break;
+				case GameSection.CHARACTER_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_CHARACTER_SELECTION, true, !showLoadingPanelImmediately); break;
+				case GameSection.ENVIRONMENT_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_ENVIRONMENT_SELECTION, true, !showLoadingPanelImmediately); break;
+				case GameSection.ITEMS_SELECTION: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_ITEMS_SELECTION, true, !showLoadingPanelImmediately); break;
+				case GameSection.TUTORIAL: ScreenLoaderVisualIndicator.Instance.LoadScene(GameSettings.SCENE_TUTORIAL, true, !showLoadingPanelImmediately); break;
+				}
 			}
 		}
 		else{
-			ScreenLoaderVisualIndicator.Instance.LoadScene(sceneToGo);
+			ScreenLoaderVisualIndicator.Instance.LoadScene(sceneToGo, true, !showLoadingPanelImmediately);
 		}
-	}
-	
-	
-	
-	private void goTo(){
-		
 	}
 }

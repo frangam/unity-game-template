@@ -128,7 +128,7 @@ public class InputBackButton : Singleton<InputBackButton> {
 					break;
 					
 				case Action.GAME_SCREEN:
-					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_GAME);
+					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSection.GAME);
 					break;
 					
 					
@@ -140,14 +140,14 @@ public class InputBackButton : Singleton<InputBackButton> {
 						GameController.Instance.Manager.Paused = true;
 					}
 					else if(GameController.Instance.Manager.Finished){
-						ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
+						ScreenLoaderVisualIndicator.Instance.LoadScene (GameSection.MAIN_MENU);
 					}
 					
 					break;
 					
 					
 				case Action.MAIN_MENU_WITHOUT_CONFIRMATION:
-					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSettings.SCENE_MAINMENU);
+					ScreenLoaderVisualIndicator.Instance.LoadScene (GameSection.MAIN_MENU);
 					break;
 					
 					//			case Action.MAIN_MENU_WITH_CONFIRMATION:
