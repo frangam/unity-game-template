@@ -4,7 +4,7 @@ using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BotonLogin : UIBaseButton {
+public class LoginButton : UIBaseButton {
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
@@ -56,6 +56,7 @@ public class BotonLogin : UIBaseButton {
 			break;
 			
 		case SocialNetwork.GAME_CENTER:
+			gameObject.SetActive(Application.platform == RuntimePlatform.IPhonePlayer);
 			iosAuthenticated = GameCenterManager.IsPlayerAuthenticated;
 			gameObject.SetActive(!iosAuthenticated);
 			break;
@@ -114,16 +115,16 @@ public class BotonLogin : UIBaseButton {
 			if(GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED){
 				GPSConnect.Instance.init();
 				GooglePlayConnection.instance.connect (); //conectar
-				GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerAndroidConnected);
+				GooglePlayConnection.ActionPlayerConnected += OnPlayerAndroidConnected;
 				
 			}
 			else if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED){
 				GooglePlayConnection.instance.connect();
-				GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerAndroidConnected);
+				GooglePlayConnection.ActionPlayerConnected += OnPlayerAndroidConnected;
 			}
 			else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
 				GooglePlayConnection.instance.disconnect();
-				GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerAndroidDisconnected);
+				GooglePlayConnection.ActionPlayerDisconnected += OnPlayerAndroidDisconnected;
 				PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
 			}
 			break;
@@ -191,7 +192,7 @@ public class BotonLogin : UIBaseButton {
 		} 
 	}
 	private void OnPlayerAndroidDisconnected() {
-		GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerAndroidDisconnected);
+		GooglePlayConnection.ActionPlayerDisconnected -= OnPlayerAndroidDisconnected;
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("LoginButton - android player disconnected");
@@ -200,7 +201,7 @@ public class BotonLogin : UIBaseButton {
 	}
 	
 	private void OnPlayerAndroidConnected() {
-		GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerAndroidConnected);
+		GooglePlayConnection.ActionPlayerConnected -= OnPlayerAndroidConnected;
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("LoginButton - android OnPlayerConnected - player connected");

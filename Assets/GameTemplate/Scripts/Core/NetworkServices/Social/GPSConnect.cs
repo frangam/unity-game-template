@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GPSConnect : PersistentSingleton<GPSConnect> {
 	private static bool jugadorConectado = false;
@@ -35,50 +36,14 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	//  Inicializar
 	//--------------------------------------
 	public void init (bool showLoginWindowGameServices = true) {
-		//		//listen for GooglePlayConnection events
-		//		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-		//		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-		//
-		//
-		//		//listen for GooglePlayManager events
-		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.ACHIEVEMENT_UPDATED, OnAchivmentUpdated);
-		GooglePlayManager.instance.addEventListener (GooglePlayManager.SCORE_SUBMITED, OnScoreSubmited);
-		//		
-		//		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
-		//			//checking if player already connected
-		//			OnPlayerConnected ();
-		//		} 
-		//		else{
-		//			GooglePlayConnection.instance.connect (); //conectar
-		//		}
-		
-		
-		
 		//listen for GooglePlayConnection events
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-		
-		
+		GooglePlayConnection.ActionPlayerConnected += OnPlayerConnected;
+		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
 		GooglePlayConnection.ActionConnectionResultReceived += ActionConnectionResultReceived;
 		
-		
-		
 		//listen for GooglePlayManager events
-		GooglePlayManager.instance.addEventListener (GooglePlayManager.ACHIEVEMENT_UPDATED, OnAchivmentUpdated);
-		GooglePlayManager.instance.addEventListener (GooglePlayManager.SCORE_SUBMITED, OnScoreSubmited);
-		
-		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.SCORE_REQUEST_RECEIVED, OnScoreUpdated);
-		
-		
-		
-		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.SEND_GIFT_RESULT_RECEIVED, OnGiftResult);
-		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.PENDING_GAME_REQUESTS_DETECTED, OnPendingGiftsDetected);
-		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.GAME_REQUESTS_ACCEPTED, OnGameRequestAccepted);
-		
-		//		GooglePlayManager.ActionOAuthTockenLoaded += ActionOAuthTockenLoaded;
-		//		GooglePlayManager.ActionAvaliableDeviceAccountsLoaded += ActionAvaliableDeviceAccountsLoaded;
-		//		
-		//		GooglePlayManager.instance.addEventListener (GooglePlayManager.ACHIEVEMENTS_LOADED, OnAchievmnetsLoadedInfoListner);
+		GooglePlayManager.ActionScoreSubmited += OnScoreSubmited;
+		GooglePlayManager.ActionAchievementUpdated += OnAchivmentUpdated;
 		
 		
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
@@ -100,44 +65,17 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	//--------------------------------------
 	//  DESTROY
 	//--------------------------------------
-	//	void OnDestroy() {
-	//		if(!GooglePlayConnection.IsDestroyed) {
-	//			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-	//			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-	//			
-	//		}
-	//		
-	//		if(!GooglePlayManager.IsDestroyed) {
-	//			GooglePlayManager.instance.removeEventListener (GooglePlayManager.ACHIEVEMENT_UPDATED, OnAchivmentUpdated);
-	////			GooglePlayManager.instance.removeEventListener (GooglePlayManager.PLAYER_LOADED, OnPlayerInfoLoaded);
-	//			GooglePlayManager.instance.removeEventListener (GooglePlayManager.SCORE_SUBMITED, OnScoreSubmited);
-	//		}
-	//	}
 	private void OnDestroy() {
 		if(!GooglePlayConnection.IsDestroyed) {
 			GTDebug.log("Destroying events");
-			
-			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-			
-			
-			//			GooglePlayConnection.ActionConnectionResultReceived -= ActionConnectionResultReceived;
+			GooglePlayConnection.ActionPlayerConnected -= OnPlayerConnected;
+			GooglePlayConnection.ActionPlayerDisconnected -= OnPlayerDisconnected;
+			GooglePlayConnection.ActionConnectionResultReceived -= ActionConnectionResultReceived;
 		}
 		
 		if(!GooglePlayManager.IsDestroyed) {
-			GooglePlayManager.instance.removeEventListener (GooglePlayManager.ACHIEVEMENT_UPDATED, OnAchivmentUpdated);
-			GooglePlayManager.instance.removeEventListener (GooglePlayManager.SCORE_SUBMITED, OnScoreSubmited);
-			
-			//			GooglePlayManager.instance.removeEventListener (GooglePlayManager.SEND_GIFT_RESULT_RECEIVED, OnGiftResult);
-			//			GooglePlayManager.instance.removeEventListener (GooglePlayManager.PENDING_GAME_REQUESTS_DETECTED, OnPendingGiftsDetected);
-			//			GooglePlayManager.instance.removeEventListener (GooglePlayManager.GAME_REQUESTS_ACCEPTED, OnGameRequestAccepted);
-			
-			//			GooglePlayManager.ActionAvaliableDeviceAccountsLoaded -= ActionAvaliableDeviceAccountsLoaded;
-			//			GooglePlayManager.ActionOAuthTockenLoaded -= ActionOAuthTockenLoaded;
-			
-			
-			
-			//			GooglePlayManager.instance.removeEventListener (GooglePlayManager.ACHIEVEMENTS_LOADED, OnAchievmnetsLoadedInfoListner);
+			GooglePlayManager.ActionAchievementUpdated -= OnAchivmentUpdated;
+			GooglePlayManager.ActionScoreSubmited -= OnScoreSubmited;
 		}
 	}
 	/*--------------------------------
@@ -154,7 +92,24 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		}
 	}
 	
-	private void OnScoreSubmited(CEvent e) {
+	//	private void ActionAvailableDeviceAccountsLoaded(List<string> accounts) {
+	//		string msg = "Device contains following google accounts:" + "\n";
+	//		foreach(string acc in GooglePlayManager.instance.deviceGoogleAccountList) {
+	//			msg += acc + "\n";
+	//		} 
+	//		
+	//		AndroidDialog dialog = AndroidDialog.Create("Accounts Loaded", msg, "Sign With Fitst one", "Do Nothing");
+	//		dialog.ActionComplete += SighDialogComplete;
+	//		
+	//	}
+	private void SighDialogComplete (AndroidDialogResult res) {
+		if(res == AndroidDialogResult.YES) {
+			GooglePlayConnection.instance.connect(GooglePlayManager.instance.deviceGoogleAccountList[0]);
+		}
+		
+	}
+	
+	private void OnScoreSubmited(GooglePlayResult result) {
 		//		GooglePlayResult result = e.data as GooglePlayResult;
 		//		AndroidNative.showMessage ("OnScoreSubmited", result.message);
 		
@@ -195,8 +150,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	}
 	
 	private void OnPlayerConnected() {
-		
-		GTDebug.log("Player connected");
+		//		GTDebug.log("Player connected");
 	}
 	
 	private void OnConnectionEstablished(){
@@ -211,29 +165,35 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			loadAchievements ();
 	}
 	
-	private void OnAchivmentUpdated(CEvent e) {
-		//		GooglePlayResult result = e.data as GooglePlayResult;
-		//		AndroidNative.showMessage ("OnAchivmentUpdated ", "Id: " + result.achievementId + "\n status: " + result.message);
+	private void OnAchivmentUpdated(GP_GamesResult result) {
+		
 	}
 	
 	private void loadLeaderBoards() {
 		GTDebug.log("Loading leaderboards");
 		
 		//listening for load event 
-		GooglePlayManager.instance.addEventListener (GooglePlayManager.LEADERBOARDS_LOADED, OnLeaderBoardsLoaded);
+		GooglePlayManager.ActionLeaderboardsLoaded += OnLeaderBoardsLoaded;
 		GooglePlayManager.instance.LoadLeaderBoards ();
 		
 	}
 	
 	private void loadAchievements() {
-		GooglePlayManager.instance.addEventListener (GooglePlayManager.ACHIEVEMENTS_LOADED, OnAchivmentsLoaded);
+		GooglePlayManager.ActionAchievementsLoaded += OnAchivmentsLoaded;
 		GooglePlayManager.instance.LoadAchievements ();
 	}
 	
+	private void OnAchivmentsLoaded(GooglePlayResult result) {
+		GooglePlayManager.ActionAchievementsLoaded -= OnAchivmentsLoaded;
+		
+		if(result.isSuccess){
+			achievementsLoaded = true;
+			BaseAchievementsManager.Instance.initialCheckingInServerSide();
+		} 
+	}
 	
-	private void OnLeaderBoardsLoaded(CEvent e) {
-		GooglePlayManager.instance.removeEventListener (GooglePlayManager.LEADERBOARDS_LOADED, OnLeaderBoardsLoaded);
-		GooglePlayResult result = e.data as GooglePlayResult;
+	private void OnLeaderBoardsLoaded(GooglePlayResult result) {
+		GooglePlayManager.ActionLeaderboardsLoaded -= OnLeaderBoardsLoaded;
 		
 		GTDebug.log("Leader boards loaded result success: " +result.isSuccess + ". Result code: " +result.response);
 		
@@ -270,10 +230,12 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		//<0 means not configured good
 		if(scoreValue < 0){
 			//				ScoresHandler.Instance.showRanking(id);
-			GTDebug.log("Submitting dummy zero score to store because score value from store is "+scoreValue);
+			//			GTDebug.log("Submitting dummy zero score to store because score value from store is "+scoreValue);
 			
-			submittedScoreZeroAtInit = true;
-			ScoresHandler.Instance.sendScoreToServerByID(score.Id, 0);
+			//			submittedScoreZeroAtInit = true;
+			//			ScoresHandler.Instance.sendScoreToServerByID(score.Id, 0);
+			
+			GTDebug.log("Leader board id " + score.Id + " current score: " +gpScore.score);
 		}
 		else{
 			GTDebug.log("Leader board id " + score.Id + " current player "+gpScore.playerId + " rank: " +gpScore.rank + " score value: " + gpScore.score);
@@ -283,15 +245,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	}
 	
 	
-	private void OnAchivmentsLoaded(CEvent e) {
-		GooglePlayManager.instance.removeEventListener (GooglePlayManager.ACHIEVEMENTS_LOADED, OnAchivmentsLoaded);
-		GooglePlayResult result = e.data as GooglePlayResult;
-		
-		if(result.isSuccess){
-			achievementsLoaded = true;
-			BaseAchievementsManager.Instance.initialCheckingInServerSide();
-		} 
-	}
+	
 	
 	//--------------------------------
 	// Eventos Gestor Logros

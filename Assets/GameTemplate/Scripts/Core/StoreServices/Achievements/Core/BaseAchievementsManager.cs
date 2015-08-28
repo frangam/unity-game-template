@@ -168,14 +168,14 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
 			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
 			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
-			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
+			dialog.ActionComplete += OnAndroidDialogClose;
 		}
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED){
 			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
 			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
 			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
 			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
-			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
+			dialog.ActionComplete += OnAndroidDialogClose;
 		}
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
 			GooglePlayManager.instance.ShowAchievementsUI();
@@ -212,12 +212,10 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			GameCenterManager.ShowAchievements();
 		} 
 	}
-	private void OnDialogClose(CEvent e) {
-		//removing listner
-		(e.dispatcher as AndroidDialog).removeEventListener(BaseEvent.COMPLETE, OnDialogClose);
+	private void OnAndroidDialogClose(AndroidDialogResult res) {
 		
 		//parsing result
-		switch((AndroidDialogResult)e.data) {
+		switch(res) {
 		case AndroidDialogResult.YES:
 			GooglePlayConnection.instance.connect();
 			GooglePlayManager.instance.showAchievementsUI();

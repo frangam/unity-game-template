@@ -177,9 +177,9 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			
 			
 			//More eventts ot explore under GoogleMobileAdEvents class
-			GoogleMobileAd.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_LOADED, OnInterstisialsLoaded);
-			GoogleMobileAd.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_OPENED, OnInterstisialsOpen);
-			GoogleMobileAd.controller.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_CLOSED, OnInterstisialsClosed);
+			GoogleMobileAd.OnInterstitialLoaded += OnInterstisialsLoaded;
+			GoogleMobileAd.OnInterstitialOpened += OnInterstisialsOpen;
+			GoogleMobileAd.OnInterstitialClosed += OnInterstisialsClosed;
 			
 			//		//listening for InApp Event
 			//		//You will only receive in-app purchase (IAP) ads if you specifically configure an IAP ad campaign in the AdMob front end.

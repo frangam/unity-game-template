@@ -47,12 +47,11 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 			panelCaptura.gameObject.SetActive (false);
 		
 		if(GameSettings.Instance.USE_FACEBOOK){
-			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	 OnAuthFB);
-			SPFacebook.instance.addEventListener(FacebookEvents.USER_DATA_LOADED,  			OnUserDataLoaded);
-			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_FAILED,  	 OnAuthFailedFB);
-			//			SPFacebook.instance.addEventListener(FacebookUserInfo.PROFILE_IMAGE_LOADED,   OnProfileImageLoaded);
-			SPFacebook.instance.addEventListener(FacebookEvents.GAME_FOCUS_CHANGED,   OnFocusChanged);
-			SPFacebook.instance.addEventListener(FacebookEvents.FRIENDS_DATA_LOADED,  			OnFriendsDataLoaded);
+			SPFacebook.instance.OnAuthCompleteAction +=	 OnAuthFB;
+			SPFacebook.instance.OnUserDataRequestCompleteAction += OnUserDataLoaded;
+			SPFacebook.instance.OnFocusChangedAction += OnFocusChanged;
+			SPFacebook.instance.OnFriendsDataRequestCompleteAction += OnFriendsDataLoaded;
+			SPFacebook.instance.OnPostingCompleteAction += OnPostFB;
 		}
 		
 		//---
@@ -62,9 +61,8 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		
 		#if UNITY_ANDROID || UNITY_EDITOR
 		if(GameSettings.Instance.USE_TWITTER){
-			AndroidTwitterManager.instance.addEventListener(TwitterEvents.POST_SUCCEEDED,  OnPost);
-			AndroidTwitterManager.instance.addEventListener(TwitterEvents.POST_FAILED,  OnPostFailed);
-			AndroidTwitterManager.instance.addEventListener(TwitterEvents.AUTHENTICATION_SUCCEEDED,  OnAuthTwitter);
+			AndroidTwitterManager.instance.OnPostingCompleteAction += OnPost;
+			AndroidTwitterManager.instance.OnAuthCompleteAction += OnAuthTwitter;
 		}
 		#elif UNITY_IPHONE
 		#endif
@@ -77,9 +75,6 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		//---
 		#region 
 		if(GameSettings.Instance.USE_FACEBOOK){
-			SPFacebook.instance.addEventListener(FacebookEvents.POST_FAILED,  			OnPostFailed);
-			SPFacebook.instance.addEventListener(FacebookEvents.POST_SUCCEEDED,   		OnPost);
-			
 			if(!SPFacebook.instance.IsInited){
 				SPFacebook.instance.Init();
 			}
@@ -109,169 +104,161 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	// --------------------------------------
 	// EVENTS
 	// --------------------------------------	
-	private void OnInitFB() {
-		GameLoaderManager.Instance.FbInited = true;
+	private void OnPostFB(FBPostResult res) {
+		
+		if(res.IsSucceeded) {
+			
+		} else {
+			
+		}
+	}
+	
+	private void OnAuthFB(FBResult result) {
+		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
+			GameLoaderManager.Instance.FbInited = true;
+		
+		estaLogeadoEnFB = SPFacebook.instance.IsLoggedIn;
 		
 		if(SPFacebook.instance.IsLoggedIn) {
-			OnAuthFB();
-		}
-	}
-	
-	private void OnAuthFB() {
-		estaLogeadoEnFB = true;
-		Debug.Log ("FB authenticated");
-		
-		// Login callback
-		if(FB.IsLoggedIn) {
+			GTDebug.log("Success to log in FB");
 			SPFacebook.instance.LoadUserData();
 			LoadFriends();
-			
-			//if(ParseUser.CurrentUser == null)
-			//    GestorParse.instance.login(); //logear en Parse
 		} else {
-			//			UIHandler.Instance.abrir(GameScreen.FACEBOOK_FAILED_CONNECTION);
-			//			Debug.Log ("FBLoginCallback: User canceled login");
+			GTDebug.log("Failed to log in FB");
+		}		
+	}
+	
+	
+	private void OnAuthTwitter(TWResult result) {
+		estaLogeadoEnTwitter = result.IsSucceeded;
+		
+		if(result.IsSucceeded) {
+			if(posteando){
+				postear(SocialNetwork.TWITTER, hacerCaptura);
+				posteando = false;
+			}
 		}
 		
-	}
-	
-	private void OnAuthFailedFB() {
-		estaLogeadoEnFB = false;
-		//		Debug.Log ("FB fallo autenticacion");
-		
-		//		UIHandler.Instance.abrir(GameScreen.FACEBOOK_FAILED_CONNECTION);
 		
 	}
 	
-	private void OnAuthTwitter() {
-		estaLogeadoEnTwitter = true;
-		
-		if(posteando){
-			postear(SocialNetwork.TWITTER, hacerCaptura);
-			posteando = false;
-		}
-	}
 	
-	
-	private void OnPost() {
+	private void OnPost(TWResult result) {
 		if(panelCaptura)
 			panelCaptura.gameObject.SetActive (false);
 		
-		//		AndroidNative.showMessage(Localization.Localize(ExtraLocalizations.TITULO_POPUP_POST_EXITO_ENVIADO), Localization.Localize(ExtraLocalizations.POST_DESCRIPCION_ENVIADO));
-	}
-	
-	private void OnPostFailed() {
-		if(panelCaptura)
-			panelCaptura.gameObject.SetActive (false);
-		
-		//		AndroidNative.showMessage("Error", "Opps, post failed, something was wrong");
-	}
-	
-	private void OnPostSuccses() {
-		//		IOSNative.showMessage("Positng example", "Posy Succses!");
-	}
-	
-	private void OnFocusChanged(CEvent e) {
-		bool focus = (bool) e.data;
-		
-		if (!focus)  {                                                                                        
-			// pause the game - we will need to hide                                             
-			Time.timeScale = 0f;                                                                  
-		} else  {                                                                                        
-			// start the game back up - we're getting focus again                                
-			Time.timeScale = 1f;                                                                  
-		}   
-	}
-	
-	private void OnUserDataLoaded() {
-		SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.large);
-		//			AndroidNative.showMessage("Success", "user loaded");
-	}
-	
-	private void OnUserDataLoadFailed() {
-		//			AndroidNative.showMessage("Error", "Opps, user data load failed, something was wrong");
-	}
-	
-	private void OnFriendsDataLoaded() {
-		//		Debug.Log ("cargando imagenes amigos");
-		foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
-			friend.LoadProfileImage(FacebookProfileImageSize.large);
-		}
-		
-		//			AndroidNative.showMessage("Success", "friends loaded");
-	}
-	
-	private void OnFriendDataLoadFailed() {
-		//			AndroidNative.showMessage("Error", "Opps, friends data load failed, something was wrong");
-	}
-	
-	
-	private void OnProfileImageLoaded(CEvent e) {
-		//		Debug.Log ("fotos amigos cargadas");
-		//		StartCoroutine(GestorParse.listaUsuarios ());
-		//		StartCoroutine (guardarAmigos ());
-	}
-	
-	//---
-	//scores Api events
-	//---
-	private void OnPlayerScoreRequestComplete(CEvent e) {
-		FB_APIResult result = e.data as FB_APIResult;
-		
 		if(result.IsSucceeded) {
-			string msg = "Player has scores in " + SPFacebook.instance.userScores.Count + " apps" + "\n";
-			msg += "Current Player Score = " + SPFacebook.instance.GetCurrentPlayerIntScoreByAppId(FB.AppId);
+			GTDebug.log("Congrats. You just posted something to Twitter!");
+		} else {
+			GTDebug.log("Oops! Posting failed. Something went wrong.");
+		}
+	}
+	
+	
+	private void OnFocusChanged(bool focus) {                            
+		Time.timeScale = focus ? 1f : 0f;                                                                  
+	}
+	
+	private void OnUserDataLoaded(FBResult result) {
+		if (result.Error == null)  { 
+			GTDebug.log("FB user data loaded");
+			//			IsUserInfoLoaded = true;
 			
+			//user data available, we can get info using
+			//SPFacebook.instance.userInfo getter
+			//and we can also use userInfo methods, for exmple download user avatar image
+			//			SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.square);
+			SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.large);
 			
 		} else {
-			//			SA_StatusBar.text = result.responce;
+			GTDebug.log("Opps, user FB data load failed, something was wrong");
 		}
-		
-		
 	}
 	
-	private void OnAppScoreRequestComplete(CEvent e) {
-		FB_APIResult result = e.data as FB_APIResult;
+	private void OnFriendsDataLoaded(FBResult res) {
 		
-		if(result.IsSucceeded) {
-			string msg = "Loaded " + SPFacebook.instance.appScores.Count + " scores results" + "\n";
-			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
+		
+		
+		if(res.Error == null) {
+			GTDebug.log("FB friends data loaded");
+			//friednds data available, we can get it using
+			//SPFacebook.instance.friendsList getter
+			//and we can also use FacebookUserInfo methods, for exmple download user avatar image
 			
+			//			foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
+			//				friend.LoadProfileImage(FacebookProfileImageSize.square);
+			//			}
+			foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
+				friend.LoadProfileImage(FacebookProfileImageSize.large);
+			}
 			
+			//			IsFrindsInfoLoaded = true;
 		} else {
-			//			SA_StatusBar.text = result.responce;
+			GTDebug.log("Opps, FB friends data load failed, something was wrong");
 		}
-		
 	}
 	
-	private void OnSubmitScoreRequestComplete(CEvent e) {
-		
-		FB_APIResult result = e.data as FB_APIResult;
-		if(result.IsSucceeded) {
-			string msg = "Score successfully submited" + "\n";
-			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
-			
-			
-		} else {
-			//			SA_StatusBar.text = result.responce;
-		}
-		
-		
-	}
 	
-	private void OnDeleteScoreRequestComplete(CEvent e) {
-		FB_APIResult result = e.data as FB_APIResult;
-		if(result.IsSucceeded) {
-			string msg = "Score successfully deleted" + "\n";
-			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
-			
-			
-		} else {
-			//			SA_StatusBar.text = result.responce;
-		}
-		
-		
-	}
+	//	//---
+	//	//scores Api events
+	//	//---
+	//	private void OnPlayerScoreRequestComplete(CEvent e) {
+	//		FB_APIResult result = e.data as FB_APIResult;
+	//		
+	//		if(result.IsSucceeded) {
+	//			string msg = "Player has scores in " + SPFacebook.instance.userScores.Count + " apps" + "\n";
+	//			msg += "Current Player Score = " + SPFacebook.instance.GetCurrentPlayerIntScoreByAppId(FB.AppId);
+	//			
+	//			
+	//		} else {
+	//			//			SA_StatusBar.text = result.responce;
+	//		}
+	//		
+	//		
+	//	}
+	//	
+	//	private void OnAppScoreRequestComplete(CEvent e) {
+	//		FB_APIResult result = e.data as FB_APIResult;
+	//		
+	//		if(result.IsSucceeded) {
+	//			string msg = "Loaded " + SPFacebook.instance.appScores.Count + " scores results" + "\n";
+	//			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
+	//			
+	//			
+	//		} else {
+	//			//			SA_StatusBar.text = result.responce;
+	//		}
+	//		
+	//	}
+	//	
+	//	private void OnSubmitScoreRequestComplete(CEvent e) {
+	//		
+	//		FB_APIResult result = e.data as FB_APIResult;
+	//		if(result.IsSucceeded) {
+	//			string msg = "Score successfully submited" + "\n";
+	//			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
+	//			
+	//			
+	//		} else {
+	//			//			SA_StatusBar.text = result.responce;
+	//		}
+	//		
+	//		
+	//	}
+	//	
+	//	private void OnDeleteScoreRequestComplete(CEvent e) {
+	//		FB_APIResult result = e.data as FB_APIResult;
+	//		if(result.IsSucceeded) {
+	//			string msg = "Score successfully deleted" + "\n";
+	//			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
+	//			
+	//			
+	//		} else {
+	//			//			SA_StatusBar.text = result.responce;
+	//		}
+	//		
+	//		
+	//	}
 	
 	
 	// --------------------------------------

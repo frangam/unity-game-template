@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using UnionAssets.FLE;
 
 
 public class RateApp : Singleton<RateApp>{
@@ -60,7 +59,7 @@ public class RateApp : Singleton<RateApp>{
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_VOTE_BUTTON)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_REMEMBER_BUTTON)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_REFUSE_BUTTON));
-		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
+		rate.ActionComplete += onRatePopUpClose;
 		
 		#elif UNITY_ANDROID
 		string link = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.CurrentAmazonAppLink : GameSettings.Instance.CurrentAndroidAppLink;
@@ -69,11 +68,11 @@ public class RateApp : Singleton<RateApp>{
 		                                                    ,link,Localization.Get(ExtraLocalizations.RATE_POPUP_VOTE_BUTTON)
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_REMEMBER_BUTTON)
 		                                                    ,Localization.Get(ExtraLocalizations.RATE_POPUP_REFUSE_BUTTON));
-		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
+		rate.ActionComplete += onRatePopUpClose;
 		#elif UNITY_WP8
 		WP8RateUsPopUp rate = WP8RateUsPopUp.Create(Localization.Get(ExtraLocalizations.RATE_POPUP_TITLE)
 		                                            , Localization.Get(ExtraLocalizations.RATE_POPUP_MESSAGE));
-		rate.addEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
+		rate.ActionComplete += onRatePopUpClose;
 		#endif
 	}
 	
@@ -92,25 +91,23 @@ public class RateApp : Singleton<RateApp>{
 	//--------------------------------------
 	//  EVENTS 
 	//--------------------------------------
-	private void onRatePopUpClose(CEvent e){
+	private void onRatePopUpClose(AndroidDialogResult result){
 		#if UNITY_IPHONE
-		(e.dispatcher as IOSRateUsPopUp).removeEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
+		
 		
 		#elif UNITY_ANDROID
-		(e.dispatcher as AndroidRateUsPopUp).removeEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
-		#elif UNITY_WP8
-		(e.dispatcher as WP8RateUsPopUp).removeEventListener(BaseEvent.COMPLETE, onRatePopUpClose);
-		#endif
-		//the result
-		string result = e.data.ToString();
-		
-		//depending on the result
-		if (result == "RATED" || result == "DECLINED"){
+		switch(result) {
+		case AndroidDialogResult.RATED:
 			PlayerPrefs.SetInt(PP_RATE_DONE, 1);
-		}
-		else if (result == "REMIND"){
+			break;
+		case AndroidDialogResult.REMIND:
+		case AndroidDialogResult.DECLINED:
 			PlayerPrefs.SetString(PP_RATE_LATER, System.DateTime.Now.ToBinary().ToString());
+			break;
 		}
+		#elif UNITY_WP8
+		
+		#endif
 	}
 	
 }

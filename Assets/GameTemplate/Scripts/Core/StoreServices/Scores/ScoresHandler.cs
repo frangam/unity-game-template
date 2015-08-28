@@ -149,14 +149,14 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
 			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
 			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
-			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
+			dialog.ActionComplete += OnAndroidDialogClose;
 		}
 		else if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED){
 			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
 			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
 			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
 			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
-			dialog.addEventListener(BaseEvent.COMPLETE, OnDialogClose);
+			dialog.ActionComplete += OnAndroidDialogClose;
 		}
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
 			//Show all rankings
@@ -200,12 +200,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				GameCenterManager.ShowLeaderboards();
 		} 
 	}
-	private void OnDialogClose(CEvent e) {
-		//removing listner
-		(e.dispatcher as AndroidDialog).removeEventListener(BaseEvent.COMPLETE, OnDialogClose);
-		
-		//parsing result
-		switch((AndroidDialogResult)e.data) {
+	private void OnAndroidDialogClose(AndroidDialogResult res) {
+		switch(res) {
 		case AndroidDialogResult.YES:
 			GooglePlayConnection.instance.connect();
 			GooglePlayManager.instance.showAchievementsUI();
