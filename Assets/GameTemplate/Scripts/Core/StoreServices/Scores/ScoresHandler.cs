@@ -1,8 +1,16 @@
+/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
 
 public class ScoresHandler : PersistentSingleton<ScoresHandler> {
+	//--------------------------------------
+	// Private Attributes
+	//--------------------------------------
 	private string scoreIDToShow = "";
 	
 	//--------------------------------------
@@ -320,7 +328,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 					//criteria order to know which is a best score to send to the server or not
 					switch(score.Order){
 					case ScoreOrder.DESCENDING: sendScoreToServer = scoreSavedInServer < scoreToSend; break;
-					case ScoreOrder.ASCENDING: sendScoreToServer = scoreSavedInServer > scoreToSend; break;
+					case ScoreOrder.ASCENDING: sendScoreToServer = scoreSavedInServer <= 0 || ( scoreSavedInServer > scoreToSend); break;
 					}
 				}
 				else{
@@ -552,19 +560,6 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 			res = GameSettings.Instance.CurrentWorldLevelRankingIDs[world-1];
 		}
 		
-		//		switch(world){
-		//		case 1: res = GameSettings.Instance.ID_RANKING_WORLD_1; break;
-		//		case 2: res = GameSettings.Instance.ID_RANKING_WORLD_2; break;
-		//		case 3: res = GameSettings.Instance.ID_RANKING_WORLD_3; break;
-		//		case 4: res = GameSettings.Instance.ID_RANKING_WORLD_4; break;
-		//		case 5: res = GameSettings.Instance.ID_RANKING_WORLD_5; break;
-		//		case 6: res = GameSettings.Instance.ID_RANKING_WORLD_6; break;
-		//		case 7: res = GameSettings.Instance.ID_RANKING_WORLD_7; break;
-		//		case 8: res = GameSettings.Instance.ID_RANKING_WORLD_8; break;
-		//		case 9: res = GameSettings.Instance.ID_RANKING_WORLD_9; break;
-		//		case 10: res = GameSettings.Instance.ID_RANKING_WORLD_10; break;
-		//		}
-		
 		return res;
 	}
 	
@@ -579,19 +574,6 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		if(level > 0 && GameSettings.Instance.CurrentSurvivalLevelRankingIDs != null && GameSettings.Instance.CurrentSurvivalLevelRankingIDs.Count > level-1){
 			res = GameSettings.Instance.CurrentSurvivalLevelRankingIDs[level-1];
 		}
-		
-		//		switch(level){
-		//		case 1: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_1; break;
-		//		case 2: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_2; break;
-		//		case 3: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_3; break;
-		//		case 4: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_4; break;
-		//		case 5: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_5; break;
-		//		case 6: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_6; break;
-		//		case 7: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_7; break;
-		//		case 8: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_8; break;
-		//		case 9: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_9; break;
-		//		case 10: res = GameSettings.Instance.ID_RANKING_SURVIVAL_LEVEL_10; break;
-		//		}
 		
 		return res;
 	}

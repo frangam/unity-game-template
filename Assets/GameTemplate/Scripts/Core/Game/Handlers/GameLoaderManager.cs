@@ -1,28 +1,32 @@
+/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 using UnityEngine;
 using System.Collections;
 
 public class GameLoaderManager : Singleton<GameLoaderManager> {
 	//--------------------------------------
+	// Constants
+	//--------------------------------------
+	private const int totalLoadingSteps 						= 5;
+	private const float DUMMY_WAIT_TIME 						= 3.5f;
+	private const float MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION 	= 10; 	//Google Play Services
+	private const float MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION 	= 10; 	//Game Center
+	private const float MAX_WAIT_TIME_TO_CHECK_WP_CONNECTION 	= 8; 	//Windows Phone
+	public const float 	WAIT_TIME_TO_INIT_INAPP 				= 15; 	//In app Billing
+	private const float MAX_WAIT_TIME_TO_CHECK_FB_CONNECTION 	= 5; 	//Facebook
+	private const float MAX_WAIT_TIME_TO_RESTORE_PURCHASES 		= 15; 	//restore purchases
+	
+	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
-	[SerializeField]
-	private bool deletePlayerPrefs = false;
-	
 	
 	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private const int totalLoadingSteps 						= 5;
-	private const float DUMMY_WAIT_TIME 						= 3.5f;
-	private const float TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION 	= 10;
-	private const float TIEMPO_ESPERA_COMPROBAR_GC_CONEXION 	= 10;
-	private const float TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION 	= 8; 
-	public const float 	WAIT_TIME_TO_INIT_INAPP 				= 15; 
-	private const float TIEMPO_ESPERA_COMPROBAR_FACEBOOK_INITED = 5; 
-	private const float MAX_WAIT_TIME_TO_RESTORE_PURCHASES 		= 15; 
-	
-	
 	private UILoadingPanel loadingPanel;
 	private bool showLoadingPanel;
 	private int  currentLoadingStepProgress = 1;
@@ -111,27 +115,18 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		loadingPanel = FindObjectOfType<UILoadingPanel>();
 		showLoadingPanel = loadingPanel != null;
 		
-		GTDebug.log("initializing");
+		GTDebug.log("Initializing");
 		
-		if(deletePlayerPrefs)
-			PlayerPrefs.DeleteAll();
-		
-		loadLanguage (); //idioma
-		
-		//		Localization.language = GameSettings.LOC_ENGLISH;
-		
+		loadLanguage (); 
 		loadInitialMoneyOnlyFirstTime();
 		loadSettings();
-		loadAudio (); //musica y sonido
-		loadScoresAndInitialLevel (); //puntos
-		//		LoadGPSandGC (); //google play services y game center
+		loadAudio (); 
+		loadScoresAndInitialLevel ();
 		loadScoresWithDifficulty ();
-		
-		//		StartCoroutine (waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded ()); //se carga el tutorial o el menu del juego
+		LoadGPSandGC (); //google play services y game center
 	}
 	
 	public virtual void Start(){
-		LoadGPSandGC (); //google play services y game center
 		StartCoroutine (waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded ()); //se carga el tutorial o el menu del juego
 	}
 	
@@ -277,8 +272,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER){
-			StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_GC_CONEXION));
-			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GC_CONEXION);
+			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
+			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
 			loadSceneAfterChecking();
 		}
 		#else
@@ -298,7 +293,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			if(inappNotInited)
 				wait += WAIT_TIME_TO_INIT_INAPP;
 			else if(twNotInited || fbNotInited)
-				wait += TIEMPO_ESPERA_COMPROBAR_FACEBOOK_INITED;
+				wait += MAX_WAIT_TIME_TO_CHECK_FB_CONNECTION;
 			
 			
 			yield return new WaitForSeconds (wait);

@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,7 +27,15 @@ public class ExclusiveForGameMultiversion : MonoBehaviour {
 	// Unity Method
 	//--------------------------------------
 	void Awake(){
-		gameObject.SetActive (multiversionIndexes.Contains(GameSettings.Instance.currentGameMultiversion));
+		UIBaseWindow win = GetComponent<UIBaseWindow>();
+		bool active = multiversionIndexes.Contains(GameSettings.Instance.currentGameMultiversion);
+		
+		if(win != null && !active && win.NotStartWithManager)
+			UIController.Instance.Manager.close(win, !win.NotStartWithManager);
+		else if(win != null && active && win.NotStartWithManager)
+			UIController.Instance.Manager.open(win, !win.NotStartWithManager);
+		else 
+			gameObject.SetActive (active);
 	}
 	
 	

@@ -1,3 +1,8 @@
+/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 using UnityEngine;
 using System;
 using System.Collections;
@@ -59,7 +64,7 @@ public class RateApp : Singleton<RateApp>{
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_VOTE_BUTTON)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_REMEMBER_BUTTON)
 		                                            ,Localization.Get(ExtraLocalizations.RATE_POPUP_REFUSE_BUTTON));
-		rate.ActionComplete += onRatePopUpClose;
+		rate.OnComplete += onRateIOSPopUpClose;
 		
 		#elif UNITY_ANDROID
 		string link = GameSettings.Instance.BUILD_FOR_AMAZON ? GameSettings.Instance.CurrentAmazonAppLink : GameSettings.Instance.CurrentAndroidAppLink;
@@ -92,10 +97,6 @@ public class RateApp : Singleton<RateApp>{
 	//  EVENTS 
 	//--------------------------------------
 	private void onRatePopUpClose(AndroidDialogResult result){
-		#if UNITY_IPHONE
-		
-		
-		#elif UNITY_ANDROID
 		switch(result) {
 		case AndroidDialogResult.RATED:
 			PlayerPrefs.SetInt(PP_RATE_DONE, 1);
@@ -105,9 +106,19 @@ public class RateApp : Singleton<RateApp>{
 			PlayerPrefs.SetString(PP_RATE_LATER, System.DateTime.Now.ToBinary().ToString());
 			break;
 		}
-		#elif UNITY_WP8
+	}
+	
+	private void onRateIOSPopUpClose(IOSDialogResult result){
 		
-		#endif
+		switch(result) {
+		case IOSDialogResult.RATED:
+			PlayerPrefs.SetInt(PP_RATE_DONE, 1);
+			break;
+		case IOSDialogResult.REMIND:
+		case IOSDialogResult.DECLINED:
+			PlayerPrefs.SetString(PP_RATE_LATER, System.DateTime.Now.ToBinary().ToString());
+			break;
+		}
 	}
 	
 }
