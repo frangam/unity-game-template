@@ -1,4 +1,8 @@
-﻿using System;
+﻿/// <summary>
+/// Useful when we need to get a coroutine return value
+/// Original idea from: http://answers.unity3d.com/questions/24640/how-do-i-return-a-value-from-a-coroutine.html
+/// </summary>
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;

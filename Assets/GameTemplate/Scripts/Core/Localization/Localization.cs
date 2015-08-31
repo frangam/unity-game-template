@@ -1,7 +1,8 @@
-//----------------------------------------------
-//            NGUI: Next-Gen UI kit
-// Copyright © 2011-2014 Tasharen Entertainment
-//----------------------------------------------
+/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 
 using UnityEngine;
 using System.Collections.Generic;

@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
+using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
@@ -135,10 +140,10 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			AndroidInAppPurchaseManager.ActionBillingSetupFinished -= OnBillingConnected;
 			#elif UNITY_IPHONE
 			if(IOSInAppPurchaseManager.instance != null){
-				IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
-				IOSInAppPurchaseManager.instance.OnTransactionComplete -= OnTransactionComplete;
-				IOSInAppPurchaseManager.instance.OnVerificationComplete -= OnVerificationComplete;
-				IOSInAppPurchaseManager.instance.OnRestoreComplete -= OnRestoreComplete;
+				IOSInAppPurchaseManager.OnStoreKitInitComplete -= OnStoreKitInitComplete;
+				IOSInAppPurchaseManager.OnTransactionComplete -= OnTransactionComplete;
+				IOSInAppPurchaseManager.OnVerificationComplete -= OnVerificationComplete;
+				IOSInAppPurchaseManager.OnRestoreComplete -= OnRestoreComplete;
 			}
 			#elif WP8
 			WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
@@ -284,11 +289,11 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		
 		#elif UNITY_IPHONE
 		if(IOSInAppPurchaseManager.instance != null){
-			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
-			IOSInAppPurchaseManager.instance.OnTransactionComplete += OnTransactionComplete;
-			IOSInAppPurchaseManager.instance.OnVerificationComplete += OnVerificationComplete;
-			IOSInAppPurchaseManager.instance.OnRestoreComplete += OnRestoreComplete;
-			IOSInAppPurchaseManager.instance.loadStore();
+			IOSInAppPurchaseManager.OnStoreKitInitComplete += OnStoreKitInitComplete;
+			IOSInAppPurchaseManager.OnTransactionComplete += OnTransactionComplete;
+			IOSInAppPurchaseManager.OnVerificationComplete += OnVerificationComplete;
+			IOSInAppPurchaseManager.OnRestoreComplete += OnRestoreComplete;
+			IOSInAppPurchaseManager.Instance.loadStore();
 		}
 		#elif UNITY_WP8
 		WP8InAppPurchasesManager.instance.addEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
@@ -402,22 +407,22 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			
 		}
 		
-		IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
+		IOSInAppPurchaseManager.OnStoreKitInitComplete -= OnStoreKitInitComplete;
 	}
-	void OnTransactionComplete (IOSStoreKitResponse responce){
-		GTDebug.log("Product ID: " + responce.productIdentifier + ". State: " + responce.state);
+	void OnTransactionComplete (IOSStoreKitResult response){
+		GTDebug.log("Product ID: " + response.ProductIdentifier + ". State: " + response.State);
 		
 		
-		switch(responce.state) {
+		switch(response.State) {
 		case InAppPurchaseState.Restored:
 			//			OnProcessingRestorePurchases();
 			//			break;
 		case InAppPurchaseState.Purchased:
-			if(responce.state == InAppPurchaseState.Purchased){
+			if(response.State == InAppPurchaseState.Purchased){
 				//Our product been succsesly purchased or restored
 				//So we need to provide content to our user 
 				//depends on productIdentifier
-				OnProcessingPurchaseProduct(responce.productIdentifier);		
+				OnProcessingPurchaseProduct(response.ProductIdentifier);		
 			}
 			
 			
@@ -438,43 +443,36 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			//transaction times out. Avoid blocking your UI 
 			//or gameplay while waiting for the transaction to be updated.
 			
-			OnProcessingPurchaseProduct(responce.productIdentifier, false, true);
+			OnProcessingPurchaseProduct(response.ProductIdentifier, false, true);
 			break;
 		case InAppPurchaseState.Failed:
 			GTDebug.log("State: Failed");
 			
-			OnProcessingPurchaseProduct(responce.productIdentifier, false);
+			OnProcessingPurchaseProduct(response.ProductIdentifier, false);
 			
 			//Our purchase flow is failed.
 			//We can unlock interface and report user that the purchase is failed. 
-			GTDebug.log("Transaction failed with error, code: " + responce.error.code + ", description: "+ responce.error.description);
+			GTDebug.log("Transaction failed with error, code: " + response.Error.Code + ", description: "+ response.Error.Description);
 			break;
 		}
-		
-		//		IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
 	}
-	void OnVerificationComplete (IOSStoreKitVerificationResponse responce){
-		//		IOSNativePopUpManager.showMessage("Verification", "Transaction verification status: " + responce.status.ToString());
-		
-		GTDebug.log("Transaction verification status: " + responce.status.ToString());
+	void OnVerificationComplete (IOSStoreKitVerificationResponse response){
+		GTDebug.log("Transaction verification status: " + response.status.ToString());
 	}
-	void OnRestoreComplete (ISN_Result responce){
-		if(responce.IsSucceeded){
+	void OnRestoreComplete (ISN_Result response){
+		if(response.IsSucceeded){
 			OnProcessingRestorePurchases();
 			GTDebug.log("All purchases has been restored.");
 		}
 		else{
 			OnProcessingRestorePurchases(false);
-			GTDebug.log("Restore failed: "+ responce.error.description);
+			GTDebug.log("Restore failed: "+ response.Error.Description);
 		}
 	}
 	#endregion
 	
 	#region WP8Events
 	void OnInitComplete() {
-		
-		
-		
 		if(WP8InAppPurchasesManager.instance.products != null){
 			IsInited = true;
 			
@@ -508,8 +506,6 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		}
 		
 		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
-		
-		//		WP8Dialog.Create("market Initted", "Total products avaliable: " + WP8InAppPurchasesManager.instance.products.Count);
 	}
 	void OnPurchaseFinished(CEvent e) {
 		WP8PurchseResponce responce = e.data as WP8PurchseResponce;
@@ -519,8 +515,6 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			OnProcessingPurchaseProduct(responce.productId);
 		} else {
 			OnProcessingPurchaseProduct(responce.productId, false);
-			//Purchase fail logic for product with id recponce.productId should be here
-			//			WP8Dialog.Create("Purchase Failed", "Error: " + responce.error);
 		}
 	}
 	#endregion
@@ -694,15 +688,5 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		
 		return product;
 	}
-	
-	
-	
-	//	public bool purchased(string productId){
-	//		return AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(productId);
-	////		return IOSInAppPurchaseManager.instance.products.
-	//
-	//	
-	//	}
-	
 	#endregion
 }

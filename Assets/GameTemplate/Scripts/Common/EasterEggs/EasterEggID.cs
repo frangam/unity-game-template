@@ -1,3 +1,8 @@
+/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 public enum EasterEggID{
 	EASTER_EGG_NONE		= -1,
 	EASTER_EGG_0		= 0,

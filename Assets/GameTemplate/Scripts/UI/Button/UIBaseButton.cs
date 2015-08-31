@@ -1,8 +1,12 @@
-﻿using UnityEngine;
+﻿/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-[AddComponentMenu("Game Template/UI")]
 [RequireComponent(typeof(Button))]
 public class UIBaseButton : MonoBehaviour {
 	//Button Event When sound will play

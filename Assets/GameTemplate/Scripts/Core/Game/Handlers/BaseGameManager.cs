@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
+using UnityEngine;
 using System.Collections;
 using UnionAssets.FLE;
 using System;

@@ -1,3 +1,9 @@
+/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
+
 // this script is based on car control code from this forum post:
 // http://forum.unity3d.com/threads/50643-How-to-make-a-physically-real-stable-car-with-WheelColliders
 // by Edy.

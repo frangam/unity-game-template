@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿/// <summary>
+/// Useful when we need to get a coroutine return value
+/// Original idea from: http://answers.unity3d.com/questions/24640/how-do-i-return-a-value-from-a-coroutine.html
+/// </summary>
+using UnityEngine;
 using System.Collections;
 
 public class FilesUtil  {

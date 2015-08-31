@@ -1,3 +1,8 @@
+/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
@@ -41,17 +46,9 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			//--
 			// Achievements
 			//--
-			//Achievement registration. If you will skipt this step GameCenterManager.achievements array will contain only achievements with reported progress 
-			
-			//			foreach(string id in baseachi.Instance.Ids){
-			//				GameCenterManager.registerAchievement (id);
-			//			}
-			
-			
-			//Listen for the Game Center events
-			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_LOADED, OnAchievementsLoaded);
-			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENT_PROGRESS, OnAchievementProgress);
-			GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_RESET, OnAchievementsReset);
+			GameCenterManager.OnAchievementsLoaded += OnAchievementsLoaded;
+			//			GameCenterManager.OnAchievementsProgress += OnAchievementProgress;
+			//			GameCenterManager.OnAchievementsReset += OnAchievementsReset;
 			
 			//--
 			// Player Scores
@@ -59,14 +56,11 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			GameCenterManager.OnPlayerScoreLoaded += OnPlayerScoreLoaded;
 			GameCenterManager.OnScoreSubmitted += OnScoreSubmitted;
 			
-			
-			//		DontDestroyOnLoad (gameObject);
-			
 			//Initializing Game Cneter class. This action will triger authentication flow
 			if(showLoginWindowGameServices){
 				GTDebug.log("Showing authentication flow of Game Center");
 				
-				GameCenterManager.init();
+				GameCenterManager.Init();
 				IsInited = true;
 			}
 			else{
@@ -104,26 +98,16 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	}
 	
 	/*--------------------------------
-	 * Eventos Game Center
+	 * Events
 	 -------------------------------*/
 	void OnAuthFinished (ISN_Result res) {
-		
-		
 		if (res.IsSucceeded) {
 			GTDebug.log("Player connected");
-			
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 1);
-			
 			loadScores();
-			
-			//			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.player.playerId + "\n" + "Alias: " + GameCenterManager.player.alias);
 		} else {
 			GTDebug.log("Player NOT connected");
-			
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
-			
-			//			IOSNativePopUpManager.showMessage("Game Cneter ", "Player auntification failed");
-			//			GameLoaderManager.Instance.GCPrepared = false;
 		}
 	}
 	
@@ -151,39 +135,22 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		}
 	}
 	
-	
-	
-	private void OnAchievementsLoaded() {
-		//
-		//
-		//		Debug.Log ("Achievemnts was loaded from IOS Game Center");
-		//		
-		//		foreach(AchievementTemplate tpl in GameCenterManager.achievements) {
-		//			Debug.Log (tpl.id + ":  " + tpl.progress);
-		//		}
-		
-		
-		
-		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
+	private void OnAchievementsLoaded(ISN_Result res) {
+		if(res.IsSucceeded && GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
 			GTDebug.log("Starting initial checking in server side");
 			BaseAchievementsManager.Instance.initialCheckingInServerSide();
 		}
 	}
 	
-	private void OnAchievementsReset() {
-		//		Debug.Log ("All  Achievemnts was reseted");
-	}
+	//	private void OnAchievementsReset(ISN_Result res) {
+	//
+	//	}
+	//	
+	//	private void OnAchievementProgress(ISN_Result res) {
+	//
+	//	}
 	
-	private void OnAchievementProgress(CEvent e) {
-		//		Debug.Log ("OnAchievementProgress");
-		//		
-		//		AchievementTemplate tpl = e.data as AchievementTemplate;
-		//		Debug.Log (tpl.id + ":  " + tpl.progress.ToString());
-	}
-	
-	//--------------------------------
-	// Eventos Gestor Logros
-	//--------------------------------
+
 	void OnAchievementsChecked (){
 		achievementsChecked = true;
 	}

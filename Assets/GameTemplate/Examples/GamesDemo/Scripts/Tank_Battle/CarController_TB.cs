@@ -110,7 +110,7 @@ public class CarController_TB : BaseVehicle
 		// set default data
 		myDataManager.SetName("Player");
 		myDataManager.SetHealth(startHealthAmount);
-				
+		
 		if(isAIControlled)
 		{
 			// set our name to an AI player
@@ -129,7 +129,7 @@ public class CarController_TB : BaseVehicle
 		MakeVulnerable();
 		
 		// grab volume from sound controller for our engine sound
-		GetComponent<AudioSource>().volume= BaseSoundController.Instance.volume;
+		//		GetComponent<AudioSource>().volume= BaseSoundController.Instance.volume;
 	}	
 	
 	void InitAI()
@@ -164,7 +164,7 @@ public class CarController_TB : BaseVehicle
 		// tell gun controller to do 'look and destroy'
 		gunControl.currentState= AIAttackStates.AIAttackState.look_and_destroy;
 	}
-		
+	
 	void AddBattleController()
 	{			
 		if(myGO==null)
@@ -198,11 +198,11 @@ public class CarController_TB : BaseVehicle
 	public override void UpdatePhysics ()
 	{
 		if( canControl )
-    		base.UpdatePhysics();
+			base.UpdatePhysics();
 		
 		if( isFinished )
 			myBody.velocity *= 0.99f;
-			
+		
 		// if we are moving slow, apply some extra force to turn the car quickly
 		// so we can do donuts (!) - note that since there is no 'ground detect' it will apply it in the air, too (bad!)
 		if( mySpeed < TurnTorqueHelperMaxSpeed )
@@ -241,10 +241,10 @@ public class CarController_TB : BaseVehicle
 				gunControl.canControl=false;
 			}
 		}
-				
+		
 		// see if our car is supposed to be held in-place
 		CheckLock();
-				
+		
 		// update the audio
 		UpdateEngineAudio();
 		
@@ -257,9 +257,9 @@ public class CarController_TB : BaseVehicle
 	{
 		// calculate steering amount
 		steer= Mathf.Clamp( default_input.GetHorizontal() , -1, 1 );
-				
+		
 		// how much accelerator?
-        motor= Mathf.Clamp( default_input.GetVertical() , 0, 1 );
+		motor= Mathf.Clamp( default_input.GetVertical() , 0, 1 );
 		
 		// how much brake?
 		brake= -1 * Mathf.Clamp( default_input.GetVertical() , -1, 0 );
@@ -302,8 +302,8 @@ public class CarController_TB : BaseVehicle
 		steer= Mathf.Clamp( AIController.GetHorizontal(), -1, 1 );
 		
 		// how much accelerator?
-        motor= Mathf.Clamp( AIController.GetVertical() , -1, 1 );
-
+		motor= Mathf.Clamp( AIController.GetVertical() , -1, 1 );
+		
 		// THIS IS IMPORTANT! As we are a wheeled vehicle, the engine needs to drive to turn when stopped
 		if( AIController.currentAIState == AIState.stopped_turning_left || AIController.currentAIState == AIState.stopped_turning_right )
 		{
@@ -311,11 +311,11 @@ public class CarController_TB : BaseVehicle
 			motor= 0.4f;
 		}
 	}
-
-    public void SetAIInput (bool aiFlag)
-    {
-        isAIControlled = aiFlag;
-    }
+	
+	public void SetAIInput (bool aiFlag)
+	{
+		isAIControlled = aiFlag;
+	}
 	
 	private ProjectileController aProj;
 	private GameObject tempGO;
@@ -337,7 +337,7 @@ public class CarController_TB : BaseVehicle
 			{
 				// grab a ref to the projectile's controller
 				aProj= tempGO.GetComponent<ProjectileController>();
-			
+				
 				// quick check to make sure that this projectile was not launched by this player
 				if( aProj.ownerType_id != id )
 				{
@@ -357,10 +357,10 @@ public class CarController_TB : BaseVehicle
 	
 	public void OnTriggerEnter( Collider other )
 	{
-	
+		
 		// check to see if the trigger uses any of the layers where we want to automatically respawn the player on impact
 		int objLayerMask = (1 << other.gameObject.layer);
-
+		
 		if ((respawnLayerMask.value & objLayerMask) > 0) 
 		{
 			Respawn();
@@ -388,14 +388,14 @@ public class CarController_TB : BaseVehicle
 			
 			// reset health to full
 			myDataManager.SetHealth(startHealthAmount);
-
+			
 		} else {
 			
 			// tell game controller to do small scale hit if we still have some health left
 			((GameController_TB)GameController.Instance.Manager).PlayerHit( myTransform );
 		}
 	}
-		
+	
 	void Respawn()
 	{
 		// reset the 'we are respawning' variable

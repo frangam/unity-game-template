@@ -6,7 +6,7 @@ using System.Collections;
 public class GameController_IP : BaseGameManager 
 {
 	public string mainMenuSceneName = "menu_IP";
-
+	
 	public bool didInit;
 	public Transform playerParent;
 	public GameObject[] playerPrefabList;
@@ -25,7 +25,7 @@ public class GameController_IP : BaseGameManager
 	
 	public BaseUserManager mainPlayerDataManager1;
 	public BaseUserManager mainPlayerDataManager2;
-		
+	
 	private int powerupExplosionCounter =0;
 	public int numberOfExplosionsToMakePowerup =10;
 	
@@ -41,7 +41,7 @@ public class GameController_IP : BaseGameManager
 	private bool isStopped;
 	
 	[System.NonSerialized]
-//	public static GameController_IP Instance;
+	//	public static GameController_IP Instance;
 	
 	public float gameSpeed=8;
 	
@@ -54,10 +54,10 @@ public class GameController_IP : BaseGameManager
 	
 	public float CameraStartPositionZ= -11;
 	
-//	public GameController_IP()
-//	{
-//		Instance=this;
-//	}
+	//	public GameController_IP()
+	//	{
+	//		Instance=this;
+	//	}
 	
 	public void Start()
 	{
@@ -160,7 +160,7 @@ public class GameController_IP : BaseGameManager
 		
 		// all ready to play, let's go!
 		playerGO1.SendMessage( "GameStart" );
-				
+		
 		// now, if there *is* a player 2, let's tell it to get going
 		if(totalPlayers>1)
 		{
@@ -168,11 +168,11 @@ public class GameController_IP : BaseGameManager
 			playerScript2= playerGO2.GetComponent<Player_SpaceShip_IP>();
 			
 			mainPlayerDataManager2= playerGO2.GetComponent<BasePlayerManager>().DataManager;
-		
+			
 			playerGO2.SendMessage( "GameStart" );
 		}
 	}
-		
+	
 	public void StopMovingForward ()
 	{
 		isStopped=true;
@@ -221,7 +221,7 @@ public class GameController_IP : BaseGameManager
 	public override void EnemyDestroyed ( Vector3 aPosition, int pointsValue, int hitByID )
 	{
 		// tell our sound controller to play an explosion sound
-		BaseSoundController.Instance.PlaySoundByIndex( 1, aPosition );
+		//		BaseSoundController.Instance.PlaySoundByIndex( 1, aPosition );
 		
 		// play an explosion effect at the enemy position
 		Explode ( aPosition );
@@ -236,7 +236,7 @@ public class GameController_IP : BaseGameManager
 		} else {
 			// tell main data manager to add score
 			mainPlayerDataManager2.AddScore( pointsValue );
-		
+			
 			// update the score on the UI
 			UpdateScoreP2( mainPlayerDataManager2.GetScore() );
 		}
@@ -259,7 +259,7 @@ public class GameController_IP : BaseGameManager
 	public void PlayerHit(Transform whichPlayer)
 	{
 		// tell our sound controller to play an explosion sound
-		BaseSoundController.Instance.PlaySoundByIndex( 2, whichPlayer.position );
+		//		BaseSoundController.Instance.PlaySoundByIndex( 2, whichPlayer.position );
 		
 		// call the explosion function!
 		Explode( whichPlayer.position );
@@ -278,7 +278,7 @@ public class GameController_IP : BaseGameManager
 		if( UIControl != null )
 			UIControl.UpdateLivesP1( aScore );
 	}
-
+	
 	public void UpdateScoreP2( int aScore )
 	{
 		if( UIControl != null )
@@ -291,8 +291,8 @@ public class GameController_IP : BaseGameManager
 			UIControl.UpdateLivesP2( aScore );
 	}
 	
-
-		
+	
+	
 	private bool player1Dead;
 	private bool player2Dead;
 	

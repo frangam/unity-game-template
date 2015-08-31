@@ -1,17 +1,8 @@
-﻿/**
- * ScreenBounds.cs
- * 
- * ScreenBounds scale and locate the four screen bounds if exist (top, bottom, left and right).
- * File location: Assets/Scripts/Utils/Unity/ScreenBounds.cs
- * 
- * 
- * (c) Copyright 2014 fgarmo.com All Rights Reserved.
- * 
- * @version 1.0.0
- * @Unity3D 4.3
- *
- */
-
+﻿/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 using UnityEngine;
 using System.Collections;
 

@@ -1,7 +1,15 @@
-﻿using UnityEngine;
+﻿/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
+using UnityEngine;
 using System.Collections;
 using System.Diagnostics;
 
+/// <summary>
+/// Custom Debug class to know which class is calling and in which class method
+/// </summary>
 public class GTDebug {
 	public enum DebugMessageType{
 		NORMAL 	= 0,

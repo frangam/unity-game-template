@@ -1,3 +1,8 @@
+/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 public enum GameSection{
 	NONE									= -3,
 	SOME									= -2,

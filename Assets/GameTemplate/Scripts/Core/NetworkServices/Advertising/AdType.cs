@@ -1,3 +1,8 @@
+/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 public enum AdType{
 	ALL 						= -3,
 	SOME						= -2,

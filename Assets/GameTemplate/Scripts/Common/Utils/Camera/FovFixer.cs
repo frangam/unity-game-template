@@ -1,6 +1,14 @@
+/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Ensures a screen zone for hold devices
+/// </summary>
 public class FovFixer : MonoBehaviour {
 	public float originalWidth = 1024.0f;
 	public float originalHeight = 768.0f;

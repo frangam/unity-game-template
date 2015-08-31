@@ -1,3 +1,8 @@
+/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 public enum AchieveCondition{
 	
 	ACTIVE_IF_LOWER_THAN		= -1,
