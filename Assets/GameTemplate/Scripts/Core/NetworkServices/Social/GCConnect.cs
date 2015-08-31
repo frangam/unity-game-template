@@ -46,6 +46,13 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			//--
 			// Achievements
 			//--
+			if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
+				foreach(Achievement a in GameSettings.Instance.CurrentAchievements){
+					GameCenterManager.RegisterAchievement(a.IdForIOS);
+				}
+			}
+			
+			
 			GameCenterManager.OnAchievementsLoaded += OnAchievementsLoaded;
 			//			GameCenterManager.OnAchievementsProgress += OnAchievementProgress;
 			//			GameCenterManager.OnAchievementsReset += OnAchievementsReset;
@@ -84,6 +91,8 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		
 		//the rest of scores
 		if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0){
+			
+			
 			foreach(Score score in GameSettings.Instance.CurrentScores){
 				if(score != null && !string.IsNullOrEmpty(score.Id)){
 					scoresToLoad.Add(score);
@@ -92,9 +101,12 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		}
 		
 		//finaly load scores
-		totalScoresToLoad = scoresToLoad.Count;
-		foreach(Score score in scoresToLoad)
-			GameCenterManager.LoadCurrentPlayerScore(score.IdForSaveOniOSStore);
+		totalScoresToLoad = scoresToLoad != null ? scoresToLoad.Count : 0;
+		
+		if(totalScoresToLoad > 0){
+			foreach(Score score in scoresToLoad)
+				GameCenterManager.LoadCurrentPlayerScore(score.IdForSaveOniOSStore);
+		}
 	}
 	
 	/*--------------------------------
@@ -150,7 +162,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	//
 	//	}
 	
-
+	
 	void OnAchievementsChecked (){
 		achievementsChecked = true;
 	}

@@ -110,6 +110,8 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			}
 		}
 		#elif UNITY_IPHONE
+		aID = achievement.IdForIOS;
+		
 		if(GameCenterManager.IsPlayerAuthenticated && GameCenterManager.GetAchievementProgress(aID) < 100){ //Menor al 100%
 			aID = aID.Replace("-", "_");
 			GameCenterManager.SubmitAchievement(achievement.getProgressPercentage(), aID); //Completamos con el 100% del progreso
@@ -148,7 +150,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 				}
 				#elif UNITY_IPHONE
 				if(GameCenterManager.IsPlayerAuthenticated){
-					string id = a.Id.Replace("-","_");
+					string id = a.IdForIOS;
 					lockedInServer = GameCenterManager.GetAchievementProgress(id) < 100;
 				}
 				#elif WP8

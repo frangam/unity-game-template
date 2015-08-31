@@ -72,6 +72,20 @@ public class BaseQuest {
 		}
 	}
 	
+	public string IdForIOS {
+		get {
+			string res = this.id.Replace("-", "_");
+			
+			if(GameSettings.Instance.groupScores){ 
+				res = res.Replace(GameSettings.Instance.prefixScoresGroupOnIOS, "");
+				res = res.Insert(0, GameSettings.Instance.prefixScoresGroupOnIOS);
+				GTDebug.log("id for ios: " +res + ". Prefix: " +GameSettings.Instance.prefixScoresGroupOnIOS);
+			}
+			
+			return res;
+		}
+	}
+	
 	public int Level {
 		get {
 			return this.level;

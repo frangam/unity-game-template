@@ -69,25 +69,31 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		if(gkScore != null){
 			string id = gkScore.leaderboardId;
 			id = id.Replace("_", "-");
-			if(GameSettings.Instance.groupScores) 
-				id = id.Replace(GameSettings.Instance.prefixScoresGroupOnIOS, "");
+			id = id.Replace(GameSettings.Instance.prefixScoresGroupOnIOS, "");
+			
+			GTDebug.log("Get score from GameSettings asset with LeaderboardID: "+ id);
 			
 			//get local score objhec
 			Score score = getScoreByID(id);
 			
 			if(score != null){
+				GTDebug.log("Local score: LeaderboardID: "+ id + " score: " +score.Value);
+				
 				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
 				//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
 				if(Application.platform == RuntimePlatform.IPhonePlayer && score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
 					double scoreSavedInServerDouble = gkScore.GetDoubleScore();
 					System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
 					long convertedValue = ((long) (timeSpan.TotalMilliseconds)); //milliseconds
-					GTDebug.log("LeaderboardID: "+ id + " Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServerDouble+"Secs. After: "+ convertedValue+"Ms");
-					loadBestScoreFromStore(id, convertedValue);
+					GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + " Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServerDouble+"Secs. After: "+ convertedValue+"Ms");
+					loadBestScoreFromStore(score.Id, convertedValue);
 				}
 				else{
-					loadBestScoreFromStore(id, gkScore.GetLongScore());
+					loadBestScoreFromStore(score.Id, gkScore.GetLongScore());
 				}
+			}
+			else{
+				GTDebug.log("Local score not found with LeaderboardID: "+ id);
 			}
 		}
 	}
@@ -348,7 +354,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthenticated){
 			//get player score saved in server side
-			if(GameCenterManager.GetLeaderboard(id) != null){
+			if(GameCenterManager.GetLeaderboard(score.IdForSaveOniOSStore) != null){
 				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
 				//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
 				if(score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
