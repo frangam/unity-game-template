@@ -7,7 +7,12 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-public class UIButtomToggleWin : UIButtonOpenWin {
+
+/// <summary>
+/// Open / close windows and set button color depending of if windows are opened
+/// or not
+/// </summary>
+public class UIButtonToggleWin : UIButtonOpenWin {
 
 	//--------------------------------------
 	// Setting Attributes
@@ -30,32 +35,40 @@ public class UIButtomToggleWin : UIButtonOpenWin {
 	// Public Methods
 	//--------------------------------------
 
-	public void cl(){
-		doPress ();
-	}
-
-	public void closeMyWin(){
-	
-		if(openWindows != null && openWindows.Count > 0){
-			foreach(UIBaseWindow w in openWindows){		
+	public void closeWindowsAreOpened(){
+		if(OpenWindows != null && OpenWindows.Count > 0){
+			foreach(UIBaseWindow w in OpenWindows){		
 				UIController.Instance.Manager.close(w);
 			}
 
-			button.image.color=windowsCloseColor;
+			button.image.color = windowsCloseColor;
 		}
+	}
+
+	public void openWindowsAreClosed(){
+		if(CloseWindows != null && CloseWindows.Count > 0){
+			foreach(UIBaseWindow w in OpenWindows){		
+				UIController.Instance.Manager.open(w);
+			}
+			
+			button.image.color = windowsOpenColor;
+		}
+	}
+
+	public virtual void notifyWindowIsOpen(UIBaseWindow window){
 
 	}
 
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
-	public override void Update ()
+	public override void Awake ()
 	{
+		base.Awake ();
 
-		base.Update ();
-		if (openWindows != null && openWindows.Count > 0) {
+		if ( OpenWindows != null && OpenWindows.Count > 0) {
 			
-			foreach (UIBaseWindow w in openWindows) {
+			foreach (UIBaseWindow w in OpenWindows) {
 				if (w.IsOpen) {
 					button.image.color=windowsOpenColor;
 				}else{
@@ -71,38 +84,11 @@ public class UIButtomToggleWin : UIButtonOpenWin {
 	{
 		base.doPress ();
 
-
-		if(closeWindows != null && closeWindows.Count > 0){
-			foreach(UIBaseWindow w in closeWindows)
-				UIController.Instance.Manager.close(w);
-		}
-		
-		if(openWindows != null && openWindows.Count > 0){
-
-			foreach(UIBaseWindow w in openWindows){
-				if(!w.IsOpen){
-					isOpenWindows=false;
-				
-				}
-
-				if(!isOpenWindows){
-					UIController.Instance.Manager.open(w);
-					isOpenWindows=true;
-					VynilManager.Instance.UICarVynilManager.setActualWin(w);
-				}else{
-					UIController.Instance.Manager.close(w);
-					isOpenWindows=false;
-				}
+		if(OpenWindows != null && OpenWindows.Count > 0){
+			foreach(UIBaseWindow w in OpenWindows){
+				//notify this w window is the current new active
+				notifyWindowIsOpen(w);
 			}
-
-//			if(button&&button.image){
-//				if(isOpenWindows){
-//					button.image.color=windowsOpenColor;
-//				}else{
-//					button.image.color=windowsCloseColor;
-//				}
-//			}
-
 		}
 	}
 }

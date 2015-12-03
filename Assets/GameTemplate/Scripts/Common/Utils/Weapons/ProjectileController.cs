@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu("Common/Utils/Projectile Controller")]
+[AddComponentMenu("Common/Projectile Control")]
 
 public class ProjectileController : MonoBehaviour 
 {
