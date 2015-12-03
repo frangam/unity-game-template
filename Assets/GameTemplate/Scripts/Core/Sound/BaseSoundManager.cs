@@ -95,10 +95,10 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 	/// Mutes the or active all onces mute onces active.
 	/// </summary>
 	/// <returns><c>true</c>, if sound or music is active, <c>false</c> otherwise.</returns>
-	/// <param name="excludeIfIsMuted">If set to <c>true</c> exclude if is muted.</param>
-	public void muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter(bool forceMute = true){
-		muteOrActiveOncesMuteOncesActive(SoundType.FX, false, forceMute);
-		muteOrActiveOncesMuteOncesActive(SoundType.MUSIC, true, forceMute);
+	/// <param name="forceVolChange">If set to <c>true</c> exclude if is muted.</param>
+	public void muteOrActiveAllOncesMuteOncesActiveAndPlayOrStopAfter(bool forceVolChange = true){
+		muteOrActiveOncesMuteOncesActive(SoundType.FX, false, forceVolChange);
+		muteOrActiveOncesMuteOncesActive(SoundType.MUSIC, true, forceVolChange);
 	}
 	
 	/// <summary>
@@ -106,11 +106,10 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 	/// </summary>
 	/// <returns><c>true</c>, if sound or music is active,, <c>false</c> otherwise.</returns>
 	/// <param name="type">Type.</param>
-	/// <param name="excludeIfIsMuted">If set to <c>true</c> exclude if is muted.</param>
-	public bool muteOrActiveOncesMuteOncesActive(SoundType type, bool playOrStopMusic = true, bool forceMute = false){
+	public bool muteOrActiveOncesMuteOncesActive(SoundType type, bool playOrStopMusic = true, bool forceVolChange = false){
 		bool active = type == SoundType.FX ? IsSoundActive() : IsMusicActive();
-		string forceMutePrevKey = "";
-		bool muteForcedPreviously = false;
+		string VolChangeForcedPrevKey = "";
+		bool volumeChangeForced = false;
 		float curVol = 0;
 		float newVol = 0;
 		bool changeVolume = false;
@@ -119,20 +118,20 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 		
 		switch(type){
 		case SoundType.FX:
-			forceMutePrevKey = GameSettings.PP_SOUND_MUTE_FORCED;
+			VolChangeForcedPrevKey = GameSettings.PP_SOUND_MUTE_FORCED;
 			curVol = CurrentGeneralSoundVolume();
 			break;
 			
 		case SoundType.MUSIC:
-			forceMutePrevKey = GameSettings.PP_MUSIC_MUTE_FORCED;
+			VolChangeForcedPrevKey = GameSettings.PP_MUSIC_MUTE_FORCED;
 			curVol = CurrentGeneralMusicVolume();
 			break;
 		}
 		
-		muteForcedPreviously = PlayerPrefs.GetInt(forceMutePrevKey) != 0 ? true : false;
-		changeVolume = (!forceMute || ((forceMute && !muteForcedPreviously && curVol != 0f) || (forceMute && muteForcedPreviously)));
+		volumeChangeForced = PlayerPrefs.GetInt(VolChangeForcedPrevKey) != 0 ? true : false;
+		changeVolume = (!forceVolChange || ((forceVolChange && !volumeChangeForced && curVol != 0f) || (forceVolChange && volumeChangeForced)));
 		
-		GTDebug.log(type+" Current Vol: "+curVol + ". Force change volume ? " +forceMute+ ". Prev Forced ? " +muteForcedPreviously + ". So Change Vol ? " + changeVolume);
+		GTDebug.log(type+" Current Vol: "+curVol + ". Force change volume ? " +forceVolChange+ ". Prev Forced ? " +volumeChangeForced + ". So Change Vol ? " + changeVolume);
 		
 		if(changeVolume){
 			newVol = curVol == 0f ? 1f : 0f; //change to mute or previous sound saved
@@ -153,15 +152,16 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 			GTDebug.log(type+" Changing Vol to: " + newVol + ". Active ? " + active);
 			
 			//set flag PP_SOUND_MUTE_FORCED if we force mute or not
-			if(forceMute){
+			if(forceVolChange){
 				GTDebug.log(type+" Set flag Force Change Vol to True");
-				PlayerPrefs.SetInt(forceMutePrevKey, 1);
+				PlayerPrefs.SetInt(VolChangeForcedPrevKey, 1);
 			}
-			else if(!forceMute){
+			else{
 				GTDebug.log(type+" Reset flag Force Change Vol to False");
-				PlayerPrefs.SetInt(forceMutePrevKey, 0);
+				PlayerPrefs.SetInt(VolChangeForcedPrevKey, 0);
 			}
 		}
+		
 		
 		
 		

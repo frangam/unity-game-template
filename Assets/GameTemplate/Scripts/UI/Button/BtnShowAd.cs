@@ -12,13 +12,7 @@ public class BtnShowAd : UIBaseButton {
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private AdNetwork network = AdNetwork.GOOGLE_ADMOB;
-	
-	[SerializeField]
 	private AdType adType = AdType.INTERSTITIAL; //the ad type to show
-	
-	[SerializeField]
-	private int adZoneIndex = 0;
 	
 	
 	//--------------------------------------
@@ -35,15 +29,15 @@ public class BtnShowAd : UIBaseButton {
 		
 		switch(adType){
 		case AdType.INTERSTITIAL: AdsHandler.Instance.showInterstitial(); break;
-		case AdType.VIDEO: AdsHandler.Instance.PlayAVideo(adZoneIndex); break;
-		case AdType.RANDOM_INTERSTITIAL_VIDEO: AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd(adZoneIndex); break;
-		case AdType.VIDEO_V4VC: AdsHandler.Instance.playVideoV4VC(adZoneIndex); break;
+		case AdType.VIDEO: AdsHandler.Instance.PlayAVideo(); break;
+		case AdType.RANDOM_INTERSTITIAL_VIDEO: AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd(); break;
+		case AdType.VIDEO_V4VC: AdsHandler.Instance.playVideoV4VC(); break;
 		}
 	}
 	
 	protected override bool canPress ()
 	{
-		return AdsHandler.Instance.canShowAd(network,adZoneIndex,adType) && base.canPress ();
+		return AdsHandler.Instance.canShowAd(adType) && base.canPress ();
 	}
 	
 	

@@ -16,6 +16,21 @@ public class UIButtonOpenWin : UIBaseButton {
 	
 	[SerializeField]
 	private List<UIBaseWindow> closeWindows;
+
+	//--------------------------------------
+	// Getters / Setters
+	//--------------------------------------
+	public List<UIBaseWindow> OpenWindows {
+		get {
+			return this.openWindows;
+		}
+	}
+
+	public List<UIBaseWindow> CloseWindows {
+		get {
+			return this.closeWindows;
+		}
+	}
 	
 	//--------------------------------------
 	// Overriden Methods

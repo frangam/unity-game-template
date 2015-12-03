@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/***************************************************************************
+Project:    Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
+using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 
@@ -59,7 +64,7 @@ public class GameSettings : ScriptableObject {
 	public static bool 							mandatoryTutorial 				= false; //if it is mandatory to do tutorial before to play
 	public static bool 							firstTimePlayerInviteFriends 	= false; //show invite friends screen if it is the firs time
 	public static int 							maxLevels 						= 10;
-	
+	public static GameSection					previousGameSection				= GameSection.NONE; //the previous section of the current we are coming
 	
 	//STATIC SETTINGS
 	public static float 						graphicsDetails					= 1f;
@@ -96,7 +101,7 @@ public class GameSettings : ScriptableObject {
 	public bool 								USE_IN_APP_PURCHASES_SERVICE 	= true;
 	public bool 								ENABLE_ANDROID_IMMERSIVE_MODE	= true;
 	public bool 								showTestLogs					= false; //show debug log for test or not
-	
+	public string								heyZapID;
 	
 	//--------------------------------------
 	// Constants

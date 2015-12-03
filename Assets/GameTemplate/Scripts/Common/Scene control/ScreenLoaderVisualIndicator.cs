@@ -103,21 +103,34 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 	}
 	
 	public bool LoadScene(GameSection section, bool showLoadIndicator = true, bool showLoadingPanel = true){
-		bool valid = false;
 		List<GTBuildScene> scenes = GTBuildSettingsConfig.Instance.CurrentBuildPack.build.scenes;
-		int selectedScene = 0;
+		bool valid = scenes != null && scenes.Count > 0;
 		
-		for(int i=0; i<scenes.Count; i++){
-			if(scenes[i].Section == section){
-				selectedScene = i;
-				break;
+		//set the current section as the previous one, because we are going to load a new one
+		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
+		
+		if(valid){
+			string selectedScene = "";
+			int sceneIndex = 0;
+			for(int i=0; i<scenes.Count; i++){
+				if(scenes[i].Section == section){
+					selectedScene = scenes[i].name;
+					sceneIndex = i;
+					break;
+				}
+			}
+			valid = !string.IsNullOrEmpty(selectedScene);
+			
+			if(valid){
+				StartCoroutine(Load(sceneIndex, showLoadIndicator, showLoadingPanel));
+			}
+			else{
+				GTDebug.logErrorAlways("Not found scene for section "+section+" in this current build "+GameSettings.Instance.currentGameMultiversion.ToString());
 			}
 		}
-		
-		//		if(!string.IsNullOrEmpty(selectedScene)){
-		valid = true;
-		StartCoroutine(Load(selectedScene, showLoadIndicator, showLoadingPanel));
-		//		}
+		else{
+			GTDebug.logErrorAlways("Not found any scene in this current build "+GameSettings.Instance.currentGameMultiversion.ToString());
+		}
 		
 		return valid;
 	}

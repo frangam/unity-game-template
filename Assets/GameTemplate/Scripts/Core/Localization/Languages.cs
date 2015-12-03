@@ -4,10 +4,14 @@ Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 ***************************************************************************/
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Languages {
+	public static event Action OnChangingLanguage = delegate {};
+	public static event Action OnLanguageSelected = delegate {};
+	
 	private const string PP_CURRENT_LANGUAGE = "pp_current_language";
 	
 	public static void loadAllLanguagesInGameSettings(){
@@ -39,7 +43,9 @@ public class Languages {
 	}
 	
 	public static void selectLanguage(SystemLanguage language, bool setFlagLanguageChanged = false){
+		OnChangingLanguage(); //dispatch event
 		Localization.language = language.ToString();
+		OnLanguageSelected(); //dispatch event
 		
 		if(setFlagLanguageChanged)
 			PlayerPrefs.SetInt(GameSettings.PP_LANGUAGE_CHANGED, 1);

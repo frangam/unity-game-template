@@ -6,18 +6,17 @@ Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnionAssets.FLE;
+using Heyzap;
 
 public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
-	public const string V4VC_RESULT = "gt_v4vc_result";
 	
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
-	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
+	public static event System.Action OnIncentivedVideoFinished = delegate{};
 	
 	//--------------------------------------
 	// Setting Attributes
@@ -42,13 +41,6 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//--------------------------------------
 	// Getters & Setters
 	//--------------------------------------
-	public static EventDispatcherBase dispatcher {
-		get {
-			return _dispatcher;
-		}
-	}
-	
-	
 	public bool HasPausedGame {
 		get {
 			return this.hasPausedGame;
@@ -60,63 +52,27 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	// INITIALIZE
 	//--------------------------------------
 	#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_EDITOR)
-	public bool canShowAd(AdNetwork network, int zoneIndex = 0, AdType type = AdType.BANNER){
+	public bool canShowAd(AdType type = AdType.BANNER, string tag = "default"){
 		bool hasInternet = InternetChecker.Instance.IsconnectedToInternet;
-		bool canShow = hasInternet && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0
-			&& (type == AdType.VIDEO_V4VC //can show if the ad type is video with and a reward 
+		bool canShow = hasInternet && !string.IsNullOrEmpty(GameSettings.Instance.heyZapID)
+			&& (type == AdType.VIDEO_V4VC //can show if the ad type is video with and a reward even player had purchase for quitting ads 
 			    || (type != AdType.VIDEO_V4VC && !GameSettings.Instance.IS_PRO_VERSION));
 		
-		GTDebug.log("Has internet ? " + hasInternet);
-		
 		if(canShow){
-			switch(network){
-			case AdNetwork.GOOGLE_ADMOB:
-				canShow = GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB) && googleAdmobInited; break;
-			case AdNetwork.ADCOLONY: 
-				string zoneId = AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex);
-				canShow = GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) 
-					&& adcolonyInited 
-						&& !string.IsNullOrEmpty(zoneId) 
-						&& ((type == AdType.VIDEO && AdColony.IsVideoAvailable(zoneId))
-						    || (type == AdType.VIDEO_V4VC && AdColony.IsV4VCAvailable(zoneId)))
-						; 
-				
-				
-				
-				GTDebug.log("Zone ID: " + zoneId);
-				
-				if(type == AdType.VIDEO)
-					GTDebug.log("Is video available ? " +AdColony.IsVideoAvailable(zoneId));
-				else if(type == AdType.VIDEO_V4VC)
-					GTDebug.log("Is video V4VC available ? " +AdColony.IsV4VCAvailable(zoneId));
-				break;
+			switch(type){
+			case AdType.INTERSTITIAL: canShow = HZInterstitialAd.isAvailable(tag); break;
+			case AdType.VIDEO: HZVideoAd.fetch(); canShow = HZVideoAd.isAvailable(tag); break;
+			case AdType.VIDEO_V4VC: HZIncentivizedAd.fetch(); canShow = HZIncentivizedAd.isAvailable(tag); break;
 			}
 		}
-		
-		GTDebug.log("Can show ad ? " +canShow);
 		
 		return canShow;
 	}
 	
 	protected void Start(){
-		if(GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE)
-			StartCoroutine(handleInitializationWhenUsingInAppBilling());
-		
-		StartCoroutine(checkInternetConnection());
+		StartCoroutine(handleInitializationWhenUsingInAppBilling());
 	}
 	
-	private IEnumerator checkInternetConnection(){
-		inited = (!GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) || (GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY) && adcolonyInited))
-			&& (!GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB) || (GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB) && googleAdmobInited));
-		
-		//try to init
-		if(!inited && !waitingFinishInitInApps && InternetChecker.Instance.IsconnectedToInternet){
-			init();
-		}
-		
-		yield return new WaitForSeconds(5);
-		StartCoroutine(checkInternetConnection());
-	}
 	
 	private IEnumerator handleInitializationWhenUsingInAppBilling(){
 		waitingFinishInitInApps = true;
@@ -144,76 +100,132 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	}
 	
 	private void init(){
-		if(!GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.adsNetworks != null && GameSettings.Instance.adsNetworks.Count > 0){
-			GTDebug.log("initializing");
-			
-			//AdColony
-			if(GameSettings.Instance.adsNetworks.Contains(AdNetwork.ADCOLONY))
-				initAdColony();
-			
-			//Admob
-			if(GameSettings.Instance.adsNetworks.Contains(AdNetwork.GOOGLE_ADMOB)){
-				initGoogleAdmob();
-				
-				//create and show banner ad
-				CreateBanner ();
+		// Your Publisher ID is: 1d3b3bbd9f2a398c60822451a696ffea
+		HeyzapAds.start(GameSettings.Instance.heyZapID, HeyzapAds.FLAG_NO_OPTIONS);
+		
+		//--------------------------------------
+		//  HEYZAP PLUGIN EVENT LISTNERS
+		//--------------------------------------
+		//------
+		//BANNER ADS
+		//------
+		HZBannerAd.setDisplayListener(delegate(string adState, string adTag){
+			if (adState == "loaded") {
+				// Do something when the banner ad is loaded
 			}
-		}
+			if (adState == "error") {
+				// Do something when the banner ad fails to load (they can fail when refreshing after successfully loading)
+			}
+			if (adState == "click") {
+				// Do something when the banner ad is clicked, like pause your game
+			}
+		});
+		
+		
+		//------
+		//Interstitial Ads
+		//------
+		HZInterstitialAd.setDisplayListener(delegate(string adState, string adTag){
+			if ( adState.Equals("show") ) {
+				// Do something when the ad shows, like pause your game
+				pauseGame();
+			}
+			if ( adState.Equals("hide") ) {
+				// Do something after the ad hides itself
+				pauseGame(false);
+			}
+			if ( adState.Equals("click") ) {
+				// Do something when an ad is clicked on
+			}
+			if ( adState.Equals("failed") ) {
+				// Do something when an ad fails to show
+				pauseGame(false);
+			}
+			if ( adState.Equals("available") ) {
+				// Do something when an ad has successfully been fetched
+			}
+			if ( adState.Equals("fetch_failed") ) {
+				// Do something when an ad did not fetch
+			}
+			if ( adState.Equals("audio_starting") ) {
+				// The ad being shown will use audio. Mute any background music
+			}
+			if ( adState.Equals("audio_finished") ) {
+				// The ad being shown has finished using audio.
+				// You can resume any background music.
+			}
+		});
+		
+		
+		//------
+		//Reward Videos
+		//------
+		HZIncentivizedAd.setDisplayListener(delegate(string adState, string adTag){
+			if (adState.Equals ("show")) {
+				// Do something when the ad shows, like pause your game
+				pauseGame();
+			}
+			if (adState.Equals ("hide")) {
+				// Do something after the ad hides itself
+				//				pauseGame(false);
+			}
+			if (adState.Equals ("click")) {
+				// Do something when an ad is clicked on
+			}
+			if (adState.Equals ("failed")) {
+				// Do something when an ad fails to show
+			}
+			if (adState.Equals ("available")) {
+				// Do something when an ad has successfully been fetched
+			}
+			if (adState.Equals ("fetch_failed")) {
+				// Do something when an ad did not fetch
+			}
+			if (adState.Equals ("incentivized_result_complete")) {
+				// The user has watched the entire video and should be given a reward.
+				pauseGame(false);
+				OnIncentivedVideoFinished();
+			}
+			if (adState.Equals ("incentivized_result_incomplete")) {
+				// The user did not watch the entire video and should not be given a reward.
+				pauseGame(false);
+			}
+		});
+		
+		
+		//------
+		//Reward Videos
+		//------
+		HZVideoAd.setDisplayListener( delegate(string adState, string adTag){
+			if (adState.Equals ("show")) {
+				// Do something when the ad shows, like pause your game
+				pauseGame();
+			}
+			if (adState.Equals ("hide")) {
+				// Do something after the ad hides itself
+				pauseGame(false);
+			}
+			if (adState.Equals ("click")) {
+				// Do something when an ad is clicked on
+			}
+			if (adState.Equals ("failed")) {
+				// Do something when an ad fails to show
+			}
+			if (adState.Equals ("available")) {
+				// Do something when an ad has successfully been fetched
+			}
+			if (adState.Equals ("fetch_failed")) {
+				// Do something when an ad did not fetch
+			}
+		});
+		
+		
+		CreateBanner();
+		
+		//For Test purposes
+		//		HeyzapAds.showMediationTestSuite();
 	}
 	
-	private void initGoogleAdmob(){
-		AdmobIDsPack pack =  GoogleAdmobSettings.Instance.CurrentIDsPack;
-		if(pack != null){
-			//Required
-			GoogleMobileAd.Init();
-			
-			//set ids
-			GoogleMobileAd.SetBannersUnitID(pack.android_BannerID, pack.iOS_BannerID, pack.wp_BannerID);
-			GoogleMobileAd.SetInterstisialsUnitID(pack.android_InterstitialID, pack.iOS_InterstitialID, pack.wp_InterstitialID);
-			
-			
-			//		//Optional, add data for better ad targeting
-			//		GoogleMobileAd.SetGender(GoogleGenger.Male);
-			//		GoogleMobileAd.AddKeyword("game");
-			//		GoogleMobileAd.SetBirthday(1989, AndroidMonth.MARCH, 18);
-			//		GoogleMobileAd.TagForChildDirectedTreatment(false);
-			
-			
-			
-			
-			//More eventts ot explore under GoogleMobileAdEvents class
-			GoogleMobileAd.OnInterstitialLoaded += OnInterstisialsLoaded;
-			GoogleMobileAd.OnInterstitialOpened += OnInterstisialsOpen;
-			GoogleMobileAd.OnInterstitialClosed += OnInterstisialsClosed;
-			
-			//		//listening for InApp Event
-			//		//You will only receive in-app purchase (IAP) ads if you specifically configure an IAP ad campaign in the AdMob front end.
-			//		GoogleMobileAd.addEventListener(GoogleMobileAdEvents.ON_AD_IN_APP_REQUEST, OnInAppRequest);
-			
-			googleAdmobInited = true;
-		}
-	}
-	
-	private void initAdColony(){
-		AdColonyIDsPack pack = AdColonySettings.Instance.CurrentIDsPack;
-		if(pack != null){
-			AdColony.OnVideoStarted = OnVideoStarted;
-			AdColony.OnVideoFinished = OnVideoFinished;
-			AdColony.OnV4VCResult = OnV4VCResult;
-			//     	AdColony.OnAdAvailabilityChange = OnAdAvailabilityChange;
-			
-			string[] zoneIDs = null;
-			string appID = "";
-			switch(Application.platform){
-			case RuntimePlatform.Android: appID = pack.android_appID; zoneIDs = pack.android_adZoneIDs.ToArray(); break;
-			case RuntimePlatform.IPhonePlayer: appID = pack.iOS_appID; zoneIDs = pack.iOS_adZoneIDs.ToArray(); break;
-			}
-			
-			AdColony.Configure( "1.0", appID, zoneIDs );
-			
-			adcolonyInited = true;
-		}
-	}
 	
 	private void pauseGame(bool pause = true, bool alwaysMute = true){
 		//alway mute sound and music when show an ad
@@ -247,100 +259,28 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			if(!pause)
 				hasPausedGame = pause;
 		}
+		
+		
+		if(!pause)
+			hasPausedGame = false;
 	}
 	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
 	public void testOnInterstitialOpen(){
-		OnInterstisialsOpen();
+		//		OnInterstisialsOpen();
 	}
 	public void testOnInterstitialClose(){
-		OnInterstisialsClosed();
+		//		OnInterstisialsClosed();
 	}
 	public void testOnVideoStarted(){
-		OnVideoStarted();
+		//		OnVideoStarted();
 	}
 	public void testOnInterstitialFinished(){
-		OnVideoFinished(true);
+		//		OnVideoFinished(true);
 	}
 	
-	
-	private void OnBannerLoadedAction (GoogleMobileAdBanner banner) {
-		banner.OnLoadedAction -= OnBannerLoadedAction;
-		banner.Show();
-	}
-	
-	private void OnInterstisialsLoaded() {
-		//ad loaded, strting ad
-		IsInterstisialsAdReady = true;
-		GoogleMobileAd.ShowInterstitialAd();
-	}
-	
-	private void OnInterstisialsOpen() {
-		IsInterstisialsAdReady = false;
-		pauseGame();
-		//		//pausing the game
-		//		if(BaseGameScreenController.Instance.Section == GameSection.GAME)
-		//			GameController.Instance.Manager.Paused = true;
-	}
-	
-	private void OnInterstisialsClosed(){
-		pauseGame(false);
-		
-		//		//un-pausing the game
-		//		if (BaseGameScreenController.Instance.Section == GameSection.GAME)
-		//			GameController.Instance.Manager.Paused = false;
-	}
-	
-	//	private void OnInAppRequest(CEvent e) {
-	//		//getting product id
-	//		string productId = (string) e.data;
-	//		Debug.Log ("In App Request for product Id: " + productId + " received");
-	//		
-	//		
-	//		//Then you should perfrom purchase  for this product id, using this or another game billing plugin
-	//		//Once the purchase is complete, you should call RecordInAppResolution with one of the constants defined in GADInAppResolution:
-	//		
-	//		GoogleMobileAd.RecordInAppResolution(GADInAppResolution.RESOLUTION_SUCCESS);
-	//		
-	//	}
-	
-	void OnVideoStarted(){
-		hasPausedGame = true;
-		pauseGame();
-		
-		GTDebug.log( "Ad video playing." );
-	}
-	
-	void OnVideoFinished( bool ad_shown ){
-		pauseGame(false);
-		hasPausedGame = false;
-		
-		GTDebug.log( "Ad video finished." );
-		
-		
-	}
-	
-	void OnV4VCResult( bool success, string name, int amount ){
-		if (success){
-			//dispatch event
-			_dispatcher.dispatch(V4VC_RESULT, new V4VCResult(name, amount));
-			
-			GTDebug.log( "Awarded " + amount + " " + name );
-			// e.g. "Awarded 100 Gold"
-			
-			
-			if(name.Equals("Bills")){
-				GameMoneyManager.Instance.addMoney(amount);
-			}
-			
-			
-		}
-		else{
-			GTDebug.log( "not Awarded " + amount + " " + name );
-		}
-	}
 	
 	
 	//--------------------------------------
@@ -349,231 +289,100 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	public void showRandomGameplayInterstitialOrVideoAd(int adZoneIndex = 0){
 		int videoPercentage = Mathf.Clamp(GameSettings.Instance.videoPercentageInRandomShow, 0, 100);
 		int election = Random.Range(0, 100);
-		bool canShowAdmobAd = canShowAd(AdNetwork.GOOGLE_ADMOB, adZoneIndex, AdType.INTERSTITIAL);
-		bool canShowAdColonyAd = canShowAd(AdNetwork.ADCOLONY, adZoneIndex, AdType.VIDEO);
+		bool canshowInterstitial = canShowAd(AdType.INTERSTITIAL);
+		bool canShowVideo = canShowAd(AdType.VIDEO);
 		
-		GTDebug.log("Can show admob ads ? " +canShowAdmobAd + ", can show adcolony ads ? "+ canShowAdColonyAd);
+		GTDebug.log("Can show interstitial ads ? " +canshowInterstitial + ", can show video ads ? "+ canShowVideo);
 		GTDebug.log("Random percentage for video electo: "+ videoPercentage + ". Election %: " + election);
 		
-		if(canShowAdmobAd && canShowAdColonyAd){
-			//show adcolony video
+		if(canshowInterstitial && canShowVideo){
+			//show video
 			if(election >= 0 && election < videoPercentage){
 				GTDebug.log("Playing video");
-				PlayAVideo(adZoneIndex);
+				//				PlayAVideo(adZoneIndex);
+				HZVideoAd.show();
 			}
-			//admob interstitial
+			//show interstitial
 			else{
 				GTDebug.log("Showing Interstitial");
-				showInterstitial();
+				//				showInterstitial();
+				HZInterstitialAd.show();
 			}
 		}
-		else if(canShowAdmobAd && !canShowAdColonyAd){
+		else if(canshowInterstitial && !canShowVideo){
 			GTDebug.log("Showing Interstitial");
-			showInterstitial();
+			//			showInterstitial();
+			HZInterstitialAd.show();
 		}
-		else if(!canShowAdmobAd && canShowAdColonyAd){
+		else if(!canshowInterstitial && canShowVideo){
 			GTDebug.log("Playing video");
-			PlayAVideo(adZoneIndex);
+			//			PlayAVideo(adZoneIndex);
+			HZVideoAd.show();
 		}
 	}
 	
 	public void quitAds(){
 		PlayerPrefs.SetInt(GameSettings.PP_PURCHASED_QUIT_ADS, 1);
 		GameSettings.Instance.IS_PRO_VERSION = true;
-		DestroyAllBanners();
+		HZBannerAd.Destroy ();
+	}
+	
+	public void destroyBanner(){
+		HZBannerAd.Destroy();
 	}
 	
 	public void hideBanner(){
-		if (canShowAd(AdNetwork.GOOGLE_ADMOB))
-			HideBanner();
+		HZBannerAd.Hide();
 	}
 	
 	
 	
 	public void showInterstitial(){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(canShowAd(AdNetwork.GOOGLE_ADMOB)){
-			//loadin ad:
-			GoogleMobileAd.LoadInterstitialAd ();
-		}
+		if(canShowAd(AdType.INTERSTITIAL))
+			HZInterstitialAd.show();
 		#endif
 	}
 	
-	public void refrescarBanner(AdNetwork network = AdNetwork.GOOGLE_ADMOB){
+	public void refrescarBanner(){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(canShowAd(AdNetwork.GOOGLE_ADMOB))
-			RefreshBanner();
-		#endif
-	}
-	
-	
-	public void playVideoV4VC(int zoneIndex = 0, AdNetwork network = AdNetwork.ADCOLONY, AdType type = AdType.VIDEO_V4VC, bool prePopup = false, bool postPopup = false){
-		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		string zoneID = AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex);
-		
-		// Check to see if a video for V4VC is available in the zone.
-		//		if(AdColony.IsV4VCAvailable(zoneID)){
-		if(canShowAd(AdNetwork.ADCOLONY, zoneIndex, type)){
-			GTDebug.log("Play AdColony V4VC Ad");
-			// The AdColony class exposes two methods for showing V4VC Ads.
-			// ---------------------------------------
-			// The first `ShowV4VC`, plays a V4VC Ad and, optionally, displays
-			// a popup when the video is finished.
-			// ---------------------------------------
-			// The second is `OfferV4VC`, which popups a confirmation before
-			// playing the ad and, optionally, displays popup when the video 
-			// is finished.
-			
-			// Call one of the V4VC Video methods:
-			// Note that you should also pause your game here (audio, etc.) AdColony will not
-			// pause your app for you.
-			if(prePopup)
-				AdColony.OfferV4VC(postPopup, zoneID);
-			else
-				AdColony.ShowV4VC(postPopup, zoneID);
-		}
-		else{
-			GTDebug.log("V4VC Ad Not Available in this zone id "+zoneID);
-		}
-		
+		destroyBanner();
+		CreateBanner();
 		#endif
 	}
 	
 	
-	// When a video is available, you may choose to play it in any fashion you like.
-	// Generally you will play them automatically during breaks in your game,
-	// or in response to a user action like clicking a button.
-	// Below is a method that could be called, or attached to a GUI action.
-	public void PlayAVideo(int zoneIndex = 0, AdNetwork network = AdNetwork.ADCOLONY, AdType type = AdType.VIDEO)
-	{
+	public void playVideoV4VC(){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		string zoneID = AdColonySettings.Instance.GetZoneIDByIndex(zoneIndex);
-		
-		if(canShowAd(AdNetwork.ADCOLONY, zoneIndex, type)){
-			//			// Check to see if a video is available in the zone.
-			//			if(AdColony.IsVideoAvailable(zoneID)){
-			GTDebug.log("Play AdColony Video in this zone ID " + zoneID);
-			
-			// Call AdColony.ShowVideoAd with that zone to play an interstitial video.
-			// Note that you should also pause your game here (audio, etc.) AdColony will not
-			// pause your app for you.
-			AdColony.ShowVideoAd(zoneID); 
-			//			}
-			//			else{
-			//				GTDebug.log("Video Not Available in this zone ID "+zoneID);
-			//			}
-		}
+		if(canShowAd(AdType.VIDEO_V4VC))
+			HZIncentivizedAd.show();
+		#endif
+	}
+	
+	public void PlayAVideo(){
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
+		if(canShowAd(AdType.VIDEO))
+			HZVideoAd.show();
 		#endif
 	}
 	
 	private void CreateBanner(){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-		if(canShowAd(AdNetwork.GOOGLE_ADMOB)){
-			GoogleMobileAdBanner banner;
+		if(canShowAd(AdType.BANNER)){
+			string pos = HZBannerAd.POSITION_TOP;
+			switch(anchor){
+			case TextAnchor.LowerCenter:
+			case TextAnchor.LowerLeft:
+			case TextAnchor.LowerRight:
+				pos = HZBannerAd.POSITION_BOTTOM;
+				break;
+			}
+			HZBannerShowOptions opt = new HZBannerShowOptions();
+			opt.Position = pos;
 			
-			if (registerdBanners.ContainsKey(UniqueBannerID)){
-				banner = registerdBanners[UniqueBannerID];
-			}
-			else{
-				banner = GoogleMobileAd.CreateAdBanner(anchor, size);
-				registerdBanners.Add(UniqueBannerID, banner);
-			}
-			
-			if (banner.IsLoaded && !banner.IsOnScreen){
-				//listening for banner to load example using C# actions:
-				banner.OnLoadedAction += OnBannerLoadedAction;
-				
-				//By setting this flsg to fals we will prevent banner to show when it's loaded
-				//e will listner for OnLoadedAction event and show it by our selfs instead
-				banner.ShowOnLoad = false;
-			}
+			HZBannerAd.ShowWithOptions(opt);
 		}
 		#endif
-	}
-	
-	private void DestroyAllBanners(){
-		if(registerdBanners != null && registerdBanners.Count > 0){
-			
-			foreach(GoogleMobileAdBanner b in registerdBanners.Values){
-				GTDebug.log("Found banner with id: " + b.id + " destroying");
-				//				b.Hide();
-				GoogleMobileAd.DestroyBanner(b.id);
-			}
-		}
-	}
-	
-	private void HideBanner(){
-		if (registerdBanners.ContainsKey(UniqueBannerID)){
-			GTDebug.log("Found banner with id: " + UniqueBannerID);
-			
-			GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
-			if (banner.IsLoaded){
-				GTDebug.log("Banner with id: " + UniqueBannerID + " loaded");
-				
-				if (banner.IsOnScreen){
-					GTDebug.log("Banner with id: " + UniqueBannerID + " hiding");
-					
-					banner.Hide();
-				}
-			}
-			else{
-				GTDebug.log("Banner with id: " + UniqueBannerID + " not loaded");
-				
-				banner.ShowOnLoad = false;
-			}
-		}
-		else{
-			GTDebug.log("No banner found with id: " + UniqueBannerID);
-		}
-	}
-	
-	private void RefreshBanner(){
-		if (registerdBanners.ContainsKey(UniqueBannerID)){
-			GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
-			if (banner.IsLoaded){
-				if (banner.IsOnScreen){
-					GTDebug.log("Banner with id: " + UniqueBannerID + " refreshing");
-					
-					//					GTDebug.log("Refreshing banner ad at position: ");
-					
-					banner.Refresh();
-				}
-				else{
-					GTDebug.log("Banner with id: " + UniqueBannerID + "not refreshing");
-				}
-			}
-			else{
-				GTDebug.log("Banner with id: " + UniqueBannerID + "not loaded");
-			}
-			//else
-			//{
-			//    banner.ShowOnLoad = true;
-			//}
-		}
-	}
-	
-	// --------------------------------------
-	// GET / SET
-	// --------------------------------------
-	public static Dictionary<string, GoogleMobileAdBanner> registerdBanners{
-		get{
-			if (_registerdBanners == null){
-				_registerdBanners = new Dictionary<string, GoogleMobileAdBanner>();
-			}
-			return _registerdBanners;
-		}
-	}
-	
-	public string sceneBannerId{
-		get{
-			return Application.loadedLevelName + "_" + this.gameObject.name;
-		}
-	}
-	
-	public string UniqueBannerID{
-		get{
-			return this.gameObject.name;
-		}
 	}
 	#endif
 }

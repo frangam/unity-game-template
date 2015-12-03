@@ -11,7 +11,7 @@ public class UIBaseGameControlButtonsWindow : UIBaseWindow {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private AxisTouchButton[] buttons;
+	private AxisTouchButton[] axisTouchButtons;
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -19,7 +19,7 @@ public class UIBaseGameControlButtonsWindow : UIBaseWindow {
 	public override void Awake ()
 	{
 		base.Awake ();
-		buttons = GetComponentsInChildren<AxisTouchButton>();
+		axisTouchButtons = GetComponentsInChildren<AxisTouchButton>();
 	}
 	
 	//--------------------------------------
@@ -29,8 +29,8 @@ public class UIBaseGameControlButtonsWindow : UIBaseWindow {
 	/// Releases the touch down.
 	/// </summary>
 	public void releaseTouchDown(){
-		if(buttons != null && buttons.Length > 0){
-			foreach(AxisTouchButton b in buttons){
+		if(axisTouchButtons != null && axisTouchButtons.Length > 0){
+			foreach(AxisTouchButton b in axisTouchButtons){
 				GTDebug.log("Releasing button " +b.name);
 				b.OnPointerUp(null);
 			}

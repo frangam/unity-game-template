@@ -1176,7 +1176,12 @@ public class GameSettingsEditor : Editor {
 			if(!GameSettings.Instance.IS_PRO_VERSION){
 				EditorGUILayout.BeginVertical(GUI.skin.box);
 				
-				adsNetworks();
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("HeyZap ID");
+				GameSettings.Instance.heyZapID	= EditorGUILayout.TextField(GameSettings.Instance.heyZapID);
+				EditorGUILayout.EndHorizontal();
+				
+				//				adsNetworks();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(whenShowInitialAd);
