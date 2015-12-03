@@ -12,19 +12,19 @@ public class BtnOpenDailyRewards : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private DailyRewardsInterface drWin;
-	
+
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
 	protected override bool canPress ()
 	{
 		bool can = drWin && InternetChecker.Instance.IsconnectedToInternet && DailyRewards.Instance.IsInitialized && base.canPress ();
-		
-		GTDebug.log("Can press ? " + can);
-		
+
+		GTDebug.log("BtnOpenDailyRewards Can press ? " + can + ". Internet ? " + InternetChecker.Instance.IsconnectedToInternet + ". DailyRewards initialized ? " + DailyRewards.Instance.IsInitialized);
+
 		return can;
 	}
-	
+
 	protected override void doPress ()
 	{
 		base.doPress ();

@@ -24,7 +24,7 @@ public class TimedRewardsInterface : MonoBehaviour {
 	
 	// Needed Constants
 	private const float COINS_TIMER = 3600f; // How many seconds until the player can claim the reward
-	private const string TIMED_REWARDS_TIME = "TimedRewardsTime";
+	private const string TIMED_REWARDS_TIME = "pp_dr_timed_rewards_time";
 	private const string FMT = "O";
 	
 	void Awake() {
@@ -42,7 +42,7 @@ public class TimedRewardsInterface : MonoBehaviour {
 			if(timer.TotalSeconds <= 0) {
 				canClaim = true;
 				btnClaim.interactable = true;
-				txtTimer.text = "You prize is ready to be claimed!";
+				txtTimer.text = Localization.Get("daily_rw_ready");//"You prize is ready to be claimed!";
 			} else {
 				// I need to save the player time every tick. If the player exits the game the information keeps logged
 				// For perfomance issues you can save this information when the player switches scenes or quits the application
@@ -53,7 +53,7 @@ public class TimedRewardsInterface : MonoBehaviour {
 
 	// This where you add the player coins/cash/money/prize, etc.
 	public void OnClaimClick() {
-		Debug.Log("Reward Claimed!");
+		GTDebug.log("Reward Claimed!");
 		PlayerPrefs.SetString (TIMED_REWARDS_TIME, DateTime.Now.ToString (FMT));
 		UpdateTimer ();
 	}

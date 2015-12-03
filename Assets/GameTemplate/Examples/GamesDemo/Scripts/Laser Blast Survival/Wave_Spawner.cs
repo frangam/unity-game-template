@@ -20,7 +20,7 @@ public class Wave_Spawner : MonoBehaviour
 	{
 		// count how many objects we have lined up in the spawn object list
 		for(int i=0; i< spawnObjectPrefabs.Length; i++)
-			//		foreach( GameObject go in spawnObjectPrefabs )
+//		foreach( GameObject go in spawnObjectPrefabs )
 		{
 			totalSpawnObjects++;
 		}
@@ -34,7 +34,7 @@ public class Wave_Spawner : MonoBehaviour
 	public void LaunchWave()
 	{
 		CancelInvoke("LaunchWave");
-		
+				
 		if( randomSpawning )
 		{
 			currentObjectNum= Random.Range ( 0, totalSpawnObjects-1 );
@@ -49,7 +49,7 @@ public class Wave_Spawner : MonoBehaviour
 				// you were making a game that only lasted until that happens
 			}
 		}
-		
+	
 		// create an object
 		GameObject tempObj= SpawnController.Instance.SpawnGO( spawnObjectPrefabs[currentObjectNum], Vector3.zero, Quaternion.identity );
 		
@@ -57,7 +57,7 @@ public class Wave_Spawner : MonoBehaviour
 		currentWave= tempProps.enemiesInWave;
 		
 		// play a spawn sound effect, which should be a 2d sound so that its position doesn't matter
-		//		BaseSoundController.Instance.PlaySoundByIndex(4, Vector3.zero);
+//		BaseSoundController.Instance.PlaySoundByIndex(4, Vector3.zero);
 	}
 	
 	public void Fragged()

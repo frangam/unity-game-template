@@ -32,6 +32,31 @@ public class UISoundActivationButton : UIBaseButton {
 	// Overriden Methods
 	//--------------------------------------
 	public override void Awake(){
+		checkShowActive();
+	}
+
+	public override void Update ()
+	{
+		base.Update ();
+		checkShowActive();
+	}
+	
+	protected override void doPress ()
+	{
+		base.doPress ();
+		
+		active = BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(type);
+		
+//		if(hideActive)
+//			imgActive.gameObject.SetActive(active);
+//		
+//		imgInactive.gameObject.SetActive(!active);
+	}
+
+	//--------------------------------------
+	// Private Methods
+	//--------------------------------------
+	private void checkShowActive(){
 		switch(type){
 		case SoundType.FX:
 			active = BaseSoundManager.Instance.IsSoundActive();
@@ -47,18 +72,6 @@ public class UISoundActivationButton : UIBaseButton {
 		else{
 			imgActive.gameObject.SetActive(true);
 		}
-		
-		imgInactive.gameObject.SetActive(!active);
-	}
-	
-	protected override void doPress ()
-	{
-		base.doPress ();
-		
-		active = BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(type);
-		
-		if(hideActive)
-			imgActive.gameObject.SetActive(active);
 		
 		imgInactive.gameObject.SetActive(!active);
 	}

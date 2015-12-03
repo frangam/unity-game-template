@@ -16,7 +16,7 @@ public class GTDebug {
 		WARNING = 1,
 		ERROR	= 2
 	}
-	
+
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
@@ -59,7 +59,7 @@ public class GTDebug {
 			showDebugLog(finalMessage, DebugMessageType.ERROR); //finally show debug log
 		}
 	}
-	
+
 	/// <summary>
 	/// Log always the specified message WITHOUT checking if flag show test logs in GameSettings is true
 	/// </summary>
@@ -102,8 +102,8 @@ public class GTDebug {
 		string finalMessage = getFinalMessage (message, className, mthName, includeClassNameCalling && !string.IsNullOrEmpty(className), includeMethodCalling && !string.IsNullOrEmpty(mthName)); 
 		showDebugLog(finalMessage, DebugMessageType.ERROR); //finally show debug log
 	}
-	
-	
+
+
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
@@ -114,14 +114,14 @@ public class GTDebug {
 		case DebugMessageType.ERROR: UnityEngine.Debug.LogError(message); break;
 		}
 	}
-	
+
 	private static string getFinalMessage(string message, string classIntialValue, string methodInitialValue, bool includeClassNameCalling, bool includeMethodCalling){
 		string className = getClassNameParsingResult(classIntialValue, includeClassNameCalling, includeMethodCalling);
 		string methodName = getMethodNameParsingResult(methodInitialValue, includeClassNameCalling, includeMethodCalling);
 		string finalMessage = className + methodName + message;
 		return finalMessage;
 	}
-	
+
 	private static string getClassNameParsingResult(string initialValue, bool includeClassNameCalling, bool includeMethodCalling){
 		string className = includeClassNameCalling ? initialValue : "";
 		if(includeClassNameCalling && !includeMethodCalling)

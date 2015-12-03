@@ -12,19 +12,19 @@ using System.Text;
 
 public static class ColorExtensions{
 	static System.Random _randomizer = new System.Random();
-	
-	public static Color GetMatte(this Color Source)
-	{
-		Color inputColor = Source;
-		RGB rgb = new RGB { R = inputColor.r * 255, G = inputColor.g * 255, B = inputColor.b * 255 };
-		HSB hsb = ConvertToHSB(rgb);
-		hsb.B = hsb.B < 17f ? 17f : hsb.B;
-		hsb.S = hsb.S>0.9f ? .9f: hsb.S; //Added to create dark on light, and light on dark
-		rgb = ConvertToRGB(hsb);
-		return new Color((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1);
-	}
-	
-	public static Color GetContrast(this Color Source, bool PreserveOpacity = true)
+
+    public static Color GetMatte(this Color Source)
+    {
+        Color inputColor = Source;
+        RGB rgb = new RGB { R = inputColor.r * 255, G = inputColor.g * 255, B = inputColor.b * 255 };
+        HSB hsb = ConvertToHSB(rgb);
+        hsb.B = hsb.B < 17f ? 17f : hsb.B;
+        hsb.S = hsb.S>0.9f ? .9f: hsb.S; //Added to create dark on light, and light on dark
+        rgb = ConvertToRGB(hsb);
+        return new Color((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1);
+    }
+    
+    public static Color GetContrast(this Color Source, bool PreserveOpacity = true)
 	{
 		Color inputColor = Source;
 		//if RGB values are close to each other by a diff less than 10%, then if RGB values are lighter side, decrease the blue by 50% (eventually it will increase in conversion below), if RBB values are on darker side, decrease yellow by about 50% (it will increase in conversion)
@@ -53,7 +53,7 @@ public static class ColorExtensions{
 		hsb.H = hsb.H < 180 ? hsb.H + 180 : hsb.H - 180;
 		//_hsb.B = _isColorDark ? 240/255 : 50/255; //Added to create dark on light, and light on dark
 		rgb = ConvertToRGB(hsb);
-		
+
 		return new Color ((float)rgb.R/255, (float)rgb.G/255, (float)rgb.B/255, sourceAlphaValue);
 	}
 	

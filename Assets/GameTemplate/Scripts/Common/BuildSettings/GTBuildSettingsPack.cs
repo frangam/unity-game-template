@@ -14,7 +14,7 @@ public class GTBuildSettingsPack {
 	//--------------------------------------
 	public int 						gameVersion;
 	public GTBuildSettings			build;
-	
+
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -26,7 +26,7 @@ public class GTBuildSettingsPack {
 			gameVersion = value;
 		}
 	}
-	
+
 	public GTBuildSettings Build {
 		get {
 			return this.build;
@@ -35,21 +35,21 @@ public class GTBuildSettingsPack {
 			build = value;
 		}
 	}
-	
+
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
 	public GTBuildSettingsPack(int pGameVersion, GTBuildSettings pBuild = null){
 		gameVersion = pGameVersion;
-		
+
 		if(pBuild != null)
 			build = new GTBuildSettings(pBuild);
 		else
 			build = new GTBuildSettings();
 	}
-	
-	
-	
+
+
+
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -58,9 +58,9 @@ public class GTBuildSettingsPack {
 		return string.Format ("[GTBuildSettingsPack: gameVersion={0} build={1}]"
 		                      , gameVersion, build.ToString());
 	}
-	
+
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	
+
 }

@@ -29,6 +29,12 @@ public class Waypoints_Controller : MonoBehaviour {
 	
 	public bool closed=true;
 	public bool shouldReverse;
+
+	public ArrayList Transforms {
+		get {
+			return transforms;
+		}
+	}
 	
 	void Start()
 	{

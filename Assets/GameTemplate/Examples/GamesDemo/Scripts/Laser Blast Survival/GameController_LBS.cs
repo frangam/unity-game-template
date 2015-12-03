@@ -11,15 +11,15 @@ public class GameController_LBS : BaseGameManager
 	public Wave_Spawner WaveSpawnController;
 	
 	public Transform playerParent;
-	public Transform [] startPoints;
-	
+    public Transform [] startPoints;
+    
 	[System.NonSerialized]
-	public GameObject playerGO1;
+    public GameObject playerGO1;
 	
 	private Vector3[] playerStarts;
 	private Quaternion[] playerRotations;
 	
-	private ArrayList playerList;
+    private ArrayList playerList;
 	private ArrayList playerTransforms;
 	
 	private Player_LBS thePlayerScript;
@@ -33,16 +33,16 @@ public class GameController_LBS : BaseGameManager
 	public UI_LBS UIControl;
 	
 	[System.NonSerialized]
-	//	public static GameController_LBS Instance;
+//	public static GameController_LBS Instance;
 	
 	public float gameSpeed=1;
 	
 	public RadarGUI theRadarControlScript;
 	
-	//	public GameController_LBS()
-	//	{
-	//		Instance=this;
-	//	}
+//	public GameController_LBS()
+//	{
+//		Instance=this;
+//	}
 	
 	public void Start()
 	{
@@ -59,20 +59,20 @@ public class GameController_LBS : BaseGameManager
 		numberOfPlayers= playerPrefabList.Length;
 		
 		// initialize some temporary arrays we can use to set up the players
-		Vector3 [] playerStarts = new Vector3 [numberOfPlayers];
-		Quaternion [] playerRotations = new Quaternion [numberOfPlayers];
+        Vector3 [] playerStarts = new Vector3 [numberOfPlayers];
+        Quaternion [] playerRotations = new Quaternion [numberOfPlayers];
+
+        // we are going to use the array full of start positions that must be set in the editor, which means we always need to
+        // make sure that there are enough start positions for the number of players
+
+        for ( int i = 0; i < numberOfPlayers; i++ )
+        {
+            // grab position and rotation values from start position transforms set in the inspector
+            playerStarts [i] = (Vector3) startPoints [i].position;
+            playerRotations [i] = ( Quaternion ) startPoints [i].rotation;
+        }
 		
-		// we are going to use the array full of start positions that must be set in the editor, which means we always need to
-		// make sure that there are enough start positions for the number of players
-		
-		for ( int i = 0; i < numberOfPlayers; i++ )
-		{
-			// grab position and rotation values from start position transforms set in the inspector
-			playerStarts [i] = (Vector3) startPoints [i].position;
-			playerRotations [i] = ( Quaternion ) startPoints [i].rotation;
-		}
-		
-		SpawnController.Instance.SetUpPlayers( playerPrefabList, playerStarts, playerRotations, playerParent, numberOfPlayers );
+        SpawnController.Instance.SetUpPlayers( playerPrefabList, playerStarts, playerRotations, playerParent, numberOfPlayers );
 		
 		playerTransforms=new ArrayList();
 		
@@ -82,41 +82,41 @@ public class GameController_LBS : BaseGameManager
 		playerList=new ArrayList();
 		
 		for ( int i = 0; i < numberOfPlayers; i++ )
-		{
+        {
 			Transform tempT= (Transform)playerTransforms[i];
 			Player_LBS tempController= tempT.GetComponent<Player_LBS>();
 			playerList.Add(tempController);
 			tempController.Init ();
 		}
 		
-		// grab a ref to the player's gameobject for later
-		playerGO1 = SpawnController.Instance.GetPlayerGO( 0 );
-		
-		// grab a reference to the focussed player's car controller script, so that we can
-		// do things like access its speed variable
-		thePlayerScript = ( Player_LBS ) playerGO1.GetComponent<Player_LBS>();
-		
-		// assign this player the id of 0
-		thePlayerScript.SetID( 0 );
-		
-		// set player control
-		thePlayerScript.SetUserInput( true );
-		
-		// as this is the user, we want to focus on this for UI etc.
-		focusPlayerScript = thePlayerScript;
-		
+        // grab a ref to the player's gameobject for later
+        playerGO1 = SpawnController.Instance.GetPlayerGO( 0 );
+
+        // grab a reference to the focussed player's car controller script, so that we can
+        // do things like access its speed variable
+        thePlayerScript = ( Player_LBS ) playerGO1.GetComponent<Player_LBS>();
+
+        // assign this player the id of 0
+        thePlayerScript.SetID( 0 );
+
+        // set player control
+        thePlayerScript.SetUserInput( true );
+
+        // as this is the user, we want to focus on this for UI etc.
+        focusPlayerScript = thePlayerScript;
+
 		// see if we have a camera target object to look at
 		Transform aTarget= playerGO1.transform.FindChild("CamTarget");
-		
+
 		if(aTarget!=null)
 		{
 			// if we have a camera target to aim for, instead of the main player, we use that instead
 			Camera.main.SendMessage("SetTarget", aTarget );
 		} else {
-			// tell the camera script to target the player
+        	// tell the camera script to target the player
 			Camera.main.SendMessage("SetTarget", playerGO1.transform );
 		}
-		
+
 		// finally, tell the radar about the new player
 		theRadarControlScript.SetCenterObject( playerGO1.transform );
 	}
@@ -133,11 +133,11 @@ public class GameController_LBS : BaseGameManager
 	public override void EnemyDestroyed ( Vector3 aPosition, int pointsValue, int hitByID )
 	{
 		// tell our sound controller to play an explosion sound
-		//		BaseSoundController.Instance.PlaySoundByIndex( 1, aPosition );
+//		BaseSoundController.Instance.PlaySoundByIndex( 1, aPosition );
 		
 		// tell main data manager to add score
 		mainPlayerDataManager1.AddScore( pointsValue );
-		
+			
 		// update the score on the UI
 		UpdateScoreP1( mainPlayerDataManager1.GetScore() );
 		
@@ -151,7 +151,7 @@ public class GameController_LBS : BaseGameManager
 	public void PlayerHit(Transform whichPlayer)
 	{
 		// tell our sound controller to play an explosion sound
-		//		BaseSoundController.Instance.PlaySoundByIndex( 2, whichPlayer.position );
+//		BaseSoundController.Instance.PlaySoundByIndex( 2, whichPlayer.position );
 		
 		// call the explosion function!
 		Explode( whichPlayer.position );

@@ -35,12 +35,12 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 			UILoadingPanel.Instance.changeProgress(async.progress, false, 1f);
 			yield return null;
 		}
-		//		if(async != null && async.progress >= 1f)
-		//			async.allowSceneActivation = true;
-		//		//
-		//		yield return async;
-		//		if(GameSettings.Instance.showTestLogs)
-		//			Debug.Log("Loading complete");
+//		if(async != null && async.progress >= 1f)
+//			async.allowSceneActivation = true;
+//		//
+//		yield return async;
+//		if(GameSettings.Instance.showTestLogs)
+//			Debug.Log("Loading complete");
 	}
 	
 	private IEnumerator Load(int escena, bool showLoadIndicator = true,  bool showLoadingPanel = true){
@@ -68,13 +68,13 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 			UILoadingPanel.Instance.changeProgress(async.progress, false, 1);
 			yield return null;
 		}
-		//		if(async != null && async.progress >= 1)
-		//			async.allowSceneActivation = true;
+//		if(async != null && async.progress >= 1)
+//			async.allowSceneActivation = true;
 		
 		
-		//		yield return async;
-		
-		//		Debug.Log("Loading complete");
+//		yield return async;
+
+//		Debug.Log("Loading complete");
 	}
 	
 	private IEnumerator ShowLoadIndicatorOnly(){
@@ -97,24 +97,24 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 	public void LoadScene(string scene, bool showLoadIndicator = true, bool showLoadingPanel = true){
 		//set the current section as the previous one, because we are going to load a new one
 		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
-		
+
 		StartCoroutine(Load(scene, showLoadIndicator, showLoadingPanel));
 	}
 	
 	public void LoadScene(int scene, bool showLoadIndicator = true, bool showLoadingPanel = true){
 		//set the current section as the previous one, because we are going to load a new one
 		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
-		
+
 		StartCoroutine(Load(scene, showLoadIndicator, showLoadingPanel));
 	}
-	
+
 	public bool LoadScene(GameSection section, bool showLoadIndicator = true, bool showLoadingPanel = true){
 		List<GTBuildScene> scenes = GTBuildSettingsConfig.Instance.CurrentBuildPack.build.scenes;
 		bool valid = scenes != null && scenes.Count > 0;
-		
+
 		//set the current section as the previous one, because we are going to load a new one
-		//		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
-		
+//		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
+
 		if(valid){
 			string selectedScene = "";
 			int sceneIndex = 0;
@@ -126,7 +126,7 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 				}
 			}
 			valid = !string.IsNullOrEmpty(selectedScene);
-			
+
 			if(valid){
 				StartCoroutine(Load(sceneIndex, showLoadIndicator, showLoadingPanel));
 			}
@@ -137,7 +137,7 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		else{
 			GTDebug.logErrorAlways("Not found any scene in this current build "+GameSettings.Instance.currentGameMultiversion.ToString());
 		}
-		
+
 		return valid;
 	}
 	

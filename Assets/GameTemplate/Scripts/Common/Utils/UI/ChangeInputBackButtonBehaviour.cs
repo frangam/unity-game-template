@@ -21,10 +21,10 @@ public class ChangeInputBackButtonBehaviour {
 	[SerializeField]
 	[Tooltip("Leave empty if do navigate with Action. If we go to an specific scene represented by another game section fill it")]
 	private string specificScreenToGO;
-	
+
 	[SerializeField]
 	private UIBaseManager uiManagerToDoAction;
-	
+
 	[SerializeField]
 	private List<UIBaseWindow> openWindows;
 	
@@ -77,7 +77,7 @@ public class ChangeInputBackButtonBehaviour {
 			closeWindows = value;
 		}
 	}
-	
+
 	public UIBaseManager UiManagerToDoAction {
 		get {
 			return this.uiManagerToDoAction;

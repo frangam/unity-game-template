@@ -2,6 +2,8 @@
 Project:      Mobile Interface Template
 Copyright (c) Niobium Studios.
 Author:       Guilherme Nunes Barbosa (gnunesb@gmail.com)
+
+Modified by: Francisco Manuel García Moreno (garmodev@gmail.com)
 \***************************************************************************/
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,80 +20,81 @@ public class DailyRewardsInterface : UIBaseWindow {
 	public UIBaseWindow loadingWin;
 	public UIBaseWindow pnlInternetLost;
 	public ScrollRectEnsureVisible scroll;
-	
+
 	// Prefab containing the daily reward
 	public GameObject dailyRewardPrefab;
-	
+
 	// Claim Button
 	public Button btnClaim;
-	
+
 	// How long until next claim
 	public Text txtTimeDue;
-	
+
 	// The Grid that contains the rewards
 	public GridLayoutGroup dailyRewardsGroup;
-	
-	private DailyRewards dailyRewards;
+
+//	private DailyRewards dailyRewards;
 	private float timer = 0;
-	
+
 	public override void Awake ()
 	{
 		timer = 0;
 		base.Awake();
-		dailyRewards = FindObjectOfType<DailyRewards> ();
-		dailyRewards.CheckRewards ();
-		UpdateUI ();
+//		dailyRewards = FindObjectOfType<DailyRewards> ();
+//		DailyRewards.Instance.CheckRewards ();
+//		dailyRewards.CheckRewards ();
+//		UpdateUI ();
 	}
-	
+
 	public void initialization(){
-		dailyRewards.CheckRewards ();
+		DailyRewards.Instance.CheckRewards ();
 		UpdateUI (true);
-		
+
 	}
-	
-	
+
+
 	public override void open ()
 	{
 		base.open ();
 		UpdateUI (true);
-		
+
 		timer = 0;
-		
+
 		bool inited = InternetChecker.Instance.IsconnectedToInternet 
-			&& (dailyRewards != null && dailyRewards.IsInitialized && dailyRewards.rewards != null);
-		
+			&& (DailyRewards.Instance.IsInitialized && DailyRewards.Instance.rewards != null);
+
 		if(!inited){
 			StartCoroutine(tryToInitEverySeconds());
 			UIController.Instance.Manager.open(loadingWin);
 			StartCoroutine(waitForInitRewards());
 		}
 	}
-	
+
 	private IEnumerator doInitialization(){
 		yield return new WaitForSeconds(3);
 		UIController.Instance.Manager.waitForClose(loadingWin,2);
 		StartCoroutine(centerScrollOntheCurrentDailyAvailable());
 	}
-	
+
 	private IEnumerator tryToInitEverySeconds(float secondsForTryInit = 2.5f, int totalTimes = 4, int timer = 0){
-		if(!dailyRewards.IsInitialized && timer < totalTimes){
-			dailyRewards.Initialize();
+		if(!DailyRewards.Instance.IsInitialized && timer < totalTimes){
+			DailyRewards.Instance.Initialize();
 			yield return new WaitForSeconds(secondsForTryInit);
 			timer++;
 			StartCoroutine(tryToInitEverySeconds(secondsForTryInit,totalTimes,timer));
 		}
 	}
-	
+
 	private IEnumerator waitForInitRewards(){
-		bool inited = (dailyRewards != null && dailyRewards.IsInitialized && dailyRewards.rewards != null);
+		bool inited = (DailyRewards.Instance.IsInitialized && DailyRewards.Instance.rewards != null);
 		while(timer < MAX_TIME_WAIT_FOR_INIT && !inited){
 			timer += Time.deltaTime;
-			inited = InternetChecker.Instance.IsconnectedToInternet && (dailyRewards != null && dailyRewards.IsInitialized && dailyRewards.rewards != null);
+			inited = InternetChecker.Instance.IsconnectedToInternet && (DailyRewards.Instance.IsInitialized && DailyRewards.Instance.rewards != null);
 			yield return null;
 		}
-		
+
 		if(!inited){
-			dailyRewards.Initialize();
+			DailyRewards.Instance.Initialize();
 			UIController.Instance.Manager.open(pnlInternetLost);
 			UIController.Instance.Manager.waitForClose(pnlInternetLost, 3);
 			UIController.Instance.Manager.waitForClose(loadingWin, 3);
@@ -99,44 +102,44 @@ public class DailyRewardsInterface : UIBaseWindow {
 		}
 		else{
 			initialization();
-			
-			//			yield return new WaitForSeconds(3);
-			//			UIController.Instance.Manager.waitForClose(loadingWin,2);
-			//			StartCoroutine(centerScrollOntheCurrentDailyAvailable());
+
+//			yield return new WaitForSeconds(3);
+//			UIController.Instance.Manager.waitForClose(loadingWin,2);
+//			StartCoroutine(centerScrollOntheCurrentDailyAvailable());
 		}
 	}
-	
+
 	public IEnumerator centerScrollOntheCurrentDailyAvailable(){
-		while(!dailyRewards.IsInitialized){
+		while(!DailyRewards.Instance.IsInitialized){
 			yield return null;
 		}
-		int availableIndex = dailyRewards.AvailableReward;
+		int availableIndex = DailyRewards.Instance.AvailableReward;
 		DailyReward[] rwButtons = GetComponentsInChildren<DailyReward>();
-		
-		if(scroll && availableIndex >= 0 && dailyRewards.rewards != null && dailyRewards.rewards.Count > availableIndex && rwButtons != null && rwButtons.Length > availableIndex){			
+
+		if(scroll && availableIndex >= 0 && DailyRewards.Instance.rewards != null && DailyRewards.Instance.rewards.Count > availableIndex && rwButtons != null && rwButtons.Length > availableIndex){			
 			RectTransform rt = rwButtons[availableIndex].GetComponent<RectTransform>();
-			
+				
 			if(rt != null)
 				scroll.CenterOnItem(rt);
 		}
 	}
-	
+
 	// Clicked the claim button
 	public void OnClaimClick() {
-		dailyRewards.ClaimPrize (dailyRewards.availableReward);
-		dailyRewards.CheckRewards ();
+		DailyRewards.Instance.ClaimPrize (DailyRewards.Instance.availableReward);
+		DailyRewards.Instance.CheckRewards ();
 		UpdateUI ();
 	}
-	
+
 	private IEnumerator doUpdate(bool centerScroll = false){
-		bool inited = (dailyRewards != null && dailyRewards.IsInitialized && dailyRewards.rewards != null);
+		bool inited = (DailyRewards.Instance.IsInitialized && DailyRewards.Instance.rewards != null);
 		while(timer < MAX_TIME_WAIT_FOR_INIT && !inited){
 			timer += Time.deltaTime;
-			inited = (dailyRewards != null && dailyRewards.IsInitialized && dailyRewards.rewards != null);
+			inited = (DailyRewards.Instance.IsInitialized && DailyRewards.Instance.rewards != null);
 			yield return null;
 		}
-		
-		
+
+
 		if(inited){
 			foreach(Transform child in dailyRewardsGroup.transform) {
 				Destroy(child.gameObject);
@@ -144,8 +147,8 @@ public class DailyRewardsInterface : UIBaseWindow {
 			
 			bool isRewardAvailableNow = false;
 			
-			for(int i = 0; i< dailyRewards.rewards.Count; i++) {
-				int reward = dailyRewards.rewards[i];
+			for(int i = 0; i< DailyRewards.Instance.rewards.Count; i++) {
+				int reward = DailyRewards.Instance.rewards[i];
 				int day = i+1;
 				
 				GameObject dailyRewardGo = GameObject.Instantiate(dailyRewardPrefab) as GameObject;
@@ -157,8 +160,8 @@ public class DailyRewardsInterface : UIBaseWindow {
 				dailyReward.day = day;
 				dailyReward.reward = reward;
 				
-				dailyReward.isAvailable = day == dailyRewards.availableReward;
-				dailyReward.isClaimed = day <= dailyRewards.lastReward;
+				dailyReward.isAvailable = day == DailyRewards.Instance.availableReward;
+				dailyReward.isClaimed = day <= DailyRewards.Instance.lastReward;
 				
 				if(dailyReward.isAvailable) {
 					isRewardAvailableNow = true;
@@ -169,56 +172,56 @@ public class DailyRewardsInterface : UIBaseWindow {
 			
 			btnClaim.gameObject.SetActive(isRewardAvailableNow);
 			txtTimeDue.gameObject.SetActive(!isRewardAvailableNow);
-			
+
 			if(centerScroll)
 				StartCoroutine(doInitialization());
 		}
 	}
-	
+
 	public void UpdateUI (bool centerScroll = false) {
 		if(isActiveAndEnabled)
 			StartCoroutine(doUpdate(centerScroll));
 	}
-	
+
 	void FixedUpdate() {
 		if(txtTimeDue.IsActive()) {
-			TimeSpan difference = (dailyRewards.lastRewardTime - dailyRewards.timer).Add(new TimeSpan (0, 24, 0, 0));
-			
+			TimeSpan difference = (DailyRewards.Instance.lastRewardTime - DailyRewards.Instance.timer).Add(new TimeSpan (0, 24, 0, 0));
+
 			// Is the counter below 0? There is a new reward then
 			if(difference.TotalSeconds <= 0) {
-				dailyRewards.CheckRewards();
+				DailyRewards.Instance.CheckRewards();
 				UpdateUI();
 				return;
 			}
-			
+
 			string formattedTs = string.Format("{0:D2}:{1:D2}:{2:D2}", difference.Hours, difference.Minutes, difference.Seconds);
-			
+
 			txtTimeDue.text = Localization.Get("daily_rw_return_in") + " " + formattedTs; //"Return in " + formattedTs + " to claim your reward";
 		}
 	}
-	
+
 	// Resets player preferences
 	public void OnResetClick() {
-		dailyRewards.Reset ();
+		DailyRewards.Instance.Reset ();
 		
-		dailyRewards.lastRewardTime = System.DateTime.MinValue;
+		DailyRewards.Instance.lastRewardTime = System.DateTime.MinValue;
 		
-		dailyRewards.CheckRewards ();
+		DailyRewards.Instance.CheckRewards ();
 		UpdateUI ();
 	}
 	
 	// Simulates the next day
 	public void OnAdvanceDayClick() {
-		dailyRewards.timer = dailyRewards.timer.AddDays (1);
-		dailyRewards.CheckRewards ();
+		DailyRewards.Instance.timer = DailyRewards.Instance.timer.AddDays (1);
+		DailyRewards.Instance.CheckRewards ();
 		UpdateUI ();
 	}
 	
 	// Simulates the next hour
 	public void OnAdvanceHourClick() {
-		dailyRewards.timer = dailyRewards.timer.AddHours (1);
-		dailyRewards.CheckRewards ();
+		DailyRewards.Instance.timer = DailyRewards.Instance.timer.AddHours (1);
+		DailyRewards.Instance.CheckRewards ();
 		UpdateUI ();
 	}
-	
+
 }

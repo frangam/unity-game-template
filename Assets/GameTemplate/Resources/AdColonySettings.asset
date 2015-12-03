@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d1d299a91caf4d918c390fc23e44ebb, type: 3}
+  m_Name: AdColonySettings
+  m_EditorClassIdentifier: 
+  idsPacks:
+  - gameVersion: 0
+    android_appID: app7c7b1a75e1c04c969e
+    iOS_appID: appea9643936f5b4179a3
+    android_adZoneIDs:
+    - vzf8b91ae1c53b49bd96
+    iOS_adZoneIDs:
+    - vz7993011c8a904d17aa
+  - gameVersion: 1
+    android_appID: appe0a06ddcbb084c948e
+    iOS_appID: appaa5a58760c7340d9bc
+    android_adZoneIDs:
+    - vzb8d1e6e2ae3f4ec8b6
+    iOS_adZoneIDs:
+    - vz65438138f99148c695
+  - gameVersion: 2
+    android_appID: app133cc43a994443efac
+    iOS_appID: appd5aa9a47c5d14d5780
+    android_adZoneIDs:
+    - vzbd428560d1024e2f94
+    - vzbfbc6cc8c02e45819a
+    - vz31cac27e2645434eb2
+    iOS_adZoneIDs:
+    - vz34e3c41db43f4b5696
+    - vz56ec599cdab047888a
+    - vz178490ab39884ec6a6
+  - gameVersion: 3
+    android_appID: app4a349357e0a4495da6
+    iOS_appID: app92d948aeac9b4b508c
+    android_adZoneIDs:
+    - vz87da7f20621e4bf787
+    - vzf80f1444ee55448c90
+    - vz51d411cc73de43c08f
+    iOS_adZoneIDs:
+    - vz8933acb03ab1434abd
+    - vza26a27980c714f15b1
+    - vz380c67c4d2744830a3
+  - gameVersion: 4
+    android_appID: app41807e284a80439597
+    iOS_appID: app9ed23d3157c6496ba7
+    android_adZoneIDs:
+    - vz6b9a8fa488e74ec5aa
+    - vz91baa54184df4cd1b2
+    - vz4c72223d1470429496
+    iOS_adZoneIDs:
+    - vz7b261a2bd216422388
+    - vz3e53b6c7a9e9410c91
+    - vz99f6856487894929ad
+  - gameVersion: 5
+    android_appID: appfd4766c3ec6a4fb895
+    iOS_appID: app88b3a0732b2f4e8693
+    android_adZoneIDs:
+    - vz412013f0274647fb9f
+    - vzcd496e6285d5487bbb
+    - vzb76109cfb9e94b8abd
+    iOS_adZoneIDs:
+    - vz7af3e96f3b2643bba8
+    - vz724e95897e7f4aea88
+    - vzb12866d8b149402d8c
+  showPacks: 1

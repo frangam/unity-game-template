@@ -25,14 +25,14 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	
 	void OnEnable(){
 		GTDebug.log("Enabling");
-		
+
 		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
 			BaseAchievementsManager.dispatcher.addEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);			
 	}
 	
 	void OnDisable(){
 		GTDebug.log("Disabling");
-		
+
 		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
 			BaseAchievementsManager.dispatcher.removeEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);	
 	}
@@ -45,11 +45,11 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		GooglePlayConnection.ActionPlayerConnected += OnPlayerConnected;
 		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
 		GooglePlayConnection.ActionConnectionResultReceived += ActionConnectionResultReceived;
-		
+
 		//listen for GooglePlayManager events
 		GooglePlayManager.ActionScoreSubmited += OnScoreSubmited;
 		GooglePlayManager.ActionAchievementUpdated += OnAchievementUpdated;
-		
+
 		
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
 			GTDebug.log("Player connected");
@@ -96,17 +96,17 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			GTDebug.log("Connection failed with code: " + result.code.ToString());
 		}
 	}
-	
-	//	private void ActionAvailableDeviceAccountsLoaded(List<string> accounts) {
-	//		string msg = "Device contains following google accounts:" + "\n";
-	//		foreach(string acc in GooglePlayManager.instance.deviceGoogleAccountList) {
-	//			msg += acc + "\n";
-	//		} 
-	//		
-	//		AndroidDialog dialog = AndroidDialog.Create("Accounts Loaded", msg, "Sign With Fitst one", "Do Nothing");
-	//		dialog.ActionComplete += SighDialogComplete;
-	//		
-	//	}
+
+//	private void ActionAvailableDeviceAccountsLoaded(List<string> accounts) {
+//		string msg = "Device contains following google accounts:" + "\n";
+//		foreach(string acc in GooglePlayManager.instance.deviceGoogleAccountList) {
+//			msg += acc + "\n";
+//		} 
+//		
+//		AndroidDialog dialog = AndroidDialog.Create("Accounts Loaded", msg, "Sign With Fitst one", "Do Nothing");
+//		dialog.ActionComplete += SighDialogComplete;
+//		
+//	}
 	private void SighDialogComplete (AndroidDialogResult res) {
 		if(res == AndroidDialogResult.YES) {
 			GooglePlayConnection.instance.connect(GooglePlayManager.instance.deviceGoogleAccountList[0]);
@@ -140,7 +140,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		} 
 		else {
 			jugadorConectado = false;
-			
+
 			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 				GameLoaderManager.Instance.GPSPrepared = false;
 		}
@@ -155,23 +155,23 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 	}
 	
 	private void OnPlayerConnected() {
-		//		GTDebug.log("Player connected");
+//		GTDebug.log("Player connected");
 	}
 	
 	private void OnConnectionEstablished(){
 		PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 1);
 		
 		GooglePlayManager.instance.LoadConnectedPlayers ();
-		
+
 		if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0)
 			loadLeaderBoards ();
-		
+
 		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
-			loadAchievements ();
+		loadAchievements ();
 	}
 	
 	private void OnAchievementUpdated(GP_AchievementResult result) {
-		
+
 	}
 	
 	private void loadLeaderBoards() {
@@ -187,7 +187,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		GooglePlayManager.ActionAchievementsLoaded += OnAchivmentsLoaded;
 		GooglePlayManager.instance.LoadAchievements ();
 	}
-	
+
 	private void OnAchivmentsLoaded(GooglePlayResult result) {
 		GooglePlayManager.ActionAchievementsLoaded -= OnAchivmentsLoaded;
 		
@@ -205,7 +205,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		if(result.isSuccess) {
 			initialLeaderboardsLoad(new Score(GameSettings.Instance.CurrentUniqueRankingID));
 			initialLeaderboardsLoad(new Score(GameSettings.Instance.CurrentUniqueSurvivalRankingID));
-			
+
 			if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0){
 				foreach(Score score in GameSettings.Instance.CurrentScores){
 					initialLeaderboardsLoad(score);
@@ -215,10 +215,10 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			GTDebug.log("Leader-Boards Loaded error: "+ result.message);
 		}
 	}
-	
+
 	private void initialLeaderboardsLoad(Score score){
 		if(score == null || (score != null && string.IsNullOrEmpty(score.Id))) return;
-		
+
 		GooglePlayManager.instance.LoadPlayerCenteredScores(score.Id, GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL, 25); //25 is the maximum number of scores to fetch per page
 		GPLeaderBoard leaderboard = GooglePlayManager.instance.GetLeaderBoard(score.Id);
 		
@@ -226,8 +226,8 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			GTDebug.log("Leader boards loaded " + score.Id + " not found in leader boards list");
 			return;
 		}
-		
-		
+
+
 		GPScore gpScore = leaderboard.GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL);
 		long scoreValue = gpScore.score;
 		
@@ -235,11 +235,11 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		//<0 means not configured good
 		if(scoreValue < 0){
 			//				ScoresHandler.Instance.showRanking(id);
-			//			GTDebug.log("Submitting dummy zero score to store because score value from store is "+scoreValue);
+//			GTDebug.log("Submitting dummy zero score to store because score value from store is "+scoreValue);
 			
-			//			submittedScoreZeroAtInit = true;
-			//			ScoresHandler.Instance.sendScoreToServerByID(score.Id, 0);
-			
+//			submittedScoreZeroAtInit = true;
+//			ScoresHandler.Instance.sendScoreToServerByID(score.Id, 0);
+
 			GTDebug.log("Leader board id " + score.Id + " current score: " +gpScore.score);
 		}
 		else{
@@ -248,9 +248,9 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			ScoresHandler.Instance.loadBestScoreFromStore(score.Id, scoreValue);
 		}
 	}
+
 	
-	
-	
+
 	
 	//--------------------------------
 	// Eventos Gestor Logros

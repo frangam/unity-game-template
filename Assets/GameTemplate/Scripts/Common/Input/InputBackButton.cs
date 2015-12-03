@@ -30,10 +30,10 @@ public class InputBackButton : Singleton<InputBackButton> {
 	[SerializeField]
 	[Tooltip("Leave empty if do navigate with Action. If we go to an specific scene represented by another game section fill it")]
 	private string specificScreenToGO;
-	
+
 	[SerializeField]
 	private UIBaseManager uiManagerToDoAnAction;
-	
+
 	[SerializeField]
 	private List<UIBaseWindow> openWindows;
 	
@@ -63,7 +63,7 @@ public class InputBackButton : Singleton<InputBackButton> {
 			specificScreenToGO = value;
 		}
 	}
-	
+
 	public UIBaseManager UiManagerToDoAnAction {
 		get {
 			return this.uiManagerToDoAnAction;
@@ -105,7 +105,7 @@ public class InputBackButton : Singleton<InputBackButton> {
 			
 			
 			//logic with priority
-			
+
 			if(uiManagerToDoAnAction != null){
 				uiManagerToDoAnAction.doActionWhenInputBackButtonIsPressed();
 			}

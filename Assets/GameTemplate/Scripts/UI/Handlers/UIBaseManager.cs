@@ -29,7 +29,7 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private bool 					isTheMainManager = false;	//We want a unique main UIBaseManager
-	
+
 	[SerializeField]
 	private bool 					locateAllWindows = true;
 	
@@ -132,9 +132,9 @@ public class UIBaseManager : MonoBehaviour {
 	// Public Methods
 	//--------------------------------------
 	public virtual void doActionWhenInputBackButtonIsPressed(){
-		
+
 	}
-	
+
 	public virtual void loadWindows(){
 		if(locateAllWindows){
 			UIBaseWindow[] windowsArr = FindObjectsOfType<UIBaseWindow>() as UIBaseWindow[];
@@ -242,16 +242,16 @@ public class UIBaseManager : MonoBehaviour {
 		if(window != null && (!handleStart || (handleStart && !window.NotStartWithManager))){
 			//		if(windows.Contains(window)){
 			//first do it visible or not
-			
+
 			//open or close window hidding or activing the gameobject window
-			//			if(!window.CloseIsSetAlpha){
-			////				window.gameObject.SetActive(show);
-			//
-			//
-			//
-			//
-			////				StartCoroutine(setActiveOrInactive(window, show));
-			//			}
+//			if(!window.CloseIsSetAlpha){
+////				window.gameObject.SetActive(show);
+//
+//
+//
+//
+////				StartCoroutine(setActiveOrInactive(window, show));
+//			}
 			//open or close window changing its alpha value
 			if(window.CloseIsSetAlpha && window.CanvasGroup){
 				float alpha = show ? window.OpenAlphaValue : window.CloseAlphaValue;
@@ -264,7 +264,7 @@ public class UIBaseManager : MonoBehaviour {
 			
 		}
 	}
-	
+
 	private IEnumerator doOpen(UIBaseWindow window, bool handleStart = true, bool show = true, bool forceCloseWin = false){
 		if(show){
 			CoroutineWithData cd =  new CoroutineWithData(this, setActiveOrInactive(window, show));			
@@ -274,10 +274,10 @@ public class UIBaseManager : MonoBehaviour {
 			do{
 				yield return cd.result;
 				result = cd.result.ToString();
-				//				GTDebug.log("window open ? " + result.Equals("finished"));
+//				GTDebug.log("window open ? " + result.Equals("finished"));
 			}
 			while(!result.Equals("finished"));
-			
+
 			//window is opened
 			if(result.Equals("finished")){
 				window.open();
@@ -295,7 +295,7 @@ public class UIBaseManager : MonoBehaviour {
 						g.SetActive(false);
 					}
 				}
-				
+
 				//open windows when open the current one
 				if(window.OpenNewWinsWhenOpen != null && window.OpenNewWinsWhenOpen.Count > 0){
 					foreach(UIBaseWindow w in window.OpenNewWinsWhenOpen){
@@ -303,7 +303,7 @@ public class UIBaseManager : MonoBehaviour {
 						w.open();
 					}
 				}
-				
+
 				//show gameobjects when the current window is opened
 				if(window.ShowObjsWhenOpen != null && window.ShowObjsWhenOpen.Count > 0){
 					foreach(GameObject g in window.ShowObjsWhenOpen){
@@ -313,25 +313,25 @@ public class UIBaseManager : MonoBehaviour {
 			}
 		}
 		else{
-			
-			//		if(show){
-			//			window.open();
-			//			
-			//			//close windows when open the current one
-			//			if(window.CloseWinsWhenOpen != null && window.CloseWinsWhenOpen.Count > 0){
-			//				foreach(UIBaseWindow w in window.CloseWinsWhenOpen){
-			//					w.gameObject.SetActive(false);
-			//					w.close();
-			//				}
-			//			}
-			//			//hide gameobjects when the current window are open
-			//			if(window.HideObjsWhenOpen != null && window.HideObjsWhenOpen.Count > 0){
-			//				foreach(GameObject g in window.HideObjsWhenOpen){
-			//					g.SetActive(false);
-			//				}
-			//			}
-			//		}
-			//		else{
+
+//		if(show){
+//			window.open();
+//			
+//			//close windows when open the current one
+//			if(window.CloseWinsWhenOpen != null && window.CloseWinsWhenOpen.Count > 0){
+//				foreach(UIBaseWindow w in window.CloseWinsWhenOpen){
+//					w.gameObject.SetActive(false);
+//					w.close();
+//				}
+//			}
+//			//hide gameobjects when the current window are open
+//			if(window.HideObjsWhenOpen != null && window.HideObjsWhenOpen.Count > 0){
+//				foreach(GameObject g in window.HideObjsWhenOpen){
+//					g.SetActive(false);
+//				}
+//			}
+//		}
+//		else{
 			if(!forceCloseWin)
 				window.close();
 			else
@@ -344,7 +344,7 @@ public class UIBaseManager : MonoBehaviour {
 					w.open();
 				}
 			}
-			
+
 			//close new window when close the current win
 			if(window.CloseWinsWhenClose != null && window.CloseWinsWhenClose.Count > 0){
 				foreach(UIBaseWindow w in window.CloseWinsWhenClose){
@@ -359,15 +359,15 @@ public class UIBaseManager : MonoBehaviour {
 					g.SetActive(true);
 				}
 			}
-			
+
 			//hide gameobjects when the current window is closed
 			if(window.HideObjsWhenClose != null && window.HideObjsWhenClose.Count > 0){
 				foreach(GameObject g in window.HideObjsWhenClose){
 					g.SetActive(false);
 				}
 			}
-			
-			
+
+
 			//close at the end
 			CoroutineWithData cd =  new CoroutineWithData(this, setActiveOrInactive(window, show));			
 			string result = "";
@@ -379,25 +379,25 @@ public class UIBaseManager : MonoBehaviour {
 				GTDebug.log("result is " + result);
 			}
 			while(!result.Equals("finished"));
-			
+
 		}
-		
-		//		//close at the end
-		//		CoroutineWithData cd =  new CoroutineWithData(this, setActiveOrInactive(window, show));			
-		//		string result = "";
-		//
-		//		//wait for a while
-		//		do{
-		//			yield return cd.result;
-		//			result = cd.result.ToString();
-		//			GTDebug.log("result is " + result);
-		//		}
-		//		while(!result.Equals("finished"));
+			
+//		//close at the end
+//		CoroutineWithData cd =  new CoroutineWithData(this, setActiveOrInactive(window, show));			
+//		string result = "";
+//
+//		//wait for a while
+//		do{
+//			yield return cd.result;
+//			result = cd.result.ToString();
+//			GTDebug.log("result is " + result);
+//		}
+//		while(!result.Equals("finished"));
 	}
 	
 	private IEnumerator setActiveOrInactive(UIBaseWindow win, bool active = true){
 		bool finishedAnim = false;
-		
+
 		if(active){
 			do{
 				finishedAnim = win.FinishedOpenAnim();
@@ -412,14 +412,14 @@ public class UIBaseManager : MonoBehaviour {
 			}
 			while(!finishedAnim);
 		}
-		
+
 		//finally active or inactive the gameobject
 		if(finishedAnim){
 			win.gameObject.SetActive(active);
-			
+
 			if(win.name.Equals("MenuInitialWin"))
 				GTDebug.log("MenuInitialWin activing ? "+active);
-			
+
 			yield return "finished";
 		}
 	}

@@ -12,7 +12,7 @@ public class SelectedPlayerOrder : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private int order;
-	
+
 	//--------------------------------------
 	// Getters & Setters
 	//--------------------------------------

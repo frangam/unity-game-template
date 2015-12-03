@@ -69,14 +69,14 @@ public class UILoadingPanel : Singleton<UILoadingPanel> {
 		else if(!addToCurrentProgress){
 			currentProgress = pProgress; 
 		}
-		
-		
+
+
 		if(slider)
 			slider.value = currentProgress/divideSliderValueFactor;
 		
 		if(lbProgress)
 			lbProgress.text = ((int)(currentProgress*100)).ToString()+"%";
-		
-		
+
+
 	}
 }

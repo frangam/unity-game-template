@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 Project:     Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -72,7 +72,7 @@ public class UIBaseConfimationPurchaseWindow : UIConfirmationDialog {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public virtual void init(int moneyPrice, bool pHasEnoughMoney, bool pHasEnoughGems){
+	public virtual void initBestTime(int moneyPrice, bool pHasEnoughMoney, bool pHasEnoughGems){
 		hasEnoughMoney = pHasEnoughMoney;
 		hasEnoughGems = pHasEnoughGems;
 		
@@ -88,7 +88,7 @@ public class UIBaseConfimationPurchaseWindow : UIConfirmationDialog {
 		}
 	}
 	
-	public virtual void init(UIBasePurchasableListItem pItem, bool pHasEnoughMoney, bool pHasEnoughGems){
+	public virtual void initBestTime(UIBasePurchasableListItem pItem, bool pHasEnoughMoney, bool pHasEnoughGems){
 		purchableItem = pItem;
 		hasEnoughMoney = pHasEnoughMoney;
 		hasEnoughGems = pHasEnoughGems;

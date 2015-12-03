@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 Project:     Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -70,14 +70,14 @@ public class UIBaseStatsUpgradesWin : UIBaseShopListWindow {
 		base.open ();
 		
 		if(upgradeButtons != null)
-			init ();
+			initBestTime ();
 	}
 	
 	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public virtual void init(){
+	public virtual void initBestTime(){
 		foreach(UpgradeStatButton b in upgradeButtons)
 			b.init();
 	}
@@ -93,8 +93,8 @@ public class UIBaseStatsUpgradesWin : UIBaseShopListWindow {
 		UIBaseUpgradableStatListItem uItem = (UIBaseUpgradableStatListItem) currentItemSelected;
 		
 		if(payWithGemsWin){
-			payWithGemsWin.init(button);
-			payWithGemsWin.init(moneyPrice, GameMoneyManager.Instance.hasEnoughMoney(moneyPrice), GameMoneyManager.Instance.hasEnoughGems(moneyPrice, true)); //first init the window
+			payWithGemsWin.initBestTime(button);
+			payWithGemsWin.initBestTime(moneyPrice, GameMoneyManager.Instance.hasEnoughMoney(moneyPrice), GameMoneyManager.Instance.hasEnoughGems(moneyPrice, true)); //first init the window
 			UIController.Instance.Manager.open(payWithGemsWin);
 		}
 	}

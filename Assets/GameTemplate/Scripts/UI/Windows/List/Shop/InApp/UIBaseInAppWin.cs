@@ -479,7 +479,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 				//show product price on the button
 				foreach(UIBaseInAppButton button in inAppButtons){
 					if(button != null && button.Item != null && p.SKU.Equals(button.Item.Id)){
-						//						button.showPriceInfo(p.Price.ToString(), p.PriceCurrencyCode);
+//						button.showPriceInfo(p.Price.ToString(), p.PriceCurrencyCode);
 						button.showPriceInfo(p.LocalizedPrice);
 						break;
 					}
@@ -654,7 +654,7 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		foreach(UIBaseInAppItem item in CoreIAPManager.Instance.Products){
 			if(item.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE){
 				item.applyReward();
-				
+
 				//get the corresponding in app button of this in app item
 				UIBaseInAppButton button = getButton(item);
 				if(button != null && item.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE && item.RewardedNonConsumable){

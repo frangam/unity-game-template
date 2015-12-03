@@ -174,7 +174,7 @@ public class BuildGenerator {
 		string resourcesBeforeBuildPath = GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath + "/";
 		List<string> includes = build.resIncludes;
 		List<string> sharedResBetweenAllVersions = GTBuildSettingsConfig.Instance.sharedResources;
-		
+
 		if(!System.IO.Directory.Exists(resourcesBeforeBuildPath))
 			System.IO.Directory.CreateDirectory(resourcesBeforeBuildPath);
 		
@@ -226,13 +226,13 @@ public class BuildGenerator {
 		//		string path7 = "drawable-xxhdpi/app_icon.png";
 		//		string[] sourcePaths = {sourcePath+path1, sourcePath+path2, sourcePath+path3,sourcePath+path4, sourcePath+path5, sourcePath+path6,sourcePath+path7};
 		//		string[] destPaths = {destinationPath+path1, destinationPath+path2, destinationPath+path3,destinationPath+path4, destinationPath+path5, destinationPath+path6,destinationPath+path7};
-		
-		//		List<string> iconTypes = new List<string> (){"drawable", "drawable-hdpi" ,"drawable-ldpi", "drawable-mdpi", "drawable-xhdpi", "drawable-xxhdpi", "drawable-xxhdpi"};
-		
+
+//		List<string> iconTypes = new List<string> (){"drawable", "drawable-hdpi" ,"drawable-ldpi", "drawable-mdpi", "drawable-xhdpi", "drawable-xxhdpi", "drawable-xxhdpi"};
+
 		foreach(string iconFolder in paths){
 			string source = sourcePath+iconFolder+"/"+iconName;
 			string destFolder = destinationPath+iconFolder; //path/drawable.../
-			
+
 			if(!System.IO.Directory.Exists(destFolder)){
 				System.IO.Directory.CreateDirectory(destFolder);
 				AssetDatabase.Refresh();
@@ -240,10 +240,10 @@ public class BuildGenerator {
 			
 			//			UnityEngine.Debug.Log(ret);
 			//			UnityEngine.Debug.Log ("moving from: "+source+" to: "+dest); 
-			
+
 			string dest = destFolder+"/"+iconName;
 			string ret = AssetDatabase.MoveAsset(source, dest);
-			
+
 			if(ret != ""){
 				AssetDatabase.ImportAsset(source);
 				ret = AssetDatabase.MoveAsset(source, dest);
@@ -264,14 +264,14 @@ public class BuildGenerator {
 		foreach(string iconFolder in paths){
 			string source = sourcePath+iconFolder + "/" + iconName;
 			string dest = destinationPath+iconFolder + "/" + iconName;
-			string destFolder = destinationPath + iconFolder; //path/drawable.../
-			//create a icons folder if not exist
-			if (!System.IO.Directory.Exists(destFolder))
-			{
-				System.IO.Directory.CreateDirectory(destFolder);
-				AssetDatabase.Refresh();
-			}
-			string ret = AssetDatabase.MoveAsset(source, dest);
+            string destFolder = destinationPath + iconFolder; //path/drawable.../
+            //create a icons folder if not exist
+            if (!System.IO.Directory.Exists(destFolder))
+            {
+                System.IO.Directory.CreateDirectory(destFolder);
+                AssetDatabase.Refresh();
+            }
+            string ret = AssetDatabase.MoveAsset(source, dest);
 			
 			//			UnityEngine.Debug.Log(ret);
 			//			UnityEngine.Debug.Log ("moving from: "+source+" to: "+dest);

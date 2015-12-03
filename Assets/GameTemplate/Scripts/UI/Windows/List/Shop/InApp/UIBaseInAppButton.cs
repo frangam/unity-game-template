@@ -15,7 +15,7 @@ public class UIBaseInAppButton : UIBaseButton {
 	[SerializeField]
 	[Tooltip("The corresponding index of the inappIDs list from GameTemplate Settings depending on the game multiversion")]
 	private int inAppIndexPackFromGameTemplate = 0;
-	
+
 	[SerializeField]
 	private UIBaseInAppWin window;
 	
@@ -33,7 +33,7 @@ public class UIBaseInAppButton : UIBaseButton {
 	
 	[SerializeField]
 	private bool restartWhenNonConsumableItemWasPurchased = false;
-	
+
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -68,7 +68,7 @@ public class UIBaseInAppButton : UIBaseButton {
 		
 		if(GameSettings.Instance.showTestLogs)
 			Debug.Log("UIBaseInAppButton - active ? " + active);
-		
+
 		//get the id from GameSettings based on the given index
 		if(GameSettings.Instance.CurrentInAppBillingIDs != null && GameSettings.Instance.CurrentInAppBillingIDs.Count > 0 
 		   && inAppIndexPackFromGameTemplate < GameSettings.Instance.CurrentInAppBillingIDs.Count){
@@ -77,11 +77,11 @@ public class UIBaseInAppButton : UIBaseButton {
 		
 		if(active){
 			//get the id from GameSettings based on the given index
-			//			if(GameSettings.Instance.CurrentInAppBillingIDs != null && GameSettings.Instance.CurrentInAppBillingIDs.Count > 0 
-			//			   && inAppIndexPackFromGameTemplate < GameSettings.Instance.CurrentInAppBillingIDs.Count){
-			//				Item.Id = GameSettings.Instance.CurrentInAppBillingIDs[inAppIndexPackFromGameTemplate];
-			//			}
-			
+//			if(GameSettings.Instance.CurrentInAppBillingIDs != null && GameSettings.Instance.CurrentInAppBillingIDs.Count > 0 
+//			   && inAppIndexPackFromGameTemplate < GameSettings.Instance.CurrentInAppBillingIDs.Count){
+//				Item.Id = GameSettings.Instance.CurrentInAppBillingIDs[inAppIndexPackFromGameTemplate];
+//			}
+
 			Item.load();
 			
 			if(item != null){
@@ -101,11 +101,11 @@ public class UIBaseInAppButton : UIBaseButton {
 		else
 			gameObject.SetActive(false);
 	}
-	
+
 	public override void Update ()
 	{
 		base.Update ();
-		
+
 		if(!active){
 			active = InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
 			
@@ -127,11 +127,11 @@ public class UIBaseInAppButton : UIBaseButton {
 			}
 		}
 	}
-	
-	//	protected override bool canPress ()
-	//	{
-	//		return base.canPress () && InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
-	//	}
+
+//	protected override bool canPress ()
+//	{
+//		return base.canPress () && InternetChecker.Instance.IsconnectedToInternet && CoreIAPManager.Instance.IsInited && CoreIAPManager.Instance.NumProducts > 0;
+//	}
 	
 	protected override void doPress ()
 	{
@@ -172,11 +172,11 @@ public class UIBaseInAppButton : UIBaseButton {
 		if(lbRealMoneyPrice){
 			lbRealMoneyPrice.text = price.ToString() + priceCurrencyCode;
 			
-			//			//TODO Poner moneda que corresponda
-			//			lbRealMoneyPrice.text += priceCurrencyCode;
+//			//TODO Poner moneda que corresponda
+//			lbRealMoneyPrice.text += priceCurrencyCode;
 		}
 	}
-	
+
 	/// <summary>
 	/// Shows the localized price.
 	/// </summary>

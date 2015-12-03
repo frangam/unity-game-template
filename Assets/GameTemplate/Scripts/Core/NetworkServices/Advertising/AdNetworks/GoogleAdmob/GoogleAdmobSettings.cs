@@ -15,12 +15,12 @@ using UnityEditor;
 
 public class GoogleAdmobSettings : ScriptableObject {
 	public bool IsTestSettinsOpened = true;
-	
+
 	[SerializeField]
-	//	public List<GADTestDevice> testDevices =  new List<GADTestDevice>();
+//	public List<GADTestDevice> testDevices =  new List<GADTestDevice>();
 	public List<AdmobIDsPack> idsPacks;
 	public bool showPacks = true;
-	
+
 	public AdmobIDsPack CurrentIDsPack{
 		get{return idsPacks[GameSettings.Instance.currentGameMultiversion]; }
 	}
@@ -68,13 +68,13 @@ public class GoogleAdmobSettings : ScriptableObject {
 	
 	
 	
-	//	public void AddDevice(GADTestDevice p) {
-	//		testDevices.Add(p);
-	//	}
-	//	
-	//	public void RemoveDevice(GADTestDevice p) {
-	//		testDevices.Remove(p);
-	//	}
+//	public void AddDevice(GADTestDevice p) {
+//		testDevices.Add(p);
+//	}
+//	
+//	public void RemoveDevice(GADTestDevice p) {
+//		testDevices.Remove(p);
+//	}
 	
 	
 }

@@ -10,7 +10,7 @@ using System.Collections;
 [CustomEditor(typeof(GTBuildSettingsConfig))]
 public class BuildSettingsEditor : Editor {
 	private GTBuildSettingsConfig settings;
-	
+
 	//--------------------------------------
 	// Unity
 	//--------------------------------------
@@ -55,7 +55,7 @@ public class BuildSettingsEditor : Editor {
 			DirtyEditor();
 		}
 	}
-	
+
 	private void createFolders(){
 		string path = GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath;
 		//---
@@ -64,8 +64,8 @@ public class BuildSettingsEditor : Editor {
 		bool preBuildResFolder = !string.IsNullOrEmpty(GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath);
 		if(!preBuildResFolder){
 			Debug.LogError("Not Selected Pre Build Resources Folder");
-			
-			//			GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath = "Assets/TempPB";
+
+//			GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath = "Assets/TempPB";
 		}
 		else if(!System.IO.Directory.Exists(path)){
 			Color prev = GUI.color;
@@ -76,7 +76,7 @@ public class BuildSettingsEditor : Editor {
 			}
 			GUI.color = prev;
 		}
-		
+
 		int i=0;
 		foreach(GTBuildSettingsPack pack in GTBuildSettingsConfig.Instance.packs){
 			//---
@@ -89,7 +89,7 @@ public class BuildSettingsEditor : Editor {
 			else{
 				path = pack.build.androidBuildFolder;
 				path = path.Replace(Application.dataPath.Replace("Assets", ""), "");
-				
+
 				if(!System.IO.Directory.Exists(path)){
 					Color prev = GUI.color;
 					GUI.color = Color.yellow;
@@ -100,7 +100,7 @@ public class BuildSettingsEditor : Editor {
 					GUI.color = prev;
 				}
 			}
-			
+
 			//---
 			//iOS Build Folder
 			//---
@@ -122,21 +122,21 @@ public class BuildSettingsEditor : Editor {
 					GUI.color = prev;
 				}
 			}
-			
-			
-			
-			
+
+
+
+
 			i++;
 		}
 	}
 	
-	
+
 	protected virtual void showBuildSettings(){
 		GTBuildSettingsConfig.Instance.showSettings = EditorGUILayout.Foldout(GTBuildSettingsConfig.Instance.showSettings, "Build Settings");
 		if (GTBuildSettingsConfig.Instance.showSettings) {			
 			Color prevCol = GUI.color;
 			
-			
+
 			if(GTBuildSettingsConfig.Instance.packs == null || (GTBuildSettingsConfig.Instance.packs != null && GTBuildSettingsConfig.Instance.packs.Count == 0)) {
 				EditorGUILayout.HelpBox("No Build Settings Packs for Game Multiversion Registred",MessageType.None);
 			}
@@ -187,28 +187,28 @@ public class BuildSettingsEditor : Editor {
 			EditorGUI.indentLevel--;
 		}
 	}
-	
-	
+
+
 	
 	protected virtual void buildSettingsForEveryGameMultiversion(int packIndex){
 		if((GTBuildSettingsConfig.Instance.packs != null && GTBuildSettingsConfig.Instance.packs.Count > 0)){
 			Color prevCol = GUI.color;
-			
+
 			if(GTBuildSettingsConfig.Instance.showBuildPackSettings[GTBuildSettingsConfig.Instance.packs[packIndex]]){
 				EditorGUILayout.BeginVertical(GUI.skin.box);
-				
+
 				if(GTBuildSettingsConfig.Instance.packs[packIndex].build == null) {
 					EditorGUILayout.HelpBox("No Build Settings Registred",MessageType.None);
 				}
 				else{
 					EditorGUILayout.Space();
-					
+
 					showMainFeatures(packIndex);
 					EditorGUILayout.Space();
 					showFoldersFeatures(packIndex);
 					EditorGUILayout.Space();
-					
-					
+
+				
 					//---------------------------------------
 					//Lists
 					//--------------------------------------
@@ -224,14 +224,14 @@ public class BuildSettingsEditor : Editor {
 			}
 		}
 	}
-	
+
 	private void showMainFeatures(int packIndex){
 		if(!GTBuildSettingsConfig.Instance.showSpecificMainFeaturesFromBuildPack.ContainsKey(GTBuildSettingsConfig.Instance.packs[packIndex]))
 			GTBuildSettingsConfig.Instance.showSpecificMainFeaturesFromBuildPack.Add(GTBuildSettingsConfig.Instance.packs[packIndex], false);
 		
-		
-		
-		
+
+
+
 		EditorGUILayout.BeginVertical(GUI.skin.box);
 		GTBuildSettingsConfig.Instance.showSpecificMainFeaturesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]] = EditorGUILayout.Foldout(GTBuildSettingsConfig.Instance.showSpecificMainFeaturesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]], "Main Features");
 		if(GTBuildSettingsConfig.Instance.showSpecificMainFeaturesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]]){
@@ -242,7 +242,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Company Name:",GUILayout.Width(130));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.companyName = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.companyName);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Android Game Name
 			//--------------------------------------
@@ -250,7 +250,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Android Game Name:",GUILayout.Width(130));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidGameName = GUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidGameName, 30);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// iOS Game Name
 			//--------------------------------------
@@ -258,7 +258,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("iOS Game Name:",GUILayout.Width(130));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.iOSGameName = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.iOSGameName);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// WP Game Name
 			//--------------------------------------
@@ -266,7 +266,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("WP Game Name:",GUILayout.Width(130));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.wpGameName = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.wpGameName);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//--------------------------------------
 			// Cloud Project ID
 			//--------------------------------------
@@ -274,7 +274,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Cloud Project ID:",GUILayout.Width(130));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.cloudProjectID = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.cloudProjectID);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Bundle Identifier
 			//--------------------------------------
@@ -282,7 +282,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Bundle Identifier:",GUILayout.Width(130));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.bundleIdentifier = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.bundleIdentifier).Trim();
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Android Bundle Version
 			//--------------------------------------
@@ -290,7 +290,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Android Bundle Version:",GUILayout.Width(180));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBundleVersion = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBundleVersion).Trim();
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Android Bundle Version Code
 			//--------------------------------------
@@ -298,7 +298,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Android Bundle Version Code:",GUILayout.Width(180));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBundleVersionCode = EditorGUILayout.IntField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBundleVersionCode);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// iOS Bundle Version
 			//--------------------------------------
@@ -306,7 +306,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("iOS Bundle Version:",GUILayout.Width(180));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.iOSBundleVersion = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.iOSBundleVersion).Trim();
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Google Play Services ID
 			//--------------------------------------
@@ -314,7 +314,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Google Play Services ID:",GUILayout.Width(180));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.googlePlayServicesID = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.googlePlayServicesID).Trim();
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Apple ID
 			//--------------------------------------
@@ -322,7 +322,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Apple ID:",GUILayout.Width(180));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.appleID = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.appleID).Trim();
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Android Billing Base 64 key
 			//--------------------------------------
@@ -330,8 +330,8 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Android Base64 Key:",GUILayout.Width(180));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBillingBase64Key = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBillingBase64Key).Trim();
 			EditorGUILayout.EndHorizontal();
-			
-			
+
+
 			//---------------------------------------
 			// Android Keystore settings
 			//--------------------------------------
@@ -339,7 +339,7 @@ public class BuildSettingsEditor : Editor {
 		}
 		EditorGUILayout.EndVertical();
 	}
-	
+
 	private void showAndroidKeystoreFeatures(int packIndex){
 		if(!GTBuildSettingsConfig.Instance.showKeyStoreSettingsFromBuildPack.ContainsKey(GTBuildSettingsConfig.Instance.packs[packIndex]))
 			GTBuildSettingsConfig.Instance.showKeyStoreSettingsFromBuildPack.Add(GTBuildSettingsConfig.Instance.packs[packIndex], false);
@@ -357,16 +357,16 @@ public class BuildSettingsEditor : Editor {
 			if(GUILayout.Button("Browse",  GUILayout.Width(50))) {
 				string initialPathForBrowsing = System.Environment.GetEnvironmentVariable("HOME");
 				string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeystoreNamePath;
-				
+
 				if(packIndex > 0 && !string.IsNullOrEmpty(GTBuildSettingsConfig.Instance.packs[packIndex-1].build.androidKeystoreNamePath))
 					initialPathForBrowsing = GTBuildSettingsConfig.Instance.packs[packIndex-1].build.androidKeystoreNamePath;
 				else if(!string.IsNullOrEmpty(preSelected))
 					initialPathForBrowsing = preSelected;
-				
+
 				GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeystoreNamePath = EditorUtility.OpenFilePanel("Choose your Android Keystore file", initialPathForBrowsing, "");
 			}
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Keystore pass
 			//--------------------------------------
@@ -374,7 +374,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Keystore Pass",GUILayout.Width(120));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeystorePass = EditorGUILayout.PasswordField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeystorePass);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Keystore alias
 			//--------------------------------------
@@ -382,7 +382,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Key Alias",GUILayout.Width(120));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeyaliasName = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeyaliasName).Trim();
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Keystore alias pass
 			//--------------------------------------
@@ -390,7 +390,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Key Alias Pass",GUILayout.Width(120));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeyaliasPass = EditorGUILayout.PasswordField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeyaliasPass);
 			EditorGUILayout.EndHorizontal();
-			
+
 			//---------------------------------------
 			// Keystore Facebook Hash
 			//--------------------------------------
@@ -398,7 +398,7 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.LabelField("Facebook Hash",GUILayout.Width(120));
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeyStoreFBHash = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidKeyStoreFBHash).Trim();
 			EditorGUILayout.EndHorizontal();
-			
+
 		}
 		EditorGUILayout.EndVertical();
 	}
@@ -406,7 +406,7 @@ public class BuildSettingsEditor : Editor {
 	private void showFoldersFeatures(int packIndex){
 		if(!GTBuildSettingsConfig.Instance.showSpecificFoldersFeaturesFromBuildPack.ContainsKey(GTBuildSettingsConfig.Instance.packs[packIndex]))
 			GTBuildSettingsConfig.Instance.showSpecificFoldersFeaturesFromBuildPack.Add(GTBuildSettingsConfig.Instance.packs[packIndex], false);
-		
+
 		EditorGUILayout.BeginVertical(GUI.skin.box);
 		GTBuildSettingsConfig.Instance.showSpecificFoldersFeaturesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]] = EditorGUILayout.Foldout(GTBuildSettingsConfig.Instance.showSpecificFoldersFeaturesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]], "Folder Paths");
 		if(GTBuildSettingsConfig.Instance.showSpecificFoldersFeaturesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]]){
@@ -480,28 +480,28 @@ public class BuildSettingsEditor : Editor {
 			}
 			EditorGUILayout.EndHorizontal();
 			
-			
+
 		}
 		EditorGUILayout.EndVertical();
 	}
-	
+
 	protected virtual void showSharedResources(){
-		//		EditorGUILayout.BeginVertical(GUI.skin.box);
-		
+//		EditorGUILayout.BeginVertical(GUI.skin.box);
+
 		
 		GTBuildSettingsConfig.Instance.showSharedResources = EditorGUILayout.Foldout(GTBuildSettingsConfig.Instance.showSharedResources, "Shared Resources");
 		if(GTBuildSettingsConfig.Instance.showSharedResources){
 			Color prevCol = GUI.color;
-			
-			
+
+
 			//---------------------------------------
 			// Pre Build Resources Excludes Folder
 			//--------------------------------------
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("PB Res Excludes Folder:",GUILayout.Width(150));
 			EditorGUILayout.SelectableLabel(GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath);
-			
-			
+
+		
 			
 			if(GUILayout.Button("Browse",  GUILayout.Width(50))) {
 				string preSelected = GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath;
@@ -515,10 +515,10 @@ public class BuildSettingsEditor : Editor {
 				GTBuildSettingsConfig.Instance.resourcesBeforeBuildPath  = EditorUtility.OpenFolderPanel("Choose Pre Build Resources Excludes Folder", currentFolder, "").Replace(Application.dataPath, "Assets");
 			}
 			EditorGUILayout.EndHorizontal();
-			
-			
-			
-			
+
+
+
+
 			//---------------------------------------
 			// All shared resources
 			//--------------------------------------
@@ -562,7 +562,7 @@ public class BuildSettingsEditor : Editor {
 				}
 				EditorGUILayout.EndHorizontal();
 				
-				
+
 				
 				i++;
 				EditorGUILayout.EndVertical();
@@ -578,9 +578,9 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.EndHorizontal();
 			//			EditorGUILayout.Space();
 		}
-		//		EditorGUILayout.EndVertical();
+//		EditorGUILayout.EndVertical();
 	}
-	
+
 	protected virtual void showSpecificScenes(int packIndex){
 		EditorGUILayout.BeginVertical(GUI.skin.box);
 		if(!GTBuildSettingsConfig.Instance.showSpecificScenesFromBuildPack.ContainsKey(GTBuildSettingsConfig.Instance.packs[packIndex]))
@@ -589,7 +589,7 @@ public class BuildSettingsEditor : Editor {
 		GTBuildSettingsConfig.Instance.showSpecificScenesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]] = EditorGUILayout.Foldout(GTBuildSettingsConfig.Instance.showSpecificScenesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]], "Scenes");
 		if(GTBuildSettingsConfig.Instance.showSpecificScenesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]]){
 			Color prevCol = GUI.color;
-			
+
 			if(GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes == null || (GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes != null && GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes.Count == 0)) {
 				EditorGUILayout.HelpBox("No Scenes Registred",MessageType.None);
 			}
@@ -597,7 +597,7 @@ public class BuildSettingsEditor : Editor {
 			int i = 0;
 			foreach(GTBuildScene scene in GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes) {
 				EditorGUILayout.BeginVertical(GUI.skin.box);
-				
+
 				EditorGUILayout.BeginHorizontal();
 				GUI.color = Color.red;
 				if(GUILayout.Button("-",  GUILayout.Width(30))) {
@@ -606,9 +606,9 @@ public class BuildSettingsEditor : Editor {
 				}
 				GUI.color = prevCol;
 				EditorGUILayout.EndHorizontal();
-				
-				
-				
+
+			
+
 				//---------------------------------------
 				// Scene Path
 				//--------------------------------------
@@ -620,7 +620,7 @@ public class BuildSettingsEditor : Editor {
 					string prev = i > 0 ?  GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes[i-1].name: "";
 					string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes[i].name;
 					string currentFile = "";
-					
+
 					if(string.IsNullOrEmpty (preSelected) && !string.IsNullOrEmpty(prev))
 						currentFile = prev;
 					else if(string.IsNullOrEmpty (preSelected) && string.IsNullOrEmpty(prev))
@@ -631,7 +631,7 @@ public class BuildSettingsEditor : Editor {
 					GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes[i].name = EditorUtility.OpenFilePanel("Choose Scene file", currentFile, "").Replace(Application.dataPath, "Assets");
 				}
 				EditorGUILayout.EndHorizontal();
-				
+
 				//---------------------------------------
 				// Scene for GameSection
 				//--------------------------------------
@@ -639,11 +639,11 @@ public class BuildSettingsEditor : Editor {
 				EditorGUILayout.LabelField("Game Section:",GUILayout.Width(65));
 				GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes[i].section = (GameSection) EditorGUILayout.EnumPopup(GTBuildSettingsConfig.Instance.packs[packIndex].build.scenes[i].section);
 				EditorGUILayout.EndHorizontal();
-				
+
 				i++;
 				EditorGUILayout.EndVertical();
 			}
-			
+
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginHorizontal();
 			GUI.color = Color.cyan;
@@ -656,7 +656,7 @@ public class BuildSettingsEditor : Editor {
 		}
 		EditorGUILayout.EndVertical();
 	}
-	
+
 	protected virtual void showSpecificAndroidIcons(int packIndex){
 		EditorGUILayout.BeginVertical(GUI.skin.box);
 		if(!GTBuildSettingsConfig.Instance.showSpecificAndroidIconsFromBuildPack.ContainsKey(GTBuildSettingsConfig.Instance.packs[packIndex]))
@@ -691,7 +691,7 @@ public class BuildSettingsEditor : Editor {
 				EditorGUILayout.LabelField("Icon "+(i+1).ToString()+":",GUILayout.Width(60));					
 				GTBuildSettingsConfig.Instance.packs[packIndex].build.androidIcons[i] = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidIcons[i]).Trim();
 				EditorGUILayout.EndHorizontal();
-				
+
 				i++;
 				EditorGUILayout.EndVertical();
 			}
@@ -708,7 +708,7 @@ public class BuildSettingsEditor : Editor {
 		}
 		EditorGUILayout.EndVertical();
 	}
-	
+
 	protected virtual void showSpecificIOSIcons(int packIndex){
 		EditorGUILayout.BeginVertical(GUI.skin.box);
 		if(!GTBuildSettingsConfig.Instance.showSpecificIOSIconsFromBuildPack.ContainsKey(GTBuildSettingsConfig.Instance.packs[packIndex]))
@@ -760,121 +760,121 @@ public class BuildSettingsEditor : Editor {
 		}
 		EditorGUILayout.EndVertical();
 	}
-	
+
 	protected virtual void showSpecificResIncludes(int packIndex){
 		Color prevCol = GUI.color;
-		
+
 		EditorGUILayout.BeginVertical(GUI.skin.box);
 		if(!GTBuildSettingsConfig.Instance.showSpecificResIncludesFromBuildPack.ContainsKey(GTBuildSettingsConfig.Instance.packs[packIndex]))
 			GTBuildSettingsConfig.Instance.showSpecificResIncludesFromBuildPack.Add(GTBuildSettingsConfig.Instance.packs[packIndex], false);
-		
+
 		GUI.color = Color.green;
 		GTBuildSettingsConfig.Instance.showSpecificResIncludesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]] = EditorGUILayout.Foldout(GTBuildSettingsConfig.Instance.showSpecificResIncludesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]], "Resources Includes");
 		GUI.color = prevCol;
 		if(GTBuildSettingsConfig.Instance.showSpecificResIncludesFromBuildPack[GTBuildSettingsConfig.Instance.packs[packIndex]]){
+
 			
-			
-			
-			
-			
-			//			//---------------------------------------
-			//			// Resources Folder
-			//			//--------------------------------------
-			//			EditorGUILayout.BeginHorizontal();
-			//			EditorGUILayout.LabelField("Resources Folder:",GUILayout.Width(120));
-			//			EditorGUILayout.SelectableLabel(GTBuildSettingsConfig.Instance.packs[packIndex].build.resourcesFolder);
-			//			
-			//			if(GUILayout.Button("Browse",  GUILayout.Width(50))) {
-			//				string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.resourcesFolder;
-			//				string currentFile = string.IsNullOrEmpty (preSelected) ? GTBuildSettings.RESOURCES_FOLDER : preSelected;
-			//				GTBuildSettingsConfig.Instance.packs[packIndex].build.resourcesFolder = EditorUtility.OpenFolderPanel("Choose Resources Folder", currentFile, "").Replace(Application.dataPath, "Assets");
-			//			}
-			//			EditorGUILayout.EndHorizontal();
-			
-			
-			
-			if(GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes == null || (GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes != null && GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes.Count == 0)) {
-				EditorGUILayout.HelpBox("No Resources Includes",MessageType.None);
-			}
-			
-			int i = 0;
-			
-			foreach(string path in GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes) {
-				Color bgColor = Color.green;
-				GUI.backgroundColor = bgColor;
-				EditorGUILayout.BeginVertical(GUI.skin.box);
+
+
+
+//			//---------------------------------------
+//			// Resources Folder
+//			//--------------------------------------
+//			EditorGUILayout.BeginHorizontal();
+//			EditorGUILayout.LabelField("Resources Folder:",GUILayout.Width(120));
+//			EditorGUILayout.SelectableLabel(GTBuildSettingsConfig.Instance.packs[packIndex].build.resourcesFolder);
+//			
+//			if(GUILayout.Button("Browse",  GUILayout.Width(50))) {
+//				string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.resourcesFolder;
+//				string currentFile = string.IsNullOrEmpty (preSelected) ? GTBuildSettings.RESOURCES_FOLDER : preSelected;
+//				GTBuildSettingsConfig.Instance.packs[packIndex].build.resourcesFolder = EditorUtility.OpenFolderPanel("Choose Resources Folder", currentFile, "").Replace(Application.dataPath, "Assets");
+//			}
+//			EditorGUILayout.EndHorizontal();
+
+
+
+				if(GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes == null || (GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes != null && GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes.Count == 0)) {
+					EditorGUILayout.HelpBox("No Resources Includes",MessageType.None);
+				}
+
+				int i = 0;
+
+				foreach(string path in GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes) {
+					Color bgColor = Color.green;
+					GUI.backgroundColor = bgColor;
+					EditorGUILayout.BeginVertical(GUI.skin.box);
+
+
+					GUI.backgroundColor = prevCol;
+					EditorGUILayout.BeginHorizontal();
+					GUI.color = Color.red;
+					if(GUILayout.Button("-",  GUILayout.Width(30))) {
+						GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes.Remove(path);
+						break;
+					}
+					GUI.color = prevCol;
+					GUI.backgroundColor = bgColor;
+
+					EditorGUILayout.EndHorizontal();
+					
+					//Resource files
+					//Icon NAME
+					//---------------------------------------
+					// Pre Build Resources Includes Folder
+					//--------------------------------------
+					GUI.backgroundColor = prevCol;
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField("Res "+(i+1).ToString()+":",GUILayout.Width(60));					
+//					GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i] = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i]).Trim();
+
+					EditorGUILayout.SelectableLabel(GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i]);
+					
+					if(GUILayout.Button("Browse",  GUILayout.Width(50))) {
+//						string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i];
+//						string currentFile = string.IsNullOrEmpty (preSelected) ?  : preSelected;
+
+						string prev = i > 0 ?  GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i-1]: "";
+						string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i];
+						string currentFile = "";
+						
+						if(string.IsNullOrEmpty (preSelected) && !string.IsNullOrEmpty(prev))
+							currentFile = prev;
+						else if(string.IsNullOrEmpty (preSelected) && string.IsNullOrEmpty(prev)){
+							currentFile = Application.dataPath +"/Resources";
+							if(!System.IO.Directory.Exists(currentFile)){
+								System.IO.Directory.CreateDirectory(currentFile);
+								AssetDatabase.Refresh();
+							}
+						}
+						else if(!string.IsNullOrEmpty (preSelected))
+							currentFile = preSelected;
+
+						GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i] = EditorUtility.OpenFilePanel("Choose Resources Includes", currentFile, "").Replace(Application.dataPath, "Assets");
+					}
+
+					EditorGUILayout.EndHorizontal();
+					
+					i++;
+
+
+					EditorGUILayout.EndVertical();
+					GUI.backgroundColor = prevCol;
+				}
 				
-				
-				GUI.backgroundColor = prevCol;
+				EditorGUILayout.Space();
 				EditorGUILayout.BeginHorizontal();
-				GUI.color = Color.red;
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes.Remove(path);
-					break;
+				GUI.color = Color.cyan;
+				if(GUILayout.Button("New Include")) {
+					GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes.Add("");
 				}
 				GUI.color = prevCol;
-				GUI.backgroundColor = bgColor;
-				
 				EditorGUILayout.EndHorizontal();
-				
-				//Resource files
-				//Icon NAME
-				//---------------------------------------
-				// Pre Build Resources Includes Folder
-				//--------------------------------------
-				GUI.backgroundColor = prevCol;
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Res "+(i+1).ToString()+":",GUILayout.Width(60));					
-				//					GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i] = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i]).Trim();
-				
-				EditorGUILayout.SelectableLabel(GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i]);
-				
-				if(GUILayout.Button("Browse",  GUILayout.Width(50))) {
-					//						string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i];
-					//						string currentFile = string.IsNullOrEmpty (preSelected) ?  : preSelected;
-					
-					string prev = i > 0 ?  GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i-1]: "";
-					string preSelected = GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i];
-					string currentFile = "";
-					
-					if(string.IsNullOrEmpty (preSelected) && !string.IsNullOrEmpty(prev))
-						currentFile = prev;
-					else if(string.IsNullOrEmpty (preSelected) && string.IsNullOrEmpty(prev)){
-						currentFile = Application.dataPath +"/Resources";
-						if(!System.IO.Directory.Exists(currentFile)){
-							System.IO.Directory.CreateDirectory(currentFile);
-							AssetDatabase.Refresh();
-						}
-					}
-					else if(!string.IsNullOrEmpty (preSelected))
-						currentFile = preSelected;
-					
-					GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes[i] = EditorUtility.OpenFilePanel("Choose Resources Includes", currentFile, "").Replace(Application.dataPath, "Assets");
-				}
-				
-				EditorGUILayout.EndHorizontal();
-				
-				i++;
-				
-				
-				EditorGUILayout.EndVertical();
-				GUI.backgroundColor = prevCol;
-			}
-			
-			EditorGUILayout.Space();
-			EditorGUILayout.BeginHorizontal();
-			GUI.color = Color.cyan;
-			if(GUILayout.Button("New Include")) {
-				GTBuildSettingsConfig.Instance.packs[packIndex].build.resIncludes.Add("");
-			}
-			GUI.color = prevCol;
-			EditorGUILayout.EndHorizontal();
-			//			EditorGUILayout.Space();
+				//			EditorGUILayout.Space();
 		}
 		EditorGUILayout.EndVertical();
 	}
-	
-	
+
+
 	private static void DirtyEditor() {
 		#if UNITY_EDITOR
 		EditorUtility.SetDirty(GTBuildSettingsConfig.Instance);

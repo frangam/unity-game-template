@@ -28,25 +28,25 @@ public class GTBuildSettingsConfig : ScriptableObject {
 	public List<GTBuildSettingsPack>				packs;
 	public List<string>								sharedResources;
 	public string									resourcesBeforeBuildPath;
-	
+
 	public GTBuildSettingsPack CurrentBuildPack{
 		get{
 			if(packs != null && packs.Count > GameSettings.Instance.currentGameMultiversion) return packs[GameSettings.Instance.currentGameMultiversion];
 			else return null;
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
 	private const string assetName = "GTBuildSettingsConfig";
 	private const string path = "GameTemplate/Resources";
 	private const string extension = ".asset";

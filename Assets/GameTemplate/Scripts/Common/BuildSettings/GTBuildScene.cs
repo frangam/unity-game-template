@@ -14,8 +14,8 @@ public class GTBuildScene {
 	public string name;
 	public string path;
 	public GameSection section;
-	
-	
+
+
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -27,7 +27,7 @@ public class GTBuildScene {
 			name = value;
 		}
 	}
-	
+
 	public string Path {
 		get {
 			return this.path;
@@ -36,7 +36,7 @@ public class GTBuildScene {
 			path = value;
 		}
 	}
-	
+
 	public GameSection Section {
 		get {
 			return this.section;
@@ -45,7 +45,7 @@ public class GTBuildScene {
 			section = value;
 		}
 	}
-	
+
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------

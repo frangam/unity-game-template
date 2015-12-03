@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 Project:     Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -24,13 +24,13 @@ public class UIBaseWindow : MonoBehaviour {
 	
 	[SerializeField]
 	private bool 							startClosed 								= true;
-	
+
 	[SerializeField]
 	private bool 							closeIsSetAlpha 							= false;
-	
+
 	[SerializeField]
 	private float			 				closeAlphaValue 							= 0f;
-	
+
 	[SerializeField]
 	private float 							openAlphaValue 								= 1f;
 	
@@ -41,7 +41,7 @@ public class UIBaseWindow : MonoBehaviour {
 	[SerializeField]
 	[Tooltip("Greater than 0 if we want to close this window after it was open and wait this delay time")]
 	private float 							waitForcloseAfterOpen 						= 0f;
-	
+
 	[SerializeField]
 	private bool 							ignoreTimeScaleInWaitingForCloseAfterOpen 	= false;
 	
@@ -50,7 +50,7 @@ public class UIBaseWindow : MonoBehaviour {
 	
 	[SerializeField]
 	private string 							closeAnimTrigger 							= "";
-	
+
 	[SerializeField]
 	[Tooltip("These windows are open when the current window is opened")]
 	private List<UIBaseWindow> 				openNewWinsWhenOpen;
@@ -62,15 +62,15 @@ public class UIBaseWindow : MonoBehaviour {
 	[SerializeField]
 	[Tooltip("These windows are closed when the current window is opened")]
 	private List<UIBaseWindow> 				closeWinsWhenOpen;
-	
+
 	[SerializeField]
 	[Tooltip("These windows are closed when the current window is closed")]
 	private List<UIBaseWindow> 				closeWinsWhenClose;
-	
+
 	[SerializeField]
 	[Tooltip("These gameobjects are shown when the current window is opened")]
 	private List<GameObject> 				showObjsWhenOpen;
-	
+
 	[SerializeField]
 	[Tooltip("These gameobjects are shown when the current window is closed")]
 	private List<GameObject> 				showObjsWhenClose;
@@ -78,7 +78,7 @@ public class UIBaseWindow : MonoBehaviour {
 	[SerializeField]
 	[Tooltip("These gameobjects are hidden when the current window is opened")]
 	private List<GameObject> 				hideObjsWhenOpen;
-	
+
 	[SerializeField]
 	[Tooltip("These gameobjects are hidden when the current window is closed")]
 	private List<GameObject> 				hideObjsWhenClose;
@@ -122,25 +122,25 @@ public class UIBaseWindow : MonoBehaviour {
 			return this.startClosed;
 		}
 	}
-	
+
 	public CanvasGroup CanvasGroup {
 		get {
 			return this.myCanvasGroup;
 		}
 	}
-	
+
 	public bool CloseIsSetAlpha {
 		get {
 			return this.closeIsSetAlpha;
 		}
 	}
-	
+
 	public float CloseAlphaValue {
 		get {
 			return this.closeAlphaValue;
 		}
 	}
-	
+
 	public float OpenAlphaValue {
 		get {
 			return this.openAlphaValue;
@@ -263,7 +263,7 @@ public class UIBaseWindow : MonoBehaviour {
 		if(!window){
 			GTDebug.logWarningAlways("No window attached");
 		}
-		
+
 		if(closeIsSetAlpha && !myCanvasGroup){
 			GTDebug.logErrorAlways("Not found canvas group and cloaseIsSetAlpha flag is set");
 		}
@@ -286,22 +286,22 @@ public class UIBaseWindow : MonoBehaviour {
 				g.blocksRaycasts = active;
 			}
 		}
-		
+
 		//interactable buttons
 		if(buttons != null && buttons.Length > 0){
 			foreach(Button b in buttons){
 				if(b!=null)
-					b.interactable = active;
+				b.interactable = active;
 			}
 		}
 	}
-	
+
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	public virtual void open(){
 		activeInterectablesChildren(); //active button children
-		
+
 		if(firstOpen)
 			firstOpen = false;
 		
@@ -324,8 +324,8 @@ public class UIBaseWindow : MonoBehaviour {
 		
 		if(Anim != null && !string.IsNullOrEmpty(openAnimTrigger))
 			Anim.SetTrigger(openAnimTrigger);
-		
-		
+
+
 		//do something extra actions
 		doSomeThingWhenOpen();
 		
@@ -342,24 +342,24 @@ public class UIBaseWindow : MonoBehaviour {
 		
 		if(Anim != null && !string.IsNullOrEmpty(openAnimTrigger))
 			Anim.ResetTrigger(openAnimTrigger);
-		
+
 	}
 	
 	public virtual void close(){
 		activeInterectablesChildren(false);
-		
+
 		if(firstClose)
 			firstClose = false;
 		
 		isOpen = false;
-		
+
 		if(Anim != null && !string.IsNullOrEmpty(closeAnimTrigger))
 			Anim.SetTrigger(closeAnimTrigger);
-		
+
 		//do something extra actions
 		doSomeThingWhenClose();
 	}
-	
+
 	/// <summary>
 	/// Do something extra actions when open.
 	/// </summary>
@@ -368,11 +368,7 @@ public class UIBaseWindow : MonoBehaviour {
 	/// Do something extra actions when close.
 	/// </summary>
 	public virtual void doSomeThingWhenClose(){}
-	
-	public virtual void initBestTime(bool pStartClosed){
-		startClosed = pStartClosed;
-	}
-	
+
 	public virtual bool FinishedOpenAnim(){
 		bool res = false;
 		
@@ -382,14 +378,14 @@ public class UIBaseWindow : MonoBehaviour {
 		
 		return res;
 	}
-	
+
 	public virtual bool FinishedClosedAnim(){
 		bool res = false;
-		
+
 		if(!Anim || string.IsNullOrEmpty(closeAnimTrigger) 
 		   || (Anim != null && !string.IsNullOrEmpty(closeAnimTrigger) && anim.GetCurrentAnimatorStateInfo(0).IsName("Closed"))) 
 			res = true;
-		
+
 		return res;
 	}
 	

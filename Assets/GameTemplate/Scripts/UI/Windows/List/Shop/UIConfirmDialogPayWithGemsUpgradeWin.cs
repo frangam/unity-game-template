@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 Project:     Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -15,7 +15,7 @@ public class UIConfirmDialogPayWithGemsUpgradeWin : UIBaseConfimationPurchaseWin
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public void init(UpgradeStatButton button){
+	public void initBestTime(UpgradeStatButton button){
 		upgradeButton = button;
 	}
 

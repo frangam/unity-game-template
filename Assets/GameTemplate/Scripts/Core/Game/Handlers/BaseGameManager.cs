@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 Project:    Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -267,7 +267,8 @@ public class BaseGameManager : MonoBehaviour {
 	}
 	
 	public virtual bool canShowAdDuringGamePlay(){
-		return AdsHandler.Instance.canShowAdRandom();
+        //return true; TODO nei
+        return AdsHandler.Instance.canShowAdRandom();
 	}
 	
 	private void handleGameOverAdShowing(){
@@ -413,7 +414,7 @@ public class BaseGameManager : MonoBehaviour {
 		}
 		
 		//refresh banner ad
-		AdsHandler.Instance.refrescarBanner();
+//		AdsHandler.Instance.refrescarBanner();
 		
 		//show interstitial ad
 		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0)){
@@ -665,7 +666,7 @@ public class BaseGameManager : MonoBehaviour {
 				
 				if(!AdsHandler.Instance.HasPausedGame && started)
 					UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
-				
+				    
 				//				//mute fx
 				//				BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX, true, true);
 				

@@ -1,4 +1,4 @@
-// This script is based on the script from the Unity wiki (originally posted by me!)
+// This script is based on the script from the Unity wiki
 
 using UnityEngine;
 using System.Collections;

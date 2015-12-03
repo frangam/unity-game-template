@@ -6,7 +6,7 @@ using System.Collections;
 public class Player_SpaceShip_IP : BaseTopDownSpaceShip 
 {
 	private Standard_SlotWeaponController weaponControl;
-	
+
 	private bool isInvulnerable;
 	private bool isRespawning;
 	
@@ -31,7 +31,7 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 		DontDestroyOnLoad (this.transform);
 		
 		didInit=false;
-		
+
 		// tell our base class to initialize
 		base.Init ();
 		
@@ -54,7 +54,7 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 		
 		// tell weapon control who we are (so all weapon control can tell projectiles who sent them)
 		weaponControl.SetOwner(ownerID);
-		
+			
 		// if a player manager is not set in the editor, let's try to find one
 		if(myPlayerManager==null)
 			myPlayerManager= myGO.GetComponent<BasePlayerManager>();
@@ -87,10 +87,10 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 		// don't do anything until Init() has been run
 		if(!didInit)
 			return;
-		
+
 		// do the update in our base
 		UpdateShip ();
-		
+
 		// check to see if we're supposed to be controlling the player before checking for firing
 		if(!canControl)
 			return;
@@ -121,7 +121,7 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 			// firing isn't in the default spaceship (BaseTopDownSpaceShip.cs) behaviour, so we add it here
 			fire_input= default_input.GetFire();
 		}
-	}
+    }
 	
 	void OnCollisionEnter(Collision collider)
 	{
@@ -141,7 +141,7 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 		if( other.gameObject.layer==12 )
 		{
 			// tell our sound controller to play a powerup sound
-			//			BaseSoundController.Instance.PlaySoundByIndex( 3, myTransform.position );
+//			BaseSoundController.Instance.PlaySoundByIndex( 3, myTransform.position );
 			
 			// hit a powerup trigger
 			Destroy ( other.gameObject );
@@ -154,10 +154,10 @@ public class Player_SpaceShip_IP : BaseTopDownSpaceShip
 	void LostLife()
 	{
 		isRespawning=true;
-		
+			
 		// blow us up!
 		((GameController_IP)GameController.Instance.Manager).PlayerHit( myTransform );
-		
+			
 		// reduce lives by one
 		myDataManager.ReduceHealth(1);
 		

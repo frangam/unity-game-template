@@ -18,37 +18,43 @@ public class DailyRewards : Singleton<DailyRewards> {
 	public bool userAServer	 = true;
 	public string serverURL = "http://www.frillsgames.com/gettime.php";
 	public List<int> rewards;			// Rewards list 
-	
+
 	public DateTime timer;				// Today timer
 	public DateTime lastRewardTime;		// The last time the user clicked in a reward
 	public int availableReward;			// The available reward position the user can click
 	public int lastReward;				// the last reward the user clicked
 	private float t;					// Timer seconds ticker
 	private bool isInitialized;			// Is the timer initialized?
-	
+
 	// Needed Constants
 	private const string LAST_REWARD_TIME = "pp_dr_last_reward_time";
 	private const string LAST_REWARD = "pp_dr_last_reward";
 	private const string FMT = "O";
-	
+
 	public int AvailableReward {
 		get {
 			return this.availableReward;
 		}
 	}
-	
+
 	public int LastReward {
 		get {
 			return this.lastReward;
 		}
 	}
-	
+
 	public bool IsInitialized {
 		get {
 			return this.isInitialized;
 		}
 	}
-	
+
+	void Awake(){
+		if (!isInitialized)
+			Initialize ();
+	}
+
+
 	void Update() {
 		t += Time.deltaTime;
 		if(t >= 1) {
@@ -56,7 +62,7 @@ public class DailyRewards : Singleton<DailyRewards> {
 			t = 0;
 		}
 	}
-	
+
 	public void Initialize() {
 		if(userAServer)
 			StartCoroutine(initTimeFormServer());
@@ -65,35 +71,37 @@ public class DailyRewards : Singleton<DailyRewards> {
 			isInitialized = true;
 		}
 	}
-	
+
 	private IEnumerator initTimeFormServer(){
 		CoroutineWithData cd = new CoroutineWithData(this, TimeUtils.getDateTimeFromServer(serverURL) );
 		yield return cd.coroutine;
-		GTDebug.log("result is " + cd.result);
-		
+		GTDebug.log("Daily rewards - Getting time from server with result: " + cd.result);
+
 		string result = cd.result.ToString();
-		
+
 		if(!string.IsNullOrEmpty(result) && !result.Equals("fail")){
+			GTDebug.logWarning("Daily rewards time from server: " +result );
 			DateTime dt = Convert.ToDateTime(cd.result);
 			timer = dt;
 			isInitialized = true;
+			GTDebug.logWarning("Daily rewards is inited. Result: " +result);
 		}
 		else{
 			//try to connect again
 			GTDebug.logWarning("Daily rewards not inited. Result: " +result +". Waiting for an internet connection");
-			
+
 			while(!InternetChecker.Instance.IsconnectedToInternet)
 				yield return new WaitForSeconds(5f);
-			
+
 			//when we have an internet connection, trying to connect to server
 			StartCoroutine(initTimeFormServer());
 		}
 	}
-	
+
 	private IEnumerator doCheckRewards(){
 		if(!isInitialized){
 			Initialize();
-			
+
 			while(!isInitialized) {
 				yield return null;
 			}
@@ -126,7 +134,7 @@ public class DailyRewards : Singleton<DailyRewards> {
 					}
 					else{
 						availableReward = lastReward + 1;
-						
+					
 						GTDebug.log("Player can claim prize " + availableReward);
 					}
 				}
@@ -142,28 +150,28 @@ public class DailyRewards : Singleton<DailyRewards> {
 			availableReward = 1;
 		}
 	}
-	
+
 	// Check if the player have unclaimed prizes
 	public void CheckRewards() {
 		StartCoroutine(doCheckRewards());
 	}
-	
+
 	// Claims the prize and checks if the player can do it
 	public void ClaimPrize(int day) {
 		if(availableReward == day) {
 			//apply reward
 			//add money
 			GameMoneyManager.Instance.addMoney(rewards[day - 1]);
-			
+
 			GTDebug.log("Reward [" + rewards[day - 1] + "] Claimed!");
 			PlayerPrefs.SetInt (LAST_REWARD, availableReward);
-			
+
 			string lastClaimedStr = timer.ToString (FMT);
 			//GTDebug.log("Setting date: " + lastClaimedStr);
 			PlayerPrefs.SetString (LAST_REWARD_TIME, lastClaimedStr);
-			
+
 			BaseSoundManager.Instance.play(BaseSoundIDs.CLAIM_BILLS_FX);
-			
+
 			CheckRewards();
 		} else if(day <= lastReward) {
 			GTDebug.log("Reward already claimed. Try again tomorrow");
@@ -171,10 +179,10 @@ public class DailyRewards : Singleton<DailyRewards> {
 			GTDebug.log("Cannot Claim this reward! Can only claim reward #" + availableReward);
 		}
 	}
-	
+
 	public void Reset() {
 		PlayerPrefs.DeleteKey (DailyRewards.LAST_REWARD);
 		PlayerPrefs.DeleteKey (DailyRewards.LAST_REWARD_TIME);
 	}
-	
+
 }

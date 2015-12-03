@@ -107,9 +107,9 @@ public class RateApp : Singleton<RateApp>{
 			break;
 		}
 	}
-	
+
 	private void onRateIOSPopUpClose(IOSDialogResult result){
-		
+
 		switch(result) {
 		case IOSDialogResult.RATED:
 			PlayerPrefs.SetInt(PP_RATE_DONE, 1);

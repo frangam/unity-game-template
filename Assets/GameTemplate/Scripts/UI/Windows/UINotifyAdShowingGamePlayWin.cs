@@ -64,13 +64,18 @@ public class UINotifyAdShowingGamePlayWin : UIBaseWindow {
 		BaseGameManager.dispatcher.removeEventListener(BaseGameManager.LAUNCHING_AD_DURING_GAMEPLAY_IN_X_SECS, OnLaunchingAd);
 	}
 
-	private IEnumerator showProgress(){
-		cvGroup.alpha = 1;
+	private IEnumerator showProgress(bool notInterrupt = false){
+		bool canShow = notInterrupt || (!notInterrupt && GameController.Instance.Manager.canShowAdDuringGamePlay());
 
-		//using WaitForSeconds because we want to do it with time scale and not ignoring
-		for(int i=GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS; i>0; i--){
-			lbSecondsToShowAd.text = useLocalization ? Localization.Get(ExtraLocalizations.AD_IN) + " " + i.ToString() : i.ToString();
-			yield return new WaitForSeconds(1);
+		if(canShow){
+			cvGroup.alpha = 1;
+
+			//using WaitForSeconds because we want to do it with time scale and not ignoring
+			for(int i=GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS; i>0 && canShow; i--){
+				lbSecondsToShowAd.text = useLocalization ? Localization.Get(ExtraLocalizations.AD_IN) + " " + i.ToString() : i.ToString();
+				canShow = notInterrupt || (!notInterrupt && GameController.Instance.Manager.canShowAdDuringGamePlay());
+				yield return new WaitForSeconds(1);
+			}
 		}
 
 		cvGroup.alpha = 0;
@@ -81,7 +86,8 @@ public class UINotifyAdShowingGamePlayWin : UIBaseWindow {
 	//--------------------------------------
 	public void OnLaunchingAd(CEvent e){
 		if(lbSecondsToShowAd){
-			StartCoroutine(showProgress());
+			bool notInterrupt = (bool) e.data;
+			StartCoroutine(showProgress(notInterrupt));
 		}
 	}
 }

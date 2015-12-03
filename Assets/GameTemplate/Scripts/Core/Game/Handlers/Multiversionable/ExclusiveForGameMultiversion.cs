@@ -13,7 +13,7 @@ public class ExclusiveForGameMultiversion : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	private List<int> multiversionIndexes;
-	
+
 	//--------------------------------------
 	// Getters & Setters
 	//--------------------------------------
@@ -22,14 +22,14 @@ public class ExclusiveForGameMultiversion : MonoBehaviour {
 			return this.multiversionIndexes;
 		}
 	}
-	
+
 	//--------------------------------------
 	// Unity Method
 	//--------------------------------------
 	void Awake(){
 		UIBaseWindow win = GetComponent<UIBaseWindow>();
 		bool active = multiversionIndexes.Contains(GameSettings.Instance.currentGameMultiversion);
-		
+
 		if(win != null && !active && win.NotStartWithManager)
 			UIController.Instance.Manager.close(win, !win.NotStartWithManager);
 		else if(win != null && active && win.NotStartWithManager)
@@ -37,7 +37,7 @@ public class ExclusiveForGameMultiversion : MonoBehaviour {
 		else 
 			gameObject.SetActive (active);
 	}
-	
-	
+
+
 	
 }

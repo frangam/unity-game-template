@@ -79,9 +79,9 @@ public class CarController_MVD : BaseVehicle
 		
 		AddRaceController();
 		
-		// reset our lap counter
-		raceControl.ResetLapCounter();
-		
+        // reset our lap counter
+        raceControl.ResetLapCounter();
+
 		// get a ref to the weapon controller
 		weaponControl= myGO.GetComponent<Standard_SlotWeaponController>();
 		
@@ -95,7 +95,7 @@ public class CarController_MVD : BaseVehicle
 		// set default data
 		myDataManager.SetName("Player");
 		myDataManager.SetHealth(startHealthAmount);
-		
+				
 		if(isAIControlled)
 		{
 			// set our name to an AI player
@@ -167,7 +167,7 @@ public class CarController_MVD : BaseVehicle
 	public override void UpdatePhysics ()
 	{
 		if(canControl)
-			base.UpdatePhysics();
+    		base.UpdatePhysics();
 		
 		// if we are moving slow, apply some extra force to turn the car quickly
 		// so we can do donuts (!) - note that since there is no 'ground detect' it will apply it in the air, too (bad!)
@@ -216,7 +216,7 @@ public class CarController_MVD : BaseVehicle
 		
 		// tell race control to see if we're going the wrong way
 		raceControl.CheckWrongWay();
-		
+			
 		// check to see if we're going the wrong way and act on it
 		if(raceControl.goingWrongWay)
 		{
@@ -265,9 +265,9 @@ public class CarController_MVD : BaseVehicle
 	{
 		// calculate steering amount
 		steer= Mathf.Clamp( default_input.GetHorizontal() , -1, 1 );
-		
+				
 		// how much accelerator?
-		motor= Mathf.Clamp( default_input.GetVertical() , 0, 1 );
+        motor= Mathf.Clamp( default_input.GetVertical() , 0, 1 );
 		
 		// how much brake?
 		brake= -1 * Mathf.Clamp( default_input.GetVertical() , -1, 0 );
@@ -293,7 +293,7 @@ public class CarController_MVD : BaseVehicle
 				if(canPlayFireSound)
 				{
 					// tell our sound controller to play a pew sound
-					//					BaseSoundController.Instance.PlaySoundByIndex(0, myTransform.position);
+//					BaseSoundController.Instance.PlaySoundByIndex(0, myTransform.position);
 					
 					canPlayFireSound=false;
 					Invoke ("ResetFireSoundDelay", timeBetweenFireSounds);
@@ -318,52 +318,52 @@ public class CarController_MVD : BaseVehicle
 		steer= Mathf.Clamp( AIController.GetHorizontal(), -1, 1 );
 		
 		// how much accelerator?
-		motor= Mathf.Clamp( AIController.GetVertical() , 0, 1 );
+        motor= Mathf.Clamp( AIController.GetVertical() , 0, 1 );
 		
 		// how much brake?
 		//brake= -1 * Mathf.Clamp( AIController._input.GetVertical(), -1, 0 );
 	}
-	
-	public void FinishedRace ()
-	{
-		// stop allowing control for the vehicle
-		canControl = false;
-		brake = 1;
-		motor = 0;
-		
-		// set a flag so it's easy to tell when we are done
-		raceControl.RaceFinished();
-	}
-	
-	public void SetAIInput (bool aiFlag)
-	{
-		isAIControlled = aiFlag;
-	}
-	
-	public bool IsFinished ()
-	{
-		return raceControl.GetIsFinished();
-	}
-	
-	public int GetCurrentLap ()
-	{
-		return raceControl.GetCurrentLap();
-	}
-	
-	public int GetCurrentWaypointNum ()
-	{
-		return raceControl.GetCurrentWaypointNum();
-	}
-	
-	public float GetCurrentWaypointDist ()
-	{
-		return raceControl.GetCurrentWaypointDist();
-	}
-	
-	public bool IsLapDone ()
-	{
-		return raceControl.GetIsLapDone();
-	}
+
+    public void FinishedRace ()
+    {
+        // stop allowing control for the vehicle
+        canControl = false;
+        brake = 1;
+        motor = 0;
+
+        // set a flag so it's easy to tell when we are done
+        raceControl.RaceFinished();
+    }
+
+    public void SetAIInput (bool aiFlag)
+    {
+        isAIControlled = aiFlag;
+    }
+
+    public bool IsFinished ()
+    {
+        return raceControl.GetIsFinished();
+    }
+
+    public int GetCurrentLap ()
+    {
+        return raceControl.GetCurrentLap();
+    }
+
+    public int GetCurrentWaypointNum ()
+    {
+        return raceControl.GetCurrentWaypointNum();
+    }
+
+    public float GetCurrentWaypointDist ()
+    {
+        return raceControl.GetCurrentWaypointDist();
+    }
+
+    public bool IsLapDone ()
+    {
+        return raceControl.GetIsLapDone();
+    }
 	
 	public void SetWayController( Waypoints_Controller aControl )
 	{
@@ -394,9 +394,9 @@ public class CarController_MVD : BaseVehicle
 	
 	public void OnTriggerEnter( Collider other )
 	{
-		
+	
 		int objLayerMask = (1 << other.gameObject.layer);
-		
+
 		if ((respawnLayerMask.value & objLayerMask) > 0) 
 		{
 			Respawn();
@@ -424,17 +424,17 @@ public class CarController_MVD : BaseVehicle
 			
 			// reset health to full
 			myDataManager.SetHealth(startHealthAmount);
-			
+
 		} else {
 			
 			// tell game controller to do small scale hit
 			((GameController_MVD)GameController.Instance.Manager).PlayerHit( myTransform );
-			
+				
 			// disable and hide weapon
 			//weaponControl.DisableCurrentWeapon();
 		}
 	}
-	
+		
 	void Respawn()
 	{
 		// reset the 'we are respawning' variable

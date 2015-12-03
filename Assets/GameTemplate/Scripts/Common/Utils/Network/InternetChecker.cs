@@ -24,7 +24,7 @@ public class InternetChecker : PersistentSingleton<InternetChecker> {
 	//--------------------------------------
 	[SerializeField]
 	private bool checkFromURL = false;
-	
+
 	[SerializeField]
 	private float CheckTimer = 5f;
 	
@@ -54,7 +54,7 @@ public class InternetChecker : PersistentSingleton<InternetChecker> {
 	protected override void Awake ()
 	{
 		base.Awake ();
-		
+
 		if(checkFromURL)
 			InvokeRepeating("PingService",0,CheckTimer);
 	}

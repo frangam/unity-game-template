@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 Project:     Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -149,7 +149,7 @@ public class UIBaseShopListWindow : UIBaseListWindow {
 		else if(pItem != null && !pItem.Purchased){
 			//open confirmation purchase window
 			if(GameMoneyManager.Instance.hasEnoughMoney(pItem) || (useGemsIfNotEnoughMoney && GameMoneyManager.Instance.hasEnoughGems(pItem))){
-				confirmationPurchaseWin.init(pItem, GameMoneyManager.Instance.hasEnoughMoney(pItem), GameMoneyManager.Instance.hasEnoughGems(pItem)); //first init the window
+				confirmationPurchaseWin.initBestTime(pItem, GameMoneyManager.Instance.hasEnoughMoney(pItem), GameMoneyManager.Instance.hasEnoughGems(pItem)); //first init the window
 				UIController.Instance.Manager.open(confirmationPurchaseWin);
 			}
 			//open add more gems window

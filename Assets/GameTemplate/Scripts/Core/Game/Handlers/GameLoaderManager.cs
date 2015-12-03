@@ -40,6 +40,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	private bool initedGralServices = false;
 	private bool showLoginWindowGameServices = false;
 	private bool loadingNextScene = false;
+	private bool languagesLoaded = false;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -111,23 +112,26 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
+	
+	
 	public virtual void Awake () {
 		loadingPanel = FindObjectOfType<UILoadingPanel>();
 		showLoadingPanel = loadingPanel != null;
 		
 		GTDebug.log("Initializing");
 		
-		loadLanguage (); 
+		
 		loadInitialMoneyOnlyFirstTime();
 		loadSettings();
 		loadAudio (); 
 		loadScoresAndInitialLevel ();
 		loadScoresWithDifficulty ();
 		LoadGPSandGC (); //google play services y game center
+		loadLanguage (); 
 	}
 	
 	public virtual void Start(){
-		StartCoroutine (waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded ()); //se carga el tutorial o el menu del juego
+		StartCoroutine (waitTimeForLoadServicesAndLoadNextSceneIfNotLoaded ()); 
 	}
 	
 	public virtual void LateUpdate(){
@@ -140,17 +144,15 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 				&& (!GameSettings.Instance.USE_FACEBOOK || (GameSettings.Instance.USE_FACEBOOK && fbInited))
 				//twitter
 				&& (!GameSettings.Instance.USE_TWITTER || (GameSettings.Instance.USE_TWITTER && twInited));
-		bool initedAllSevices = initedGralServices;
+		bool initedAllSevices = initedGralServices && languagesLoaded;
 		
 		#if UNITY_ANDROID
-		initedAllSevices = 
-			(!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES || (GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared))
-				&& initedGralServices;
+		initedAllSevices = initedAllSevices && 
+			(!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES || (GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && gpsPrepared));
 		
 		#elif UNITY_IPHONE
-		initedAllSevices = 
-			(!GameSettings.Instance.USE_GAMECENTER || (GameSettings.Instance.USE_GAMECENTER && gcPrepared))
-				&& initedGralServices;
+		initedAllSevices = initedAllSevices &&
+			(!GameSettings.Instance.USE_GAMECENTER || (GameSettings.Instance.USE_GAMECENTER && gcPrepared));
 		
 		#elif UNITY_WP8
 		
@@ -158,6 +160,8 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		
 		if(initedAllSevices){
+			GTDebug.log("Inited all Services -> Loading next scene");
+
 			handleInitialAdShowing();
 			loadingNextScene = true;
 			
@@ -222,6 +226,19 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		}
 		
 		///-----
+		//Wait time if languages are not loaded
+		///-----
+		GTDebug.log("Languages Loaded ? "+languagesLoaded);
+		
+		if(!languagesLoaded){
+			do{
+				yield return null;
+			}
+			while(!languagesLoaded);
+			GTDebug.log("Languages loaded");
+		}
+		
+		///-----
 		//Wait time if INAPP is not inited
 		///-----
 		GTDebug.log("InApp Billing inited ? "+inAppInited);
@@ -264,21 +281,64 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		///-----
 		/// Wait time for each platform
 		///-----
+
 		#if UNITY_ANDROID
 		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
-			StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION));
-			yield return new WaitForSeconds (TIEMPO_ESPERA_COMPROBAR_GPS_CONEXION);
+//			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
+//			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION);
+
+			float startTime = 0, currentTime = 0, elapsedTime = 0;
+			startTime = Time.realtimeSinceStartup;
+			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
+			do{
+				currentTime = Time.realtimeSinceStartup;
+				elapsedTime = currentTime-startTime;
+				yield return null;
+			}
+			while(!gcPrepared && elapsedTime<MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION);
+			
+			GTDebug.log("Google Play Services Inited ? "+gpsPrepared);
+			GTDebug.log("Google Play Services Check time out ? "+(elapsedTime>=MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
+
 			loadSceneAfterChecking();
 		}
 		#elif UNITY_IPHONE
 		if(GameSettings.Instance.USE_GAMECENTER){
+//			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
+//			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
+
+			float startTime = 0, currentTime = 0, elapsedTime = 0;
+			startTime = Time.realtimeSinceStartup;
 			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
-			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
+			do{
+				currentTime = Time.realtimeSinceStartup;
+				elapsedTime = currentTime-startTime;
+				yield return null;
+			}
+			while(!gcPrepared && elapsedTime<MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
+			
+			GTDebug.log("Game Center Inited ? "+gcPrepared);
+			GTDebug.log("Game Center Inited Check time out ? "+(elapsedTime>=MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
+
 			loadSceneAfterChecking();
 		}
 		#else
-		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
-		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
+//		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
+//		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
+
+//		float startTime = 0, currentTime = 0, elapsedTime = 0;
+//		startTime = Time.realtimeSinceStartup;
+//		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
+//		do{
+//			currentTime = Time.realtimeSinceStartup;
+//			elapsedTime = currentTime-startTime;
+//			yield return null;
+//		}
+//		while(! && elapsedTime<TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
+//		
+//		GTDebug.log("Google Play Services Inited ? "+gpsPrepared);
+//		GTDebug.log("Google Play Services Check time out ? "+(elapsedTime>=TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
+
 		loadSceneAfterChecking();
 		#endif
 		
@@ -296,12 +356,28 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 				wait += MAX_WAIT_TIME_TO_CHECK_FB_CONNECTION;
 			
 			
-			yield return new WaitForSeconds (wait);
+//			yield return new WaitForSeconds (wait);
+
+
+			float startTime = 0, currentTime = 0, elapsedTime = 0;
+			startTime = Time.realtimeSinceStartup;
+			StartCoroutine(showProgressBySeconds((int)wait));
+			do{
+				currentTime = Time.realtimeSinceStartup;
+				elapsedTime = currentTime-startTime;
+				yield return null;
+			}
+			while((twNotInited || inappNotInited || fbNotInited) && elapsedTime<wait);
+			
+			GTDebug.log("InApp Inited ? "+!inappNotInited+", Twitter Inited ? " +!twNotInited+", FB Inited ? "+fbNotInited);
+			GTDebug.log("Check time out ? "+(elapsedTime>=wait));
+
+
 			loadSceneAfterChecking();
 		}
 		//Wait a dummy time if we not use any service
 		else if(!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER && !GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE){
-			yield return new WaitForSeconds (DUMMY_WAIT_TIME);
+//			yield return new WaitForSeconds (DUMMY_WAIT_TIME);
 			loadSceneAfterChecking();
 		}
 	}
@@ -341,10 +417,10 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	 -------------------------------*/
 	public virtual void loadLanguage(){
 		//load in a list all SystemLanguage
-		Languages.loadAllLanguagesInGameSettings();
+		Languages.Instance.loadAllLanguagesInGameSettings();
 		
 		if(GameSettings.Instance.useTestLanguage){
-			Languages.selectLanguage(GameSettings.Instance.testLanguage);
+			Languages.Instance.selectLanguage(GameSettings.Instance.testLanguage);
 		}
 		else{
 			//if not changed language
@@ -354,11 +430,16 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			
 			// if player has not changed the language, we load the device language if we are supporting it if not we set English by default
 			if(PlayerPrefs.GetInt(GameSettings.PP_LANGUAGE_CHANGED) == 0){
-				Languages.selectLanguageOfDeviceIfSupported();
+				Languages.Instance.selectLanguageOfDeviceIfSupported();
+			}
+			else{
+				Languages.Instance.selectCurrentLanguage();
 			}
 		}
 		
-		GTDebug.log("Current Language: " + Languages.getCurrentLanguage());
+		languagesLoaded = true;
+		
+		GTDebug.log("Current Language: " + Languages.Instance.CurrentLanguage);
 	}
 	
 	/*--------------------------------

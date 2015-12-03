@@ -16,32 +16,32 @@ public class Score {
 	
 	[SerializeField]
 	private string id;
-	
+
 	[SerializeField]
 	private ScoreFormat format;
-	
+
 	[SerializeField]
 	private ScoreOrder order;
-	
+
 	[SerializeField]
 	private bool useGreaterLimit;
 	
 	[SerializeField]
 	private bool useLowerLimit;
-	
+
 	[SerializeField]
 	[Tooltip("Optional")]
 	private long greaterLimit;
-	
+
 	[SerializeField]
 	[Tooltip("Optional")]
 	private long lowerLimit;
-	
+
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
 	private long value;
-	
+
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -53,36 +53,37 @@ public class Score {
 			nameLocKey = value;
 		}
 	}
-	
+
 	public string IdForSaveOniOSStore{
 		get {  
 			string res = this.id.Replace("-", "_");
-			
+
 			if(GameSettings.Instance.groupScores){ 
 				res = res.Replace(GameSettings.Instance.prefixScoresGroupOnIOS, "");
 				res = res.Insert(0, GameSettings.Instance.prefixScoresGroupOnIOS);
+				GTDebug.log("id for ios: " +res + ". Prefix: " +GameSettings.Instance.prefixScoresGroupOnIOS);
 			}
-			
+
 			return res;
 		}
 	}
-	
+
 	public string Id {
 		get {
 			string res = this.id;
-			
-			//#if !UNITY_EDITOR && UNITY_IPHONE
-			//			if(GameSettings.Instance.groupScores) 
-			//				res = res.Insert(0, GameSettings.Instance.prefixScoresGroupOnIOS);
-			//#endif
-			
+
+//#if !UNITY_EDITOR && UNITY_IPHONE
+//			if(GameSettings.Instance.groupScores) 
+//				res = res.Insert(0, GameSettings.Instance.prefixScoresGroupOnIOS);
+//#endif
+
 			return res;
 		}
 		set {
 			id = value;
 		}
 	}
-	
+
 	public ScoreFormat Format {
 		get {
 			return this.format;
@@ -91,7 +92,7 @@ public class Score {
 			format = value;
 		}
 	}
-	
+
 	public ScoreOrder Order {
 		get {
 			return this.order;
@@ -100,7 +101,7 @@ public class Score {
 			order = value;
 		}
 	}
-	
+
 	public long GreaterLimit {
 		get {
 			return this.greaterLimit;
@@ -109,7 +110,7 @@ public class Score {
 			greaterLimit = value;
 		}
 	}
-	
+
 	public long LowerLimit {
 		get {
 			return this.lowerLimit;
@@ -118,7 +119,7 @@ public class Score {
 			lowerLimit = value;
 		}
 	}
-	
+
 	public long Value {
 		get {
 			return this.value;
@@ -127,7 +128,7 @@ public class Score {
 			value = value;
 		}
 	}
-	
+
 	public bool UseGreaterLimit {
 		get {
 			return this.useGreaterLimit;
@@ -136,7 +137,7 @@ public class Score {
 			useGreaterLimit = value;
 		}
 	}
-	
+
 	public bool UseLowerLimit {
 		get {
 			return this.useLowerLimit;
@@ -145,7 +146,7 @@ public class Score {
 			useLowerLimit = value;
 		}
 	}
-	
+
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------
@@ -154,13 +155,13 @@ public class Score {
 		id = "";
 		format = ScoreFormat.NUMERIC;
 		order = ScoreOrder.DESCENDING;
-		
+
 		useGreaterLimit = false;
 		greaterLimit = long.MaxValue;
 		useLowerLimit = false;
 		lowerLimit = long.MinValue;
 	}
-	
+
 	public Score(string pId){
 		nameLocKey = "";
 		id = pId;

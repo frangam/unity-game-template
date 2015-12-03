@@ -13,7 +13,7 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private bool showLoadingPanelImmediately = false;
-	
+
 	[SerializeField]
 	[Tooltip("Game Section represented")]
 	private GameSection section;
@@ -47,10 +47,10 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	{
 		if(showLoadingPanelImmediately)
 			UILoadingPanel.Instance.show();
-		
+
 		return base.doPressBeforeAWhile ();
 	}
-	
+
 	protected override void doPress ()
 	{
 		base.doPress ();

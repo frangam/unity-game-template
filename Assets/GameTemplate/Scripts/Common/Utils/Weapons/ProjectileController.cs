@@ -43,7 +43,7 @@ public class ProjectileController : MonoBehaviour
 		if(!didPlaySound)
 		{
 			// tell our sound controller to play a pew sound
-			//			BaseSoundController.Instance.PlaySoundByIndex(whichSoundToPlayOnStart, myTransform.position);
+//			BaseSoundController.Instance.PlaySoundByIndex(whichSoundToPlayOnStart, myTransform.position);
 			// we only want to play the sound once, so set didPlaySound here
 			didPlaySound=true;
 		}
@@ -65,7 +65,7 @@ public class ProjectileController : MonoBehaviour
 	{		
 		// if we have assigned a particle effect, we will instantiate one when a collision happens.
 		if(doProjectileHitParticle)
-			//			Instantiate(particleEffectPrefab, transform.position, Quaternion.identity);
+//			Instantiate(particleEffectPrefab, transform.position, Quaternion.identity);
 			particleEffectPrefab.Spawn(transform.position,  Quaternion.identity);
 		
 		// destroy this game object after a collision

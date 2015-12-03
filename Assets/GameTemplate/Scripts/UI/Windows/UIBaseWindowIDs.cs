@@ -27,7 +27,7 @@ public static class UIBaseWindowIDs {
 	public const string PLAYER_WINS_WINDOW 								= "bwi_000012";
 	public const string NOTIFY_AD_SHOWING_WINDOW_DURING_GAME_PLAY 		= "bwi_000013";
 	public const string GAME_CONTROL_BUTTONS					 		= "bwi_000014";
-	
+
 	public const string UNIQUE_LIST_WINDOW								= "bwi_000020";
 	
 	public const string LOGIN			 								= "bwi_000050";

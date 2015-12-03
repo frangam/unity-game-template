@@ -28,7 +28,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 		
 		//		
 		#endif
-		
+
 		
 		//---
 		//FB
@@ -77,7 +77,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 		}
 		#endregion
 	}
-	
+
 	void Start(){
 		// Check for a Facebook logged in user
 		if (GameSettings.Instance.USE_FACEBOOK && FB.IsLoggedIn) {
@@ -88,7 +88,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 			//    GestorParse.instance.login();
 			//} else {
 			// Show any user cached profile info
-			
+
 			//}
 		}
 	}
@@ -101,16 +101,16 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 		//		}
 		
 	}
-	
+
 	
 	// --------------------------------------
 	// EVENTS
 	// --------------------------------------	
-	
+
 	private void OnAuthFB(FB_APIResult result) {
 		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 			GameLoaderManager.Instance.FbInited = true;
-		
+
 		if(SPFacebook.instance.IsLoggedIn) {
 			GTDebug.log("Success to log in FB");
 			SPFacebook.instance.LoadUserData();
@@ -126,10 +126,10 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 			GameLoaderManager.Instance.TwInited = true;
 		
 		if(result.IsSucceeded) {
-			
+
 		}
 	}
-	
+
 	
 	
 	private void OnFocusChanged(bool focus) {                            

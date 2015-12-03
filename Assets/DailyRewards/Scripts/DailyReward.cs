@@ -11,6 +11,7 @@ using System;
  * Daily Reward Object
  */
 public class DailyReward : MonoBehaviour {
+	public string locDayKey = "lb_reward_day";
 	public Text txtDay;
 	public Text txtReward;
 	public Image imgBackground;
@@ -23,8 +24,9 @@ public class DailyReward : MonoBehaviour {
 	public Color availableColor;
 	public Color claimedColor;
 
+
 	public void Refresh() {
-		txtDay.text = "Day " + day.ToString ();
+		txtDay.text = Localization.Get(locDayKey) + " " + day.ToString ();
 		txtReward.text = reward.ToString ();
 
 		if(isAvailable) {

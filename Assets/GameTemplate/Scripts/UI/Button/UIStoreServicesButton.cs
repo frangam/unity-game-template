@@ -16,10 +16,10 @@ public class UIStoreServicesButton : UIBaseButton {
 	
 	[SerializeField]
 	private ScoreType scoreType;
-	
+
 	[SerializeField]
 	private int scoreIndexForGameMultiversion;
-	
+
 	//
 	//	[SerializeField]
 	//	[Tooltip("Leave empty if you want to show all items. Don't leave empty if you want to show an specific item")]
@@ -28,7 +28,7 @@ public class UIStoreServicesButton : UIBaseButton {
 	[SerializeField]
 	[Tooltip("True if we want to get the ranking id from de GameManager")]
 	private bool handledByGameManager = false;
-	
+
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -60,11 +60,11 @@ public class UIStoreServicesButton : UIBaseButton {
 				case ScoreType.SURVIVAL:	rankId = GameSettings.Instance.CurrentUniqueSurvivalRankingID;	break;
 				case ScoreType.BY_INDEX_MULTIGAME: 
 					if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > scoreIndexForGameMultiversion)
-						#if UNITY_ANDROID
-						rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].Id;
-					#elif UNITY_IPHONE
+#if UNITY_ANDROID
+					rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].Id;
+#elif UNITY_IPHONE
 					rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].IdForSaveOniOSStore;
-					#endif
+#endif
 					else
 						Debug.LogError("UIStoreServicesButton ("+name+") - score index out of range");
 					break;

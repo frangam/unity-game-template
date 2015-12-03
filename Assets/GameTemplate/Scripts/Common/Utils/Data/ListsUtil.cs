@@ -1,7 +1,8 @@
-﻿/// <summary>
-/// Useful when we need to get a coroutine return value
-/// Original idea from: http://answers.unity3d.com/questions/24640/how-do-i-return-a-value-from-a-coroutine.html
-/// </summary>
+﻿/***************************************************************************
+Project:     Game Template
+Copyright (c) Frills Games
+Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
+***************************************************************************/
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -16,7 +16,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	private bool notifiedLoader = false;
 	private int totalScoresToLoad = 0;
 	private int scoresLoaded = 0;
-	
+
 	void Update(){
 		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN && !notifiedLoader && leaderBoardsLoaded && achievementsLoaded && achievementsChecked){
 			GTDebug.log("Notifying to GameLoaderManager that GameCenter is prepared");
@@ -27,14 +27,14 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	
 	void OnEnable(){
 		GTDebug.log("Enabling");
-		
+
 		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
 			BaseAchievementsManager.dispatcher.addEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);		
 	}
 	
 	void OnDisable(){
 		GTDebug.log("Disabling");
-		
+
 		if(GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0)
 			BaseAchievementsManager.dispatcher.removeEventListener(BaseAchievementsManager.ACHIEVEMENTS_INITIAL_CHEKING, OnAchievementsChecked);	
 	}
@@ -51,18 +51,18 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 					GameCenterManager.RegisterAchievement(a.IdForIOS);
 				}
 			}
-			
-			
+
+
 			GameCenterManager.OnAchievementsLoaded += OnAchievementsLoaded;
-			//			GameCenterManager.OnAchievementsProgress += OnAchievementProgress;
-			//			GameCenterManager.OnAchievementsReset += OnAchievementsReset;
-			
+//			GameCenterManager.OnAchievementsProgress += OnAchievementProgress;
+//			GameCenterManager.OnAchievementsReset += OnAchievementsReset;
+
 			//--
 			// Player Scores
 			//--
 			GameCenterManager.OnLeadrboardInfoLoaded += OnLeadrboardInfoLoaded;
 			GameCenterManager.OnScoreSubmitted += OnScoreSubmitted;
-			
+		
 			//Initializing Game Cneter class. This action will triger authentication flow
 			if(showLoginWindowGameServices){
 				GTDebug.log("Showing authentication flow of Game Center");
@@ -78,31 +78,31 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	
 	private void loadScores(){
 		List<Score> scoresToLoad = new List<Score>();
-		
+
 		Score uniqueScore = new Score(GameSettings.Instance.CurrentUniqueRankingID);
 		if(uniqueScore != null && !string.IsNullOrEmpty(uniqueScore.Id)){
 			scoresToLoad.Add(uniqueScore);
 		}
-		
+
 		Score uniqueSurvivalScore = new Score(GameSettings.Instance.CurrentUniqueRankingID);
 		if(uniqueSurvivalScore != null && !string.IsNullOrEmpty(uniqueSurvivalScore.Id)){
 			scoresToLoad.Add(uniqueSurvivalScore);
 		}
-		
+
 		//the rest of scores
 		if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0){
-			
-			
+
+
 			foreach(Score score in GameSettings.Instance.CurrentScores){
 				if(score != null && !string.IsNullOrEmpty(score.Id)){
 					scoresToLoad.Add(score);
 				}
 			}
 		}
-		
+
 		//finaly load scores
 		totalScoresToLoad = scoresToLoad != null ? scoresToLoad.Count : 0;
-		
+
 		if(totalScoresToLoad > 0){
 			foreach(Score score in scoresToLoad)
 				GameCenterManager.LoadCurrentPlayerScore(score.IdForSaveOniOSStore);
@@ -122,14 +122,14 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 0);
 		}
 	}
-	
+
 	private void OnLeadrboardInfoLoaded (GK_LeaderboardResult result) {
 		if(result.IsSucceeded) {
 			scoresLoaded++;
-			
-			//			if(scoresLoaded >= totalScoresToLoad)
-			//				GameCenterManager.OnPlayerScoreLoaded -= OnPlayerScoreLoaded;
-			
+
+//			if(scoresLoaded >= totalScoresToLoad)
+//				GameCenterManager.OnPlayerScoreLoaded -= OnPlayerScoreLoaded;
+
 			GK_Score score = result.Leaderboard.GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL);
 			GTDebug.log("Leaderboard ID: "+ score.LeaderboardId + " Player score loaded: [Long: " + score.LongScore+"] [Milliseconds: "+score.Milliseconds.TotalMilliseconds+"]");
 			ScoresHandler.Instance.loadBestScoreFromStore(score);
@@ -138,7 +138,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			GTDebug.log("Player score load was failed");
 		}
 	}
-	
+
 	private void OnScoreSubmitted (ISN_Result result) {
 		if(result.IsSucceeded)  {
 			GTDebug.log("Score Submitted");
@@ -146,7 +146,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			GTDebug.log("Score Submit Failed");
 		}
 	}
-	
+
 	private void OnAchievementsLoaded(ISN_Result res) {
 		if(res.IsSucceeded && GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
 			GTDebug.log("Starting initial checking in server side");
@@ -154,15 +154,15 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		}
 	}
 	
-	//	private void OnAchievementsReset(ISN_Result res) {
-	//
-	//	}
-	//	
-	//	private void OnAchievementProgress(ISN_Result res) {
-	//
-	//	}
+//	private void OnAchievementsReset(ISN_Result res) {
+//
+//	}
+//	
+//	private void OnAchievementProgress(ISN_Result res) {
+//
+//	}
 	
-	
+
 	void OnAchievementsChecked (){
 		achievementsChecked = true;
 	}

@@ -13,10 +13,10 @@ public class ScaleSprite : MonoBehaviour {
 		WIDTH_AND_HEIGHT,
 		WIDTH_RELATIVE_TO_HEIGHT
 	}
-	
+
 	public ScaleType scaleType = ScaleType.WIDTH_AND_HEIGHT;
 	private SpriteRenderer spriteRenderer;
-	
+
 	// Use this for initialization
 	void Awake () {
 		spriteRenderer = GetComponent<SpriteRenderer>();
@@ -29,28 +29,28 @@ public class ScaleSprite : MonoBehaviour {
 		
 		float worldScreenHeight = Camera.main.orthographicSize * 2.0f;
 		float worldScreenWidth = worldScreenHeight / Screen.height * Screen.width;
-		
-		
-		
+
+
+
 		switch(scaleType){
 		case ScaleType.WIDTH_AND_HEIGHT:
 			transform.localScale = new Vector3( worldScreenWidth / width, worldScreenHeight / height, transform.localScale.z);
-			
-			
+
+
 			break;
-			
+
 		case ScaleType.ONLY_WIDTH:
 			transform.localScale = new Vector3( worldScreenWidth / width, transform.localScale.y, transform.localScale.z);
 			break;
-			
+
 		case ScaleType.WIDTH_RELATIVE_TO_HEIGHT:
 			transform.localScale = new Vector3( worldScreenWidth / width, transform.localScale.y/height/2, transform.localScale.z);
 			break;
-			
+
 		case ScaleType.ONLY_HEIGHT:
 			transform.localScale = new Vector3( transform.localScale.x/width*2, worldScreenHeight, transform.localScale.z);
 			break;
 		}
 	}
-	
+
 }

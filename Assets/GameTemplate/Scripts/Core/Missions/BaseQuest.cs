@@ -71,7 +71,7 @@ public class BaseQuest {
 			this.id = value;
 		}
 	}
-	
+
 	public string IdForIOS {
 		get {
 			string res = this.id.Replace("-", "_");
@@ -81,7 +81,7 @@ public class BaseQuest {
 				res = res.Insert(0, GameSettings.Instance.prefixScoresGroupOnIOS);
 				GTDebug.log("id for ios: " +res + ". Prefix: " +GameSettings.Instance.prefixScoresGroupOnIOS);
 			}
-			
+
 			return res;
 		}
 	}

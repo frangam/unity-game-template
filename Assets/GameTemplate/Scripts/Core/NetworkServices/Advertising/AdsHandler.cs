@@ -17,12 +17,12 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	// Static Attributes
 	//--------------------------------------
 	public static event System.Action OnIncentivedVideoFinished = delegate{};
-	public static event System.Action OnVideoOrIntertisialFinished = delegate { };
-	
-	//--------------------------------------
-	// Setting Attributes
-	//--------------------------------------
-	public GADBannerSize size = GADBannerSize.SMART_BANNER;
+    public static event System.Action OnVideoOrIntertisialFinished = delegate { };
+
+    //--------------------------------------
+    // Setting Attributes
+    //--------------------------------------
+    public GADBannerSize size = GADBannerSize.SMART_BANNER;
 	public TextAnchor anchor = TextAnchor.LowerCenter;
 	public bool test = true;
 	
@@ -69,16 +69,16 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		
 		return canShow;
 	}
-	
-	public bool canShowAdRandom()
-	{
-		bool hasInternet = InternetChecker.Instance.IsconnectedToInternet;
-		bool hasPro = GameSettings.Instance.IS_PRO_VERSION;
-		bool canShow = hasInternet && !string.IsNullOrEmpty(GameSettings.Instance.heyZapID) && !hasPro;
-		
-		return canShow;
-	}
-	protected void Start(){
+
+    public bool canShowAdRandom()
+    {
+        bool hasInternet = InternetChecker.Instance.IsconnectedToInternet;
+        bool hasPro = GameSettings.Instance.IS_PRO_VERSION;
+        bool canShow = hasInternet && !string.IsNullOrEmpty(GameSettings.Instance.heyZapID) && !hasPro;
+
+        return canShow;
+    }
+    protected void Start(){
 		StartCoroutine(handleInitializationWhenUsingInAppBilling());
 	}
 	
@@ -142,8 +142,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			if ( adState.Equals("hide") ) {
 				// Do something after the ad hides itself
 				pauseGame(false);
-				OnVideoOrIntertisialFinished();
-			}
+                OnVideoOrIntertisialFinished();
+            }
 			if ( adState.Equals("click") ) {
 				// Do something when an ad is clicked on
 			}
@@ -214,8 +214,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			if (adState.Equals ("hide")) {
 				// Do something after the ad hides itself
 				pauseGame(false);
-				OnVideoOrIntertisialFinished();
-			}
+                OnVideoOrIntertisialFinished();
+            }
 			if (adState.Equals ("click")) {
 				// Do something when an ad is clicked on
 			}
@@ -259,7 +259,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 				hasPausedGame = pause;
 		}
 		else if(BaseGameScreenController.Instance.Section != GameSection.GAME
-		        && (hasPausedGame || (!hasPausedGame && Time.timeScale != 0f))){
+				&& (hasPausedGame || (!hasPausedGame && Time.timeScale != 0f))){
 			if(pause)
 				hasPausedGame = pause;
 			
@@ -275,48 +275,48 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		
 		if(!pause)
 			hasPausedGame = false;
-		
-		//TODO nei,trhow the finish event on test
-		#if UNITY_EDITOR
-		OnIncentivedVideoFinished();
-		#endif
-		
-	}
+
+        //TODO nei,trhow the finish event on test
+        #if UNITY_EDITOR
+                OnIncentivedVideoFinished();
+        #endif
+
+    }
 	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
 	public void testOnInterstitialOpen(){
-		//		OnInterstisialsOpen();
-		#if UNITY_EDITOR
-		pauseGame();
-		#endif
-	}
+        //		OnInterstisialsOpen();
+        #if UNITY_EDITOR
+            pauseGame();
+        #endif
+    }
 	public void testOnInterstitialClose(){
-		//		OnInterstisialsClosed();
-		#if UNITY_EDITOR
-		pauseGame(false);
-		#endif
-	}
-	public void testOnVideoStarted(){
-		//		OnVideoStarted();
-		#if UNITY_EDITOR
-		pauseGame();
-		#endif
-	}
-	public void testOnVideoFinished(){
-		//		OnVideoFinished(true);
-		#if UNITY_EDITOR
-		pauseGame(false);
-		#endif
-	}
-	
-	
-	
-	//--------------------------------------
-	//  PUBLIC METHODS
-	//--------------------------------------
-	public void showRandomGameplayInterstitialOrVideoAd(int adZoneIndex = 0){
+        //		OnInterstisialsClosed();
+        #if UNITY_EDITOR
+                pauseGame(false);
+        #endif
+    }
+    public void testOnVideoStarted(){
+        //		OnVideoStarted();
+        #if UNITY_EDITOR
+                pauseGame();
+        #endif
+    }
+    public void testOnVideoFinished(){
+        //		OnVideoFinished(true);
+        #if UNITY_EDITOR
+            pauseGame(false);
+        #endif
+    }
+
+
+
+    //--------------------------------------
+    //  PUBLIC METHODS
+    //--------------------------------------
+    public void showRandomGameplayInterstitialOrVideoAd(int adZoneIndex = 0){
 		int videoPercentage = Mathf.Clamp(GameSettings.Instance.videoPercentageInRandomShow, 0, 100);
 		int election = Random.Range(0, 100);
 		bool canshowInterstitial = canShowAd(AdType.INTERSTITIAL);

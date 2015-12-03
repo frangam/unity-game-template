@@ -25,10 +25,13 @@ public class TimeUtils{
 
 	public static IEnumerator getDateTimeFromServer(string serverURL)
 	{
+		GTDebug.log ("TimeUtils - Getting time from server "+serverURL);
 		WWW www = new WWW(serverURL);
 		yield return www;
 
 		string response = www.text;
+
+		GTDebug.log ("TimeUtils - Getting time from server Response: "+response);
 
 		if (string.IsNullOrEmpty(www.error)){
 			yield return response;

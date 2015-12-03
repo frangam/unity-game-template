@@ -27,7 +27,12 @@ public class HUDFPS : MonoBehaviour
 	private float accum   = 0; // FPS accumulated over the interval
 	private int   frames  = 0; // Frames drawn over the interval
 	private float timeleft; // Left time for current interval
-	
+
+	void Awake(){
+		//Only active when game is set to a development version.
+		gameObject.SetActive(GameSettings.Instance.IS_A_DEV_VERSION);
+	}
+
 	void Start(){
 		timeleft = updateInterval;  
 	}

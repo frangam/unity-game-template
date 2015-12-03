@@ -112,18 +112,18 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	private void OnPostFB(FBPostResult res) {
 		
 		if(res.IsSucceeded) {
-			
+
 		} else {
-			
+
 		}
 	}
-	
+
 	private void OnAuthFB(FB_APIResult result) {
 		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 			GameLoaderManager.Instance.FbInited = true;
-		
+
 		isLoggedInFB = SPFacebook.instance.IsLoggedIn;
-		
+
 		if(SPFacebook.instance.IsLoggedIn) {
 			GTDebug.log("Success to log in FB");
 			SPFacebook.instance.LoadUserData();
@@ -132,33 +132,33 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 			GTDebug.log("Failed to log in FB");
 		}		
 	}
-	
+
 	
 	private void OnAuthTwitter(TWResult result) {
 		isLoggedInTw = result.IsSucceeded;
-		
+
 		if(result.IsSucceeded) {
 			if(posting){
 				postear(SocialNetwork.TWITTER, doScreenshot);
 				posting = false;
 			}
 		}
-		
-		
+
+
 	}
 	
 	
 	private void OnPost(TWResult result) {
 		if(screenshotPanel)
 			screenshotPanel.gameObject.SetActive (false);
-		
+
 		if(result.IsSucceeded) {
 			GTDebug.log("Congrats. You just posted something to Twitter!");
 		} else {
 			GTDebug.log("Oops! Posting failed. Something went wrong.");
 		}
 	}
-	
+
 	
 	private void OnFocusChanged(bool focus) {                            
 		Time.timeScale = focus ? 1f : 0f;                                                                  
@@ -167,22 +167,22 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	private void OnUserDataLoaded(FB_APIResult result) {
 		if (result.Error == null)  { 
 			GTDebug.log("FB user data loaded");
-			//			IsUserInfoLoaded = true;
+//			IsUserInfoLoaded = true;
 			
 			//user data available, we can get info using
 			//SPFacebook.instance.userInfo getter
 			//and we can also use userInfo methods, for exmple download user avatar image
-			//			SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.square);
+//			SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.square);
 			SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.large);
 			
 		} else {
 			GTDebug.log("Opps, user FB data load failed, something was wrong");
 		}
 	}
-	
+
 	private void OnFriendsDataLoaded(FB_APIResult res) {
-		
-		
+
+
 		
 		if(res.Error == null) {
 			GTDebug.log("FB friends data loaded");
@@ -190,19 +190,19 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 			//SPFacebook.instance.friendsList getter
 			//and we can also use FacebookUserInfo methods, for exmple download user avatar image
 			
-			//			foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
-			//				friend.LoadProfileImage(FacebookProfileImageSize.square);
-			//			}
+//			foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
+//				friend.LoadProfileImage(FacebookProfileImageSize.square);
+//			}
 			foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
 				friend.LoadProfileImage(FacebookProfileImageSize.large);
 			}
 			
-			//			IsFrindsInfoLoaded = true;
+//			IsFrindsInfoLoaded = true;
 		} else {
 			GTDebug.log("Opps, FB friends data load failed, something was wrong");
 		}
 	}
-	
+
 	
 	// --------------------------------------
 	// Public Methods
@@ -364,10 +364,10 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	public void post(SocialNetwork network, bool shareLevelCompleted = false, bool screenshot = false){
 		posting = true;
 		doScreenshot = screenshot;
-		
+
 		#if UNITY_ANDROID || UNITY_IPHONE || UNITY_EDITOR
 		login (network); //logeamos si fuese necesario
-		
+
 		if(posting){
 			postear(network, shareLevelCompleted, doScreenshot);
 			posting = false;
@@ -470,7 +470,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 	private IEnumerator postCaptura(SocialNetwork network, string message) {
 		
 		yield return new WaitForEndOfFrame();
-		
+
 		//---
 		// Create a texture the size of the screen, RGB24 format
 		//---
@@ -479,7 +479,7 @@ public class BaseSocialController : Singleton<BaseSocialController> {
 		Texture2D tex = new Texture2D( width, height, TextureFormat.RGB24, false );
 		tex.ReadPixels( new Rect(0, 0, width, height), 0, 0 ); // Read screen contents into the texture
 		tex.Apply();
-		
+
 		
 		//---
 		//Posting message with the screenshot

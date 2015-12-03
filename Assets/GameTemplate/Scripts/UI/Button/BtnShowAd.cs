@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
 Project:    Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -13,35 +13,35 @@ public class BtnShowAd : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private AdType adType = AdType.INTERSTITIAL; //the ad type to show
-	
+
 	[SerializeField]
 	[Tooltip("Shows ads every number of clicks indicated for this value")]
 	[Range(1,100)]
 	private int numberOfClicksForShowAd = 1;
-	
-	
-	
-	//--------------------------------------
-	// Getters & Setters
-	//--------------------------------------
-	public int NumberOfClicksForShowAd
-	{
-		get
-		{
-			return numberOfClicksForShowAd;
-		}
-		
-	}
-	//--------------------------------------
-	// Overriden Methods
-	//--------------------------------------
-	protected override void doPress ()
+
+ 
+
+    //--------------------------------------
+    // Getters & Setters
+    //--------------------------------------
+    public int NumberOfClicksForShowAd
+    {
+        get
+        {
+            return numberOfClicksForShowAd;
+        }
+
+    }
+    //--------------------------------------
+    // Overriden Methods
+    //--------------------------------------
+    protected override void doPress ()
 	{
 		if(base.ClicksCounter >= 0 && (base.ClicksCounter == 0 || (base.ClicksCounter % NumberOfClicksForShowAd == 0))){
 			base.doPress ();
-			
+
 			GTDebug.log ("Showing Ad ["+adType+"]");
-			
+
 			switch(adType){
 			case AdType.INTERSTITIAL: AdsHandler.Instance.showInterstitial(); break;
 			case AdType.VIDEO: AdsHandler.Instance.PlayAVideo(); break;

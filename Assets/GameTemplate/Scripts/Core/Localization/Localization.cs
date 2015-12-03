@@ -31,39 +31,41 @@ using System.Collections.Generic;
 public static class Localization
 {
 	public delegate byte[] LoadFunction (string path);
-
+	public static event System.Action OnLocalize = delegate {};
+	
+	
 	/// <summary>
 	/// Want to have Localization loading be custom instead of just Resources.Load? Set this function.
 	/// </summary>
-
+	
 	static public LoadFunction loadFunction;
-
+	
 	/// <summary>
 	/// Whether the localization dictionary has been loaded.
 	/// </summary>
- 
+	
 	static public bool localizationHasBeenSet = false;
-
+	
 	// Loaded languages, if any
 	static string[] mLanguages = null;
-
+	
 	// Key = Value dictionary (single language)
 	static Dictionary<string, string> mOldDictionary = new Dictionary<string, string>();
-
+	
 	// Key = Values dictionary (multiple languages)
 	static Dictionary<string, string[]> mDictionary = new Dictionary<string, string[]>();
-
+	
 	// Index of the selected language within the multi-language dictionary
 	static int mLanguageIndex = -1;
-
+	
 	// Currently selected language
 	static string mLanguage;
-
+	
 	/// <summary>
 	/// Localization dictionary. Dictionary key is the localization key. Dictionary value is the list of localized values (columns in the CSV file).
 	/// Be very careful editing this via code, and be sure to set the "KEY" to the list of languages.
 	/// </summary>
-
+	
 	static public Dictionary<string, string[]> dictionary
 	{
 		get
@@ -77,11 +79,11 @@ public static class Localization
 			mDictionary = value;
 		}
 	}
-
+	
 	/// <summary>
 	/// List of loaded languages. Available if a single Localization.csv file was used.
 	/// </summary>
-
+	
 	static public string[] knownLanguages
 	{
 		get
@@ -90,11 +92,11 @@ public static class Localization
 			return mLanguages;
 		}
 	}
-
+	
 	/// <summary>
 	/// Name of the currently active language.
 	/// </summary>
-
+	
 	static public string language
 	{
 		get
@@ -116,16 +118,16 @@ public static class Localization
 			}
 		}
 	}
-
+	
 	/// <summary>
 	/// Load the specified localization dictionary.
 	/// </summary>
-
+	
 	static bool LoadDictionary (string value)
 	{
 		// Try to load the Localization CSV
 		byte[] bytes = null;
-
+		
 		if (!localizationHasBeenSet)
 		{
 			if (loadFunction == null)
@@ -136,13 +138,15 @@ public static class Localization
 			else bytes = loadFunction("Localization");
 			localizationHasBeenSet = true;
 		}
-
+		
 		// Try to load the localization file
-		if (LoadCSV(bytes)) return true;
-
+		if (LoadCSV(bytes)) {
+			return true;
+		}
+		
 		// If this point was reached, the localization file was not present
 		if (string.IsNullOrEmpty(value)) return false;
-
+		
 		// Not a referenced asset -- try to load it dynamically
 		if (loadFunction == null)
 		{
@@ -150,7 +154,7 @@ public static class Localization
 			if (asset != null) bytes = asset.bytes;
 		}
 		else bytes = loadFunction(value);
-
+		
 		if (bytes != null)
 		{
 			Set(value, bytes);
@@ -158,11 +162,11 @@ public static class Localization
 		}
 		return false;
 	}
-
+	
 	/// <summary>
 	/// Load the specified language.
 	/// </summary>
-
+	
 	static bool LoadAndSelect (string value)
 	{
 		if (!string.IsNullOrEmpty(value))
@@ -170,85 +174,85 @@ public static class Localization
 			if (mDictionary.Count == 0 && !LoadDictionary(value)) return false;
 			if (SelectLanguage(value)) return true;
 		}
-
+		
 		// Old style dictionary
 		if (mOldDictionary.Count > 0) return true;
-
+		
 		// Either the language is null, or it wasn't found
 		mOldDictionary.Clear();
 		mDictionary.Clear();
 		if (string.IsNullOrEmpty(value)) PlayerPrefs.DeleteKey("Language");
 		return false;
 	}
-
+	
 	/// <summary>
 	/// Load the specified asset and activate the localization.
 	/// </summary>
-
+	
 	static public void Load (TextAsset asset)
 	{
 		ByteReader reader = new ByteReader(asset);
 		Set(asset.name, reader.ReadDictionary());
 	}
-
+	
 	/// <summary>
 	/// Set the localization data directly.
 	/// </summary>
-
+	
 	static public void Set (string languageName, byte[] bytes)
 	{
 		ByteReader reader = new ByteReader(bytes);
 		Set(languageName, reader.ReadDictionary());
 	}
-
+	
 	/// <summary>
 	/// Load the specified CSV file.
 	/// </summary>
-
+	
 	static public bool LoadCSV (TextAsset asset) { return LoadCSV(asset.bytes, asset); }
-
+	
 	/// <summary>
 	/// Load the specified CSV file.
 	/// </summary>
-
+	
 	static public bool LoadCSV (byte[] bytes) { return LoadCSV(bytes, null); }
-
+	
 	/// <summary>
 	/// Load the specified CSV file.
 	/// </summary>
-
+	
 	static bool LoadCSV (byte[] bytes, TextAsset asset)
 	{
 		if (bytes == null) return false;
 		ByteReader reader = new ByteReader(bytes);
-
+		
 		// The first line should contain "KEY", followed by languages.
 		BetterList<string> temp = reader.ReadCSV();
-
+		
 		// There must be at least two columns in a valid CSV file
 		if (temp.size < 2) return false;
-
+		
 		// The first entry must be 'KEY', capitalized
 		temp[0] = "KEY";
-
-#if !UNITY_3_5
+		
+		#if !UNITY_3_5
 		// Ensure that the first value is what we expect
 		if (!string.Equals(temp[0], "KEY"))
 		{
 			Debug.LogError("Invalid localization CSV file. The first value is expected to be 'KEY', followed by language columns.\n" +
-				"Instead found '" + temp[0] + "'", asset);
+			               "Instead found '" + temp[0] + "'", asset);
 			return false;
 		}
 		else
-#endif
+			#endif
 		{
 			mLanguages = new string[temp.size - 1];
 			for (int i = 0; i < mLanguages.Length; ++i)
 				mLanguages[i] = temp[i + 1];
 		}
-
+		
 		mDictionary.Clear();
-
+		
 		// Read the entire CSV file into memory
 		while (temp != null)
 		{
@@ -257,19 +261,19 @@ public static class Localization
 		}
 		return true;
 	}
-
+	
 	/// <summary>
 	/// Select the specified language from the previously loaded CSV file.
 	/// </summary>
-
+	
 	static bool SelectLanguage (string language)
 	{
 		mLanguageIndex = -1;
-
+		
 		if (mDictionary.Count == 0) return false;
-
+		
 		string[] keys;
-
+		
 		if (mDictionary.TryGetValue("KEY", out keys))
 		{
 			for (int i = 0; i < keys.Length; ++i)
@@ -280,19 +284,20 @@ public static class Localization
 					mLanguageIndex = i;
 					mLanguage = language;
 					PlayerPrefs.SetString("Language", mLanguage);
-//					UIRoot.Broadcast("OnLocalize");
-					UILocalize.dispatcher.dispatch(UILocalize.ON_LOCALIZE_EVENT);
+					//					UIRoot.Broadcast("OnLocalize");
+					OnLocalize();
+					
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-
+	
 	/// <summary>
 	/// Helper function that adds a single line from a CSV file to the localization list.
 	/// </summary>
-
+	
 	static void AddCSV (BetterList<string> values)
 	{
 		if (values.size < 2) return;
@@ -308,11 +313,11 @@ public static class Localization
 			Debug.LogError("Unable to add '" + values[0] + "' to the Localization dictionary.\n" + ex.Message);
 		}
 	}
-
+	
 	/// <summary>
 	/// Load the specified asset and activate the localization.
 	/// </summary>
-
+	
 	static public void Set (string languageName, Dictionary<string, string> dictionary)
 	{
 		mLanguage = languageName;
@@ -321,64 +326,64 @@ public static class Localization
 		localizationHasBeenSet = false;
 		mLanguageIndex = -1;
 		mLanguages = new string[] { languageName };
-//		UIRoot.Broadcast("OnLocalize");
-		UILocalize.dispatcher.dispatch(UILocalize.ON_LOCALIZE_EVENT);
+		//		UIRoot.Broadcast("OnLocalize");
+		OnLocalize();
 	}
-
+	
 	/// <summary>
 	/// Localize the specified value.
 	/// </summary>
-
+	
 	static public string Get (string key)
 	{
 		// Ensure we have a language to work with
 		if (!localizationHasBeenSet) language = PlayerPrefs.GetString("Language", "English");
-
+		
 		string val;
 		string[] vals;
-#if UNITY_IPHONE || UNITY_ANDROID
+		#if UNITY_IPHONE || UNITY_ANDROID
 		string mobKey = key + " Mobile";
-
+		
 		if (mLanguageIndex != -1 && mDictionary.TryGetValue(mobKey, out vals))
 		{
 			if (mLanguageIndex < vals.Length)
 				return vals[mLanguageIndex];
 		}
 		else if (mOldDictionary.TryGetValue(mobKey, out val)) return val;
-#endif
+		#endif
 		if (mLanguageIndex != -1 && mDictionary.TryGetValue(key, out vals))
 		{
 			if (mLanguageIndex < vals.Length)
 				return vals[mLanguageIndex];
 		}
 		else if (mOldDictionary.TryGetValue(key, out val)) return val;
-
-#if UNITY_EDITOR
+		
+		#if UNITY_EDITOR
 		Debug.LogWarning("Localization key not found: '" + key + "'");
-#endif
+		#endif
 		return key;
 	}
-
+	
 	[System.Obsolete("Localization is now always active. You no longer need to check this property.")]
 	static public bool isActive { get { return true; } }
-
+	
 	[System.Obsolete("Use Localization.Get instead")]
 	static public string Localize (string key) { return Get(key); }
-
+	
 	/// <summary>
 	/// Returns whether the specified key is present in the localization dictionary.
 	/// </summary>
-
+	
 	static public bool Exists (string key)
 	{
 		// Ensure we have a language to work with
 		if (!localizationHasBeenSet) language = PlayerPrefs.GetString("Language", "English");
-
-#if UNITY_IPHONE || UNITY_ANDROID
+		
+		#if UNITY_IPHONE || UNITY_ANDROID
 		string mobKey = key + " Mobile";
 		if (mDictionary.ContainsKey(mobKey)) return true;
 		else if (mOldDictionary.ContainsKey(mobKey)) return true;
-#endif
+		#endif
 		return mDictionary.ContainsKey(key) || mOldDictionary.ContainsKey(key);
 	}
 }

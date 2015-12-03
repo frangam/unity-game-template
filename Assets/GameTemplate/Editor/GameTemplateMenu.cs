@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
 Project:     Game Template
 Copyright (c) Frills Games
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
@@ -390,23 +390,23 @@ public class GameTemplateMenu : EditorWindow {
 		string url = "https://docs.google.com/document/d/1w3WNzRjEWl5lmuezFPhp94IzN4Z1dXHxB9qJJy1kMzE/edit#heading=h.y450umntyl6f";
 		Application.OpenURL(url);
 	}
-	[MenuItem("GameTemplate/Documentation/Nomenclature & Standards/Extensions/Debug Logs")]
+	[MenuItem("GameTemplate/Documentation/Nomenclature & Standards/Debug Logs")]
 	public static void NommenclatureAndStandardsDegugLogs() {
 		string url = "https://docs.google.com/document/d/1w3WNzRjEWl5lmuezFPhp94IzN4Z1dXHxB9qJJy1kMzE/edit#heading=h.n8tb1pp7jsp0";
 		Application.OpenURL(url);
 	}
-	[MenuItem("GameTemplate/Documentation/Nomenclature & Standards/Extensions/Events")]
+	[MenuItem("GameTemplate/Documentation/Nomenclature & Standards/Events")]
 	public static void NommenclatureAndStandardsEvents() {
 		string url = "https://docs.google.com/document/d/1w3WNzRjEWl5lmuezFPhp94IzN4Z1dXHxB9qJJy1kMzE/edit#heading=h.lkr1wwq5spz7";
 		Application.OpenURL(url);
 	}
-	[MenuItem("GameTemplate/Documentation/Nomenclature & Standards/Extensions/Coroutines")]
+	[MenuItem("GameTemplate/Documentation/Nomenclature & Standards/Coroutines")]
 	public static void NommenclatureAndStandardsCoroutines() {
 		string url = "https://docs.google.com/document/d/1w3WNzRjEWl5lmuezFPhp94IzN4Z1dXHxB9qJJy1kMzE/edit#heading=h.gz29hmn29c1w";
 		Application.OpenURL(url);
 	}
-
-
+	
+	
 	//--------------------------------------
 	//  Team Work Documentation
 	//--------------------------------------

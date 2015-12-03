@@ -20,9 +20,9 @@ public class GTBuildSettings {
 	// Public Attributes
 	//--------------------------------------
 	public string 				buildName;
-	public string				androidBuildFolder;
+	public string				androidBuildFolder;			//for Windows
 	public string				iosBuildFolder;
-	//	public string				resourcesFolder;
+//	public string				resourcesFolder;
 	public List<GTBuildScene>	scenes;
 	public string				preBuiltAndroidIconsFolder;
 	public string				preBuiltIOSIconsFolder;
@@ -40,7 +40,8 @@ public class GTBuildSettings {
 	public string				androidBundleVersion;
 	public string				iOSBundleVersion;
 	public int					androidBundleVersionCode;
-	public string 				androidKeystoreNamePath;
+	public string 				androidKeystoreNamePath;		//for Windows
+	public string 				androidKeystoreNamePathOnMAc;	//for Mac
 	public string 				androidKeystorePass;
 	public string 				androidKeyaliasName;
 	public string 				androidKeyaliasPass;
@@ -52,15 +53,15 @@ public class GTBuildSettings {
 	public List<string> ScenesNames{
 		get{
 			List<string> res = new List<string>();
-			
+
 			for(int i=0; i<scenes.Count; i++)
-				//			foreach(GTBuildScene s in scenes)
+//			foreach(GTBuildScene s in scenes)
 				res.Add(scenes[i].name);
-			
+
 			return res;
 		}
 	}
-	
+
 	public string AndroidKeystoreNamePath {
 		get {
 			return this.androidKeystoreNamePath;
@@ -69,7 +70,7 @@ public class GTBuildSettings {
 			androidKeystoreNamePath = value;
 		}
 	}
-	
+
 	public string AndroidKeystorePass {
 		get {
 			return this.androidKeystorePass;
@@ -78,7 +79,7 @@ public class GTBuildSettings {
 			androidKeystorePass = value;
 		}
 	}
-	
+
 	public string AndroidKeyaliasName {
 		get {
 			return this.androidKeyaliasName;
@@ -87,7 +88,7 @@ public class GTBuildSettings {
 			androidKeyaliasName = value;
 		}
 	}
-	
+
 	public string AndroidKeyaliasPass {
 		get {
 			return this.androidKeyaliasPass;
@@ -104,7 +105,7 @@ public class GTBuildSettings {
 			companyName = value;
 		}
 	}
-	
+
 	public string AndroidGameName {
 		get {
 			return this.androidGameName;
@@ -113,7 +114,7 @@ public class GTBuildSettings {
 			androidGameName = value;
 		}
 	}
-	
+
 	public string IOSGameName {
 		get {
 			return this.iOSGameName;
@@ -122,7 +123,7 @@ public class GTBuildSettings {
 			iOSGameName = value;
 		}
 	}
-	
+
 	public string WpGameName {
 		get {
 			return this.wpGameName;
@@ -131,7 +132,7 @@ public class GTBuildSettings {
 			wpGameName = value;
 		}
 	}
-	
+
 	public string AppleID {
 		get {
 			return this.appleID;
@@ -140,7 +141,7 @@ public class GTBuildSettings {
 			appleID = value;
 		}
 	}
-	
+
 	public string GooglePlayServicesID {
 		get {
 			return this.googlePlayServicesID;
@@ -149,7 +150,7 @@ public class GTBuildSettings {
 			googlePlayServicesID = value;
 		}
 	}
-	
+
 	public string CloudProjectID {
 		get {
 			return this.cloudProjectID;
@@ -158,7 +159,7 @@ public class GTBuildSettings {
 			cloudProjectID = value;
 		}
 	}
-	
+
 	public string BundleIdentifier {
 		get {
 			return this.bundleIdentifier;
@@ -167,7 +168,7 @@ public class GTBuildSettings {
 			bundleIdentifier = value;
 		}
 	}
-	
+
 	public string AndroidBundleVersion {
 		get {
 			return this.androidBundleVersion;
@@ -176,7 +177,7 @@ public class GTBuildSettings {
 			androidBundleVersion = value;
 		}
 	}
-	
+
 	public string IOSBundleVersion {
 		get {
 			return this.iOSBundleVersion;
@@ -185,7 +186,7 @@ public class GTBuildSettings {
 			iOSBundleVersion = value;
 		}
 	}
-	
+
 	public int AndroidBundleVersionCode {
 		get {
 			return this.androidBundleVersionCode;
@@ -210,7 +211,7 @@ public class GTBuildSettings {
 			androidBuildFolder = value;
 		}
 	}
-	
+
 	public string IosBuildFolder {
 		get {
 			return this.iosBuildFolder;
@@ -219,7 +220,7 @@ public class GTBuildSettings {
 			iosBuildFolder = value;
 		}
 	}
-	
+
 	public List<GTBuildScene> Scenes {
 		get {
 			return this.scenes;
@@ -265,7 +266,7 @@ public class GTBuildSettings {
 		}
 	}
 	
-	
+
 	
 	public List<string> ResIncludes {
 		get {
@@ -275,7 +276,7 @@ public class GTBuildSettings {
 			resIncludes = value;
 		}
 	}
-	
+
 	public string AndroidBillingBase64Key {
 		get {
 			return this.androidBillingBase64Key;
@@ -290,17 +291,17 @@ public class GTBuildSettings {
 	//--------------------------------------
 	public GTBuildSettings(GTBuildSettings build)
 		:this(build.companyName, build.androidGameName, build.iOSGameName, build.wpGameName, build.bundleIdentifier, build.androidBundleVersion, build.iOSBundleVersion
-		      , build.androidBundleVersionCode, build.androidBillingBase64Key, build.androidKeyStoreFBHash, build.cloudProjectID, build.appleID
-		      , build.googlePlayServicesID, build.buildName, build.androidBuildFolder, build.iosBuildFolder, build.scenes
-		      , build.preBuiltAndroidIconsFolder, build.preBuiltIOSIconsFolder, build.androidIcons, build.iOSIcons, build.resIncludes
+		     , build.androidBundleVersionCode, build.androidBillingBase64Key, build.androidKeyStoreFBHash, build.cloudProjectID, build.appleID
+		     , build.googlePlayServicesID, build.buildName, build.androidBuildFolder, build.iosBuildFolder, build.scenes
+		     , build.preBuiltAndroidIconsFolder, build.preBuiltIOSIconsFolder, build.androidIcons, build.iOSIcons, build.resIncludes
 		     , build.androidKeystoreNamePath, build.androidKeystorePass, build.androidKeyaliasName, build.androidKeyaliasPass){}
-	
+
 	public GTBuildSettings(string pCompany, string pAndGameName, string pIOSGameName, string pWPGameName, string pBundleId, string pABV, string pIBV
-	                       , int pBVC, string pAndroidBillingBase64Key, string pAndroidKeyStoreFBHash, string pCloudProjectID, string pAppleID, string pGPSID
-	                       , string pBName, string pAndFolder, string pIOSFolder, List<GTBuildScene> pScenes, List<string> pAndroidIcons, List<string> pIOSIcons, List<string> pResIncludes
-	                       , string pAndroidKeystoreNamePath, string pAndroidKeystorePass, string pAndroidKeyaliasName, string pAndroidKeyaliasPass)
+       	, int pBVC, string pAndroidBillingBase64Key, string pAndroidKeyStoreFBHash, string pCloudProjectID, string pAppleID, string pGPSID
+       , string pBName, string pAndFolder, string pIOSFolder, List<GTBuildScene> pScenes, List<string> pAndroidIcons, List<string> pIOSIcons, List<string> pResIncludes
+       , string pAndroidKeystoreNamePath, string pAndroidKeystorePass, string pAndroidKeyaliasName, string pAndroidKeyaliasPass)
 		: this(pCompany,pAndGameName,pIOSGameName,pWPGameName,pBundleId,pABV,pIBV,pBVC,pAndroidBillingBase64Key,pAndroidKeyStoreFBHash,pCloudProjectID,pAppleID,pGPSID
-		       , pBName,pAndFolder,pIOSFolder,pScenes, PRE_BUILT_ANDROID_ICONS_FOLDER, PRE_BUILT_IOS_ICONS_FOLDER
+		      , pBName,pAndFolder,pIOSFolder,pScenes, PRE_BUILT_ANDROID_ICONS_FOLDER, PRE_BUILT_IOS_ICONS_FOLDER
 		      , pAndroidIcons, pIOSIcons, pResIncludes, pAndroidKeystoreNamePath, pAndroidKeystorePass, pAndroidKeyaliasName, pAndroidKeyaliasPass){}
 	
 	public GTBuildSettings() 
@@ -308,11 +309,11 @@ public class GTBuildSettings {
 		      , null, "", "", "", ""){}
 	
 	public GTBuildSettings(string pCompany, string pAndGameName, string pIOSGameName, string pWPGameName, string pBundleId, string pABV, string pIBV
-	                       , int pBVC,string pAndroidBillingBase64Key, string pAndroidKeyStoreFBHash, string pCloudProjectID, string pAppleID, string pGPSID
-	                       , string pBName, string pAndFolder, string pIOSFolder, List<GTBuildScene> pScenes, string pPreBuiltAndroidIconsFolder, string pPreBuiltIOSIconsFolder
+       , int pBVC,string pAndroidBillingBase64Key, string pAndroidKeyStoreFBHash, string pCloudProjectID, string pAppleID, string pGPSID
+       , string pBName, string pAndFolder, string pIOSFolder, List<GTBuildScene> pScenes, string pPreBuiltAndroidIconsFolder, string pPreBuiltIOSIconsFolder
 	                       , List<string> pAndroidIcons, List<string> pIOSIcons, List<string> pResIncludes, string pAndroidKeystoreNamePath, string pAndroidKeystorePass
 	                       , string pAndroidKeyaliasName, string pAndroidKeyaliasPass){
-		
+
 		companyName = pCompany;
 		androidGameName = pAndGameName;
 		iOSGameName = pIOSGameName;
@@ -329,12 +330,12 @@ public class GTBuildSettings {
 		cloudProjectID = pCloudProjectID;
 		appleID = pAppleID;
 		googlePlayServicesID = pGPSID;
-		
+
 		androidKeystoreNamePath = pAndroidKeystoreNamePath;
 		androidKeystorePass = pAndroidKeystorePass;
 		androidKeyaliasName = pAndroidKeyaliasName;
 		androidKeyaliasPass = pAndroidKeyaliasPass;
-		
+			
 		if(pScenes != null){
 			scenes = new List<GTBuildScene>();
 			foreach(GTBuildScene s in pScenes)
@@ -356,7 +357,7 @@ public class GTBuildSettings {
 		else
 			iOSIcons = new List<string>();
 		
-		
+	
 		
 		if(pResIncludes != null)
 			resIncludes = new List<string>(pResIncludes);
@@ -371,8 +372,8 @@ public class GTBuildSettings {
 	{
 		return string.Format ("[GTBuildSettings: scenes={0}, AndroidIOSPath={1}, AndroidIcons={2}, iOSPath={3}, iOSIcons={4}" +
 		                      ", resourcesIncludes={5}]"
-		                      , scenesToString(), preBuiltAndroidIconsFolder,androidIconsToString(), preBuiltIOSIconsFolder
-		                      , iOSIconsToString(), ResIncludesToString());
+          , scenesToString(), preBuiltAndroidIconsFolder,androidIconsToString(), preBuiltIOSIconsFolder
+          , iOSIconsToString(), ResIncludesToString());
 	}
 	
 	//--------------------------------------

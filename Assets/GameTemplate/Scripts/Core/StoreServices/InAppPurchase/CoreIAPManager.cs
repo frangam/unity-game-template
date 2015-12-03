@@ -182,9 +182,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			}
 		}
 		#elif UNITY_IPHONE
-		//		if(IOSInAppPurchaseManager.instance != null && IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
-		//			//			IOSInAppPurchaseManager.instance.restorePurchases();
-		//		}
+//		if(IOSInAppPurchaseManager.instance != null && IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
+//			//			IOSInAppPurchaseManager.instance.restorePurchases();
+//		}
 		#endif
 	}
 	
@@ -209,7 +209,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE
 				   && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)){
 					AndroidInAppPurchaseManager.instance.consume(product.Id);
-					
+
 					GTDebug.log("Consuming product we forget to consume previously. Id: "+ product.Id);
 				}
 				
@@ -220,12 +220,12 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				else if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE 
 				        && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)) {
 					restore = true;
-					
+
 					GTDebug.log("Must restore, so we are going to apply rewards. Id: "+ product.Id);
 				}
 				else{
 					GTDebug.log("No restore any thing. Purchased previously? "
-					            +AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)+". Id: "+ product.Id);
+							+AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)+". Id: "+ product.Id);
 				}
 			}
 			
@@ -313,16 +313,16 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		//if all goes right...
 		if(result.isSuccess){
 			UIBaseInAppItem product = getProductByID(result.purchase.SKU); //get the product purchase info
-			
+
 			GTDebug.log("Product Id: "+result.purchase.SKU + ", type: " + product.IaType);
-			
+
 			//consume the purchase if the inapp product type is consumable
 			if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE)
 				AndroidInAppPurchaseManager.instance.consume(result.purchase.SKU);
 			
 			//event to process this purchase
 			OnProcessingPurchaseProduct (result.purchase.SKU, product != null);
-			
+
 		} 
 		else{
 			OnProcessingPurchaseProduct (result.purchase.SKU, false);
@@ -358,7 +358,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(result.isSuccess) {
 			//cambiamos la bandera para avisar que la tienda esta lista
 			IsInited = true;
-			
+
 			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 				GameLoaderManager.Instance.InAppInited = true;
 			
@@ -391,7 +391,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(result.IsSucceeded) {
 			GTDebug.log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
-			
+
 			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 				GameLoaderManager.Instance.InAppInited = true;
 			
@@ -411,7 +411,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	}
 	void OnTransactionComplete (IOSStoreKitResult response){
 		GTDebug.log("Product ID: " + response.ProductIdentifier + ". State: " + response.State);
-		
+
 		
 		switch(response.State) {
 		case InAppPurchaseState.Restored:
@@ -475,10 +475,10 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	void OnInitComplete() {
 		if(WP8InAppPurchasesManager.instance.products != null){
 			IsInited = true;
-			
+
 			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 				GameLoaderManager.Instance.InAppInited = true;
-			
+
 			numProducts = WP8InAppPurchasesManager.instance.products.Count;
 			productsWP = WP8InAppPurchasesManager.instance.products;
 			//			dispatcher.dispatch(RETRIEVED_PRODUCTS, WP8InAppPurchasesManager.instance.products);
@@ -585,7 +585,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	public virtual void OnRetrievedProducts (bool success = true)
 	{
 		GTDebug.log("Succes? "+success);
-		
+
 		if(success){
 			#if UNITY_ANDROID
 			List<GoogleProductTemplate> products = AndroidInAppPurchaseManager.instance.inventory.products;
@@ -598,7 +598,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE
 				   && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)){
 					AndroidInAppPurchaseManager.instance.consume(product.Id);
-					
+
 					GTDebug.log("Consuming previous product not consumed. Id: "+product.Id);
 				}
 				
@@ -619,9 +619,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 					product.applyReward();
 				}
 			}
-			
+
 			GTDebug.log("Need to restore products? "+needRestore);
-			
+
 			if(needRestore && BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN){
 				GameLoaderManager.Instance.InAppAllProductsRestored = true;
 				GameLoaderManager.Instance.InAppInited = true;
@@ -674,9 +674,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	
 	private UIBaseInAppItem getProductByID(string id){
 		UIBaseInAppItem product = null;
-		
+
 		GTDebug.log("Product id " + id + ". Products? "+(_products != null));
-		
+
 		if(_products != null){
 			foreach(UIBaseInAppItem p in _products){
 				if(p.Id.Equals(id)){

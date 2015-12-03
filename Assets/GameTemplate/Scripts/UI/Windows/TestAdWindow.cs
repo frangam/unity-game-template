@@ -25,7 +25,7 @@ public class TestAdWindow : UIBaseWindow {
 
 		switch(adType){
 		case AdType.INTERSTITIAL: AdsHandler.Instance.testOnInterstitialClose(); break;
-		case AdType.VIDEO: AdsHandler.Instance.testOnVideoStarted(); break;
+		case AdType.VIDEO: AdsHandler.Instance.testOnVideoFinished(); break;
 		}
 	}
 }

@@ -32,14 +32,19 @@ public class AutoType : UIBaseButton {
 	private Text lbMessage;
 	private bool stopType = false;
 	private bool initedTyping = false;
+	private bool inited = false;
 	
-	void OnEnable(){
-		if(!managedByWindow)
+	public override void OnEnable ()
+	{
+		//		base.OnEnable ();
+		
+		if(!managedByWindow && !inited)
 			init();
 		
 		if(!initStoped && !managedByWindow)
 			initType();
 	}
+	
 	
 	//	void Start(){
 	//		if(!managedByWindow)
@@ -70,6 +75,8 @@ public class AutoType : UIBaseButton {
 			if(initStoped){
 				lbMessage.text = stoppedMessage;
 			}
+			
+			inited = !string.IsNullOrEmpty(message);
 		}
 	}
 	
@@ -90,11 +97,12 @@ public class AutoType : UIBaseButton {
 					GetComponent<AudioSource>().PlayOneShot(sounds[Random.Range(0, sounds.Length)]);
 				}
 				
-				yield return 0;
-				yield return new WaitForSeconds (letterPause);
+				//				yield return 0;
 				
 				if(stopType)
 					break;
+				
+				yield return new WaitForSeconds (letterPause);
 			}      
 			
 			if(loopMessage && !stopType){
@@ -104,7 +112,8 @@ public class AutoType : UIBaseButton {
 	}
 	
 	public virtual void initType(string putThisMessage = null){
-		init(putThisMessage);
+		if(!inited)
+			init(putThisMessage);
 		
 		stopType = false;
 		StartCoroutine(TypeText ());
