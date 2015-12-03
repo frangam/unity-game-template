@@ -1,58 +1,85 @@
-__________________________________________________________________	
+using UnityEngine;
+using System.Collections;
 
-	MonoBehaviour Class
-___________________________________________________________________	
-
+public class #SCRIPTNAME# : MonoBehaviour {
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
+	#region Static Attributes
+	
+	#endregion
 	
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
+	#region Constants
+	
+	#endregion
 	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
-	[SerializeField]
-	private 
+	#region Setting Attributes
+//	[SerializeField]
+//	private 
+	
+	#endregion
+	
 	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
+	#region Private Attributes
+	
+	#endregion
+	
 	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
+	#region Getters/Setters
 	
-	//--------------------------------------
-	// Constructors
-	//--------------------------------------
+	#endregion
+	
 	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
+	#region Overriden Methods
+	
+	#endregion
+	
 	
 	//--------------------------------------
 	// Unity Methods
 	//--------------------------------------
 	#region Unity
-	void Start(){
-	
+	public void Awake(){
+		
 	}
 	#endregion
+	
 	
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
+	#region Private Methods
+	
+	#endregion
+	
 	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	#region Public Methods
+	
+	#endregion
+	
 	
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
-	public void OnEvent(CEvent e){
-
-	}
+	#region Events
+	
+	#endregion
+}

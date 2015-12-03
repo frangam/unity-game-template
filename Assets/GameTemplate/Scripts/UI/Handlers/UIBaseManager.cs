@@ -138,7 +138,9 @@ public class UIBaseManager : MonoBehaviour {
 	public virtual void loadWindows(){
 		if(locateAllWindows){
 			UIBaseWindow[] windowsArr = FindObjectsOfType<UIBaseWindow>() as UIBaseWindow[];
-			windows = new List<UIBaseWindow>();
+
+			if(windows == null)
+				windows = new List<UIBaseWindow>();
 			
 			foreach(UIBaseWindow w in windowsArr){
 				if(!windows.Contains(w))
