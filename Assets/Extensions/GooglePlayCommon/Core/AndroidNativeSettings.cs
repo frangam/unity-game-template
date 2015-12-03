@@ -17,8 +17,8 @@ using UnityEditor;
 
 public class AndroidNativeSettings : ScriptableObject {
 
-	public const string VERSION_NUMBER = "6.6";
-	public const string GOOGLE_PLAY_SDK_VERSION_NUMBER = "7571000";
+	public const string VERSION_NUMBER = "7.1.1";
+	public const string GOOGLE_PLAY_SDK_VERSION_NUMBER = "8115000";
 
 
 	public bool EnablePlusAPI 		= true;
@@ -38,15 +38,21 @@ public class AndroidNativeSettings : ScriptableObject {
 	public bool EnableATCSupport = false;
 
 
+	//Soomla
+	public bool EnableSoomla = false;
+	public string SoomlaDownloadLink = "http://goo.gl/7LYwuj";
+	public string SoomlaDocsLink =  "https://goo.gl/es5j1N";
+	public string SoomlaGameKey = "" ;
+	public string SoomlaEnvKey = "" ;
+
 	public bool SaveCameraImageToGallery = false;
 	public bool UseProductNameAsFolderName = true;
 	public string GalleryFolderName = string.Empty;
 	public int MaxImageLoadSize = 512;
 	public AN_CameraCaptureType CameraCaptureMode;
+	public AndroidCameraImageFormat ImageFormat = AndroidCameraImageFormat.JPG;
 
-
-
-	public bool ShowPluginSettings = false;
+	
 	public bool ShowAppPermissions = false;
 	public bool EnableBillingAPI = true;
 	public bool EnablePSAPI = true;
@@ -62,12 +68,7 @@ public class AndroidNativeSettings : ScriptableObject {
 
 
 
-	public bool ShowStoreKitParams = false;
-	public bool ShowCameraAndGalleryParams = false;
-	public bool ShowLocalNotificationParams = false;
-	public bool ShowPushNotificationParams = false;
 	public bool ThirdPartyParams = false;
-	public bool ShowPSSettings = false;
 	public bool ShowPSSettingsResources = false;
 	public bool ShowActions = false;
 	public bool GCMSettingsActinve = false;
@@ -80,6 +81,7 @@ public class AndroidNativeSettings : ScriptableObject {
 	public bool ExternalAppsAPI = true;
 	public bool PoupsandPreloadersAPI = true;
 	public bool CheckAppLicenseAPI = true;
+	public bool NetworkStateAPI = false;
 
 	public bool InAppPurchasesAPI = true;
 
@@ -104,6 +106,8 @@ public class AndroidNativeSettings : ScriptableObject {
 
 	public string GooglePlayServiceAppID = "0";
 
+	public int ToolbarSelectedIndex = 0;
+
 
 	#if ATC_SUPPORT_ENABLED
 	public  ObscuredString base64EncodedPublicKey = "REPLACE_WITH_YOUR_PUBLIC_KEY";
@@ -111,10 +115,14 @@ public class AndroidNativeSettings : ScriptableObject {
 	public  string base64EncodedPublicKey = "REPLACE_WITH_YOUR_PUBLIC_KEY";
 	#endif
 
+	public bool ShowStoreProducts = true;
+	public List<GoogleProductTemplate> InAppProducts = new List<GoogleProductTemplate>();
 
+	public bool ShowLeaderboards = true;
+	public List<GPLeaderBoard> Leaderboards = new List<GPLeaderBoard>();
 
-	
-	public List<string> InAppProducts = new List<string>();
+	public bool ShowAchievements = true;
+	public List<GPAchievement> Achievements = new List<GPAchievement>();
 
 	public bool ShowWhenAppIsForeground = true;
 	public bool EnableVibrationLocal = false;
@@ -128,6 +136,7 @@ public class AndroidNativeSettings : ScriptableObject {
 	public string ParseAppId = "YOUR_PARSE_APP_ID";
 	public string DotNetKey = "YOUR_PARSE_DOT_NET_KEY";
 
+	public bool ReplaceOldNotificationWithNew = false;
 	public bool ShowPushWhenAppIsForeground = true;
 	public bool EnableVibrationPush = false;
 	public Texture2D PushNotificationIcon = null;

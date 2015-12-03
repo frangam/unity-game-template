@@ -12,18 +12,29 @@ public class AN_SocialSharingProxy {
 	// --------------------------------------
 	// Social
 	// --------------------------------------
-	
+
+	public static void GetLaunchDeepLinkId(){
+		CallActivityFunction("GetLaunchDeepLinkId");
+	}
+
+	public static void GooglePlusShare(string message, string[] images) {
+		CallActivityFunction("GooglePlusShare", message, images);
+	}
+
+	public static void StartGooglePlusShareIntent(string text, string media) {
+		CallActivityFunction("StartGooglePlusShare", text, media);
+	}
 	
 	public static void StartShareIntent(string caption, string message,  string subject, string filters) {
 		CallActivityFunction("StartShareIntent", caption, message, subject, filters);
 	}
 	
-	public static void StartShareIntent(string caption, string message, string subject, string media, string filters) {
-		CallActivityFunction("StartShareIntentMedia", caption, message, subject, media, filters);
+	public static void StartShareIntent(string caption, string message, string subject, string media, string filters, bool saveImageToGallery = false) {
+		CallActivityFunction("StartShareIntentMedia", caption, message, subject, media, filters, saveImageToGallery);
 	}
 	
-	public static void SendMailWithImage(string caption, string message,  string subject, string email, string media) {
-		CallActivityFunction("SendMailWithImage", caption, message, subject, email, media);
+	public static void SendMailWithImage(string caption, string message,  string subject, string email, string media, bool saveImageToGallery = false) {
+		CallActivityFunction("SendMailWithImage", caption, message, subject, email, media, saveImageToGallery);
 	}
 	
 	

@@ -9,8 +9,8 @@ public class GK_RTM_MatchStartedResult : ISN_Result {
 		_Match = match;
 	}
 	
-	public GK_RTM_MatchStartedResult(string errorData):base(false) {
-		SetErrorData(errorData);
+	public GK_RTM_MatchStartedResult(string errorData):base(errorData) {
+
 	}
 	
 	

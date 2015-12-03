@@ -12,23 +12,15 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GoogleCloudManager : SA_Singleton<GoogleCloudManager> {
-
-	//Events
-	public const string STATE_DELETED     = "key_deleted";
-	public const string STATE_UPDATED     = "state_updated";
-	public const string STATE_LOADED      = "state_loaded";
-	public const string STATE_RESOLVED    = "state_resolved";
-	public const string STATE_CONFLICT    = "state_conflict";
-	public const string ALL_STATES_LOADED = "all_states_loaded";
-
+	
 
 	//Actions
-	public static Action<GoogleCloudResult> ActionStateDeleted 		=  delegate {};
-	public static Action<GoogleCloudResult> ActionStateUpdated 		=  delegate {};
-	public static Action<GoogleCloudResult> ActionStateLoaded 		=  delegate {};
-	public static Action<GoogleCloudResult> ActionStateResolved 	=  delegate {};
-	public static Action<GoogleCloudResult> ActionStateConflict 	=  delegate {};
-	public static Action<GoogleCloudResult> ActionAllStatesLoaded 	=  delegate {};
+	public static event Action<GoogleCloudResult> ActionStateDeleted 		=  delegate {};
+	public static event Action<GoogleCloudResult> ActionStateUpdated 		=  delegate {};
+	public static event Action<GoogleCloudResult> ActionStateLoaded 		=  delegate {};
+	public static event Action<GoogleCloudResult> ActionStateResolved 	=  delegate {};
+	public static event Action<GoogleCloudResult> ActionStateConflict 	=  delegate {};
+	public static event Action<GoogleCloudResult> ActionAllStatesLoaded 	=  delegate {};
 
 
 
@@ -164,7 +156,6 @@ public class GoogleCloudManager : SA_Singleton<GoogleCloudManager> {
 		}
 
 		ActionAllStatesLoaded(result);
-		dispatch (ALL_STATES_LOADED, result);
 
 	}
 
@@ -183,7 +174,6 @@ public class GoogleCloudManager : SA_Singleton<GoogleCloudManager> {
 
 		//set state data storeData [2]
 		ActionStateConflict(result);
-		dispatch (STATE_CONFLICT, result);
 	}
 
 
@@ -202,7 +192,6 @@ public class GoogleCloudManager : SA_Singleton<GoogleCloudManager> {
 
 		//set state data storeData [2]
 		ActionStateLoaded(result);
-		dispatch (STATE_LOADED, result);
 	}
 
 	private void OnStateResolved(string data) {
@@ -217,7 +206,6 @@ public class GoogleCloudManager : SA_Singleton<GoogleCloudManager> {
 
 		//set state data storeData [2]
 		ActionStateResolved(result);
-		dispatch (STATE_RESOLVED, result);
 	}
 
 	private void OnStateUpdated(string data) {
@@ -231,7 +219,6 @@ public class GoogleCloudManager : SA_Singleton<GoogleCloudManager> {
 
 		//set state data storeData [2]
 		ActionStateUpdated(result);
-		dispatch (STATE_UPDATED, result);
 	}
 
 	private void OnKeyDeleted(string data) {
@@ -241,7 +228,6 @@ public class GoogleCloudManager : SA_Singleton<GoogleCloudManager> {
 		GoogleCloudResult result = new GoogleCloudResult (storeData [0], storeData [1]);
 
 		ActionStateDeleted(result);
-		dispatch (STATE_DELETED, result);
 	}
 
 	private void OnCloudConnected(string data) {

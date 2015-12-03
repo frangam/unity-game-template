@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnionAssets.FLE;
 using System;
 using System.Text;
 using System.Security.Cryptography;
@@ -9,7 +8,7 @@ using System.Collections.Generic;
 public class TW_OAuthAPIRequest : MonoBehaviour {
 
 
-	public Action<TW_APIRequstResult> OnResult =  delegate {};
+	public event Action<TW_APIRequstResult> OnResult =  delegate {};
 
 	private bool IsFirst = true;
 	private string GetParams = string.Empty;
@@ -132,7 +131,8 @@ public class TW_OAuthAPIRequest : MonoBehaviour {
 		oauth_token_secret = AndroidTwitterManager.instance.AccessTokenSecret;
 		#endif
 
-		
+
+#if !UNITY_WP8 && !UNITY_METRO
 		string signingKey = Uri.EscapeDataString(consumerSecret) + "&" + Uri.EscapeDataString(oauth_token_secret);
 		//GS - Sign the request
 		HMACSHA1 hasher = new HMACSHA1(new ASCIIEncoding().GetBytes(signingKey));
@@ -155,6 +155,7 @@ public class TW_OAuthAPIRequest : MonoBehaviour {
 		Headers.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		Headers.Add("Authorization", authorizationHeaderParams);
 
+#endif
 
 		WWW www = new WWW(requestUrl, null,  Headers);
 		yield return www;

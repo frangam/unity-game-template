@@ -21,6 +21,8 @@ public class ISDSettingsEditor : Editor
 		GUI.changed = false;
 
 
+		GUI.enabled = true;
+
 		EditorGUILayout.LabelField("IOS Deploy Settings", EditorStyles.boldLabel);
 		EditorGUILayout.Space();
 
@@ -34,11 +36,15 @@ public class ISDSettingsEditor : Editor
 		EditorGUILayout.Space();
 		PlistValues ();
 		EditorGUILayout.Space();
+
+		GUI.enabled = true;
 		AboutGUI();
 
 		if(GUI.changed) {
 			DirtyEditor();
 		}
+
+
 
 	}
 
@@ -410,6 +416,26 @@ public class ISDSettingsEditor : Editor
 		
 		SelectableLabelField(SdkVersion, ISDSettings.VERSION_NUMBER);
 		SelectableLabelField(SupportEmail, "stans.assets@gmail.com");
+
+		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("Note: This version of IOS Deploy designed for Stan's Assets");
+		EditorGUILayout.LabelField("plugins internal use only. If you want to use IOS Deploy  ");
+		EditorGUILayout.LabelField("for your project needs, please, ");
+		EditorGUILayout.LabelField("purchase a copy of IOS Deploy plugin.");
+
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.Space();
+
+		if(GUILayout.Button("Documentation",  GUILayout.Width(150))) {
+			Application.OpenURL("https://goo.gl/sOJFXJ");
+		}
+
+		if(GUILayout.Button("Purchase",  GUILayout.Width(150))) {
+			Application.OpenURL("https://goo.gl/Nqbuuv");
+		}
+
+		EditorGUILayout.EndHorizontal();
+
 	}
 	
 	private void SelectableLabelField(GUIContent label, string value) {

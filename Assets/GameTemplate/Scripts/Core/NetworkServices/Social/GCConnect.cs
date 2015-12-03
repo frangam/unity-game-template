@@ -60,7 +60,7 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 			//--
 			// Player Scores
 			//--
-			GameCenterManager.OnPlayerScoreLoaded += OnPlayerScoreLoaded;
+			GameCenterManager.OnLeadrboardInfoLoaded += OnLeadrboardInfoLoaded;
 			GameCenterManager.OnScoreSubmitted += OnScoreSubmitted;
 			
 			//Initializing Game Cneter class. This action will triger authentication flow
@@ -123,15 +123,15 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		}
 	}
 	
-	private void OnPlayerScoreLoaded (GK_PlayerScoreLoadedResult result) {
+	private void OnLeadrboardInfoLoaded (GK_LeaderboardResult result) {
 		if(result.IsSucceeded) {
 			scoresLoaded++;
 			
-			if(scoresLoaded >= totalScoresToLoad)
-				GameCenterManager.OnPlayerScoreLoaded -= OnPlayerScoreLoaded;
+			//			if(scoresLoaded >= totalScoresToLoad)
+			//				GameCenterManager.OnPlayerScoreLoaded -= OnPlayerScoreLoaded;
 			
-			GK_Score score = result.loadedScore;
-			GTDebug.log("Leaderboard ID: "+ score.leaderboardId + " Player score loaded: [Long: " + score.GetLongScore()+"] [Double: "+score.GetDoubleScore()+"]");
+			GK_Score score = result.Leaderboard.GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL);
+			GTDebug.log("Leaderboard ID: "+ score.LeaderboardId + " Player score loaded: [Long: " + score.LongScore+"] [Milliseconds: "+score.Milliseconds.TotalMilliseconds+"]");
 			ScoresHandler.Instance.loadBestScoreFromStore(score);
 		}
 		else{

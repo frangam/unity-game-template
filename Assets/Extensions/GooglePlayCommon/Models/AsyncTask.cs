@@ -1,8 +1,7 @@
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
-public class AsyncTask : EventDispatcher {
+public class AsyncTask : MonoBehaviour {
 
 
 	void Awake() {

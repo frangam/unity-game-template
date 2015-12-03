@@ -15,17 +15,19 @@ public class IOSBillingInitChecker
 			_listener();
 		} else {
 
-			IOSInAppPurchaseManager.Instance.addEventListener(IOSInAppPurchaseManager.STORE_KIT_INITIALIZED, OnStoreKitInit);
+			IOSInAppPurchaseManager.OnStoreKitInitComplete += HandleOnStoreKitInitComplete;
 			if(!IOSInAppPurchaseManager.Instance.IsWaitingLoadResult) {
-				IOSInAppPurchaseManager.Instance.loadStore();
+				IOSInAppPurchaseManager.Instance.LoadStore();
 			}
 		}
 	}
 
-	private void OnStoreKitInit() {
-		IOSInAppPurchaseManager.Instance.removeEventListener(IOSInAppPurchaseManager.STORE_KIT_INITIALIZED, OnStoreKitInit);
+	void HandleOnStoreKitInitComplete (ISN_Result obj) {
+		IOSInAppPurchaseManager.OnStoreKitInitComplete -= HandleOnStoreKitInitComplete;
 		_listener();
 	}
+
+
 
 }
 

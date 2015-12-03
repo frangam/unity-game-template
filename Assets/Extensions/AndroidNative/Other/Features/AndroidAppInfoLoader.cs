@@ -1,9 +1,10 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
 public class AndroidAppInfoLoader : SA_Singleton<AndroidAppInfoLoader> {
 	
-	public static string PACKAGE_INFO_LOADED = "package_info_loaded";
+	public static event Action<PackageAppInfo> ActionPacakgeInfoLoaded = delegate{};
 	
 	public PackageAppInfo PacakgeInfo =  new PackageAppInfo();
 
@@ -24,7 +25,8 @@ public class AndroidAppInfoLoader : SA_Singleton<AndroidAppInfoLoader> {
 		PacakgeInfo.sharedUserId 		 = appData[3];
 		PacakgeInfo.sharedUserLabel 	 = appData[4];
 
-		dispatch(PACKAGE_INFO_LOADED, PacakgeInfo);
+		ActionPacakgeInfoLoaded(PacakgeInfo);
+
 	}
 
 }

@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 
 public class TwitterPostingTask : AsyncTask {
@@ -8,6 +8,9 @@ public class TwitterPostingTask : AsyncTask {
 	private Texture2D 	_texture = null;
 
 	private TwitterManagerInterface _controller;
+
+
+	public event Action<TWResult> ActionComplete = delegate{};
 
 	public static TwitterPostingTask Cretae() {
 		return	new GameObject("TwitterPositngTask").AddComponent<TwitterPostingTask>();
@@ -21,9 +24,10 @@ public class TwitterPostingTask : AsyncTask {
 
 
 		if(_controller.IsInited) {
-			OnTWInited();
+			OnTWInited(null);
 		} else {
-			_controller.addEventListener(TwitterEvents.TWITTER_INITED, OnTWInited);
+
+			_controller.OnTwitterInitedAction += OnTWInited;
 			_controller.Init();
 		}
 
@@ -31,55 +35,47 @@ public class TwitterPostingTask : AsyncTask {
 
 
 
-	private void OnTWInited() {
-		_controller.removeEventListener(TwitterEvents.TWITTER_INITED, OnTWInited);
+	private void OnTWInited(TWResult result) {
+		_controller.OnTwitterInitedAction -= OnTWInited;
 
 		if(_controller.IsAuthed) {
-			OnTWAuth();
+			OnTWAuth(null);
 		} else {
-			_controller.addEventListener(TwitterEvents.AUTHENTICATION_FAILED, OnTWAuthFailed);
-			_controller.addEventListener(TwitterEvents.AUTHENTICATION_SUCCEEDED, OnTWAuth);
+			_controller.OnAuthCompleteAction += OnTWAuth;
 			_controller.AuthenticateUser();
 		}
 	}
 	
 	
-	private void OnTWAuth() {
-		_controller.removeEventListener(TwitterEvents.AUTHENTICATION_FAILED, OnTWAuthFailed);
-		_controller.removeEventListener(TwitterEvents.AUTHENTICATION_SUCCEEDED, OnTWAuth);
+	private void OnTWAuth(TWResult result) {
 
+		_controller.OnAuthCompleteAction -= OnTWAuth;
 
-		_controller.addEventListener(TwitterEvents.POST_FAILED, 	OnPostFailed);
-		_controller.addEventListener(TwitterEvents.POST_SUCCEEDED, 	OnPost);
+		if(result.IsSucceeded) {
+			_controller.OnPostingCompleteAction +=  OnPost;
 
-		if(_texture != null) {
-			_controller.Post(_status, _texture);
-		} else  {
-			_controller.Post(_status);
+			if(_texture != null) {
+				_controller.Post(_status, _texture);
+			} else  {
+				_controller.Post(_status);
+			}
+		} else {
+			TWResult res =  new TWResult(false, "Auth failed");
+			ActionComplete(res);
 		}
 
+
+
+	
+
 	}
 
 
-	private void OnTWAuthFailed() {
-		_controller.removeEventListener(TwitterEvents.AUTHENTICATION_FAILED, OnTWAuthFailed);
-		_controller.removeEventListener(TwitterEvents.AUTHENTICATION_SUCCEEDED, OnTWAuth);
-		
-		TWResult res =  new TWResult(false, "Auth failed");
-		dispatch(BaseEvent.COMPLETE, res);
+	
+	private void OnPost(TWResult res) {
+		_controller.OnPostingCompleteAction -=  OnPost;
+		ActionComplete(res);
 	}
 	
-	
-	private void OnPost(CEvent e) {
-		TWResult res = e.data as TWResult;
-		dispatch(BaseEvent.COMPLETE, res);
-	}
-	
-	private void OnPostFailed(CEvent e) {
-		TWResult res = e.data as TWResult;
-		dispatch(BaseEvent.COMPLETE, res);
-	}
-
-
 
 }

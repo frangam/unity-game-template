@@ -1,9 +1,12 @@
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class TW_APIRequest : EventDispatcher {
+public abstract class TW_APIRequest : MonoBehaviour {
+
+
+	public event Action<TW_APIRequstResult> ActionComplete = delegate{};
 
 	private bool IsFirst = true;
 	private string GetParams = string.Empty;
@@ -28,12 +31,14 @@ public abstract class TW_APIRequest : EventDispatcher {
 
 	public void Send() {
 		if(TwitterApplicationOnlyToken.instance.currentToken == null) {
-			TwitterApplicationOnlyToken.instance.addEventListener(BaseEvent.COMPLETE, OnTokenLoaded);
+			TwitterApplicationOnlyToken.instance.ActionComplete += OnTokenLoaded;
 			TwitterApplicationOnlyToken.instance.RetrieveToken();
 		} else {
 			StartCoroutine(Request());
 		}
 	}
+
+
 	
 
 	public void AddParam(string name, int value) {
@@ -62,6 +67,9 @@ public abstract class TW_APIRequest : EventDispatcher {
 	// Protected Methods
 	// --------------------------------------
 
+	protected void SendCompleteResult(TW_APIRequstResult res) {
+		ActionComplete(res);
+	}
 
 	protected void SetUrl(string url) {
 		requestUrl = url;
@@ -84,7 +92,7 @@ public abstract class TW_APIRequest : EventDispatcher {
 		if(www.error == null) {
 			OnResult(www.text);
 		} else {
-			dispatch(BaseEvent.COMPLETE, new TW_APIRequstResult(false, www.error));
+			ActionComplete(new TW_APIRequstResult(false, www.error));
 		}
 
 
@@ -101,12 +109,12 @@ public abstract class TW_APIRequest : EventDispatcher {
 
 	private void OnTokenLoaded() {
 
-		TwitterApplicationOnlyToken.instance.removeEventListener(BaseEvent.COMPLETE, OnTokenLoaded);
+		TwitterApplicationOnlyToken.instance.ActionComplete -= OnTokenLoaded;
 
 		if(TwitterApplicationOnlyToken.instance.currentToken != null) {
 			StartCoroutine(Request());
 		} else {
-			dispatch(BaseEvent.COMPLETE, new TW_APIRequstResult(false, "Retirving auth token failed"));
+			ActionComplete( new TW_APIRequstResult(false, "Retirving auth token failed"));
 		}
 
 	}

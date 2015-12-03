@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 
 public class FBPostingTask : AsyncTask {
@@ -14,7 +14,7 @@ public class FBPostingTask : AsyncTask {
 	private string _actionLink = "";
 	private string _reference = "";
 
-
+	public event Action<FBPostResult> ActionComplete = delegate{};
 
 	public static FBPostingTask Cretae() {
 		return	new GameObject("PostingTask").AddComponent<FBPostingTask>();
@@ -47,7 +47,7 @@ public class FBPostingTask : AsyncTask {
 		if(SPFacebook.instance.IsInited) {
 			OnFBInited();
 		} else {
-			SPFacebook.instance.addEventListener(FacebookEvents.FACEBOOK_INITED, 			 OnFBInited);
+			SPFacebook.Instance.OnInitCompleteAction += OnFBInited;
 			SPFacebook.instance.Init();
 		}
 
@@ -56,53 +56,48 @@ public class FBPostingTask : AsyncTask {
 
 
 	private void OnFBInited() {
-		SPFacebook.instance.removeEventListener(FacebookEvents.FACEBOOK_INITED, 			 OnFBInited);
+		SPFacebook.Instance.OnInitCompleteAction -= OnFBInited;
 		if(SPFacebook.instance.IsLoggedIn) {
-			OnFBAuth();
+			OnFBAuth(null);
 		} else {
-			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_FAILED,  	 OnFBAuthFailed);
-			SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	 OnFBAuth);
+			SPFacebook.Instance.OnAuthCompleteAction += OnFBAuth;
 			SPFacebook.instance.Login();
 		}
 	}
 
 
-	private void OnFBAuth() {
-		SPFacebook.instance.removeEventListener(FacebookEvents.AUTHENTICATION_FAILED,  	     OnFBAuthFailed);
-		SPFacebook.instance.removeEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	 OnFBAuth);
+	private void OnFBAuth(FB_APIResult result) {
+
+		SPFacebook.Instance.OnAuthCompleteAction -= OnFBAuth;
 
 
-		SPFacebook.instance.addEventListener(FacebookEvents.POST_FAILED,  			OnPostFailed);
-		SPFacebook.instance.addEventListener(FacebookEvents.POST_SUCCEEDED,   		OnPost);
+		if(SPFacebook.Instance.IsLoggedIn) {
 
-		SPFacebook.instance.Post(_toId,
-		                         _link,
-		                         _linkName,
-		                         _linkCaption,
-		                         _linkDescription,
-		                         _picture,
-		                         _actionName,
-		                         _actionLink,
-		                         _reference);
+			SPFacebook.Instance.OnPostingCompleteAction += HandleOnPostingCompleteAction;
+			SPFacebook.instance.Post(_toId,
+			                         _link,
+			                         _linkName,
+			                         _linkCaption,
+			                         _linkDescription,
+			                         _picture,
+			                         _actionName,
+			                         _actionLink,
+			                         _reference);
+
+		} else {
+			FBResult res =  new FBResult("", "Auth failed");
+			FBPostResult postResult =  new FBPostResult(res);
+
+			ActionComplete(postResult);
+		}
+
+
 
 	}
-	private void OnFBAuthFailed() {
-		SPFacebook.instance.removeEventListener(FacebookEvents.AUTHENTICATION_FAILED,  	 	OnFBAuthFailed);
-		SPFacebook.instance.removeEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	OnFBAuth);
 
-		FBResult res =  new FBResult("", "Auth failed");
-		dispatch(BaseEvent.COMPLETE, res);
+	void HandleOnPostingCompleteAction (FBPostResult res) {
+		SPFacebook.Instance.OnPostingCompleteAction -= HandleOnPostingCompleteAction;
+		ActionComplete(res);
 	}
-
-
-	private void OnPost(CEvent e) {
-		FBResult res = e.data as FBResult;
-		dispatch(BaseEvent.COMPLETE, res);
-	}
-
-	private void OnPostFailed(CEvent e) {
-		FBResult res = e.data as FBResult;
-		dispatch(BaseEvent.COMPLETE, res);
-	}
-
+	
 }

@@ -25,6 +25,7 @@ public class UILoadingPanel : Singleton<UILoadingPanel> {
 	// Private Attributes
 	//--------------------------------------
 	private CanvasGroup panel;
+	private float currentProgress;
 	
 	//--------------------------------------
 	// Unity Methods
@@ -57,11 +58,25 @@ public class UILoadingPanel : Singleton<UILoadingPanel> {
 		}
 	}
 	
-	public void changeProgress(float pProgress){
+	public void changeProgress(float pProgress, bool addToCurrentProgress = true,float divideSliderValueFactor = 1){
+		//add or set current progress
+		if(addToCurrentProgress){
+			currentProgress += pProgress;
+		}
+		else if(!addToCurrentProgress && currentProgress > 0){
+			currentProgress += pProgress;
+		}
+		else if(!addToCurrentProgress){
+			currentProgress = pProgress; 
+		}
+		
+		
 		if(slider)
-			slider.value = pProgress/0.9f;
+			slider.value = currentProgress/divideSliderValueFactor;
 		
 		if(lbProgress)
-			lbProgress.text = ((int)(pProgress*100)).ToString()+"%";
+			lbProgress.text = ((int)(currentProgress*100)).ToString()+"%";
+		
+		
 	}
 }

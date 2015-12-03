@@ -31,8 +31,10 @@ public class UIBaseGameControlButtonsWindow : UIBaseWindow {
 	public void releaseTouchDown(){
 		if(axisTouchButtons != null && axisTouchButtons.Length > 0){
 			foreach(AxisTouchButton b in axisTouchButtons){
-				GTDebug.log("Releasing button " +b.name);
-				b.OnPointerUp(null);
+				if(b != null && b.isActiveAndEnabled){
+					GTDebug.log("Releasing button " +b.name);
+					b.OnPointerUp(null);
+				}
 			}
 		}
 	}

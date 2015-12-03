@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 
@@ -12,7 +13,6 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		if(back == null) {
 			back = IOSNativePreviewBackButton.Create();
 		}
-
 	}
 
 
@@ -77,6 +77,12 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 
 		}
 
+		StartX = XStartPos;
+		StartY += YButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "ReplayKit")) {
+			Application.LoadLevel("ReplayKitExampleScene");
+		}
+
 
 		StartX = XStartPos;
 		StartY += YLableStep;
@@ -112,6 +118,11 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		StartY += YLableStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Native Popups and Events")) {
 			Application.LoadLevel("PopUpsAndAppEventsHandler");
+		}
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Media Player API")) {
+			Application.LoadLevel("MediaExample");
 		}
 
 		StartX += XButtonStep;

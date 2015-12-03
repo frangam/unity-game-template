@@ -50,8 +50,8 @@ public class AN_NotificationProxy {
 	// Google Cloud Message
 	// --------------------------------------
 
-	public static void InitPushNotifications(string icon, string sound, bool vibration, bool showWhenAppForeground) {
-		CallActivityFunction ("InitPushNotifications", icon, sound, vibration.ToString(), showWhenAppForeground.ToString());
+	public static void InitPushNotifications(string icon, string sound, bool vibration, bool showWhenAppForeground, bool replaceOldNotificationWithNew) {
+		CallActivityFunction ("InitPushNotifications", icon, sound, vibration.ToString(), showWhenAppForeground.ToString(), replaceOldNotificationWithNew.ToString());
 	}
 
 	public static void InitParsePushNotifications(string appId, string dotNetKey) {

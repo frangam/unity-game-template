@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,7 +16,8 @@ using System.Collections.Generic;
 //https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 
 public class TW_UserTimeLineRequest : TW_APIRequest {
-	
+
+
 
 	public static TW_UserTimeLineRequest Create() {
 		return new GameObject("TW_TimeLineRequest").AddComponent<TW_UserTimeLineRequest>();
@@ -30,7 +31,6 @@ public class TW_UserTimeLineRequest : TW_APIRequest {
 
 	protected override void OnResult(string data) {
 
-		Debug.Log (data);
 
 		List<TweetTemplate> loadedTweets =  new List<TweetTemplate>();
 		List<object> tweets =  ANMiniJSON.Json.Deserialize(data) as List<object>;
@@ -68,9 +68,8 @@ public class TW_UserTimeLineRequest : TW_APIRequest {
 
 		TW_APIRequstResult result = new TW_APIRequstResult(true, data);
 		result.tweets = loadedTweets;
-		dispatch(BaseEvent.COMPLETE, result);
 
-
+		SendCompleteResult(result);
 
 	}
 

@@ -10,7 +10,6 @@
 
 
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class MultiplayerManagerExample : MonoBehaviour {
@@ -21,16 +20,34 @@ public class MultiplayerManagerExample : MonoBehaviour {
 
 	void Awake() {
 
-		GameCenterManager.init();
+		GameCenterManager.Init();
 
 		GameCenter_RTM.ActionMatchStarted += HandleActionMatchStarted;
 		GameCenter_RTM.ActionPlayerStateChanged += HandleActionPlayerStateChanged;
 		GameCenter_RTM.ActionDataReceived += HandleActionDataReceived;
+
+
+		GameCenterInvitations.ActionPlayerRequestedMatchWithRecipients += HandleActionPlayerRequestedMatchWithRecipients;
+		GameCenterInvitations.ActionPlayerAcceptedInvitation += HandleActionPlayerAcceptedInvitation;
+		
+
+	}
+
+	void HandleActionPlayerAcceptedInvitation (GK_MatchType math, GK_Invite invite) {
+		GameCenter_RTM.Instance.StartMatchWithInvite(invite, true);
 	}
 
 
 
-
+	void HandleActionPlayerRequestedMatchWithRecipients (GK_MatchType matchType, string[] recepientIds, GK_Player[] recepients) {
+		Debug.Log("inictation received");
+		if(matchType == GK_MatchType.RealTime) {
+			//Optionally you can provide and invitation message
+			string invitationMessage = "Come play with me, bro.";
+			
+			GameCenter_RTM.Instance.FindMatchWithNativeUI(recepientIds.Length, recepientIds.Length, invitationMessage, recepientIds);
+		}
+	}
 
 
 
@@ -104,18 +121,19 @@ public class MultiplayerManagerExample : MonoBehaviour {
 
 
 	void HandleActionPlayerStateChanged (GK_Player player, GK_PlayerConnectionState state, GK_RTM_Match match) {
-		IOSNativePopUpManager.dismissCurrentAlert();
-		IOSNativePopUpManager.showMessage ("Player State Changed", player.Alias + " state: " + state.ToString() + "\n  ExpectedPlayerCount: " + match.ExpectedPlayerCount);
+
+
+		Debug.Log("Player State Changed " +  player.Alias + " state: " + state.ToString() + "\n  ExpectedPlayerCount: " + match.ExpectedPlayerCount);
+
 	}
-
-
+	
 
 	void HandleActionMatchStarted (GK_RTM_MatchStartedResult result) {
 		IOSNativePopUpManager.dismissCurrentAlert();
 		if(result.IsSucceeded) {
 			IOSNativePopUpManager.showMessage ("Match Started", "let's play now\n  Others players count: " + result.Match.Players.Count);
 		} else {
-			IOSNativePopUpManager.showMessage ("Match Started Error", result.error.description);
+			IOSNativePopUpManager.showMessage ("Match Started Error", result.Error.Description);
 		}
 	}
 

@@ -10,7 +10,6 @@
 
 using UnityEngine;
 using System.Collections;
-using UnionAssets.FLE;
 using System.Collections.Generic;
 
 public class PTPGameController : MonoBehaviour {
@@ -36,7 +35,7 @@ public class PTPGameController : MonoBehaviour {
 
 
 		GameCenterManager.OnAuthFinished += OnAuthFinished;
-		GameCenterManager.init ();
+		GameCenterManager.Init ();
 
 
 
@@ -124,7 +123,7 @@ public class PTPGameController : MonoBehaviour {
 			CheckMatchState(result.Match);
 
 		} else {
-			IOSNativePopUpManager.showMessage ("Match Start Error", result.error.description);
+			IOSNativePopUpManager.showMessage ("Match Start Error", result.Error.Description);
 		}
 	}
 

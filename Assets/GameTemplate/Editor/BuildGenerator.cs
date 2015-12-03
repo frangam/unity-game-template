@@ -175,6 +175,9 @@ public class BuildGenerator {
 		List<string> includes = build.resIncludes;
 		List<string> sharedResBetweenAllVersions = GTBuildSettingsConfig.Instance.sharedResources;
 		
+		if(!System.IO.Directory.Exists(resourcesBeforeBuildPath))
+			System.IO.Directory.CreateDirectory(resourcesBeforeBuildPath);
+		
 		//move all shared res between multiversion, and only keep the current includes for this build
 		foreach(string sharedRes in sharedResBetweenAllVersions){
 			if(!includes.Contains(sharedRes)){
@@ -212,6 +215,7 @@ public class BuildGenerator {
 		int multiversion = GameSettings.Instance.currentGameMultiversion;
 		string sourcePath = build.preBuiltAndroidIconsFolder + "/" + multiversion.ToString() + "/";
 		string destinationPath = "Assets/Plugins/Android/res/";
+		string iconName = "app_icon.png";
 		List<string> paths = build.androidIcons;
 		//			= "drawable/app_icon.png";
 		//		string path2 = "drawable-hdpi/app_icon.png";
@@ -219,17 +223,26 @@ public class BuildGenerator {
 		//		string path4 = "drawable-mdpi/app_icon.png";
 		//		string path5 = "drawable-xhdpi/app_icon.png";
 		//		string path6 = "drawable-xxhdpi/app_icon.png";
-		//		string path7 = "drawable-xxxhdpi/app_icon.png";
+		//		string path7 = "drawable-xxhdpi/app_icon.png";
 		//		string[] sourcePaths = {sourcePath+path1, sourcePath+path2, sourcePath+path3,sourcePath+path4, sourcePath+path5, sourcePath+path6,sourcePath+path7};
 		//		string[] destPaths = {destinationPath+path1, destinationPath+path2, destinationPath+path3,destinationPath+path4, destinationPath+path5, destinationPath+path6,destinationPath+path7};
 		
-		foreach(string iconName in paths){
-			string source = sourcePath+iconName;
-			string dest = destinationPath+iconName;
-			string ret = AssetDatabase.MoveAsset(source, dest);
+		//		List<string> iconTypes = new List<string> (){"drawable", "drawable-hdpi" ,"drawable-ldpi", "drawable-mdpi", "drawable-xhdpi", "drawable-xxhdpi", "drawable-xxhdpi"};
+		
+		foreach(string iconFolder in paths){
+			string source = sourcePath+iconFolder+"/"+iconName;
+			string destFolder = destinationPath+iconFolder; //path/drawable.../
+			
+			if(!System.IO.Directory.Exists(destFolder)){
+				System.IO.Directory.CreateDirectory(destFolder);
+				AssetDatabase.Refresh();
+			}
 			
 			//			UnityEngine.Debug.Log(ret);
 			//			UnityEngine.Debug.Log ("moving from: "+source+" to: "+dest); 
+			
+			string dest = destFolder+"/"+iconName;
+			string ret = AssetDatabase.MoveAsset(source, dest);
 			
 			if(ret != ""){
 				AssetDatabase.ImportAsset(source);
@@ -245,11 +258,19 @@ public class BuildGenerator {
 		int multiversion = GameSettings.Instance.currentGameMultiversion;
 		string sourcePath = "Assets/Plugins/Android/res/";
 		string destinationPath = build.preBuiltAndroidIconsFolder + "/" + multiversion.ToString() + "/";
+		string iconName = "app_icon.png";
 		List<string> paths = build.androidIcons;
 		
-		foreach(string iconName in paths){
-			string source = sourcePath+iconName;
-			string dest = destinationPath+iconName;
+		foreach(string iconFolder in paths){
+			string source = sourcePath+iconFolder + "/" + iconName;
+			string dest = destinationPath+iconFolder + "/" + iconName;
+			string destFolder = destinationPath + iconFolder; //path/drawable.../
+			//create a icons folder if not exist
+			if (!System.IO.Directory.Exists(destFolder))
+			{
+				System.IO.Directory.CreateDirectory(destFolder);
+				AssetDatabase.Refresh();
+			}
 			string ret = AssetDatabase.MoveAsset(source, dest);
 			
 			//			UnityEngine.Debug.Log(ret);

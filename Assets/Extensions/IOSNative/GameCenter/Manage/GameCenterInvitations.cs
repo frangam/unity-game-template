@@ -35,7 +35,7 @@ public class GameCenterInvitations : ISN_Singleton<GameCenterInvitations> {
 
 	private void OnInviteeResponse(string data) {
 		Debug.Log("OnInviteeResponse");
-		string[] DataArray = data.Split(IOSNative.DATA_SPLITTER[0]);
+		string[] DataArray = data.Split(IOSNative.DATA_SPLITTER);
 
 		GK_Player player = GameCenterManager.GetPlayerById(DataArray[0]);
 		GK_InviteRecipientResponse responce = (GK_InviteRecipientResponse) Convert.ToInt32(DataArray[1]);

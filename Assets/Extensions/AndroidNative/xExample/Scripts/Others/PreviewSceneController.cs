@@ -20,9 +20,15 @@ public class PreviewSceneController : MonoBehaviour {
 	}
 
 	public void SendBug() {
-		AndroidSocialGate.SendMail("Send Mail", "", "Hey Stan, I found a bug", "stans.assets@gmail.com");
+		//AndroidSocialGate.SendMail("Send Mail", "", "Hey Stan, I found a bug", "stans.assets@gmail.com");
+
+		AN_LicenseManager.OnLicenseRequestResult += LicenseRequestResult;
+		AN_LicenseManager.instance.StartLicenseRequest();
 	}
 
+	private void LicenseRequestResult(AN_LicenseRequestResult result) {
+		Debug.Log("LicenseRequestResult " + result.ToString());
+	}
 
 	public void OpenDocs() {
 		string url = "http://goo.gl/pTcIR8";

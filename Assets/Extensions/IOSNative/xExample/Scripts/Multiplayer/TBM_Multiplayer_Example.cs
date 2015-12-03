@@ -7,17 +7,90 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 	private static bool IsInitialized = false;
 
 
-
 	void Awake() {
 		if(!IsInitialized) {
 
+
+
 			//Initializing Game Center class. This action will trigger authentication flow
-			GameCenterManager.init();
+			GameCenterManager.Init();
 			GameCenterManager.OnAuthFinished += OnAuthFinished;
 			IsInitialized = true;
 		}
 
+		int ROLE_WIZARD = 0x4; // 100 in binary
+		GameCenter_RTM.instance.SetPlayerAttributes (ROLE_WIZARD);
 
+
+
+		//Required
+		int minPlayers = 2;
+		int maxPlayers = 2;
+
+		//Optionally you can provide and invitation message
+		string invitationMessage = "Come play with me, bro.";
+
+		//Optinally you can predefine invited friends list to the match
+		//Teh code bellow assumes that player has atleast one friend, and you already loaded the friend list
+		//so we can send an invite to the first player in the firendlist
+		string[] invitations  = new string[] { GameCenterManager.FriendsList[0] };
+
+
+		GameCenter_RTM.Instance.FindMatchWithNativeUI(minPlayers, maxPlayers, invitationMessage, invitations);
+
+		GK_Player player = GameCenterManager.Player;
+		player.OnPlayerPhotoLoaded += HandleOnPlayerPhotoLoaded;
+		player.LoadPhoto(GK_PhotoSize.GKPhotoSizeNormal);
+
+		GameCenter_RTM.ActionMatchStarted += HandleActionMatchStarted;
+		GameCenterInvitations.ActionPlayerRequestedMatchWithRecipients += HandleActionPlayerRequestedMatchWithRecipients;
+		GameCenterInvitations.ActionPlayerAcceptedInvitation += HandleActionPlayerAcceptedInvitation;
+
+	
+		GameCenter_RTM.ActionNearbyPlayerStateUpdated += HandleActionNearbyPlayerStateUpdated;
+		GameCenter_RTM.Instance.StartBrowsingForNearbyPlayers();
+
+
+
+	}
+
+	void HandleActionNearbyPlayerStateUpdated (GK_Player player, bool IsAvaliable) {
+		Debug.Log("Player: " + player.DisplayName + "IsAvaliable: " + IsAvaliable);
+		Debug.Log("Nearby Players Count: " + GameCenter_RTM.Instance.NearbyPlayers.Count);
+	}
+
+	void HandleActionPlayerAcceptedInvitation (GK_MatchType matchType, GK_Invite invite) {
+		if(matchType == GK_MatchType.RealTime) {
+			bool useNativeUI = true;
+			GameCenter_RTM.Instance.StartMatchWithInvite(invite, useNativeUI);
+		}
+	}
+
+	void HandleActionPlayerRequestedMatchWithRecipients (GK_MatchType matchType, string[] recepientIds, GK_Player[] recepients) {
+		if(matchType == GK_MatchType.RealTime) {
+			//Optionally you can provide and invitation message
+			string invitationMessage = "Come play with me, bro.";
+
+			GameCenter_RTM.Instance.FindMatchWithNativeUI(recepientIds.Length, recepientIds.Length, invitationMessage, recepientIds);
+		}
+	}
+
+	void HandleActionMatchStarted (GK_RTM_MatchStartedResult result) {
+		if(result.IsSucceeded) {
+			Debug.Log("Match is successfully created");
+			if(result.Match.ExpectedPlayerCount == 0) {
+				//we should start the match
+			}
+		} else {
+			Debug.Log("Match is creation failed with error: " + result.Error.Description);
+		}
+	}
+
+	void HandleOnPlayerPhotoLoaded (GK_UserPhotoLoadResult result) {
+		if(result.IsSucceeded) {
+			Debug.Log(result.Photo);
+			Debug.Log(GameCenterManager.Player.BigPhoto);
+		}
 	}
 
 
@@ -149,7 +222,7 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 		GameCenter_TBM.ActionMatchDataUpdated -= ActionMatchDataUpdated;
 		Debug.Log("ActionMatchDataUpdated: " + res.IsSucceeded);
 		if(res.IsFailed) {
-			Debug.Log(res.error.description);
+			Debug.Log(res.Error.Description);
 		} else {
 			GameCenter_TBM.PrintMatchInfo(res.Match);
 		}
@@ -162,7 +235,8 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 		Debug.Log("ActionTrunEnded IsSucceeded: " + result.IsSucceeded);
 
 		if(result.IsFailed) {
-			Debug.Log(result.error.description);
+			IOSMessage.Create("ActionTrunEnded", result.Error.Description);
+			Debug.Log(result.Error.Description);
 		} else {
 			GameCenter_TBM.PrintMatchInfo(result.Match);
 		}
@@ -173,7 +247,7 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 		Debug.Log("ActionMacthEnded IsSucceeded: " + result.IsSucceeded);
 
 		if(result.IsFailed) {
-			Debug.Log(result.error.description);
+			Debug.Log(result.Error.Description);
 		} else {
 			GameCenter_TBM.PrintMatchInfo(result.Match);
 		}
@@ -184,7 +258,7 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 		Debug.Log("ActionMacthRemoved IsSucceeded: " + result.IsSucceeded);
 
 		if(result.IsFailed) {
-			Debug.Log(result.error.description);
+			Debug.Log(result.Error.Description);
 		} else {
 			Debug.Log("Match Id: " + result.MatchId);
 		}
@@ -205,11 +279,10 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 		Debug.Log("ActionMatchFound IsSucceeded: " + result.IsSucceeded);
 		
 		if(result.IsFailed) {
-			Debug.Log(result.error.description);
+			Debug.Log(result.Error.Description);
 		} else {
 			GameCenter_TBM.PrintMatchInfo(result.Match);
 		}
 	}
-
 
 }

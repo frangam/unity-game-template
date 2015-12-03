@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 public class TwitterApplicationOnlyToken : SA_Singleton<TwitterApplicationOnlyToken> {
-	
+
+	public event Action ActionComplete = delegate{};
+
+
 	private string _currentToken = null;
 
 	private const string  TWITTER_CONSUMER_KEY = "wEvDyAUr2QabVAsWPDiGwg";
@@ -78,7 +81,7 @@ public class TwitterApplicationOnlyToken : SA_Singleton<TwitterApplicationOnlyTo
 			PlayerPrefs.SetString(BEARER_TOKEN_KEY, _currentToken);
 		} 
 
-		dispatch(BaseEvent.COMPLETE);
+		ActionComplete();
 		
 	}
 }

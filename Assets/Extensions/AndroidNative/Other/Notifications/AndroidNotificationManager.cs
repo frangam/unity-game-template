@@ -12,10 +12,7 @@ public class AndroidNotificationManager : SA_Singleton<AndroidNotificationManage
 	//Actions
 	public Action<int> OnNotificationIdLoaded = delegate{};
 	
-	
-	//Events
-	public const string  NOTIFICATION_ID_LOADED = "notification_id_loaded";
-	
+
 	
 	private const string PP_KEY = "AndroidNotificationManagerKey";
 	private const string PP_ID_KEY = "AndroidNotificationManagerKey_ID";
@@ -125,7 +122,6 @@ public class AndroidNotificationManager : SA_Singleton<AndroidNotificationManage
 		int id = System.Convert.ToInt32(data);
 		
 		OnNotificationIdLoaded(id);
-		dispatch(NOTIFICATION_ID_LOADED, id);
 		
 	}
 	

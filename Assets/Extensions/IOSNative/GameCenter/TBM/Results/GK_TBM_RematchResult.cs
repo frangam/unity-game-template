@@ -9,8 +9,7 @@ public class GK_TBM_RematchResult : ISN_Result {
 		_Match = match;
 	}
 	
-	public GK_TBM_RematchResult(string errorData):base(false) {
-		SetErrorData(errorData);
+	public GK_TBM_RematchResult(string errorData):base(errorData) {
 	}
 	
 	

@@ -1,3 +1,4 @@
+#define GAME_CENTER_ENABLED
 ////////////////////////////////////////////////////////////////////////////////
 //  
 // @module IOS Native Plugin for Unity3D 
@@ -10,17 +11,16 @@
 
 using UnityEngine;
 using System;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
-#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 using System.Runtime.InteropServices;
 #endif
 
 public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 	
 
-	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+	#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 
 	[DllImport ("__Internal")]
 	private static extern void _ISN_TBM_LoadMatchesInfo();
@@ -111,39 +111,39 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 
 	public void LoadMatchesInfo() {
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_TBM_LoadMatchesInfo();
 		#endif
 	}
 
 	public void LoadMatch(string matchId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_TBM_LoadMatch(matchId);
 		#endif
 	}
 
-	public void FindMatch(int minPlayers, int maxPlayers, string msg = "", string[] invitations = null) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_TBM_FindMatch(minPlayers, maxPlayers, msg, IOSNative.SerializeArray(invitations));
+	public void FindMatch(int minPlayers, int maxPlayers, string msg = "", string[] playersToInvite = null) {
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		_ISN_TBM_FindMatch(minPlayers, maxPlayers, msg, IOSNative.SerializeArray(playersToInvite));
 		#endif
 	}
 
-	public void FindMatchWithNativeUI(int minPlayers, int maxPlayers, string msg = "", string[] invitations = null) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_TBM_FindMatchWithNativeUI(minPlayers, maxPlayers, msg, IOSNative.SerializeArray(invitations));
+	public void FindMatchWithNativeUI(int minPlayers, int maxPlayers, string msg = "", string[] playersToInvite = null) {
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		_ISN_TBM_FindMatchWithNativeUI(minPlayers, maxPlayers, msg, IOSNative.SerializeArray(playersToInvite));
 		#endif
 	}
 
 
 	public void SetPlayerGroup(int group) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_TBM_SetPlayerGroup(group);
 		#endif
 	}
 	
 	
 	public void SetPlayerAttributes(int attributes)  {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_TBM_SetPlayerAttributes(attributes);
 		#endif
 	}
@@ -152,7 +152,7 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 
 
 	public void SaveCurrentTurn(string matchId, byte[] matchData) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		string bytesString = System.Convert.ToBase64String (matchData);
 		_ISN_TBM_SaveCurrentTurn(matchId, bytesString);
 		#endif
@@ -161,7 +161,7 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 	
 
 	public void EndTurn(string matchId, byte[] matchData, string nextPlayerId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		string bytesString = System.Convert.ToBase64String (matchData);
 		_ISN_TBM_EndTurn(matchId, bytesString, nextPlayerId);
 		#endif
@@ -169,14 +169,14 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 
 
 	public void QuitInTurn(string matchId, GK_TurnBasedMatchOutcome outcome, string nextPlayerId, byte[] matchData) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		string bytesString = System.Convert.ToBase64String (matchData);
 		_ISN_TBM_QuitInTurn(matchId, (int)outcome, nextPlayerId, bytesString);
 		#endif
 	}
 
 	public void QuitOutOfTurn(string matchId, GK_TurnBasedMatchOutcome outcome) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_TBM_QuitOutOfTurn(matchId, (int)outcome);
 		#endif
 	}
@@ -184,24 +184,31 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 
 
 	public void EndMatch(string matchId, byte[] matchData) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		string bytesString = System.Convert.ToBase64String (matchData);
 		_ISN_TBM_EndMatch(matchId, bytesString);
 		#endif
 	}
 
 	public void Rematch(string matchId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_TBM_Rematch(matchId);
 		#endif
 	}
 
 	public void RemoveMatch(string matchId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_TBM_RemoveMatch(matchId);
 		#endif
 	}
+
+	public void UpdateParticipantOutcome(string matchId, int outcome, string playerId) {
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		_ISN_TBM_UpdateParticipantOutcome(matchId, outcome, playerId);
+		#endif
+	}
 	
+
 
 	public GK_TBM_Match GetMatchById(string matchId) {
 		if(_Matches.ContainsKey(matchId)) {
@@ -312,8 +319,7 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 	}
 
 	private void OnLoadMatchesResultFailed(string errorData) {
-		GK_TBM_LoadMatchesResult result = new GK_TBM_LoadMatchesResult(false);
-		result.SetErrorData(errorData);
+		GK_TBM_LoadMatchesResult result = new GK_TBM_LoadMatchesResult(errorData);
 		ActionMatchesInfoLoaded(result);
 	}
 
@@ -331,7 +337,7 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 
 
 	private void OnUpdateMatchResult(string data) {
-		string[] DataArray = data.Split(IOSNative.DATA_SPLITTER[0]);
+		string[] DataArray = data.Split(IOSNative.DATA_SPLITTER);
 
 		GK_TBM_MatchDataUpdateResult result;
 		string matchId = DataArray[0];
@@ -339,11 +345,8 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 
 		if(m == null) {
 			result =  new GK_TBM_MatchDataUpdateResult();
-			ISN_Error e =  new ISN_Error();
-			e.code = 0;
-			e.description = "Match with id: " + matchId + " not found";
+			ISN_Error e =  new ISN_Error(0, "Match with id: " + matchId + " not found");
 			result.SetError(e);
-			Debug.LogWarning(e.description);
 		} else {
 			m.SetData(DataArray[1]);
 			result =  new GK_TBM_MatchDataUpdateResult(m);
@@ -384,8 +387,7 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 	}
 	
 	private void OnMatchQuitResultFailed(string errorData) {
-		GK_TBM_MatchQuitResult result = new GK_TBM_MatchQuitResult();
-		result.SetErrorData(errorData);
+		GK_TBM_MatchQuitResult result = new GK_TBM_MatchQuitResult(errorData);
 		ActionMatchQuit(result);
 	}
 	
@@ -442,8 +444,7 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 	}
 	
 	private void OnMatchRemoveFailed(string errorData) {
-		GK_TBM_MatchRemovedResult result = new GK_TBM_MatchRemovedResult();
-		result.SetErrorData(errorData);
+		GK_TBM_MatchRemovedResult result = new GK_TBM_MatchRemovedResult(errorData);
 		ActionMacthRemoved(result);
 	}
 
@@ -472,7 +473,7 @@ public class GameCenter_TBM : ISN_Singleton<GameCenter_TBM> {
 	}
 
 	private static GK_TBM_Match ParceMatchInfo(string data) {
-		string[] MatchData = data.Split(IOSNative.DATA_SPLITTER[0]);
+		string[] MatchData = data.Split(IOSNative.DATA_SPLITTER);
 		return ParceMatchInfo(MatchData, 0);
 	}
 	

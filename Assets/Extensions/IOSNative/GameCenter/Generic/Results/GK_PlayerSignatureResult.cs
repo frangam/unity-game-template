@@ -12,7 +12,7 @@ public class GK_PlayerSignatureResult : ISN_Result {
 
 
 	public GK_PlayerSignatureResult(ISN_Error er):base(false) {
-		error = er;
+		_Error = er;
 	}
 
 
@@ -21,7 +21,7 @@ public class GK_PlayerSignatureResult : ISN_Result {
 
 
 		string[] array;
-		array = signature.Split("," [0]);
+		array = signature.Split(',');
 		
 		List<byte> l = new List<byte> ();
 		foreach(string s in array) {
@@ -32,7 +32,7 @@ public class GK_PlayerSignatureResult : ISN_Result {
 
 
 
-		array = salt.Split("," [0]);
+		array = salt.Split(',');
 		
 		l = new List<byte> ();
 		foreach(string s in array) {

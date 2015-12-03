@@ -7,9 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class AndroidGoogleAdsExample : MonoBehaviour {
@@ -71,12 +69,17 @@ public class AndroidGoogleAdsExample : MonoBehaviour {
 		//AndroidAdMobController.instance.AddTestDevice("6B9FA8031AEFDC4758B7D8987F77A5A6");
 
 
-		AndroidAdMobController.instance.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_LOADED, OnInterstisialsLoaded);
-		AndroidAdMobController.instance.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_OPENED, OnInterstisialsOpen);
+
+		AndroidAdMobController.instance.OnInterstitialLoaded += OnInterstisialsLoaded; 
+		AndroidAdMobController.instance.OnInterstitialOpened += OnInterstisialsOpen;
+
+
 
 		//listening for InApp Event
 		//You will only receive in-app purchase (IAP) ads if you specifically configure an IAP ad campaign in the AdMob front end.
-		AndroidAdMobController.instance.addEventListener(GoogleMobileAdEvents.ON_AD_IN_APP_REQUEST, OnInAppRequest);
+		AndroidAdMobController.instance.OnAdInAppRequest += OnInAppRequest;
+
+	
 
 
 	}
@@ -286,9 +289,8 @@ public class AndroidGoogleAdsExample : MonoBehaviour {
 		IsInterstisialsAdReady = false;
 	}
 
-	private void OnInAppRequest(CEvent e) {
-		//getting product id
-		string productId = (string) e.data;
+	private void OnInAppRequest(string productId) {
+
 		AN_PoupsProxy.showMessage ("In App Request", "In App Request for product Id: " + productId + " received");
 
 

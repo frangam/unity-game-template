@@ -6,7 +6,7 @@
     <!-- TODO: Replace the 'package' value above to reflect your app's package id. -->
 
     <!-- NOTE: Adjust minSDKVersion and targetSdkVersion as desired. -->
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="19" />
 
     <!-- NOTE: You must have at least these four permissions for AdColony. -->
     <uses-permission android:name="android.permission.INTERNET" />

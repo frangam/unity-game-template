@@ -48,7 +48,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		
 		//listen for GooglePlayManager events
 		GooglePlayManager.ActionScoreSubmited += OnScoreSubmited;
-		GooglePlayManager.ActionAchievementUpdated += OnAchivmentUpdated;
+		GooglePlayManager.ActionAchievementUpdated += OnAchievementUpdated;
 		
 		
 		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
@@ -79,7 +79,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 		}
 		
 		if(!GooglePlayManager.IsDestroyed) {
-			GooglePlayManager.ActionAchievementUpdated -= OnAchivmentUpdated;
+			GooglePlayManager.ActionAchievementUpdated -= OnAchievementUpdated;
 			GooglePlayManager.ActionScoreSubmited -= OnScoreSubmited;
 		}
 	}
@@ -170,7 +170,7 @@ public class GPSConnect : PersistentSingleton<GPSConnect> {
 			loadAchievements ();
 	}
 	
-	private void OnAchivmentUpdated(GP_GamesResult result) {
+	private void OnAchievementUpdated(GP_AchievementResult result) {
 		
 	}
 	

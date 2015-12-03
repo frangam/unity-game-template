@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class GameCenterFriendLoadExample : MonoBehaviour {
@@ -17,12 +16,15 @@ public class GameCenterFriendLoadExample : MonoBehaviour {
 	
 	void Awake() {
 
-		GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_PLAYER_AUTHENTICATED, OnAuth);
-
+		GameCenterManager.OnAuthFinished += HandleOnAuthFinished;
 		
 		//Initializing Game Center class. This action will trigger authentication flow
-		GameCenterManager.init();
+		GameCenterManager.Init();
+
+
 	}
+
+
 
 
 
@@ -85,19 +87,14 @@ public class GameCenterFriendLoadExample : MonoBehaviour {
 
 	}
 
-	
-	private void OnAuth(CEvent e) {
-
-		ISN_Result result = e.data as ISN_Result;
-
+	void HandleOnAuthFinished (ISN_Result result){
 		if (result.IsSucceeded) {
 			Debug.Log("Player Authed");
 		} else {
 			IOSNativePopUpManager.showMessage("Game Center ", "Player authentication failed");
 		}
-
-
 	}
+	
 
 	private void OnFriendsListLoaded (ISN_Result result) {
 		GameCenterManager.OnFriendsListLoaded -= OnFriendsListLoaded;

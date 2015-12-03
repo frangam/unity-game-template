@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -31,12 +32,12 @@ public class SocialPlatfromSettingsEditor : Editor {
 	private const string ANDROID_SOURCE_PATH 		= "Plugins/StansAssets/Android/";
 	private const string ANDROID_DESTANATION_PATH 	= "Plugins/Android/";
 
-	private const string version_info_file = "Plugins/StansAssets/Versions/MSP_VersionInfo.txt"; 
-	
+
 
 
 	void Awake() {
 		if(IsInstalled && IsUpToDate) {
+			PluginsInstalationUtil.IOS_Install_SocialPart();
 			UpdateManifest();
 		}
 	}
@@ -75,9 +76,8 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 
 		GeneralOptions();
+		GeneralSettings();
 		EditorGUILayout.Space();
-
-
 		FacebookSettings();
 		EditorGUILayout.Space();
 		TwitterSettings();
@@ -94,58 +94,39 @@ public class SocialPlatfromSettingsEditor : Editor {
 	}
 
 
-	public static bool IsFullVersion {
-		get {
-			if(FileStaticAPI.IsFileExists(PluginsInstalationUtil.IOS_SOURCE_PATH + "MGInstagram.h")) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-	
+
 
 	public static bool IsInstalled {
 		get {
-
-			#if UNITY_3_5 || UNITY_4_0 || UNITY_4_1	|| UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
-			if(FileStaticAPI.IsFileExists(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "androidnative.jar") && FileStaticAPI.IsFileExists(PluginsInstalationUtil.IOS_DESTANATION_PATH + "MGInstagram.h")) {
-			#else
-			if(FileStaticAPI.IsFileExists(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "androidnative.jar")) {
-			#endif
-				return true;
-			} else {
-				return false;
-			}
+			return SA_VersionsManager.Is_MSP_Installed;
 		}
 	}
+
+
 	
 	public static bool IsUpToDate {
 		get {
-			if(SocialPlatfromSettings.VERSION_NUMBER.Equals(DataVersion)) {
+
+			if(CurrentVersion == SA_VersionsManager.MSP_Version) {
 				return true;
 			} else {
 				return false;
 			}
 		}
 	}
-	
-	
-	public static string DataVersion {
-		get {
-			if(FileStaticAPI.IsFileExists(version_info_file)) {
-				return FileStaticAPI.Read(version_info_file);
-			} else {
-				return "Unknown";
-			}
-		}
-	}
 
-	public static float Version {
+	public static int CurrentVersion {
 		get {
-			return System.Convert.ToSingle(DataVersion);
+			return SA_VersionsManager.ParceVersion(SocialPlatfromSettings.VERSION_NUMBER);
 		}
 	}
+	
+	public static int CurrentMagorVersion {
+		get {
+			return SA_VersionsManager.ParceMagorVersion(SocialPlatfromSettings.VERSION_NUMBER);
+		}
+	}
+	
 
 	public static bool IsFacebookInstalled {
 		get {
@@ -160,12 +141,6 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 
 	private void GeneralOptions() {
-		
-		if(!IsFullVersion) {
-			EditorGUILayout.HelpBox("Mobile Social Plugin v" + SocialPlatfromSettings.VERSION_NUMBER + " is installed", MessageType.Info);
-			Actions();
-			return;
-		}
 		
 		if(!IsInstalled) {
 			EditorGUILayout.HelpBox("Install Required ", MessageType.Error);
@@ -185,50 +160,38 @@ public class SocialPlatfromSettingsEditor : Editor {
 		
 		if(IsInstalled) {
 			if(!IsUpToDate) {
-				EditorGUILayout.HelpBox("Update Required \nResources version: " + DataVersion + " Plugin version: " + SocialPlatfromSettings.VERSION_NUMBER, MessageType.Warning);
+				EditorGUILayout.HelpBox("Update Required \nResources version: " + SA_VersionsManager.MSP_StringVersionId + " Plugin version: " + SocialPlatfromSettings.VERSION_NUMBER, MessageType.Warning);
 
-				if(Version <= 4.4f) {
-					EditorGUILayout.HelpBox("New version contains AndroidManifest.xml chnages, Please remove Assets/Plugins/Android/AndroidManifest.xml file before update or add manualy File Sharing Block from Assets/Plugins/StansAssets/Android/AndroidManifest.xml", MessageType.Warning);
-					
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.Space();
-					
-					if(GUILayout.Button("Remove AndroidManifest and Update to " + SocialPlatfromSettings.VERSION_NUMBER,  GUILayout.Width(250))) {
-						
-						string file = "AndroidManifest.xml";
-						FileStaticAPI.DeleteFile(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + file);
-						
-						PluginsInstalationUtil.Android_UpdatePlugin();
-						UpdateVersionInfo();
-					}
-					
-					
-					EditorGUILayout.Space();
-					EditorGUILayout.EndHorizontal();
-					EditorGUILayout.Space();
-				}
-
-
+				
 				
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
 				Color c = GUI.color;
 				GUI.color = Color.cyan;
-				if(GUILayout.Button("Update to " + SocialPlatfromSettings.VERSION_NUMBER,  GUILayout.Width(250))) {
-					PluginsInstalationUtil.Android_InstallPlugin();
-					PluginsInstalationUtil.IOS_InstallPlugin();
-					UpdateVersionInfo();
+
+
+				if(CurrentMagorVersion != SA_VersionsManager.MSP_MagorVersion) {
+					if(GUILayout.Button("How to update",  GUILayout.Width(250))) {
+						Application.OpenURL("https://goo.gl/ZI66Ub");
+					}
+				} else {
+					if(GUILayout.Button("Upgrade Resources",  GUILayout.Width(250))) {
+						PluginsInstalationUtil.Android_InstallPlugin();
+						PluginsInstalationUtil.IOS_InstallPlugin();
+						UpdateVersionInfo();
+					}
 				}
-				
+
 				GUI.color = c;
 				EditorGUILayout.Space();
 				EditorGUILayout.EndHorizontal();
 				
+				EditorGUILayout.Space();
+				Actions();
 			} else {
 				EditorGUILayout.HelpBox("Mobile Social Plugin v" + SocialPlatfromSettings.VERSION_NUMBER + " is installed", MessageType.Info);
-				Actions();
-
+				PluginSettings();
 			}
 		}
 
@@ -273,18 +236,29 @@ public class SocialPlatfromSettingsEditor : Editor {
 		AndroidNativeProxy.SetValue("android:label", "@string/app_name");
 		AndroidNativeProxy.SetValue("android:configChanges", "fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen");
 		AndroidNativeProxy.SetValue("android:theme", "@android:style/Theme.Translucent.NoTitleBar");
-
-
+			
+		// Remove VIEW intent filter from AndroidNativeProxy activity
+		if(AndroidNativeProxy != null) {
+			AN_PropertyTemplate intent_filter = AndroidNativeProxy.GetOrCreateIntentFilterWithName("android.intent.action.VIEW");
+			AndroidNativeProxy.RemoveProperty(intent_filter);
+		}
+			
+		AN_ActivityTemplate SocialProxyActivity = application.GetOrCreateActivityWithName("com.androidnative.features.social.common.SocialProxyActivity");
+		SocialProxyActivity.SetValue("android:launchMode", "singleTask");
+		SocialProxyActivity.SetValue("android:label", "@string/app_name");
+		SocialProxyActivity.SetValue("android:configChanges", "fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen");
+		SocialProxyActivity.SetValue("android:theme", "@android:style/Theme.Translucent.NoTitleBar");
+			
 		if(launcherActivity.Name == "com.androidnative.AndroidNativeBridge") {
 			launcherActivity.SetName("com.unity3d.player.UnityPlayerNativeActivity");
 		}
-	
-		
+			
+			
 		////////////////////////
 		//TwitterAPI
 		////////////////////////
-
-
+			
+			
 		foreach(KeyValuePair<int, AN_ActivityTemplate> entry in application.Activities) {
 			//TODO get intents array
 			AN_ActivityTemplate act = entry.Value;
@@ -296,11 +270,10 @@ public class SocialPlatfromSettingsEditor : Editor {
 				}
 			}
 		} 
-
+			
 		if(SocialPlatfromSettings.Instance.TwitterAPI) {
-			if(AndroidNativeProxy != null) {
-
-				AN_PropertyTemplate intent_filter = AndroidNativeProxy.GetOrCreateIntentFilterWithName("android.intent.action.VIEW");
+			if(SocialProxyActivity != null) {
+				AN_PropertyTemplate intent_filter = SocialProxyActivity.GetOrCreateIntentFilterWithName("android.intent.action.VIEW");
 				intent_filter.GetOrCreatePropertyWithName("category", "android.intent.category.DEFAULT");
 				intent_filter.GetOrCreatePropertyWithName("category", "android.intent.category.BROWSABLE");
 				AN_PropertyTemplate data = intent_filter.GetOrCreatePropertyWithTag("data");
@@ -308,12 +281,11 @@ public class SocialPlatfromSettingsEditor : Editor {
 				data.SetValue("android:host", PlayerSettings.bundleIdentifier);
 			} 
 		} else {
-			if(AndroidNativeProxy != null) {
-				AN_PropertyTemplate intent_filter = AndroidNativeProxy.GetOrCreateIntentFilterWithName("android.intent.action.VIEW");
-				AndroidNativeProxy.RemoveProperty(intent_filter);
+			if(SocialProxyActivity != null) {
+				AN_PropertyTemplate intent_filter = SocialProxyActivity.GetOrCreateIntentFilterWithName("android.intent.action.VIEW");
+				SocialProxyActivity.RemoveProperty(intent_filter);
 			}
 		}
-
 
 		////////////////////////
 		//FB API
@@ -326,10 +298,30 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 
 		if(IsFacebookInstalled) {
-		
 
 
-			ApplicationId_meta.SetValue("android:value", "\\ " + FBSettings.AppId);
+
+			#if UNITY_ANDROID
+
+			string FBAppId = "0";
+			try {
+				ScriptableObject FB_Resourse = 	Resources.Load("FacebookSettings") as ScriptableObject;
+
+				if(FB_Resourse != null) {
+					Type fb_settings = FB_Resourse.GetType();
+					Debug.Log(fb_settings);
+					System.Reflection.PropertyInfo propert  = fb_settings.GetProperty("AppId", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+					FBAppId = (string) propert.GetValue(null, null);
+				}
+
+
+			} catch(Exception ex) {
+				Debug.LogError("AndroidNative. FBSettings.AppId reflection failed: " + ex.Message);
+			}
+
+
+
+			ApplicationId_meta.SetValue("android:value", "\\ " + FBAppId);
 
 			LoginActivity.SetValue("android:label", "@string/app_name");
 			LoginActivity.SetValue("android:theme", "@android:style/Theme.Translucent.NoTitleBar");
@@ -343,7 +335,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 			FBUnityDialogsActivity.SetValue("android:configChanges", "fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen");
 
 			FBUnityDeepLinkingActivity.SetValue("android:exported", "true");
-
+			#endif
 
 			
 		} else {
@@ -395,19 +387,19 @@ public class SocialPlatfromSettingsEditor : Editor {
 		return permissions;
 	}
 
-	private void Actions() {
+	private void PluginSettings() {
 		EditorGUILayout.Space();
-
-
+			
+			
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Keep Android Mnifest Clean");
-		
+			
 		EditorGUI.BeginChangeCheck();
 		SocialPlatfromSettings.Instance.KeepManifestClean = EditorGUILayout.Toggle(SocialPlatfromSettings.Instance.KeepManifestClean);
 		if(EditorGUI.EndChangeCheck()) {
 			UpdateManifest();
 		}
-		
+			
 		if(GUILayout.Button("[?]",  GUILayout.Width(25))) {
 			Application.OpenURL("http://goo.gl/018lnQ");
 		}
@@ -415,23 +407,27 @@ public class SocialPlatfromSettingsEditor : Editor {
 		EditorGUILayout.Space();
 		
 		EditorGUILayout.EndHorizontal();
-
-
+			
+			
 		SocialPlatfromSettings.Instance.ShowAPIS = EditorGUILayout.Foldout(SocialPlatfromSettings.Instance.ShowAPIS, "Mobile Social Plugin APIs");
 		if(SocialPlatfromSettings.Instance.ShowAPIS) {
 			EditorGUI.indentLevel++;
-
+			
 			EditorGUI.BeginChangeCheck();
 			DrawAPIsList();
 			if(EditorGUI.EndChangeCheck()) {
 				UpdateManifest();
 			}
-			
-			
+				
+				
 			EditorGUI.indentLevel--;
 			EditorGUILayout.Space();
 		}
+					
+		Actions();
+	}
 
+	private void Actions() {
 		SocialPlatfromSettings.Instance.ShowActions = EditorGUILayout.Foldout(SocialPlatfromSettings.Instance.ShowActions, "More Actions");
 		if(SocialPlatfromSettings.Instance.ShowActions) {
 				
@@ -449,13 +445,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 					"Remove",
 					"Cansel");
 				if(result) {
-					FileStaticAPI.DeleteFolder(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "facebook");
-					FileStaticAPI.DeleteFolder("Facebook");
-					FileStaticAPI.DeleteFolder("Extensions/GooglePlayCommon/Social/Facebook");
-					FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSPFacebookUseExample.cs");
-					FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSP_FacebookAnalyticsExample.cs");
-					FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSP_FacebookAndroidTurnBasedAndGiftsExample.cs");
-					FileStaticAPI.CopyFile("Extensions/StansAssetsCommon/SA_FB_PlaceHolder.txt", "Extensions/StansAssetsCommon/SA_FB_PlaceHolder.cs");
+					PluginsInstalationUtil.Remove_FB_SDK();
 				}
 					
 			}
@@ -482,8 +472,21 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 			if(GUILayout.Button("Reinstall",  GUILayout.Width(160))) {
 				PluginsInstalationUtil.Android_UpdatePlugin();
+				PluginsInstalationUtil.IOS_UpdatePlugin();
 				UpdateVersionInfo();
 				
+			}
+
+				
+			EditorGUILayout.EndHorizontal();	
+			EditorGUILayout.Space();
+
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+
+			if(GUILayout.Button("Remove",  GUILayout.Width(160))) {
+				SA_RemoveTool.RemovePlugins();
 			}
 				
 			EditorGUILayout.EndHorizontal();	
@@ -503,9 +506,18 @@ public class SocialPlatfromSettingsEditor : Editor {
 		Selection.activeObject = SocialPlatfromSettings.Instance;
 	}
 	
+	public static void GeneralSettings(){
+		EditorGUILayout.HelpBox("General Settings", MessageType.None);
+		
+		SocialPlatfromSettings.Instance.ShowImageSharingSettings = EditorGUILayout.Foldout(SocialPlatfromSettings.Instance.ShowImageSharingSettings, "Image Sharing");
+		if (SocialPlatfromSettings.Instance.ShowImageSharingSettings) {
+			SocialPlatfromSettings.Instance.SaveImageToGallery = EditorGUILayout.Toggle("Save Image to Gallery", SocialPlatfromSettings.Instance.SaveImageToGallery);
+		}
+	}
 	
 	private static string newPermition = "";
 	public static void FacebookSettings() {
+		EditorGUILayout.Space();
 		EditorGUILayout.HelpBox("Facebook Settings", MessageType.None);
 
 		if (SocialPlatfromSettings.Instance.fb_scopes_list.Count == 0) {
@@ -628,7 +640,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 	}
 
 	public static void UpdateVersionInfo() {
-		FileStaticAPI.Write(version_info_file, SocialPlatfromSettings.VERSION_NUMBER);
+		FileStaticAPI.Write(SA_VersionsManager.MSP_VERSION_INFO_PATH, SocialPlatfromSettings.VERSION_NUMBER);
 		UpdateManifest();
 	}
 

@@ -11,7 +11,7 @@ public class GK_Invite  {
 
 
 	public GK_Invite(string inviteData) {
-		string[] DataArray = inviteData.Split(IOSNative.DATA_SPLITTER[0]); 
+		string[] DataArray = inviteData.Split(IOSNative.DATA_SPLITTER); 
 		_Id = DataArray[0];
 		_Sender = GameCenterManager.GetPlayerById(DataArray[1]);
 

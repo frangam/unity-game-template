@@ -1,3 +1,5 @@
+#define IAD_API
+
 ////////////////////////////////////////////////////////////////////////////////
 //  
 // @module IOS Native Plugin for Unity3D 
@@ -10,16 +12,15 @@
 
 using UnityEngine;
 using System;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
-#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+#if (UNITY_IPHONE && !UNITY_EDITOR  && IAD_API) || SA_DEBUG_MODE
 using System.Runtime.InteropServices;
 #endif
 
-public class iAdBanner : EventDispatcherBase {
+public class iAdBanner  {
 
-	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+	#if (UNITY_IPHONE && !UNITY_EDITOR  && IAD_API) || SA_DEBUG_MODE
 	[DllImport ("__Internal")]
 	private static extern void _IADCreateBannerAd(int gravity,  int id);
 	
@@ -43,11 +44,11 @@ public class iAdBanner : EventDispatcherBase {
 	private int _id;
 	private TextAnchor _anchor;
 
-	public Action AdLoadedAction  			= delegate {};
-	public Action FailToReceiveAdAction  	= delegate {};
-	public Action AdWiewLoadedAction  		= delegate {};
-	public Action AdViewActionBeginAction  	= delegate {};
-	public Action AdViewFinishedAction 		= delegate {};
+	public event Action AdLoadedAction  			= delegate {};
+	public event Action FailToReceiveAdAction  	= delegate {};
+	public event Action AdWiewLoadedAction  		= delegate {};
+	public event Action AdViewActionBeginAction  	= delegate {};
+	public event Action AdViewFinishedAction 		= delegate {};
 
 
 
@@ -59,7 +60,7 @@ public class iAdBanner : EventDispatcherBase {
 		_anchor = anchor;
 		
 		
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR  && IAD_API) || SA_DEBUG_MODE
 			_IADCreateBannerAd(gravity, _id);
 		#endif
 	}
@@ -68,7 +69,7 @@ public class iAdBanner : EventDispatcherBase {
 		_id = id;
 		
 		
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR  && IAD_API) || SA_DEBUG_MODE
 			_IADCreateBannerAdPos(x, y, _id);
 		#endif
 		
@@ -82,7 +83,7 @@ public class iAdBanner : EventDispatcherBase {
 		}
 		
 		_IsOnScreen = false;
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR  && IAD_API) || SA_DEBUG_MODE
 			_IADHideAd(_id);
 		#endif
 	}
@@ -95,7 +96,7 @@ public class iAdBanner : EventDispatcherBase {
 		}
 		
 		_IsOnScreen = true;
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR  && IAD_API) || SA_DEBUG_MODE
 			_IADShowAd(_id);
 		#endif
 	}
@@ -178,7 +179,6 @@ public class iAdBanner : EventDispatcherBase {
 
 	public void didFailToReceiveAdWithError() {
 		FailToReceiveAdAction();
-		dispatch(iAdEvent.FAIL_TO_RECEIVE_AD);
 	}
 	
 	
@@ -190,26 +190,22 @@ public class iAdBanner : EventDispatcherBase {
 		}
 
 		AdLoadedAction();
-		dispatch(iAdEvent.AD_LOADED);
 
 	}
 	
 
 	public void bannerViewWillLoadAd(){
 		AdWiewLoadedAction();
-		dispatch(iAdEvent.AD_VIEW_LOADED);
 	}
 	
 	
 	public void bannerViewActionDidFinish(){
 		AdViewFinishedAction();
-		dispatch(iAdEvent.AD_VIEW_ACTION_FINISHED);
 	}
 		
 
 	public void bannerViewActionShouldBegin() {
 		AdViewActionBeginAction();
-		dispatch(iAdEvent.AD_VIEW_ACTION_BEGIN);
 	}
 }
 

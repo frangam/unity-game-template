@@ -1,6 +1,5 @@
 //#define SA_DEBUG_MODE
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class TBM_Game_Example : AndroidNativeExampleBase {
@@ -33,15 +32,16 @@ public class TBM_Game_Example : AndroidNativeExampleBase {
 		
 
 
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-		GooglePlayConnection.instance.addEventListener(GooglePlayConnection.CONNECTION_RESULT_RECEIVED, OnConnectionResult);
+		GooglePlayConnection.ActionPlayerConnected +=  OnPlayerConnected;
+		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
 		
+		GooglePlayConnection.ActionConnectionResultReceived += OnConnectionResult;
+
 		
 		
 
 		
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			//checking if player already connected
 			OnPlayerConnected ();
 		} 
@@ -167,15 +167,15 @@ public class TBM_Game_Example : AndroidNativeExampleBase {
 	}
 
 
-	
+
 	private void ConncetButtonPress() {
-		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.state.ToString());
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.State.ToString());
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			SA_StatusBar.text = "Disconnecting from Play Service...";
-			GooglePlayConnection.instance.disconnect ();
+			GooglePlayConnection.Instance.Disconnect ();
 		} else {
 			SA_StatusBar.text = "Connecting to Play Service...";
-			GooglePlayConnection.instance.connect ();
+			GooglePlayConnection.Instance.Connect ();
 		}
 	}
 
@@ -196,10 +196,10 @@ public class TBM_Game_Example : AndroidNativeExampleBase {
 	void FixedUpdate() {
 		DrawParticipants();
 
-		
+
 		
 		string title = "Connect";
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			title = "Disconnect";
 			
 			foreach(DefaultPreviewButton btn in ConnectionDependedntButtons) {
@@ -212,7 +212,7 @@ public class TBM_Game_Example : AndroidNativeExampleBase {
 				btn.DisabledButton();
 				
 			}
-			if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED) {
+			if(GooglePlayConnection.State == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.State == GPConnectionState.STATE_UNCONFIGURED) {
 				
 				title = "Connect";
 			} else {
@@ -233,9 +233,8 @@ public class TBM_Game_Example : AndroidNativeExampleBase {
 		playerLabel.text = GooglePlayManager.instance.player.name;
 	}
 
-	private void OnConnectionResult(CEvent e) {
-		
-		GooglePlayConnectionResult result = e.data as GooglePlayConnectionResult;
+	private void OnConnectionResult(GooglePlayConnectionResult result) {
+
 		SA_StatusBar.text = "ConnectionResul:  " + result.code.ToString();
 		Debug.Log(result.code.ToString());
 	}

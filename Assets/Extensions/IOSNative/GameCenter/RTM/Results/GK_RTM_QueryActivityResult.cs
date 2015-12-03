@@ -9,8 +9,7 @@ public class GK_RTM_QueryActivityResult : ISN_Result {
 		_Activity = activity;
 	}
 	
-	public GK_RTM_QueryActivityResult(string errorData):base(false) {
-		SetErrorData(errorData);
+	public GK_RTM_QueryActivityResult(string errorData):base(errorData) {
 	}
 	
 	

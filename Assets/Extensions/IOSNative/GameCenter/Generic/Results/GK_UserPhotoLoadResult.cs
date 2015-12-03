@@ -14,9 +14,8 @@ public class GK_UserPhotoLoadResult : ISN_Result {
 	}
 	
 	
-	public GK_UserPhotoLoadResult(GK_PhotoSize size, string errorData):base(false) {
+	public GK_UserPhotoLoadResult(GK_PhotoSize size, string errorData):base(errorData) {
 		_Size = size;
-		SetErrorData(errorData);
 	}
 
 

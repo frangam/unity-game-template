@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -73,7 +72,7 @@ public class TW_SearchTweetsRequest : TW_APIRequest {
 
 		TW_APIRequstResult result = new TW_APIRequstResult(true, data);
 		result.tweets = loadedTweets;
-		dispatch(BaseEvent.COMPLETE, result);
+		SendCompleteResult(result);
 
 
 

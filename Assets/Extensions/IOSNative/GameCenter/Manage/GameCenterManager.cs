@@ -1,3 +1,4 @@
+#define GAME_CENTER_ENABLED
 ////////////////////////////////////////////////////////////////////////////////
 //  
 // @module IOS Native Plugin for Unity3D 
@@ -10,51 +11,30 @@
 
 using UnityEngine;
 using System;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
-#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 using System.Runtime.InteropServices;
 #endif
 
 public class GameCenterManager : MonoBehaviour {
-
-
-
-	//Events
-
-	public const string GAME_CENTER_ACHIEVEMENTS_RESET        	 				= "game_center_achievements_reset";
-	public const string GAME_CENTER_ACHIEVEMENTS_LOADED        					= "game_center_achievements_loaded";
-	public const string GAME_CENTER_ACHIEVEMENT_PROGRESS  						= "game_center_achievement_progress";
-	public const string GAME_CENTER_PLAYER_AUTHENTICATED       					= "game_center_player_authenticated";
-
-
-
-	public const string SCORE_SUMBITTED       									= "score_sumbitted";
-	public const string GAME_CENTER_LEADERBOARD_SCORE_LOADED  					= "game_center_leaderboard_score_loaded";
-	public const string GAME_CENTER_LEADERBOARD_SCORE_LIST_LOADED  			    = "game_center_leaderboard_score_list_loaded";
 	
-	
-	public const string GAME_CENTER_USER_INFO_LOADED  							= "game_center_user_info_loaded";
-	public const string GAME_CENTER_VIEW_DISMISSED  							= "game_center_view_dismissed";
-	public const string GAME_CENTER_FRIEND_LIST_LOADED  						= "game_center_friend_list_loaded";
-
-
-
-
-
 	//Actions
 	public static event Action<ISN_Result> OnAuthFinished  = delegate{};
 
-	public static event Action<ISN_Result> OnScoreSubmitted = delegate{};
-	public static event Action<GK_PlayerScoreLoadedResult> OnPlayerScoreLoaded = delegate{};
-	public static event Action<ISN_Result> OnScoresListLoaded = delegate{};
+	public static event Action<GK_LeaderboardResult> OnScoreSubmitted = delegate{};
+	public static event Action<GK_LeaderboardResult> OnScoresListLoaded = delegate{};
+	public static event Action<GK_LeaderboardResult> OnLeadrboardInfoLoaded = delegate {};
+
+
+	public static event Action<ISN_Result> OnLeaderboardSetsInfoLoaded = delegate{};
+
 
 	public static event Action<ISN_Result> OnAchievementsReset = delegate{};
 	public static event Action<ISN_Result> OnAchievementsLoaded  = delegate{};
 	public static event Action<GK_AchievementProgressResult> OnAchievementsProgress  = delegate{};
 
-	public static event Action<ISN_Result> OnLeaderboardSetsInfoLoaded = delegate{};
+
 
 
 	public static event Action OnGameCenterViewDismissed = delegate{};
@@ -65,7 +45,7 @@ public class GameCenterManager : MonoBehaviour {
 
 
 
-	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+	#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 
 	[DllImport ("__Internal")]
 	private static extern void _initGameCenter();
@@ -83,10 +63,10 @@ public class GameCenterManager : MonoBehaviour {
 
 
 	[DllImport ("__Internal")]
-	private static extern void _getLeaderboardScore (string leaderboardId, int timeSpan, int collection);
+	private static extern void _ISN_loadLeaderboardInfo (string leaderboardId, int requestId);
 
 	[DllImport ("__Internal")]
-	private static extern void _loadLeaderboardScore (string leaderboardId, int timeSpan, int collection, int from, int to);
+	private static extern void _ISN_loadLeaderboardScore (string leaderboardId, int timeSpan, int collection, int from, int to);
 	
 	[DllImport ("__Internal")]
 	private static extern void _showAchievements();
@@ -127,24 +107,23 @@ public class GameCenterManager : MonoBehaviour {
 	
 	[DllImport ("__Internal")]
 	private static extern void _ISN_loadLeaderboardsForSet(string setId);
-
-
 	
+	[DllImport ("__Internal")]
+	private static extern  void _ISN_ShowNotificationBanner (string title, string message);
+	
+
 	#endif
 
 
 	private  static bool _IsInitialized = false;
 	private  static bool _IsPlayerAuthenticated = false;
 	private  static bool _IsAchievementsInfoLoaded = false;
+	
 
-
-
-	private static List<GK_AchievementTemplate> _achievements = new List<GK_AchievementTemplate> ();
-	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
-
-	private static Dictionary<string, GK_Leaderboard> _leaderboards =  new Dictionary<string, GK_Leaderboard>();
 	private static Dictionary<string, GK_Player> _players =  new Dictionary<string, GK_Player>();
 	private static List<string> _friendsList = new List<string>();
+
+
 	private static List<GK_LeaderboardSet> _LeaderboardSets = new List<GK_LeaderboardSet>();
 
 
@@ -156,38 +135,51 @@ public class GameCenterManager : MonoBehaviour {
 	//--------------------------------------
 	// INITIALIZE
 	//--------------------------------------
-	
-	public static void init() {
 
+	
+
+	[System.Obsolete("init is deprecated, please use Init instead.")]
+	public static void init() {
+		Init();
+	}
+
+	public static void Init() {
+		
 		if(_IsInitialized) {
 			return;
 		}
-
+		
 		_IsInitialized = true;
-
+		
 		GameCenterInvitations.Instance.Init();
-
+		
 		GameObject go =  new GameObject("GameCenterManager");
 		go.AddComponent<GameCenterManager>();
 		DontDestroyOnLoad(go);
 
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_initGameCenter();
-		#endif
-			
-	}
-
-	void Awake() {
-		foreach(string aId in IOSNativeSettings.Instance.RegisteredAchievementsIds) {
-			RegisterAchievement(aId);
+		foreach(GK_Leaderboard leaderboard in Leaderboards) {
+			leaderboard.Refresh();
 		}
+		
+		
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		_initGameCenter();
+		#endif
+		
 	}
 
 
 	public static void RetrievePlayerSignature() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_getSignature();
+		#endif
+	}
+
+
+	public static void ShowGmaeKitNotification (string title, string message) {
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		_ISN_ShowNotificationBanner (title, message);
 		#endif
 	}
 
@@ -195,23 +187,33 @@ public class GameCenterManager : MonoBehaviour {
 
 	public static void RegisterAchievement(string achievementId) {
 
+		GK_AchievementTemplate tpl = new GK_AchievementTemplate ();
+		tpl.Id = achievementId;
 
+		RegisterAchievement(tpl);
+	}
+
+	public static void RegisterAchievement(GK_AchievementTemplate achievement) {
 		bool isContains = false;
-
-		foreach(GK_AchievementTemplate t in _achievements) {
-			if (t.Id.Equals (achievementId)) {
+	
+		int replaceIndex = 0;
+		foreach(GK_AchievementTemplate tpl in Achievements) {
+			if(tpl.Id.Equals(achievement.Id)) {
 				isContains = true;
+				replaceIndex = Achievements.IndexOf(tpl);
+				break;
 			}
 		}
-
-
-		if(!isContains) {
-			GK_AchievementTemplate tpl = new GK_AchievementTemplate ();
-			tpl.Id = achievementId;
-			tpl.Progress = 0;
-			_achievements.Add (tpl);
+		
+		if(isContains) {
+			Achievements[replaceIndex] = achievement;
+		} else {
+			Achievements.Add(achievement);
 		}
 	}
+
+
+
 
 	//--------------------------------------
 	//  PUBLIC METHODS
@@ -225,13 +227,13 @@ public class GameCenterManager : MonoBehaviour {
 
 
 	public static void ShowLeaderboard(string leaderboardId, GK_TimeSpan timeSpan) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 			_showLeaderboard(leaderboardId, (int) timeSpan);
 		#endif
 	}
 
 	public static void ShowLeaderboards() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 			_showLeaderboards ();
 		#endif
 	}
@@ -241,7 +243,7 @@ public class GameCenterManager : MonoBehaviour {
 		if(!IOSNativeSettings.Instance.DisablePluginLogs) 
 			Debug.Log("unity reportScore: " + leaderboardId);
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_reportScore(score.ToString(), leaderboardId);
 		#endif
 	}
@@ -250,7 +252,7 @@ public class GameCenterManager : MonoBehaviour {
 	public static void ReportScore(double score, string leaderboardId) {
 		if(!IOSNativeSettings.Instance.DisablePluginLogs) 
 			Debug.Log("unity reportScore double: " + leaderboardId);
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		long s = System.Convert.ToInt64(score * 100);
 		_reportScore(s.ToString(), leaderboardId);
 		#endif
@@ -259,7 +261,7 @@ public class GameCenterManager : MonoBehaviour {
 
 
 	public static void RetrieveFriends() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_RetrieveFriends();
 		#endif
 	}
@@ -270,51 +272,73 @@ public class GameCenterManager : MonoBehaviour {
 	}
 	
 	public static void LoadGKPlayerInfo(string playerId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_loadGKPlayerData(playerId);
 		#endif
 	}
 	
 	public static void LoadGKPlayerPhoto(string playerId, GK_PhotoSize size) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_loadGKPlayerPhoto(playerId, (int) size);
 		#endif
 	}
 
 	
-
+	[System.Obsolete("LoadCurrentPlayerScore is deprecated, please use LoadLeaderboardInfo instead.")]
 	public static void LoadCurrentPlayerScore(string leaderboardId, GK_TimeSpan timeSpan = GK_TimeSpan.ALL_TIME, GK_CollectionType collection = GK_CollectionType.GLOBAL)  {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_getLeaderboardScore(leaderboardId, (int) timeSpan, (int) collection);
+		LoadLeaderboardInfo(leaderboardId);
+	}
+
+
+
+
+	public static void LoadLeaderboardInfo(string leaderboardId)  {
+
+
+
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		int requestId = SA_IdFactory.NextId;
+		GK_Leaderboard leaderboard = GetLeaderboard(leaderboardId);
+		leaderboard.CreateScoreListener(requestId, false);
+
+		_ISN_loadLeaderboardInfo(leaderboardId, requestId);
 		#endif
 	}
-	
 
-	private IEnumerator LoadCurrentPlayerScoreLocal(string leaderboardId, GK_TimeSpan timeSpan = GK_TimeSpan.ALL_TIME, GK_CollectionType collection = GK_CollectionType.GLOBAL ) {
+
+
+	private IEnumerator LoadLeaderboardInfoLocal(string leaderboardId) {
 		yield return new WaitForSeconds(4f);
-		LoadCurrentPlayerScoreLocal(leaderboardId, timeSpan, collection);
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		int requestId = SA_IdFactory.NextId;
+		GK_Leaderboard leaderboard = GetLeaderboard(leaderboardId);
+		leaderboard.CreateScoreListener(requestId, true);
+
+		_ISN_loadLeaderboardInfo(leaderboardId, requestId);
+		#endif
 	}
 
 
 
-	
-	public static void LoadScore(string leaderboardId, int from, int to, GK_TimeSpan timeSpan = GK_TimeSpan.ALL_TIME, GK_CollectionType collection = GK_CollectionType.GLOBAL) {
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_loadLeaderboardScore(leaderboardId, (int) timeSpan, (int) collection, from, to);
+	public static void LoadScore(string leaderboardId, int startIndex, int length, GK_TimeSpan timeSpan = GK_TimeSpan.ALL_TIME, GK_CollectionType collection = GK_CollectionType.GLOBAL) {
+
+
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		_ISN_loadLeaderboardScore(leaderboardId, (int) timeSpan, (int) collection, startIndex, length);
 		#endif
 
 	}
 
 
 	public static void IssueLeaderboardChallenge(string leaderboardId, string message, string playerId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_issueLeaderboardChallenge(leaderboardId, message, playerId);
 		#endif
 	}
 
 	public static void IssueLeaderboardChallenge(string leaderboardId, string message, string[] playerIds) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 			string ids = "";
 			int len = playerIds.Length;
 			for(int i = 0; i < len; i++) {
@@ -331,7 +355,7 @@ public class GameCenterManager : MonoBehaviour {
 
 
 	public static void IssueLeaderboardChallenge(string leaderboardId, string message) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_issueLeaderboardChallengeWithFriendsPicker(leaderboardId, message);
 		#endif
 	}
@@ -340,19 +364,19 @@ public class GameCenterManager : MonoBehaviour {
 
 
 	public static void IssueAchievementChallenge(string achievementId, string message, string playerId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_issueAchievementChallenge(achievementId, message, playerId);
 		#endif
 	}
 
 	public static void LoadLeaderboardSetInfo() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_loadLeaderboardSetInfo();
 		#endif
 	}
 
 	public static void LoadLeaderboardsForSet(string setId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_loadLeaderboardsForSet(setId);
 		#endif
 	}
@@ -361,7 +385,7 @@ public class GameCenterManager : MonoBehaviour {
 
 
 	public static void IssueAchievementChallenge(string achievementId, string message, string[] playerIds) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 			string ids = "";
 			int len = playerIds.Length;
 			for(int i = 0; i < len; i++) {
@@ -379,23 +403,23 @@ public class GameCenterManager : MonoBehaviour {
 
 
 	public static void IssueAchievementChallenge(string achievementId, string message) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_ISN_issueAchievementChallengeWithFriendsPicker(achievementId, message);
 		#endif
 	}
 
 
 	public static void ShowAchievements() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 			_showAchievements();
 		#endif
 	}
 
 	public static void ResetAchievements() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 			_resetAchievements();
 
-			foreach(GK_AchievementTemplate tpl in _achievements) {
+			foreach(GK_AchievementTemplate tpl in Achievements) {
 				tpl.Progress = 0f;
 			}
 		#endif
@@ -411,7 +435,7 @@ public class GameCenterManager : MonoBehaviour {
 	}
 
 	public static void SubmitAchievementNoCache(float percent, string achievementId) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		_submitAchievement(percent, achievementId, false);
 		#endif
 	}
@@ -428,7 +452,7 @@ public class GameCenterManager : MonoBehaviour {
 		}
 
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 			_submitAchievement(percent, achievementId, isCompleteNotification);
 		#endif
 	}
@@ -442,22 +466,42 @@ public class GameCenterManager : MonoBehaviour {
 		if(IOSNativeSettings.Instance.UsePPForAchievements) {
 			progress = GetStoredAchievementProgress(id);
 		} else {
-			foreach(GK_AchievementTemplate tpl in _achievements) {
-				if(tpl.Id == id) {
-					return tpl.Progress;
-				}
-			}
+			GK_AchievementTemplate achievement = GetAchievement(id);
+			progress = achievement.Progress;
 		}
 
 		return progress;
 	}
 
-	public static GK_Leaderboard GetLeaderboard(string id) {
-		if(_leaderboards.ContainsKey(id)) {
-			return _leaderboards[id];
-		} else {
-			return null;
+
+	public static GK_AchievementTemplate GetAchievement(string achievementId) {
+		foreach(GK_AchievementTemplate achievement in Achievements) {
+			if(achievement.Id.Equals(achievementId)) {
+				return achievement;
+			}
 		}
+
+		GK_AchievementTemplate new_achievement =  new GK_AchievementTemplate();
+		new_achievement.Id = achievementId;
+		Achievements.Add(new_achievement);
+
+		return new_achievement;
+	}
+
+
+
+	public static GK_Leaderboard GetLeaderboard(string id) {
+
+		foreach(GK_Leaderboard leaderboard in Leaderboards) {
+			if(leaderboard.Id.Equals(id)) {
+				return leaderboard;
+			}
+		}
+
+		GK_Leaderboard new_leaderboard = new GK_Leaderboard(id);
+		Leaderboards.Add(new_leaderboard);
+
+		return new_leaderboard;
 	}
 
 
@@ -478,9 +522,17 @@ public class GameCenterManager : MonoBehaviour {
 
 	public static List<GK_AchievementTemplate> Achievements {
 		get {
-			return _achievements;
+			return IOSNativeSettings.Instance.Achievements;
 		}
 	}
+
+
+	public static List<GK_Leaderboard> Leaderboards {
+		get {
+			return IOSNativeSettings.Instance.Leaderboards;
+		}
+	}
+
 
 
 	public static Dictionary<string, GK_Player> Players {
@@ -488,12 +540,7 @@ public class GameCenterManager : MonoBehaviour {
 			return _players;
 		}
 	}
-
-	public static EventDispatcherBase Dispatcher {
-		get {
-			return _dispatcher;
-		}
-	}
+	
 
 	public static GK_Player Player {
 		get {
@@ -539,128 +586,140 @@ public class GameCenterManager : MonoBehaviour {
 	//  EVENTS
 	//--------------------------------------
 
-	private void onLeaderboardScoreFailed(string array) {
-		GK_PlayerScoreLoadedResult result = new GK_PlayerScoreLoadedResult ();
-		OnPlayerScoreLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LOADED, result);
+	private void OnLoaderBoardInfoRetrivedFail(string data) {
+		string[] DataArray = data.Split(new string[] { IOSNative.DATA_SPLITTER2 }, StringSplitOptions.None);
+
+		string leaderboardId 			= DataArray[0];
+//		GK_TimeSpan timeSpan 			= (GK_TimeSpan) System.Convert.ToInt32(DataArray[1]);
+//		GK_CollectionType collection 	= (GK_CollectionType) System.Convert.ToInt32(DataArray[2]);
+		int requestId 					= System.Convert.ToInt32(DataArray[3]);
+		string errorData 				= DataArray[4];
+
+
+
+		GK_Leaderboard board = GetLeaderboard(leaderboardId);
+		board.ReportLocalPlayerScoreUpdateFail(errorData, requestId);
 	}
 
 
-	private void onLeaderboardScore(string array) {
+	private void OnLoaderBoardInfoRetrived(string data) {
 
-		string[] data;
-		data = array.Split("," [0]);
-
-		string lbId = data[0];
-		string scoreVal = data[1];
-		int rank = System.Convert.ToInt32(data[2]);
+		string[] DataArray = data.Split(new string[] { IOSNative.DATA_SPLITTER2 }, StringSplitOptions.None);
 
 
-		GK_TimeSpan timeSpan = (GK_TimeSpan) System.Convert.ToInt32(data[3]);
-		GK_CollectionType collection = (GK_CollectionType) System.Convert.ToInt32(data[4]);
+		string leaderboardId 			= DataArray[0];
+		GK_TimeSpan timeSpan 			= (GK_TimeSpan) System.Convert.ToInt32(DataArray[1]);
+		GK_CollectionType collection 	= (GK_CollectionType) System.Convert.ToInt32(DataArray[2]);
+		int requestId 					= System.Convert.ToInt32(DataArray[3]);
 
-		GK_Leaderboard board;
-		if(_leaderboards.ContainsKey(lbId)) {
-			board = _leaderboards[lbId];
-		} else {
-			board =  new GK_Leaderboard(lbId);
-			_leaderboards.Add(lbId, board);
-		}
+		long scoreVal 					= System.Convert.ToInt64(DataArray[4]);
+		int rank 						= System.Convert.ToInt32(DataArray[5]);
+		int maxRange 					=  System.Convert.ToInt32(DataArray[6]);
+		string title 					= DataArray[7];
+		string describtion 				= DataArray[8];
 
 
-		GK_Score score =  new GK_Score(scoreVal, rank, timeSpan, collection, lbId, Player.Id);
 
-		board.UpdateScore(score);
-		board.UpdateCurrentPlayerRank(rank, timeSpan, collection);
+
+
+		GK_Leaderboard board = GetLeaderboard(leaderboardId);
+		board.UpdateMaxRange(maxRange);
+		board.Info.Title = title;
+		board.Info.Description = describtion;
+
+
+		GK_Score score =  new GK_Score(scoreVal, rank, timeSpan, collection, leaderboardId, Player.Id);
+		board.ReportLocalPlayerScoreUpdate(score, requestId);
+
+	}
+
 	
+	public void onScoreSubmittedEvent(string data) {
 
-		GK_PlayerScoreLoadedResult result = new GK_PlayerScoreLoadedResult (score);
-		OnPlayerScoreLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LOADED, result);
+		string[] DataArray = data.Split(new string[] { IOSNative.DATA_SPLITTER2 }, StringSplitOptions.None);
+		
+		string leaderboardId = DataArray[0];
+//		long submittedScore = System.Convert.ToInt64(DataArray[1]);
+	
+	
+		StartCoroutine(LoadLeaderboardInfoLocal(leaderboardId));
 	}
 
 	
-	public void onScoreSubmittedEvent(string array) {
-		
-		string[] data;
-		data = array.Split("," [0]);
-		
-		string lbId = data[0];
-		//string score =  data[1];
-
-
-		StartCoroutine(LoadCurrentPlayerScoreLocal(lbId));
-
-		
-		ISN_Result result = new ISN_Result (true);
-		OnScoreSubmitted (result);
-		Dispatcher.dispatch (SCORE_SUMBITTED, result);
-	}
-
-
-
 
 	
 	public void onScoreSubmittedFailed(string data) {
-		ISN_Result result = new ISN_Result (false);
-		OnScoreSubmitted (result);
-		Dispatcher.dispatch (SCORE_SUMBITTED, result);
+
+		string[] DataArray = data.Split(new string[] { IOSNative.DATA_SPLITTER2 }, StringSplitOptions.None);
 		
-		
+		string leaderboardId = DataArray[0];
+//		long submittedScore = System.Convert.ToInt64(DataArray[1]);
+		string errorData = DataArray[2];
+
+		GK_Leaderboard board = GetLeaderboard(leaderboardId);
+		GK_LeaderboardResult result =  new GK_LeaderboardResult(board, errorData);
+		OnScoreSubmitted(result);
 	}
 
 
-	private void onLeaderboardScoreListLoaded(string array) {
+
+
+	private void OnLeaderboardScoreListLoaded(string data) {
+
+
+		string[] DataArray = data.Split(new string[] { IOSNative.DATA_SPLITTER2 }, StringSplitOptions.None);
+
+
+
+		string leaderboardId = DataArray[0];
+		GK_TimeSpan timeSpan = (GK_TimeSpan) System.Convert.ToInt32(DataArray[1]);
+		GK_CollectionType collection = (GK_CollectionType) System.Convert.ToInt32(DataArray[2]);
+
+		GK_Leaderboard board = GetLeaderboard(leaderboardId);
 
 
 		
-		string[] data;
-		data = array.Split("," [0]);
-
-		string lbId = data[0];
-		GK_TimeSpan timeSpan = (GK_TimeSpan) System.Convert.ToInt32(data[1]);
-		GK_CollectionType collection = (GK_CollectionType) System.Convert.ToInt32(data[2]);
-
-		GK_Leaderboard board;
-		if(_leaderboards.ContainsKey(lbId)) {
-			board = _leaderboards[lbId];
-		} else {
-			board =  new GK_Leaderboard(lbId);
-			_leaderboards.Add(lbId, board);
-		}
-
-
-	
 		
-		
-		for(int i = 3; i < data.Length; i+=3) {
-			string playerId = data[i];
-			string scoreVal = data[i + 1];
-			int rank = System.Convert.ToInt32(data[i + 2]);
+		for(int i = 3; i < DataArray.Length; i+=3) {
+			string playerId = DataArray[i];
+			long scoreVal = System.Convert.ToInt64 (DataArray[i + 1]); 
+			int rank = System.Convert.ToInt32(DataArray[i + 2]);
 
-			GK_Score score =  new GK_Score(scoreVal, rank, timeSpan, collection, lbId, playerId);
+			GK_Score score =  new GK_Score(scoreVal, rank, timeSpan, collection, leaderboardId, playerId);
 			board.UpdateScore(score);
+
+
 			if(Player != null) {
 				if(Player.Id.Equals(playerId)) {
-					board.UpdateCurrentPlayerRank(rank, timeSpan, collection);
+					board.UpdateCurrentPlayerScore(score);
 				}
 			}
 		}
 		
 
 
-		ISN_Result result = new ISN_Result (true);
+		GK_LeaderboardResult result = new GK_LeaderboardResult (board);
 		OnScoresListLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LIST_LOADED, result);
 
 
 	}
 
-	private void onLeaderboardScoreListLoadFailed(string array) {
+	private void OnLeaderboardScoreListLoadFailed(string data) {
 
-		ISN_Result result = new ISN_Result (false);
+		string[] DataArray = data.Split(new string[] { IOSNative.DATA_SPLITTER2 }, StringSplitOptions.None);
+
+		string leaderboardId = DataArray[0];
+		//GK_TimeSpan timeSpan = (GK_TimeSpan) System.Convert.ToInt32(DataArray[1]);
+		//GK_CollectionType collection = (GK_CollectionType) System.Convert.ToInt32(DataArray[2]);
+
+		string errorData = DataArray[3];
+
+		GK_Leaderboard board = GetLeaderboard(leaderboardId);
+
+
+		GK_LeaderboardResult result = new GK_LeaderboardResult (board, errorData);
 		OnScoresListLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LIST_LOADED, result);
+
 	}
 
 
@@ -669,33 +728,27 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_Result result = new ISN_Result (true);
 		OnAchievementsReset (result);
-		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_RESET, result);
 
 	}
 
-	private void onAchievementsResetFailed(string array) {
-		ISN_Result result = new ISN_Result (false);
+	private void onAchievementsResetFailed(string errorData) {
+		ISN_Result result = new ISN_Result (errorData);
 		OnAchievementsReset (result);
-		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_RESET, result);
 	}
 
 
 	private void onAchievementProgressChanged(string array) {
-		string[] data;
-		data = array.Split("," [0]);
+		string[] data = array.Split(IOSNative.DATA_SPLITTER);
 
 
 
-		GK_AchievementTemplate tpl =  new GK_AchievementTemplate();
-		tpl.Id = data [0];
+		GK_AchievementTemplate tpl =  GetAchievement(data[0]);
 		tpl.Progress = System.Convert.ToSingle(data [1]) ;
-		GK_AchievementProgressResult result = new GK_AchievementProgressResult(tpl);
 
-		submitAchievement (tpl);
+		GK_AchievementProgressResult result = new GK_AchievementProgressResult(tpl);
+		SaveLocalProgress (tpl);
 
 		OnAchievementsProgress(result);
-		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENT_PROGRESS, result);
-
 	}
 
 
@@ -704,38 +757,32 @@ public class GameCenterManager : MonoBehaviour {
 		ISN_Result result = new ISN_Result (true);
 		if(array.Equals(string.Empty)) {
 			OnAchievementsLoaded (result);
-			Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
 			return;
 		}
 
-		string[] data;
-		data = array.Split("," [0]);
+		string[] data = array.Split(IOSNative.DATA_SPLITTER);
 
 
 		for(int i = 0; i < data.Length; i+=3) {
-			GK_AchievementTemplate tpl =  new GK_AchievementTemplate();
-			tpl.Id 				= data[i];
+			GK_AchievementTemplate tpl =  GetAchievement(data[i]);
 			tpl.Description 	= data[i + 1];
 			tpl.Progress 		= System.Convert.ToSingle(data[i + 2]);
-			submitAchievement (tpl);
+			SaveLocalProgress (tpl);
 		}
 
 		_IsAchievementsInfoLoaded = true;
 		OnAchievementsLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
 	}
 
 
-	private void onAchievementsLoadedFailed() {
-		ISN_Result result = new ISN_Result (false);
+	private void onAchievementsLoadedFailed(string errorData) {
+		ISN_Result result = new ISN_Result (errorData);
 		OnAchievementsLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
 	}
 
 
 	private void onAuthenticateLocalPlayer(string  array) {
-		string[] data;
-		data = array.Split("," [0]);
+		string[] data = array.Split(IOSNative.DATA_SPLITTER);
 
 		_player = new GK_Player (data[0], data [1], data [2]);
 
@@ -747,27 +794,29 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_Result result = new ISN_Result (_IsPlayerAuthenticated);
 		OnAuthFinished (result);
-		Dispatcher.dispatch (GAME_CENTER_PLAYER_AUTHENTICATED, result);
-
-
-
 	}
 	
 	
-	private void onAuthenticationFailed(string  array) {
+	private void onAuthenticationFailed(string  errorData) {
+
 		_IsPlayerAuthenticated = false;
 
+		ISN_Result result;
+		if(errorData.Length > 0) {
+			result = new ISN_Result(errorData);
+		} else {
+			result	= new ISN_Result (_IsPlayerAuthenticated);
+		}
 
-		ISN_Result result = new ISN_Result (_IsPlayerAuthenticated);
+			
 		OnAuthFinished (result);
-		Dispatcher.dispatch (GAME_CENTER_PLAYER_AUTHENTICATED, result);
 	}
 
 
 	private void OnUserInfoLoadedEvent(string array) {
 		Debug.Log("OnUserInfoLoadedEvent");
 
-		string[] data = array.Split(IOSNative.DATA_SPLITTER[0]);
+		string[] data = array.Split(IOSNative.DATA_SPLITTER);
 
 		string playerId = data[0];
 		string alias = data[1];
@@ -791,8 +840,6 @@ public class GameCenterManager : MonoBehaviour {
 
 		GK_UserInfoLoadResult result = new GK_UserInfoLoadResult (p);
 		OnUserInfoLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_USER_INFO_LOADED, result);
-		
 
 	}    
 	
@@ -800,12 +847,11 @@ public class GameCenterManager : MonoBehaviour {
 		
 		GK_UserInfoLoadResult result = new GK_UserInfoLoadResult (playerId);
 		OnUserInfoLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_USER_INFO_LOADED, result);
 	}
 
 
-	public void OnUserPhotoLoadedEvent(string array) {
-		string[] data = array.Split(IOSNative.DATA_SPLITTER[0]);
+	private void OnUserPhotoLoadedEvent(string array) {
+		string[] data = array.Split(IOSNative.DATA_SPLITTER);
 		
 		string playerId = data[0];
 		GK_PhotoSize size = (GK_PhotoSize) System.Convert.ToInt32(data[1]);
@@ -837,7 +883,7 @@ public class GameCenterManager : MonoBehaviour {
 
 
 		string[] fl;
-		fl = data.Split(IOSNative.DATA_SPLITTER[0]);
+		fl = data.Split(IOSNative.DATA_SPLITTER);
 
 		for(int i = 0; i < fl.Length; i++) {
 			_friendsList.Add(fl[i]);
@@ -849,20 +895,16 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_Result result = new ISN_Result (true);
 		OnFriendsListLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_FRIEND_LIST_LOADED, result);
 
 	}
 
 	private void OnFriendListLoadFailEvent(string errorData) {
-		ISN_Result result = new ISN_Result (false);
-		result.SetErrorData(errorData);
+		ISN_Result result = new ISN_Result (errorData);
 		OnFriendsListLoaded (result);
-		Dispatcher.dispatch (GAME_CENTER_FRIEND_LIST_LOADED, result);
 	}
 
 
 	private void OnGameCenterViewDismissedEvent(string data) {
-		Dispatcher.dispatch(GAME_CENTER_VIEW_DISMISSED);
 		OnGameCenterViewDismissed();
 	}
 
@@ -870,12 +912,8 @@ public class GameCenterManager : MonoBehaviour {
 
 	private void VerificationSignatureRetrieveFailed(string array) {
 
-		string[] data;
-		data = array.Split("|" [0]);
-
-		ISN_Error error =  new ISN_Error();
-		error.code = System.Convert.ToInt32(data[0]);
-		error.description = data[1];
+		ISN_Error error =  new ISN_Error(array);
+	
 
 		GK_PlayerSignatureResult res =  new GK_PlayerSignatureResult(error);
 		OnPlayerSignatureRetrieveResult(res);
@@ -884,7 +922,7 @@ public class GameCenterManager : MonoBehaviour {
 
 	private void VerificationSignatureRetrieved(string array) {
 		string[] data;
-		data = array.Split("|" [0]);
+		data = array.Split(IOSNative.DATA_SPLITTER);
 
 		GK_PlayerSignatureResult res =  new GK_PlayerSignatureResult(data[0], data[1], data[2], data[3]);
 		OnPlayerSignatureRetrieveResult(res);
@@ -897,27 +935,15 @@ public class GameCenterManager : MonoBehaviour {
 	//  PRIVATE METHODS
 	//--------------------------------------
 
-	private void submitAchievement(GK_AchievementTemplate tpl) {
-		bool isContains = false;
-		foreach(GK_AchievementTemplate t in _achievements) {
-			if (t.Id.Equals (tpl.Id)) {
-				isContains = true;
-				t.Progress = tpl.Progress;
-			}
-		}
-
+	private void SaveLocalProgress(GK_AchievementTemplate tpl) {
 		if(IOSNativeSettings.Instance.UsePPForAchievements) {
 			SaveAchievementProgress(tpl.Id, tpl.Progress);
-		}
-
-		if(!isContains) {
-			_achievements.Add (tpl);
 		}
 	}
 
 
 	private static void ResetStoredProgress() {
-		foreach(GK_AchievementTemplate t in _achievements) {
+		foreach(GK_AchievementTemplate t in Achievements) {
 			PlayerPrefs.DeleteKey(ISN_GC_PP_KEY + t.Id);
 		}
 	}
@@ -926,7 +952,7 @@ public class GameCenterManager : MonoBehaviour {
 
 		float currentProgress =  GetStoredAchievementProgress(achievementId);
 		if(progress > currentProgress) {
-			PlayerPrefs.SetFloat(ISN_GC_PP_KEY + achievementId, progress);
+			PlayerPrefs.SetFloat(ISN_GC_PP_KEY + achievementId, Mathf.Clamp(progress, 0f, 100f));
 		}
 	}
 
@@ -941,9 +967,9 @@ public class GameCenterManager : MonoBehaviour {
 
 	private void ISN_OnLBSetsLoaded(string array) {
 
-		string[] data = array.Split("|" [0]);
+		string[] data = array.Split(IOSNative.DATA_SPLITTER);
 
-		for(int i = 0; i < data.Length; i+=3) {
+		for(int i = 0; i+2  < data.Length; i+=3) {
 			GK_LeaderboardSet lbSet =  new GK_LeaderboardSet();
 			lbSet.Title = data[i];
 			lbSet.Identifier = data[i + 1];
@@ -975,7 +1001,7 @@ public class GameCenterManager : MonoBehaviour {
 	private void ISN_OnLBSetsBoardsLoaded(string array) {
 
 
-		string[] data = array.Split("|" [0]);
+		string[] data = array.Split(IOSNative.DATA_SPLITTER);
 
 		string identifier = data[0];
 
@@ -999,22 +1025,18 @@ public class GameCenterManager : MonoBehaviour {
 
 	}
 
-	private void OnLeaderboardMaxRangeUpdate(string array) {
-		string[] data = array.Split("|" [0]);
-		
-		string identifier = data[0];
-		int MaxRange = System.Convert.ToInt32(data[1]);
+	
+	//--------------------------------------
+	// Internal
+	//--------------------------------------
 
-		GK_Leaderboard board;
-		if(_leaderboards.ContainsKey(identifier)) {
-			board = _leaderboards[identifier];
+	public static void DispatchLeaderboardUpdateEvent(GK_LeaderboardResult result, bool isInternal) {
+		if(isInternal) {
+			OnScoreSubmitted(result);
 		} else {
-			board =  new GK_Leaderboard(identifier);
+			OnLeadrboardInfoLoaded(result);
 		}
-
-		board.UpdateMaxRange(MaxRange);
 	}
-
 
 	//--------------------------------------
 	// UTILS

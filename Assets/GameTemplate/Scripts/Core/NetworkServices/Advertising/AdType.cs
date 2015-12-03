@@ -11,4 +11,5 @@ public enum AdType{
 	VIDEO						= 1,
 	BANNER						= 2,
 	RANDOM_INTERSTITIAL_VIDEO 	= 3,
+	VIDEO_V4VC					= 4
 }

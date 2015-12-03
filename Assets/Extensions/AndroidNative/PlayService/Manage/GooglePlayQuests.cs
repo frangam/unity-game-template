@@ -5,13 +5,6 @@ using System.Collections.Generic;
 
 public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 
-
-
-	//Events
-	public const string QUEST_ACCEPTED      = "quest_accepted";
-	public const string QUESTS_LOADED       = "quests_loaded";
-	public const string QUESTS_COMPLETE     = "quests_complete";
-
 	//Actions
 	public Action<GooglePlayResult> OnQuestsLoaded =  delegate{};
 	public Action<GP_QuestResult> OnQuestsAccepted =  delegate{};
@@ -145,7 +138,6 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		result.quest = GetQuestById (result.questId);
 
 
-		dispatch(QUEST_ACCEPTED, result);
 		OnQuestsAccepted(result);
 
 	}
@@ -161,7 +153,6 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		result.reward = storeData [2];
 
 
-		dispatch(QUESTS_COMPLETE, result);
 		OnQuestsCompleted(result);
 	
 	}
@@ -216,7 +207,6 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		}
 
 
-		dispatch(QUESTS_LOADED, result);
 		OnQuestsLoaded(result);
 		Debug.Log ("OnGPQuestsLoaded, total:" + _Quests.Count.ToString());
 		

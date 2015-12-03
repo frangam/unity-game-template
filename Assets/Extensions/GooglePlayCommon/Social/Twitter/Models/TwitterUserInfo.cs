@@ -9,14 +9,15 @@
 
 
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 
-public class TwitterUserInfo : EventDispatcherBase {
+public class TwitterUserInfo  {
 
-	public const string PROFILE_IMAGE_LOADED		 = "profile_image_loaded";
-	public const string PROFILE_BACKGROUND_LOADED 	 = "profile_background_loaded";
-	
+
+	public event Action<Texture2D> ActionProfileImageLoaded = delegate{};
+	public event Action<Texture2D> ActionProfileBackgroundImageLoaded = delegate{};
+
 
 	private string _id;
 	private string _description;
@@ -121,7 +122,7 @@ public class TwitterUserInfo : EventDispatcherBase {
 	public void LoadProfileImage() {
 
 		if(_profile_image != null) {
-			dispatch(PROFILE_IMAGE_LOADED);
+			ActionProfileImageLoaded(_profile_image);
 			return;
 		}
 
@@ -134,7 +135,7 @@ public class TwitterUserInfo : EventDispatcherBase {
 	public void LoadBackgroundImage() {
 
 		if(_profile_background != null) {
-			dispatch(PROFILE_BACKGROUND_LOADED);
+			ActionProfileBackgroundImageLoaded(_profile_background);
 			return;
 		}
 
@@ -274,13 +275,13 @@ public class TwitterUserInfo : EventDispatcherBase {
 	private void OnProfileImageLoaded(Texture2D img) {
 		_profile_image = img;
 
-		dispatch(PROFILE_IMAGE_LOADED);
+		ActionProfileImageLoaded(_profile_image);
 	}
 
 	private void OnProfileBackgroundLoaded(Texture2D img) {
 		_profile_background = img;
 
-		dispatch(PROFILE_BACKGROUND_LOADED);
+		ActionProfileBackgroundImageLoaded(_profile_background);
 	}
 
 

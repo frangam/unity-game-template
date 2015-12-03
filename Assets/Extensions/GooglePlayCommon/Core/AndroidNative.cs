@@ -57,8 +57,8 @@ public class AndroidNative {
 	// --------------------------------------
 	
 
-	public static void InitCameraAPI(string folderName, int maxSize, int mode) {
-		CallAndroidNativeBridge("InitCameraAPI", folderName, maxSize.ToString(), mode.ToString());
+	public static void InitCameraAPI(string folderName, int maxSize, int mode, int format) {
+		CallAndroidNativeBridge("InitCameraAPI", folderName, maxSize.ToString(), mode.ToString(), format);
 	}
 
 	public static void SaveToGalalry(string ImageData, string name) {
@@ -91,8 +91,17 @@ public class AndroidNative {
 		CallAndroidNativeBridge("loadAndroidId");
 	}
 
+	public static void LoadPackagesList () {
+		CallUtility("loadPackagesList");
+	}
 
+	public static void LoadNetworkInfo () {
+		CallUtility("loadNetworkInfo");
+	}
 
+	public static void OpenSettingsPage (string action) {
+		CallUtility("openSettingsPage", action);
+	}
 	
 	//--------------------------------------
 	// Other Features

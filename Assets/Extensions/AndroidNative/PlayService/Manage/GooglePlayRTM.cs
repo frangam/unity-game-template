@@ -5,45 +5,13 @@ using System;
 
 public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 
-
-
-
-	//Events
-	public const string DATA_RECIEVED		      	= "data_recieved";
-	public const string ROOM_UPDATED            	= "room_updated";
-
-
-	public const string ON_CONNECTED_TO_ROOM        = "OnConnectedToRoom";
-	public const string ON_DISCONNECTED_FROM_ROOM 	= "OnDisconnectedFromRoom";
-	public const string ON_P2P_CONNECTED			= "OnP2PConnected";
-	public const string ON_P2P_DISCONNECTED 		= "OnP2PDisconnected";
-	public const string ON_PEER_DECLINED 			= "OnPeerDeclined";
-	public const string ON_PEER_INVITED_TO_ROOM 	= "OnPeerInvitedToRoom";
-	public const string ON_PEER_JOINED 				= "OnPeerJoined";
-	public const string ON_PEER_LEFT 				= "OnPeerLeft";
-	public const string ON_PEERS_CONNECTED 			= "OnPeersConnected";
-	public const string ON_PEERS_DISCONNECTED 		= "OnPeersDisconnected";
-	public const string ON_ROOM_AUTOMATCHING 		= "OnRoomAutoMatching";
-	public const string ON_ROOM_CONNECTING 			= "OnRoomConnecting";
-	public const string ON_JOINED_ROOM 				= "OnJoinedRoom";
-	public const string ON_LEFT_ROOM 				= "OnLeftRoom";
-	public const string ON_ROOM_CONNECTED 			= "OnRoomConnected";
-	public const string ON_ROOM_CREATED 			= "OnRoomCreated";
-
-	public const string ON_INVITATION_BOX_UI_CLOSED = "onInvitationBoxUiClosed";
-	public const string ON_WATING_ROOM_INTENT_CLOSED = "OnWatingRoomIntentClosed";
-
-
-	public const string ON_INVITATION_RECEIVED = "on_invitation_received";
-	public const string ON_INVITATION_REMOVED = "on_invitation_removed";
-
-
 	//Actions
-	public static  Action<GP_RTM_Network_Package> ActionDataRecieved		      	=  delegate{};
-	public static  Action<GP_RTM_Room> ActionRoomUpdated            	=  delegate{};
+	public static Action<GP_RTM_Network_Package> 					ActionDataRecieved		      	= delegate{};
+	public static Action<GP_RTM_Room> 								ActionRoomUpdated            	= delegate{};
+	public static Action<GP_RTM_ReliableMessageSentResult> 			ActionReliableMessageSent 		= delegate{};
+	public static Action<GP_RTM_ReliableMessageDeliveredResult> 	ActionReliableMessageDelivered 	= delegate{};
 	
-	
-	public static Action ActionConnectedToRoom        =  delegate{};
+	public static Action ActionConnectedToRoom        	=  delegate{};
 	public static Action ActionDisconnectedFromRoom 	=  delegate{};
 
 	//contains participant id
@@ -71,14 +39,12 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 	public static Action<GP_Invite> ActionInvitationReceived =  delegate{};
 	public static Action<string> ActionInvitationRemoved =  delegate{};
 
-
-
-
-
 	private const int BYTE_LIMIT = 256;
 	private GP_RTM_Room _currentRoom = new GP_RTM_Room();
 	private List<GP_Invite> _invitations =  new List<GP_Invite>();
 
+	// Cache for reliable messages data
+	private Dictionary<int, GP_RTM_ReliableMessageListener> _ReliableMassageListeners = new Dictionary<int, GP_RTM_ReliableMessageListener>();
 	
 	//--------------------------------------
 	// INITIALIZATION
@@ -117,15 +83,51 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 		AN_GMSRTMProxy.RTMFindMatch(minPlayers, maxPlayers, playersToInvite);
 	}
 
+	public void FindMatch(GooglePlayerTemplate[] playersToInvite) {
+		
+		List<string> ids =  new List<string>();
+		foreach(GooglePlayerTemplate p in playersToInvite) {
+			ids.Add(p.playerId);
+		}
+		
+		AN_GMSRTMProxy.RTMFindMatch(ids.ToArray());
+	}
+	
+	public void FindMatch(string[] playersToInvite) {
+		AN_GMSRTMProxy.RTMFindMatch(playersToInvite);
+	}
+
 	public void SendDataToAll(byte[] data, GP_RTM_PackageType sendType) {
 		string dataString = ConvertByteDataToString(data);
-		AN_GMSRTMProxy.sendDataToAll(dataString, (int) sendType);
+		switch (sendType) {
+		case GP_RTM_PackageType.RELIABLE:
+
+			GP_RTM_ReliableMessageListener listener = new GP_RTM_ReliableMessageListener(SA_IdFactory.NextId, data);
+			_ReliableMassageListeners.Add(listener.DataTokenId, listener);
+
+			AN_GMSRTMProxy.sendDataToAll(dataString, (int) sendType);
+			break;
+		case GP_RTM_PackageType.UNRELIABLE:
+			AN_GMSRTMProxy.sendDataToAll(dataString, (int) sendType);
+			break;
+		}
 	}
 	
 	public void sendDataToPlayers(byte[] data, GP_RTM_PackageType sendType, params string[] players) {
 		string dataString = ConvertByteDataToString(data);
 		string playersString = string.Join(AndroidNative.DATA_SPLITTER, players);
-		AN_GMSRTMProxy.sendDataToPlayers(dataString, playersString, (int) sendType);
+		switch (sendType) {
+		case GP_RTM_PackageType.RELIABLE:
+
+			GP_RTM_ReliableMessageListener listener = new GP_RTM_ReliableMessageListener(SA_IdFactory.NextId, data);
+			_ReliableMassageListeners.Add(listener.DataTokenId, listener);
+
+			AN_GMSRTMProxy.sendDataToPlayers(dataString, playersString, (int) sendType);
+			break;
+		case GP_RTM_PackageType.UNRELIABLE:
+			AN_GMSRTMProxy.sendDataToPlayers(dataString, playersString, (int) sendType);
+			break;
+		}
 	}
 
 	public void ShowWaitingRoomIntent() {
@@ -170,6 +172,12 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 		AN_GMSRTMProxy.RTM_SetExclusiveBitMask (val);
 	}
 
+	public void ClearReliableMessageListener(int dataTokenId) {
+		if (_ReliableMassageListeners.ContainsKey(dataTokenId)) {
+			_ReliableMassageListeners.Remove(dataTokenId);
+			Debug.Log("[ClearReliableMessageListener] Remove data with token " + dataTokenId);
+		}
+	}
 
 	//--------------------------------------
 	// GET / SET
@@ -197,7 +205,6 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 		AndroidActivityResult result =  new AndroidActivityResult(storeData[0], storeData[1]);
 
 		ActionWatingRoomIntentClosed(result);
-		dispatch(ON_WATING_ROOM_INTENT_CLOSED,  result);
 	}
 
 	private void OnRoomUpdate(string data) {
@@ -229,10 +236,46 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 		Debug.Log("GooglePlayRTM OnRoomUpdate Room State: " + _currentRoom.status.ToString());
 
 		ActionRoomUpdated(_currentRoom);
-		dispatch(ROOM_UPDATED, _currentRoom);
 
 	}
 
+	private void OnReliableMessageSent(string data) {
+		Debug.Log ("[OnReliableMessageSent] " + data);
+
+		string[] resultData = data.Split(AndroidNative.DATA_SPLITTER[0]);
+		int messageTokedId = Int32.Parse(resultData[2]);
+		int dataTokenId = Int32.Parse(resultData[3]);
+
+		if (_ReliableMassageListeners.ContainsKey(dataTokenId)) {
+			GP_RTM_ReliableMessageSentResult result =
+				new GP_RTM_ReliableMessageSentResult(resultData[0], resultData[1], messageTokedId, _ReliableMassageListeners[dataTokenId].Data);
+			ActionReliableMessageSent(result);
+
+			_ReliableMassageListeners[dataTokenId].ReportSentMessage();
+		} else {
+			GP_RTM_ReliableMessageSentResult result = new GP_RTM_ReliableMessageSentResult(resultData[0], resultData[1], messageTokedId, null);
+			ActionReliableMessageSent(result);
+		}
+	}
+
+	private void OnReliableMessageDelivered(string data) {
+		Debug.Log("[OnReliableMessageDelivered] " + data);
+
+		string[] resultData = data.Split(AndroidNative.DATA_SPLITTER[0]);
+		int messageTokedId = Int32.Parse(resultData[2]);
+		int dataTokenId = Int32.Parse(resultData[3]);
+
+		if (_ReliableMassageListeners.ContainsKey(dataTokenId)) {
+			GP_RTM_ReliableMessageDeliveredResult result =
+				new GP_RTM_ReliableMessageDeliveredResult(resultData[0], resultData[1], messageTokedId, _ReliableMassageListeners[dataTokenId].Data);
+			ActionReliableMessageDelivered(result);
+
+			_ReliableMassageListeners[dataTokenId].ReportDeliveredMessage();
+		} else {
+			GP_RTM_ReliableMessageDeliveredResult result = new GP_RTM_ReliableMessageDeliveredResult(resultData[0], resultData[1], messageTokedId, null);
+			ActionReliableMessageDelivered(result);
+		}
+	}
 
 	private void OnMatchDataRecieved(string data) {
 		if(data.Equals(string.Empty)) {
@@ -245,7 +288,6 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 
 
 		ActionDataRecieved(package);
-		dispatch (DATA_RECIEVED, package);
 		Debug.Log ("GooglePlayManager -> DATA_RECEIVED");
 	}
 
@@ -256,79 +298,61 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 	
 	private void OnConnectedToRoom(string data) {
 		ActionConnectedToRoom();
-		dispatch (ON_CONNECTED_TO_ROOM);
 	}
 	
 	private void OnDisconnectedFromRoom(string data) {
 		ActionDisconnectedFromRoom();
-		dispatch (ON_DISCONNECTED_FROM_ROOM);
 	}
 	
 	private void OnP2PConnected(string participantId) {
 		ActionP2PConnected(participantId);
-		dispatch (ON_P2P_CONNECTED, participantId);
 	}
 	
 	private void OnP2PDisconnected(string participantId) {
 		ActionP2PDisconnected(participantId);
-		dispatch (ON_P2P_DISCONNECTED, participantId);
 	}
 
 	private void OnPeerDeclined(string data) {
 		string[] participantsids = data.Split(","[0]);
 		ActionPeerDeclined(participantsids);
-		dispatch (ON_PEER_DECLINED, participantsids);
 	}
 	
 	private void OnPeerInvitedToRoom(string data) {
 		string[] participantsids = data.Split(","[0]);
 		ActionPeerInvitedToRoom(participantsids);
-		dispatch (ON_PEER_INVITED_TO_ROOM, participantsids);
-
 	}
 	
 	private void OnPeerJoined(string data) {
 		string[] participantsids = data.Split(","[0]);
 		ActionPeerJoined(participantsids);
-		dispatch (ON_PEER_JOINED, participantsids);
-
 	}
 	
 	private void OnPeerLeft(string data) {
 		string[] participantsids = data.Split(","[0]);
 		ActionPeerLeft(participantsids);
-		dispatch (ON_PEER_LEFT, participantsids);
-
 	}
 	
 	private void OnPeersConnected(string data) {
 		string[] participantsids = data.Split(","[0]);
 		ActionPeersConnected(participantsids);
-		dispatch (ON_PEERS_CONNECTED, participantsids);
-
 	}
 	
 	private void OnPeersDisconnected(string data) {
 		string[] participantsids = data.Split(","[0]);
 		ActionPeersDisconnected(participantsids);
-		dispatch (ON_PEERS_DISCONNECTED, participantsids);
-
 	}
 	
 	private void OnRoomAutoMatching(string data) {
 		ActionRoomAutomatching();
-		dispatch (ON_ROOM_AUTOMATCHING);
 	}
 	
 	private void OnRoomConnecting(string data) {
 		ActionRoomConnecting();
-		dispatch (ON_ROOM_CONNECTING);
 	}
 		
 	private void OnJoinedRoom(string data) {
 		GP_GamesStatusCodes code = (GP_GamesStatusCodes)Convert.ToInt32(data);
 		ActionJoinedRoom(code);
-		dispatch (ON_JOINED_ROOM, code);
 	}
 	
 	private void OnLeftRoom(string data) {
@@ -339,22 +363,18 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 
 		_currentRoom =  new GP_RTM_Room();
 		ActionRoomUpdated(_currentRoom);
-		dispatch(ROOM_UPDATED, _currentRoom);
 
 		ActionLeftRoom(package);
-		dispatch (ON_LEFT_ROOM, package);
 	}
 	
 	private void OnRoomConnected(string data) {
 		GP_GamesStatusCodes code = (GP_GamesStatusCodes)Convert.ToInt32(data);
 		ActionRoomConnected(code);
-		dispatch (ON_ROOM_CONNECTED, code);
 	}
 	
 	private void OnRoomCreated(string data) {
 		GP_GamesStatusCodes code = (GP_GamesStatusCodes)Convert.ToInt32(data);
 		ActionRoomCreated(code);
-		dispatch (ON_ROOM_CREATED, code);
 	}
 
 	private void OnInvitationBoxUiClosed(string data) {
@@ -364,7 +384,6 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 		AndroidActivityResult result =  new AndroidActivityResult(storeData[0], storeData[1]);
 	
 		ActionInvitationBoxUIClosed(result);
-		dispatch(ON_INVITATION_BOX_UI_CLOSED,  result);
 	}
 
 	private void OnInvitationReceived(string data) {
@@ -382,7 +401,6 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 		if (inv.InvitationType == GP_InvitationType.INVITATION_TYPE_REAL_TIME) {
 			_invitations.Add(inv);
 			ActionInvitationReceived(inv);
-			dispatch(ON_INVITATION_RECEIVED, inv);
 		}
 	}
 
@@ -394,7 +412,6 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 			}
 		}
 		ActionInvitationRemoved(invitationId);
-		dispatch(ON_INVITATION_REMOVED, invitationId);
 	}
 
 	//--------------------------------------
@@ -432,18 +449,15 @@ public class GooglePlayRTM : SA_Singleton<GooglePlayRTM>  {
 	}
 
 	public static string ConvertByteDataToString(byte[] data) {
-		
-		string b = "";
+		System.Text.StringBuilder b = new System.Text.StringBuilder("");
 		for(int i = 0; i < data.Length; i++) {
 			if(i != 0) {
-				b += ",";
+				b.Append(",");
 			}
 			
-			b += data[i].ToString();
+			b.Append(data[i]);
 		}
-
-		return b;
-		
+		return b.ToString();		
 	}
 
 

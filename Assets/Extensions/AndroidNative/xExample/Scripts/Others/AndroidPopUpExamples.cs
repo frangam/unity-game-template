@@ -7,10 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
- 
-
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -32,17 +29,17 @@ public class AndroidPopUpExamples : MonoBehaviour {
 
 	private void RateDialogPopUp() {
 		AndroidRateUsPopUp rate = AndroidRateUsPopUp.Create("Rate Us", rateText, rateUrl);
-		rate.OnComplete += OnRatePopUpClose;
+		rate.ActionComplete += OnRatePopUpClose;
 	}
 
 	private void DialogPopUp() {
 		AndroidDialog dialog = AndroidDialog.Create("Dialog Titile", "Dialog message");
-		dialog.OnComplete += OnDialogClose;
+		dialog.ActionComplete += OnDialogClose;
 	}
 
 	private void MessagePopUp() {
 		AndroidMessage msg = AndroidMessage.Create("Message Titile", "Message message");
-		msg.OnComplete += OnMessageClose;
+		msg.ActionComplete += OnMessageClose;
 	}
 
 	private void ShowPreloader() {
@@ -111,7 +108,7 @@ public class AndroidPopUpExamples : MonoBehaviour {
 
 
 
-	private void OnMessageClose() {
+	private void OnMessageClose(AndroidDialogResult result) {
 		AN_PoupsProxy.showMessage("Result", "Message Closed");
 	}
 	

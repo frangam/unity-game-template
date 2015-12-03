@@ -21,11 +21,13 @@ public class FBPostResult  {
 
 		if(_Result.Error == null) {
 			try {
+				Debug.Log("Posy Result");
 				Dictionary<string, object> data =   ANMiniJSON.Json.Deserialize(_Result.Text) as Dictionary<string, object>;
 				_PostId = System.Convert.ToString(data["id"]);
 				_IsSucceeded = true;
 			} catch(System.Exception ex) {
-				Debug.Log(ex.Message);
+				_IsSucceeded = false;
+				Debug.Log("No Post Id: "  + ex.Message);
 			}
 				
 			SA_StatusBar.text = "Posting complete";

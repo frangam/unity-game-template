@@ -7,17 +7,17 @@ public class CSharpAPIHelper : MonoBehaviour {
 
 	public void ConnectToPlaySertivce() {
 		//listen for GooglePlayConnection events
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
+		GooglePlayConnection.ActionPlayerConnected += OnPlayerConnected;
+		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
+
 
 		
-		
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			//checking if player already connected
 			OnPlayerConnected ();
 		}  else {
 			Debug.Log("Connecting....");
-			GooglePlayConnection.instance.connect();
+			GooglePlayConnection.instance.Connect();
 		}
 
 

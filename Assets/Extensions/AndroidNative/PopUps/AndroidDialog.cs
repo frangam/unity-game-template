@@ -8,7 +8,6 @@
 
 using UnityEngine;
 using System;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,8 +17,7 @@ public class AndroidDialog : BaseAndroidPopup {
 	public string yes;
 	public string no;
 
-	public Action<AndroidDialogResult> OnComplete = delegate {} ;
-	
+
 	//--------------------------------------
 	// INITIALIZE
 	//--------------------------------------
@@ -63,12 +61,10 @@ public class AndroidDialog : BaseAndroidPopup {
 		
 		switch(index) {
 			case 0: 
-				OnComplete(AndroidDialogResult.YES);
-				dispatch(BaseEvent.COMPLETE, AndroidDialogResult.YES);
+				DispatchAction(AndroidDialogResult.YES);
 				break;
 			case 1: 
-				OnComplete(AndroidDialogResult.NO);
-				dispatch(BaseEvent.COMPLETE, AndroidDialogResult.NO);
+				DispatchAction(AndroidDialogResult.NO);
 				break;
 		}
 		

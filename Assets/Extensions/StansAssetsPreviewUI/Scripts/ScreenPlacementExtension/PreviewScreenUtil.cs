@@ -1,11 +1,14 @@
 using UnityEngine;
-using UnionAssets.FLE;
+
+using System;
 using System.Collections;
 
-public class PreviewScreenUtil : EventDispatcher
-{
+public class PreviewScreenUtil : MonoBehaviour {
+
+
 	private static PreviewScreenUtil _instance 			= null;
-	public const string SCREEN_RESSIZED 		= "screen_resized"; 
+
+	public event Action ActionScreenResized = delegate{};
 	
 	private int W = 0;
 	private int H = 0;
@@ -52,7 +55,7 @@ public class PreviewScreenUtil : EventDispatcher
 		if(W != Screen.width || H != Screen.height) {
 			W = Screen.width;			
 			H = Screen.height;
-			dispatch(SCREEN_RESSIZED);
+			ActionScreenResized();
 		}
 	}
 	

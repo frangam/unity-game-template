@@ -9,8 +9,6 @@
 
 
 using UnityEngine;
-using UnionAssets.FLE;
-
 
 public class JSHelper : MonoBehaviour {
 	
@@ -36,21 +34,31 @@ public class JSHelper : MonoBehaviour {
 
 
 		//Listen for the Game Center events
-		GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_LOADED, OnAchievementsLoaded);
-		GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENT_PROGRESS, OnAchievementProgress);
-		GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_ACHIEVEMENTS_RESET, OnAchievementsReset);
+		GameCenterManager.OnAchievementsLoaded += HandleOnAchievementsLoaded;
+		GameCenterManager.OnAchievementsProgress += HandleOnAchievementsProgress;
+		GameCenterManager.OnAchievementsReset += HandleOnAchievementsReset;
 
 
-		GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_LEADERBOARD_SCORE_LOADED, OnLeaderboardScoreLoaded);
-
-		GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_PLAYER_AUTHENTICATED, OnAuth);
+		GameCenterManager.OnScoreSubmitted += OnScoreSubmitted;
+		GameCenterManager.OnAuthFinished += HandleOnAuthFinished;
+	
 
 		DontDestroyOnLoad (gameObject);
 
-		GameCenterManager.init();
+		GameCenterManager.Init();
 		
 		Debug.Log("InitGameCenter");
 	}
+
+
+
+
+
+
+
+
+
+
 	
 
 	private void SubmitScore(int val) {
@@ -81,43 +89,38 @@ public class JSHelper : MonoBehaviour {
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
-
-	private void OnAchievementsLoaded() {
+	
+	void HandleOnAchievementsLoaded (ISN_Result res) {
 		Debug.Log ("Achievements loaded from iOS Game Center");
-
+		
 		foreach(GK_AchievementTemplate tpl in GameCenterManager.Achievements) {
 			Debug.Log (tpl.Id + ":  " + tpl.Progress);
 		}
 	}
 
-	private void OnAchievementsReset() {
-		Debug.Log ("All Achievements were reset");
-	}
-
-	private void OnAchievementProgress(CEvent e) {
+	void HandleOnAchievementsProgress (GK_AchievementProgressResult progress) {
 		Debug.Log ("OnAchievementProgress");
-
-		GK_AchievementTemplate tpl = e.data as GK_AchievementTemplate;
+		
+		GK_AchievementTemplate tpl = progress.Achievement;
 		Debug.Log (tpl.Id + ":  " + tpl.Progress.ToString());
 	}
 
-	private void OnLeaderboardScoreLoaded(CEvent e) {
-		GK_PlayerScoreLoadedResult result = e.data as GK_PlayerScoreLoadedResult;
-		
-		if(result.IsSucceeded) {
-			GK_Score score = result.loadedScore;
-			IOSNativePopUpManager.showMessage("Leaderboard " + score.leaderboardId, "Score: " + score.score + "\n" + "Rank:" + score.rank);
-		}
-		
+	void HandleOnAchievementsReset (ISN_Result res) {
+		Debug.Log ("All Achievements were reset");
 	}
 
+	void OnScoreSubmitted (GK_LeaderboardResult result) {
+		if(result.IsSucceeded) {
+			GK_Score score = result.Leaderboard.GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL);
+			IOSNativePopUpManager.showMessage("Leaderboard " + score.LeaderboardId, "Score: " + score.LongScore + "\n" + "Rank:" + score.Rank);
+		}
+	}
 
-	private void OnAuth(CEvent e) {
-		ISN_Result r = e.data as ISN_Result;
+	void HandleOnAuthFinished (ISN_Result r) {
 		if (r.IsSucceeded) {
 			IOSNativePopUpManager.showMessage("Player Authenticated", "ID: " + GameCenterManager.Player.Id + "\n" + "Name: " + GameCenterManager.Player.DisplayName);
 		}
-
 	}
 	
+
 }

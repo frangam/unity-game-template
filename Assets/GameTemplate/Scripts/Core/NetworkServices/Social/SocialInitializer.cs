@@ -107,7 +107,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 	// EVENTS
 	// --------------------------------------	
 	
-	private void OnAuthFB(FBResult result) {
+	private void OnAuthFB(FB_APIResult result) {
 		if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 			GameLoaderManager.Instance.FbInited = true;
 		
@@ -136,7 +136,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 		Time.timeScale = focus ? 1f : 0f;                                                                  
 	}
 	
-	private void OnUserDataLoaded(FBResult result) {
+	private void OnUserDataLoaded(FB_APIResult result) {
 		if (result.Error == null)  { 
 			GTDebug.log("FB user data loaded");
 			//			IsUserInfoLoaded = true;
@@ -152,7 +152,7 @@ public class SocialInitializer : Singleton<SocialInitializer> {
 		}
 	}
 	
-	private void OnFriendsDataLoaded(FBResult res) {
+	private void OnFriendsDataLoaded(FB_APIResult res) {
 		
 		
 		

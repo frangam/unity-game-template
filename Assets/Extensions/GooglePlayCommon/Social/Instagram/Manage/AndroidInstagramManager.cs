@@ -14,7 +14,7 @@ using System;
 public class AndroidInstagramManager : SA_Singleton<AndroidInstagramManager> {
 
 
-	public Action<InstagramPostResult> OnPostingCompleteAction = delegate {};
+	public static event Action<InstagramPostResult> OnPostingCompleteAction = delegate {};
 
 
 	//--------------------------------------
@@ -46,7 +46,6 @@ public class AndroidInstagramManager : SA_Singleton<AndroidInstagramManager> {
 
 	private void OnPostSuccess() {
 		OnPostingCompleteAction(InstagramPostResult.RESULT_OK);
-		dispatch(InstagramEvents.POST_SUCCEEDED, InstagramPostResult.RESULT_OK);
 	}
 	
 	
@@ -65,7 +64,6 @@ public class AndroidInstagramManager : SA_Singleton<AndroidInstagramManager> {
 		}
 		
 		OnPostingCompleteAction(error);
-		dispatch(InstagramEvents.POST_FAILED, error);
 	}
 
 }

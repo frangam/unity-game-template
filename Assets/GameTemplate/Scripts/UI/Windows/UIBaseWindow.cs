@@ -20,78 +20,94 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	[Tooltip("Use UIBaseWindowIDs class or inherited to set this value")]
-	private string id;
+	private string 							id;
 	
 	[SerializeField]
-	private bool startClosed = true;
+	private bool 							startClosed 								= true;
 	
 	[SerializeField]
-	private bool closeIsSetAlpha = false;
+	private bool 							closeIsSetAlpha 							= false;
 	
 	[SerializeField]
-	private float closeAlphaValue = 0f;
+	private float			 				closeAlphaValue 							= 0f;
 	
 	[SerializeField]
-	private float openAlphaValue = 1f;
+	private float 							openAlphaValue 								= 1f;
 	
 	[SerializeField]
 	[Tooltip("True if we not want to start this window with the UIBaseManager in the loadWindows method. This is useful when we want to open or close a window in other window open or close method")]
-	private bool notStartWithManager = false;
+	private bool 							notStartWithManager 						= false;
 	
 	[SerializeField]
 	[Tooltip("Greater than 0 if we want to close this window after it was open and wait this delay time")]
-	private float waitForcloseAfterOpen = 0f;
+	private float 							waitForcloseAfterOpen 						= 0f;
 	
 	[SerializeField]
-	private bool ignoreTimeScaleInWaitingForCloseAfterOpen = false;
+	private bool 							ignoreTimeScaleInWaitingForCloseAfterOpen 	= false;
 	
 	[SerializeField]
-	private string openAnimTrigger = "";
+	private string 							openAnimTrigger 							= "";
 	
 	[SerializeField]
-	private string closeAnimTrigger = "";
+	private string 							closeAnimTrigger 							= "";
+	
+	[SerializeField]
+	[Tooltip("These windows are open when the current window is opened")]
+	private List<UIBaseWindow> 				openNewWinsWhenOpen;
 	
 	[SerializeField]
 	[Tooltip("These windows are open when the current window is closed")]
-	private List<UIBaseWindow> openNewWinsWhenClose;
+	private List<UIBaseWindow> 				openNewWinsWhenClose;
 	
 	[SerializeField]
-	[Tooltip("These windows are closed when the current window is open")]
-	private List<UIBaseWindow> closeWinsWhenOpen;
+	[Tooltip("These windows are closed when the current window is opened")]
+	private List<UIBaseWindow> 				closeWinsWhenOpen;
+	
+	[SerializeField]
+	[Tooltip("These windows are closed when the current window is closed")]
+	private List<UIBaseWindow> 				closeWinsWhenClose;
+	
+	[SerializeField]
+	[Tooltip("These gameobjects are shown when the current window is opened")]
+	private List<GameObject> 				showObjsWhenOpen;
 	
 	[SerializeField]
 	[Tooltip("These gameobjects are shown when the current window is closed")]
-	private List<GameObject> showObjsWhenClose;
+	private List<GameObject> 				showObjsWhenClose;
 	
 	[SerializeField]
-	[Tooltip("These gameobjects are hiden when the current window is open")]
-	private List<GameObject> hideObjsWhenOpen;
+	[Tooltip("These gameobjects are hidden when the current window is opened")]
+	private List<GameObject> 				hideObjsWhenOpen;
 	
 	[SerializeField]
-	private List<string> soundIdsPlayWhenOpen;
+	[Tooltip("These gameobjects are hidden when the current window is closed")]
+	private List<GameObject> 				hideObjsWhenClose;
 	
 	[SerializeField]
-	private List<AutoType> autotypeEffects;
+	private List<string> 					soundIdsPlayWhenOpen;
 	
 	[SerializeField]
-	private List<string> soundIdsStopWhenOpen;
+	private List<AutoType> 					autotypeEffects;
+	
+	[SerializeField]
+	private List<string> 					soundIdsStopWhenOpen;
 	
 	[SerializeField]
 	[Tooltip("Change Input Back Button behaviour")]
-	private	ChangeInputBackButtonBehaviour changeIpBB;
+	private	ChangeInputBackButtonBehaviour 	changeIpBB;
 	
 	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	private CanvasGroup myCanvasGroup;
-	private Animator anim;
-	private Image window;
-	private bool isOpen = false;
-	private bool firstOpen = true;
-	private bool firstClose = true;
-	private CanvasGroup[] canvasGroups;
-	private Button[] buttons;
+	private CanvasGroup 					myCanvasGroup;
+	private Animator 						anim;						//Animator for doing anything when opening or closing win
+	private Image 							window;
+	private bool 							isOpen 			= false;
+	private bool 							firstOpen 		= true;
+	private bool 							firstClose 		= true;
+	private CanvasGroup[] 					canvasGroups;
+	private Button[] 						buttons;
 	
 	//--------------------------------------
 	// Getters/Setters
@@ -159,12 +175,28 @@ public class UIBaseWindow : MonoBehaviour {
 			showObjsWhenClose = value;
 		}
 	}
+	public List<GameObject> ShowObjsWhenOpen {
+		get {
+			return this.showObjsWhenOpen;
+		}
+		set {
+			showObjsWhenOpen = value;
+		}
+	}
 	public List<UIBaseWindow> OpenNewWinsWhenClose {
 		get {
 			return this.openNewWinsWhenClose;
 		}
 		set{
 			this.openNewWinsWhenClose = value;
+		}
+	}
+	public List<UIBaseWindow> OpenNewWinsWhenOpen {
+		get {
+			return this.openNewWinsWhenOpen;
+		}
+		set {
+			openNewWinsWhenOpen = value;
 		}
 	}
 	public List<GameObject> HideObjsWhenOpen {
@@ -175,6 +207,14 @@ public class UIBaseWindow : MonoBehaviour {
 			hideObjsWhenOpen = value;
 		}
 	}
+	public List<GameObject> HideObjsWhenClose {
+		get {
+			return this.hideObjsWhenClose;
+		}
+		set {
+			hideObjsWhenClose = value;
+		}
+	}
 	public List<UIBaseWindow> CloseWinsWhenOpen {
 		get {
 			return this.closeWinsWhenOpen;
@@ -183,7 +223,14 @@ public class UIBaseWindow : MonoBehaviour {
 			closeWinsWhenOpen = value;
 		}
 	}
-	
+	public List<UIBaseWindow> CloseWinsWhenClose {
+		get {
+			return this.closeWinsWhenClose;
+		}
+		set {
+			closeWinsWhenClose = value;
+		}
+	}
 	public bool FirstOpen {
 		get {
 			return this.firstOpen;
@@ -218,7 +265,7 @@ public class UIBaseWindow : MonoBehaviour {
 		}
 		
 		if(closeIsSetAlpha && !myCanvasGroup){
-			GTDebug.logErrorAlways("Not found canvas group and cloaseIsSetAlpha is set");
+			GTDebug.logErrorAlways("Not found canvas group and cloaseIsSetAlpha flag is set");
 		}
 	}
 	public virtual void Start(){}
@@ -232,6 +279,7 @@ public class UIBaseWindow : MonoBehaviour {
 	// Private Methods
 	//--------------------------------------
 	private void activeInterectablesChildren(bool active = true){
+		//interactable canvas
 		if(canvasGroups != null && canvasGroups.Length > 0){
 			foreach(CanvasGroup g in canvasGroups){
 				g.interactable = active;
@@ -239,9 +287,11 @@ public class UIBaseWindow : MonoBehaviour {
 			}
 		}
 		
+		//interactable buttons
 		if(buttons != null && buttons.Length > 0){
 			foreach(Button b in buttons){
-				b.interactable = active;
+				if(b!=null)
+					b.interactable = active;
 			}
 		}
 	}

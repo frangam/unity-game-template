@@ -12,68 +12,37 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
-
-
-	//Events
-	public const string SCORE_SUBMITED            = "score_submited";
-	public const string SCORE_UPDATED             = "score_updated";
-	public const string LEADERBOARDS_LOADED      = "leaderboards_loaded";
-	public const string FRIENDS_LOADED            = "players_loaded";
-	public const string ACHIEVEMENT_UPDATED       = "achievement_updated";
-	public const string ACHIEVEMENTS_LOADED       = "achievements_loaded";
-	public const string SCORE_REQUEST_RECEIVED    = "score_request_received";
-
-
-	public const string SEND_GIFT_RESULT_RECEIVED  = "send_gift_result_received";
-	public const string REQUESTS_INBOX_DIALOG_DISMISSED  = "requests_inbox_dialog_dismissed";
-
-	public const string PENDING_GAME_REQUESTS_DETECTED  = "pending_game_requests_detected";
-	public const string GAME_REQUESTS_ACCEPTED  		= "game_requests_accepted";
-
-
-	public const string AVAILABLE_DEVICE_ACCOUNTS_LOADED  = "availablee_device_accounts_loaded";
-	public const string OAUTH_TOKEN_LOADED  			 = "oauth_token_loaded";
-
-
+	
 	//Actions
-	public static Action<GP_GamesResult> ActionScoreSubmited 							= delegate {};
-	public static Action<GP_GamesResult> ActionPlayerScoreUpdated						= delegate {};
-	public static Action<GooglePlayResult> ActionLeaderboardsLoaded 					= delegate {};
-	public static Action<GooglePlayResult> ActionFriendsListLoaded 						= delegate {};
-	public static Action<GP_GamesResult> ActionAchievementUpdated 						= delegate {};
-	public static Action<GooglePlayResult> ActionAchievementsLoaded 					= delegate {};
-	public static Action<GooglePlayResult> ActionScoreRequestReceived 					= delegate {};
+	public static event Action<GP_LeaderboardResult> ActionScoreSubmited 					= delegate {};
+	public static event Action<GP_LeaderboardResult> ActionScoresListLoaded 				= delegate {};
 
-	public static Action<GooglePlayGiftRequestResult> ActionSendGiftResultReceived 		= delegate {};
-	public static Action ActionRequestsInboxDialogDismissed 							= delegate {};
-	public static Action<List<GPGameRequest>> ActionPendingGameRequestsDetected 		= delegate {};
-	public static Action<List<GPGameRequest>> ActionGameRequestsAccepted 				= delegate {};
+	public static event Action<GooglePlayResult> ActionLeaderboardsLoaded 					= delegate {};
 
-	public static Action<List<string>> ActionAvailableDeviceAccountsLoaded 				= delegate {};
-	public static Action<string> ActionOAuthTokenLoaded 								= delegate {};
+	public static event Action<GP_AchievementResult> ActionAchievementUpdated 				= delegate {};
+	public static event Action<GooglePlayResult> ActionFriendsListLoaded 					= delegate {};
+	public static event Action<GooglePlayResult> ActionAchievementsLoaded 					= delegate {};
 
+	public static event Action<GooglePlayGiftRequestResult> ActionSendGiftResultReceived 	= delegate {};
+	public static event Action ActionRequestsInboxDialogDismissed 							= delegate {};
+	public static event Action<List<GPGameRequest>> ActionPendingGameRequestsDetected 		= delegate {};
+	public static event Action<List<GPGameRequest>> ActionGameRequestsAccepted 				= delegate {};
 
+	public static event Action<List<string>> ActionAvailableDeviceAccountsLoaded 			= delegate {};
+	public static event Action<string> ActionOAuthTokenLoaded 								= delegate {};
 
 	private GooglePlayerTemplate _player = null ;
-	
 
-	private Dictionary<string, GPLeaderBoard> _leaderBoards =  new Dictionary<string, GPLeaderBoard>();
-	private Dictionary<string, GPAchievement> _achievements = new Dictionary<string, GPAchievement>();
 	private Dictionary<string, GooglePlayerTemplate> _players = new Dictionary<string, GooglePlayerTemplate>();
-
-
 
 	private List<string> _friendsList 		  				=  new List<string>();
 	private List<string> _deviceGoogleAccountList 		 	=  new List<string>();
 	private List<GPGameRequest> _gameRequests 				=  new List<GPGameRequest>();
 
-
 	private string _loadedAuthToken = "";
 	private string _currentAccount = "";
 
 	private static bool _IsLeaderboardsDataLoaded = false;
-	
-
 
 	//--------------------------------------
 	// INITIALIZE
@@ -106,8 +75,7 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 	}
 
 	public void LoadToken() {
-		AN_GMSGeneralProxy.loadToken();
-		
+		LoadToken(currentAccount, "oauth2:https://www.googleapis.com/auth/games");
 	}
 
 	public void InvalidateToken(string token) {
@@ -189,11 +157,12 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		AN_GMSGeneralProxy.loadLeaderBoards ();
 	}
 
-
-
-	public void UpdatePlayerScore(string leaderboardId, GPBoardTimeSpan span, GPCollectionType collection) {
+	public void UpdatePlayerScoreLocal(GPLeaderBoard leaderboard) {
 		if (!GooglePlayConnection.CheckState ()) { return; }
-		AN_GMSGeneralProxy.UpdatePlayerScore(leaderboardId, (int) span, (int) collection);
+		int requestId = SA_IdFactory.NextId;
+		leaderboard.CreateScoreListener(requestId);
+
+		AN_GMSGeneralProxy.loadLeaderboardInfoLocal(leaderboard.Id, requestId);
 	}
 
 	[Obsolete("loadPlayerCenteredScores is deprecated, please use LoadPlayerCenteredScores instead.")]
@@ -326,10 +295,12 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		if (!GooglePlayConnection.CheckState ()) { return; }
 		AN_GMSGeneralProxy.resetLeaderBoard(leaderboardId);
 
-		if(leaderBoards.ContainsKey(leaderboardId)) {
-			leaderBoards.Remove(leaderboardId);
+		foreach (GPLeaderBoard lb in LeaderBoards) {
+			if (lb.Id.Equals(leaderboardId)) {
+				LeaderBoards.Remove(lb);
+				return;
+			}
 		}
-
 	}
 
 	[Obsolete("loadConnectedPlayers is deprecated, please use LoadFriends instead.")]
@@ -397,26 +368,34 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		AN_GMSGiftsProxy.dismissRequest(string.Join(AndroidNative.DATA_SPLITTER, ids));
 	}
 
+	public void DispatchLeaderboardUpdateEvent(GP_LeaderboardResult result) {
+		ActionScoreSubmited(result);
+	}
 
 	//--------------------------------------
 	// PUBLIC METHODS
 	//--------------------------------------
 
 	public GPLeaderBoard GetLeaderBoard(string leaderboardId) {
-		if(_leaderBoards.ContainsKey(leaderboardId)) {
-			return _leaderBoards[leaderboardId];
-		} else {
-			return null;
+		foreach(GPLeaderBoard lb in LeaderBoards) {
+			if (lb.Id.Equals(leaderboardId)) {
+				return lb;
+			}
 		}
+
+		GPLeaderBoard leaderboard = new GPLeaderBoard(leaderboardId, string.Empty);
+		LeaderBoards.Add(leaderboard);
+		return leaderboard;
 	}
 	
 
 	public GPAchievement GetAchievement(string achievementId) {
-		if(_achievements.ContainsKey(achievementId)) {
-			return _achievements[achievementId];
-		} else {
-			return null;
+		foreach (GPAchievement achievement in Achievements) {
+			if (achievement.Id.Equals(achievementId)) {
+				return achievement;
+			}
 		}
+		return null;
 	}
 
 
@@ -455,16 +434,29 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		}
 	}
 	
-
-	public Dictionary<string, GPLeaderBoard> leaderBoards {
+	[System.Obsolete("leaderBoards is deprectaed, please use LeaderBoards instead")]
+	public List<GPLeaderBoard> leaderBoards {
 		get {
-			return _leaderBoards;
+			return LeaderBoards;
 		}
 	}
 
-	public Dictionary<string, GPAchievement> achievements {
+	public List<GPLeaderBoard> LeaderBoards {
 		get {
-			return _achievements;
+			return AndroidNativeSettings.Instance.Leaderboards;
+		}
+	}
+
+	[System.Obsolete("achievements is deprectaed, please use Achievements instead")]
+	public List<GPAchievement> achievements {
+		get {
+			return Achievements;
+		}
+	}
+
+	public List<GPAchievement> Achievements {
+		get {
+			return AndroidNativeSettings.Instance.Achievements;
 		}
 	}
 
@@ -513,12 +505,10 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		GooglePlayGiftRequestResult result =  new GooglePlayGiftRequestResult(storeData [0]);
 
 		ActionSendGiftResultReceived(result);
-		dispatch(SEND_GIFT_RESULT_RECEIVED, result);
 	}
 
 	private void OnRequestsInboxDialogDismissed(string data) {
 		ActionRequestsInboxDialogDismissed();
-		dispatch(REQUESTS_INBOX_DIALOG_DISMISSED);
 	}
 
 
@@ -529,7 +519,7 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		GooglePlayResult result = new GooglePlayResult (storeData [0]);
 		if(result.isSuccess) {
 
-			_achievements.Clear ();
+			Achievements.Clear ();
 
 			for(int i = 1; i < storeData.Length; i+=7) {
 				if(storeData[i] == AndroidNative.DATA_EOF) {
@@ -545,19 +535,18 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 				                                       storeData[i + 6]
 				                                       );
 
-				Debug.Log (ach.name);
-				Debug.Log (ach.type);
+				Debug.Log (ach.Name);
+				Debug.Log (ach.Type);
 
 
-				_achievements.Add (ach.id, ach);
+				Achievements.Add (ach);
 
 			}
 
-			Debug.Log ("Loaded: " + _achievements.Count + " Achievements");
+			Debug.Log ("Loaded: " + Achievements.Count + " Achievements");
 		}
 
 		ActionAchievementsLoaded(result);
-		dispatch (ACHIEVEMENTS_LOADED, result);
 
 	}
 
@@ -565,11 +554,10 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		string[] storeData;
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 
-		GP_GamesResult result = new GP_GamesResult (storeData [0]);
+		GP_AchievementResult result = new GP_AchievementResult (storeData [0]);
 		result.achievementId = storeData [1];
 
 		ActionAchievementUpdated(result);
-		dispatch (ACHIEVEMENT_UPDATED, result);
 
 	}
 
@@ -578,7 +566,7 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		string[] storeData;
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 
-		GooglePlayResult result = new GooglePlayResult (storeData [0]);
+		GP_LeaderboardResult result = new GP_LeaderboardResult(null, storeData[0]);
 		if(result.isSuccess) {
 
 			GPBoardTimeSpan 	timeSpan 		= (GPBoardTimeSpan)  System.Convert.ToInt32(storeData[1]);
@@ -586,28 +574,17 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 			string leaderboardId 				= storeData[3];
 			string leaderboardName 				= storeData[4];
 
-
-			GPLeaderBoard lb;
-			if(_leaderBoards.ContainsKey(leaderboardId)) {
-				lb = _leaderBoards[leaderboardId];
-			} else {
-				lb = new GPLeaderBoard (leaderboardId, leaderboardName);
-				Debug.Log("Added: "  + leaderboardId);
-				_leaderBoards.Add(leaderboardId, lb);
-			}
-
+			GPLeaderBoard lb = GetLeaderBoard(leaderboardId);
 			lb.UpdateName(leaderboardName);
+			result = new GP_LeaderboardResult(lb, storeData [0]);
 
 			for(int i = 5; i < storeData.Length; i+=8) {
 				if(storeData[i] == AndroidNative.DATA_EOF) {
 					break;
 				}
-
-
 				
 			 	long score = System.Convert.ToInt64(storeData[i]);
 				int rank = System.Convert.ToInt32(storeData[i + 1]);
-
 
 				string playerId = storeData[i + 2];
 				if(!players.ContainsKey(playerId)) {
@@ -615,19 +592,16 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 					AddPlayer(p);
 				}
 
-				GPScore s =  new GPScore(score, rank, timeSpan, collection, lb.id, playerId);
+				GPScore s =  new GPScore(score, rank, timeSpan, collection, lb.Id, playerId);
 				lb.UpdateScore(s);
 
 				if(playerId.Equals(player.playerId)) {
-					lb.UpdateCurrentPlayerRank(rank, timeSpan, collection);
+					lb.UpdateCurrentPlayerScore(s);
 				}
 			}
 		}
 
-
-		ActionScoreRequestReceived(result);
-		dispatch (SCORE_REQUEST_RECEIVED, result);
-
+		ActionScoresListLoaded(result);
 	}
 
 	private void OnLeaderboardDataLoaded(string data) {
@@ -646,18 +620,9 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 
 				string leaderboardId = storeData[i];
 				string leaderboardName = storeData [i + 1];
-
 			
-				GPLeaderBoard lb;
-				if(_leaderBoards.ContainsKey(leaderboardId)) {
-					lb = _leaderBoards[leaderboardId];
-				} else {
-					lb = new GPLeaderBoard (leaderboardId, leaderboardName);
-					_leaderBoards.Add(leaderboardId, lb);
-				}
-
+				GPLeaderBoard lb = GetLeaderBoard(leaderboardId);
 				lb.UpdateName(leaderboardName);
-
 
 				int start = i + 2;
 				for(int j = 0; j < 6; j++) {
@@ -670,70 +635,60 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 
 					//Debug.Log("timeSpan: " + timeSpan +   " collection: " + collection + " score:" + score + " rank:" + rank);
 
-					GPScore variant =  new GPScore(score, rank, timeSpan, collection, lb.id, player.playerId);
+					GPScore s =  new GPScore(score, rank, timeSpan, collection, lb.Id, player.playerId);
 					start = start + 4;
-					lb.UpdateScore(variant);
-					lb.UpdateCurrentPlayerRank(rank, timeSpan, collection);
-
+					lb.UpdateScore(s);
+					lb.UpdateCurrentPlayerScore(s);
 				}
-
-
 			}
 
-			Debug.Log ("Loaded: " + _leaderBoards.Count + " Leaderboards");
+			Debug.Log ("Loaded: " + LeaderBoards.Count + " Leaderboards");
 		}
 
 		_IsLeaderboardsDataLoaded = true;
-
 		ActionLeaderboardsLoaded(result);
-		dispatch (LEADERBOARDS_LOADED, result);
-
 	}
 
 
 	private void OnPlayerScoreUpdated(string data) {
+
 		if(data.Equals(string.Empty)) {
 			Debug.Log("GooglePlayManager OnPlayerScoreUpdated, no data avaiable");
 			return;
 		}
 
 
-		Debug.Log("OnPlayerScoreUpdated");
+		Debug.Log("OnPlayerScoreUpdated " + data);
 
 
 		string[] storeData;
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
-		GP_GamesResult result = new GP_GamesResult (storeData [0]);
+		GP_ScoreResult result = new GP_ScoreResult (storeData [0]);
+
+		string leaderboardId = storeData[1];
+		int requestId = System.Convert.ToInt32(storeData[2]);
+
+		GPLeaderBoard lb = GetLeaderBoard(leaderboardId);
 
 		if(result.isSuccess) {
+			GPBoardTimeSpan 	timeSpan 		= (GPBoardTimeSpan)  System.Convert.ToInt32(storeData[3]);
+			GPCollectionType 	collection  	= (GPCollectionType) System.Convert.ToInt32(storeData[4]);
 
-			GPBoardTimeSpan 	timeSpan 		= (GPBoardTimeSpan)  System.Convert.ToInt32(storeData[1]);
-			GPCollectionType 	collection  	= (GPCollectionType) System.Convert.ToInt32(storeData[2]);
+			long score = System.Convert.ToInt64(storeData[5]);
+			int rank = System.Convert.ToInt32(storeData[6]);
 
-			string leaderboardId = storeData[3];
+			GPScore s =  new GPScore(score, rank, timeSpan, collection, lb.Id, player.playerId);
+			result.score= s;
 
-			long score = System.Convert.ToInt64(storeData[4]);
-			int rank = System.Convert.ToInt32(storeData[5]);
-
-			GPLeaderBoard lb;
-			if(_leaderBoards.ContainsKey(leaderboardId)) {
-				lb = _leaderBoards[leaderboardId];
-			} else {
-				lb = new GPLeaderBoard (leaderboardId, "");
-				_leaderBoards.Add(leaderboardId, lb);
-			}
-
-			GPScore variant =  new GPScore(score, rank, timeSpan, collection, lb.id, player.playerId);
-			lb.UpdateScore(variant);
-			lb.UpdateCurrentPlayerRank(rank, timeSpan, collection);
-
+			lb.ReportLocalPlayerScoreUpdate(s, requestId);
+		} else {
+			lb.ReportLocalPlayerScoreUpdateFail(storeData[0], requestId);
 		}
-
-		ActionPlayerScoreUpdated(result);
-		dispatch (SCORE_UPDATED, result);
 	}
 
 	private void OnScoreSubmitted(string data) {
+		Debug.Log("OnScoreSubmitted " + data);
+
 		if(data.Equals(string.Empty)) {
 			Debug.Log("GooglePlayManager OnScoreSubmitted, no data avaiable");
 			return;
@@ -742,12 +697,15 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		string[] storeData;
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 
-		GP_GamesResult result = new GP_GamesResult (storeData [0]);
-		result.leaderboardId = storeData [1];
+		GPLeaderBoard lb = GetLeaderBoard(storeData [1]);
+		GP_LeaderboardResult result = new GP_LeaderboardResult (lb, storeData [0]);
+		if (result.isSuccess) {
+			Debug.Log("Score was submitted to leaderboard -> " + lb);
 
-		ActionScoreSubmited(result);
-		dispatch (SCORE_SUBMITED, result);
-
+			UpdatePlayerScoreLocal(lb);
+		} else {
+			ActionScoreSubmited(result);
+		}
 	}
 
 	private void OnPlayerDataLoaded(string data) {
@@ -793,7 +751,6 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		
 		Debug.Log ("OnPlayersLoaded, total:" + players.Count.ToString());
 		ActionFriendsListLoaded(result);
-		dispatch (FRIENDS_LOADED, result);
 	}
 
 	private void OnGameRequestsLoaded(string data) {
@@ -825,8 +782,6 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		}
 
 		ActionPendingGameRequestsDetected(_gameRequests);
-		dispatch(PENDING_GAME_REQUESTS_DETECTED, _gameRequests);
-
 	}
 
 	private void OnGameRequestsAccepted(string data) {
@@ -854,7 +809,6 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		}
 
 		ActionGameRequestsAccepted(acceptedList);
-		dispatch(GAME_REQUESTS_ACCEPTED, acceptedList);
 	}
 
 	private void OnAccountsLoaded(string data) {
@@ -870,14 +824,12 @@ public class GooglePlayManager : SA_Singleton<GooglePlayManager> {
 		}
 
 		ActionAvailableDeviceAccountsLoaded(_deviceGoogleAccountList);
-		dispatch(AVAILABLE_DEVICE_ACCOUNTS_LOADED, _deviceGoogleAccountList);
 	}
 
 	private void OnTokenLoaded(string token) {
 		_loadedAuthToken = token;
 
 		ActionOAuthTokenLoaded(_loadedAuthToken);
-		dispatch(OAUTH_TOKEN_LOADED, _loadedAuthToken);
 	}
 
 

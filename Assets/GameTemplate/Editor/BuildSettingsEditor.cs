@@ -248,7 +248,7 @@ public class BuildSettingsEditor : Editor {
 			//--------------------------------------
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField("Android Game Name:",GUILayout.Width(130));
-			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidGameName = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidGameName);
+			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidGameName = GUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidGameName, 30);
 			EditorGUILayout.EndHorizontal();
 			
 			//---------------------------------------

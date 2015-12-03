@@ -18,7 +18,7 @@ public class IOSNative {
 	// Constants
 	//--------------------------------------
 
-	public const string DATA_SPLITTER = "|";
+	public const char DATA_SPLITTER = '|';
 	public const string DATA_SPLITTER2 = "|%|";
 	public const string DATA_EOF = "endofline";
 
@@ -50,7 +50,7 @@ public class IOSNative {
 	public static string[] ParseArray(string arrayData) {
 
 		List<string> ParsedArray =  new List<string>();
-		string[] DataArray = arrayData.Split(IOSNative.DATA_SPLITTER[0]); 
+		string[] DataArray = arrayData.Split(IOSNative.DATA_SPLITTER); 
 
 		for(int i = 0; i < DataArray.Length; i ++ ) {
 			if(DataArray[i] == IOSNative.DATA_EOF) {

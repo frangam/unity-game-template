@@ -41,7 +41,7 @@ public class AndroidSocialNativeExample : MonoBehaviour {
 	}
 
 	public void GoogleShare() {
-		AndroidSocialGate.StartShareIntent("Hello Share Intent", "This is my text to share", shareTexture, "com.google.android.apps.plus");
+		AndroidSocialGate.StartGooglePlusShare("This is my text to share", shareTexture);
 	}
 
 

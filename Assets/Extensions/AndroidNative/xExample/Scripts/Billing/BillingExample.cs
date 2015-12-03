@@ -42,7 +42,7 @@ public class BillingExample : MonoBehaviour {
 
 	public void SuccsesPurchase() {
 		if(GPaymnetManagerExample.isInited) {
-			AndroidInAppPurchaseManager.instance.purchase (GPaymnetManagerExample.ANDROID_TEST_PURCHASED);
+			AndroidInAppPurchaseManager.Instance.Purchase (GPaymnetManagerExample.ANDROID_TEST_PURCHASED);
 		} else {
 			AndroidMessage.Create("Error", "PaymnetManagerExample not yet inited");
 		}
@@ -52,7 +52,7 @@ public class BillingExample : MonoBehaviour {
 
 	public void FailPurchase() {
 		if(GPaymnetManagerExample.isInited) {
-			AndroidInAppPurchaseManager.instance.purchase (GPaymnetManagerExample.ANDROID_TEST_ITEM_UNAVAILABLE);
+			AndroidInAppPurchaseManager.Instance.Purchase (GPaymnetManagerExample.ANDROID_TEST_ITEM_UNAVAILABLE);
 		} else {
 			AndroidMessage.Create("Error", "PaymnetManagerExample not yet inited");
 		}
@@ -61,7 +61,7 @@ public class BillingExample : MonoBehaviour {
 
 	public void ConsumeProduct() {
 		if(GPaymnetManagerExample.isInited) {
-			if(AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(GPaymnetManagerExample.ANDROID_TEST_PURCHASED)) {
+			if(AndroidInAppPurchaseManager.instance.Inventory.IsProductPurchased(GPaymnetManagerExample.ANDROID_TEST_PURCHASED)) {
 				GPaymnetManagerExample.consume (GPaymnetManagerExample.ANDROID_TEST_PURCHASED);
 			} else {
 				AndroidMessage.Create("Error", "You do not own product to consume it");

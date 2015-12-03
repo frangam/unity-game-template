@@ -52,8 +52,9 @@ public class AndroidGoogleAdsExample_old : MonoBehaviour {
 		AndroidAdMobController.instance.AddTestDevice("6B9FA8031AEFDC4758B7D8987F77A5A6");
 
 
-		AndroidAdMobController.instance.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_LOADED, OnInterstisialsLoaded);
-		AndroidAdMobController.instance.addEventListener(GoogleMobileAdEvents.ON_INTERSTITIAL_AD_OPENED, OnInterstisialsOpen);
+		AndroidAdMobController.Instance.OnInterstitialLoaded += OnInterstisialsLoaded;
+		AndroidAdMobController.Instance.OnInterstitialOpened += OnInterstisialsOpen;
+
 
 		InitStyles();
 	}

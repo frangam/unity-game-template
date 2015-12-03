@@ -10,42 +10,67 @@ public class IOSNativePostProcess  {
 	public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject) {
 
 
-		string StoreKit = "StoreKit.framework";
-		if(!ISDSettings.Instance.frameworks.Contains(StoreKit)) {
-			ISDSettings.Instance.frameworks.Add(StoreKit);
+		if(IOSNativeSettings.Instance.EnableInAppsAPI) {
+
+			string StoreKit = "StoreKit.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(StoreKit)) {
+				ISDSettings.Instance.frameworks.Add(StoreKit);
+			}
+
+		}
+
+		if(IOSNativeSettings.Instance.EnableGameCenterAPI) {
+			
+			string GameKit = "GameKit.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(GameKit)) {
+				ISDSettings.Instance.frameworks.Add(GameKit);
+			}
+			
 		}
 
 
-		string Accounts = "Accounts.framework";
-		if(!ISDSettings.Instance.frameworks.Contains(Accounts)) {
-			ISDSettings.Instance.frameworks.Add(Accounts);
+
+		if(IOSNativeSettings.Instance.EnableSocialSharingAPI) {
+		
+			string Accounts = "Accounts.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(Accounts)) {
+				ISDSettings.Instance.frameworks.Add(Accounts);
+			}
+
+			
+			
+			string SocialF = "Social.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(SocialF)) {
+				ISDSettings.Instance.frameworks.Add(SocialF);
+			}
+			
+			string MessageUI = "MessageUI.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(MessageUI)) {
+				ISDSettings.Instance.frameworks.Add(MessageUI);
+			}
 		}
 
-		string SocialF = "Social.framework";
-		if(!ISDSettings.Instance.frameworks.Contains(SocialF)) {
-			ISDSettings.Instance.frameworks.Add(SocialF);
+
+		if(IOSNativeSettings.Instance.EnableMediaPlayerAPI) {
+			string MediaPlayer = "MediaPlayer.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(MediaPlayer)) {
+				ISDSettings.Instance.frameworks.Add(MediaPlayer);
+			}
+		}
+	
+
+		if(IOSNativeSettings.Instance.EnableCameraAPI) {
+			string MobileCoreServices = "MobileCoreServices.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(MobileCoreServices)) {
+				ISDSettings.Instance.frameworks.Add(MobileCoreServices);
+			}
 		}
 
-		string MessageUI = "MessageUI.framework";
-		if(!ISDSettings.Instance.frameworks.Contains(MessageUI)) {
-			ISDSettings.Instance.frameworks.Add(MessageUI);
-		}
-
-
-		string MediaPlayer = "MediaPlayer.framework";
-		if(!ISDSettings.Instance.frameworks.Contains(MediaPlayer)) {
-			ISDSettings.Instance.frameworks.Add(MediaPlayer);
-		}
-
-
-		string MobileCoreServices = "MobileCoreServices.framework";
-		if(!ISDSettings.Instance.frameworks.Contains(MobileCoreServices)) {
-			ISDSettings.Instance.frameworks.Add(MobileCoreServices);
-		}
-
-		string GameKit = "GameKit.framework";
-		if(!ISDSettings.Instance.frameworks.Contains(GameKit)) {
-			ISDSettings.Instance.frameworks.Add(GameKit);
+		if(IOSNativeSettings.Instance.EnableReplayKit) {
+			string ReplayKit = "ReplayKit.framework";
+			if(!ISDSettings.Instance.frameworks.Contains(ReplayKit)) {
+				ISDSettings.Instance.frameworks.Add(ReplayKit);
+			}
 		}
 
 

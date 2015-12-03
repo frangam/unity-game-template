@@ -95,10 +95,16 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 	}
 	
 	public void LoadScene(string scene, bool showLoadIndicator = true, bool showLoadingPanel = true){
+		//set the current section as the previous one, because we are going to load a new one
+		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
+		
 		StartCoroutine(Load(scene, showLoadIndicator, showLoadingPanel));
 	}
 	
 	public void LoadScene(int scene, bool showLoadIndicator = true, bool showLoadingPanel = true){
+		//set the current section as the previous one, because we are going to load a new one
+		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
+		
 		StartCoroutine(Load(scene, showLoadIndicator, showLoadingPanel));
 	}
 	
@@ -107,7 +113,7 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		bool valid = scenes != null && scenes.Count > 0;
 		
 		//set the current section as the previous one, because we are going to load a new one
-		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
+		//		GameSettings.previousGameSection = BaseGameScreenController.Instance.Section;
 		
 		if(valid){
 			string selectedScene = "";

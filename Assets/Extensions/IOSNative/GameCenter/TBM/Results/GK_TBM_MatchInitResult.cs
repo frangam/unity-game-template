@@ -11,8 +11,7 @@ public class GK_TBM_MatchInitResult : ISN_Result {
 	}
 
 
-	public GK_TBM_MatchInitResult(string errorData):base(false) {
-		SetErrorData(errorData);
+	public GK_TBM_MatchInitResult(string errorData):base(errorData) {
 	}
 
 	public GK_TBM_Match Match {

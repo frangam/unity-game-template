@@ -1,4 +1,4 @@
-﻿//#define SA_DEBUG_MODE
+#define CAMERA_API
 ////////////////////////////////////////////////////////////////////////////////
 //  
 // @module IOS Native Plugin for Unity3D 
@@ -13,7 +13,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+#if (UNITY_IPHONE && !UNITY_EDITOR && CAMERA_API) || SA_DEBUG_MODE
 using System.Runtime.InteropServices;
 #endif
 
@@ -22,33 +22,28 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 
 
 	//Actions
-	public Action<IOSImagePickResult> OnImagePicked = delegate{};
-	public Action<ISN_Result> OnImageSaved = delegate{};
+	public static event Action<IOSImagePickResult> OnImagePicked = delegate{};
+	public static event Action<ISN_Result> OnImageSaved = delegate{};
+	public static event Action<string> OnVideoPathPicked = delegate{};
 
-	//Events
-	public const string  IMAGE_PICKED = "image_picked";
-	public const string  IMAGE_SAVED = "image_saved";
 
 	private bool IsWaitngForResponce = false;
 
 
 
-	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+	#if (UNITY_IPHONE && !UNITY_EDITOR && CAMERA_API) || SA_DEBUG_MODE
 
 	[DllImport ("__Internal")]
 	private static extern void _ISN_SaveToCameraRoll(string encodedMedia);
 
-	[DllImport ("__Internal")]
-	private static extern void _ISN_GetImageFromCamera();
 
 	[DllImport ("__Internal")]
 	private static extern void _ISN_GetVideoPathFromAlbum();
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_GetImageFromAlbum();
+	private static extern void _ISN_PickImage(int source);
 
-
-
+	
 	[DllImport ("__Internal")]
 	private static extern void _ISN_InitCameraAPI(float compressionRate, int maxSize, int encodingType);
 
@@ -59,7 +54,7 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 	void Awake() {
 		DontDestroyOnLoad(gameObject);
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && CAMERA_API) || SA_DEBUG_MODE
 		_ISN_InitCameraAPI(IOSNativeSettings.Instance.JPegCompressionRate, IOSNativeSettings.Instance.MaxImageLoadSize, (int) IOSNativeSettings.Instance.GalleryImageFormat);
 		#endif
 	}
@@ -67,7 +62,7 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 
 
 	public void SaveTextureToCameraRoll(Texture2D texture) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && CAMERA_API) || SA_DEBUG_MODE
 		if(texture != null) {
 			byte[] val = texture.EncodeToPNG();
 			string bytesString = System.Convert.ToBase64String (val);
@@ -82,29 +77,29 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 	}
 
 	public void GetVideoPathFromAlbum() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && CAMERA_API) || SA_DEBUG_MODE
 		_ISN_GetVideoPathFromAlbum();
 		#endif
 	}
 
-	public void GetImageFromCamera() {
-		if(IsWaitngForResponce) {
-			return;
-		}
-		IsWaitngForResponce = true;
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_GetImageFromCamera();
-		#endif
+	[Obsolete("GetImageFromAlbum is deprecated, please use PickImage(ISN_ImageSource.Album) ")]
+	public void GetImageFromAlbum() {
+		PickImage(ISN_ImageSource.Album);
 	}
 
-	public void GetImageFromAlbum() {
+	[Obsolete("GetImageFromCamera is deprecated, please use PickImage(ISN_ImageSource.Camera) ")]
+	public void GetImageFromCamera() {
+		PickImage(ISN_ImageSource.Camera);
+	}
+
+	public void PickImage(ISN_ImageSource source) {
 		if(IsWaitngForResponce) {
 			return;
 		}
 		IsWaitngForResponce = true;
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_GetImageFromAlbum();
+		#if (UNITY_IPHONE && !UNITY_EDITOR && CAMERA_API) || SA_DEBUG_MODE
+		_ISN_PickImage((int) source);
 		#endif
 	}
 
@@ -115,28 +110,25 @@ public class IOSCamera : ISN_Singleton<IOSCamera> {
 		IsWaitngForResponce = false;
 
 		IOSImagePickResult result =  new IOSImagePickResult(data);
+		OnImagePicked(result);
 
-
-	
-		dispatch(IMAGE_PICKED, result);
-		if(OnImagePicked != null) {
-			OnImagePicked(result);
-		}
 
 	}
 
 	private void OnImageSaveFailed() {
 		ISN_Result result =  new ISN_Result(false);
 
-		dispatch(IMAGE_SAVED, result);
 		OnImageSaved(result);
 	}
 
 	private void OnImageSaveSuccess() {
 		ISN_Result result =  new ISN_Result(true);
-		
-		dispatch(IMAGE_SAVED, result);
+
 		OnImageSaved(result);
+	}
+
+	private void OnVideoPickedEvent(string path) {
+		OnVideoPathPicked(path);
 	}
 
 	

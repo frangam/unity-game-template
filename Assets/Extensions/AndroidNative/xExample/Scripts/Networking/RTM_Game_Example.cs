@@ -1,6 +1,5 @@
 //#define SA_DEBUG_MODE
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class RTM_Game_Example : AndroidNativeExampleBase {
@@ -38,12 +37,13 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 		GooglePlayInvitationManager.ActionInvitationAccepted += ActionInvitationAccepted;
 		GooglePlayRTM.ActionRoomCreated += OnRoomCreated;
 
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-		GooglePlayConnection.instance.addEventListener(GooglePlayConnection.CONNECTION_RESULT_RECEIVED, OnConnectionResult);
+		GooglePlayConnection.ActionPlayerConnected +=  OnPlayerConnected;
+		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
+
+		GooglePlayConnection.ActionConnectionResultReceived += OnConnectionResult;
 
 		
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			//checking if player already connected
 			OnPlayerConnected ();
 		} 
@@ -53,15 +53,15 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 
 
 	}
-	
+
 	private void ConncetButtonPress() {
-		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.state.ToString());
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.State.ToString());
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			SA_StatusBar.text = "Disconnecting from Play Service...";
-			GooglePlayConnection.instance.disconnect ();
+			GooglePlayConnection.instance.Disconnect ();
 		} else {
 			SA_StatusBar.text = "Connecting to Play Service...";
-			GooglePlayConnection.instance.connect ();
+			GooglePlayConnection.instance.Connect ();
 		}
 	}
 
@@ -166,7 +166,7 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 			hi.SetActive(false);
 		}
 
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			if(GooglePlayManager.instance.player.icon != null) {
 				avatar.GetComponent<Renderer>().material.mainTexture = GooglePlayManager.instance.player.icon;
 			}
@@ -176,9 +176,9 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 		
 		
 		string title = "Connect";
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			title = "Disconnect";
-			
+
 			foreach(DefaultPreviewButton btn in ConnectionDependedntButtons) {
 				btn.EnabledButton();
 			}
@@ -189,7 +189,7 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 				btn.DisabledButton();
 				
 			}
-			if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED) {
+			if(GooglePlayConnection.State == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.State == GPConnectionState.STATE_UNCONFIGURED) {
 				
 				title = "Connect";
 			} else {
@@ -213,7 +213,7 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 
 
 		GooglePlayManager.ActionFriendsListLoaded +=  OnFriendListLoaded;
-		GooglePlayManager.instance.LoadFriends();
+		GooglePlayManager.Instance.LoadFriends();
 	}
 
 	void OnFriendListLoaded (GooglePlayResult result) {
@@ -233,9 +233,7 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 		}
 	}
 	
-	private void OnConnectionResult(CEvent e) {
-		
-		GooglePlayConnectionResult result = e.data as GooglePlayConnectionResult;
+	private void OnConnectionResult(GooglePlayConnectionResult result) {
 		SA_StatusBar.text = "ConnectionResul:  " + result.code.ToString();
 		Debug.Log(result.code.ToString());
 	}
@@ -250,7 +248,7 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 		inviteId = invitation.Id;
 
 		AndroidDialog dialog =  AndroidDialog.Create("Invite", "You have new invite from: " + invitation.Participant.DisplayName, "Manage Manually", "Open Google Inbox");
-		dialog.OnComplete += OnInvDialogComplete;
+		dialog.ActionComplete += OnInvDialogComplete;
 	}
 
 	void ActionInvitationAccepted (GP_Invite invitation) {
@@ -281,7 +279,7 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 		switch(result) {
 		case AndroidDialogResult.YES:
 			AndroidDialog dialog =  AndroidDialog.Create("Manage Invite", "Would you like to accept this invite?", "Accept", "Decline");
-			dialog.OnComplete += OnInvManageDialogComplete;
+			dialog.ActionComplete += OnInvManageDialogComplete;
 			break;
 		case AndroidDialogResult.NO:
 			GooglePlayRTM.instance.OpenInvitationInBoxUI();

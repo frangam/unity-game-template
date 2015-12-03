@@ -17,6 +17,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	// Static Attributes
 	//--------------------------------------
 	public static event System.Action OnIncentivedVideoFinished = delegate{};
+	public static event System.Action OnVideoOrIntertisialFinished = delegate { };
 	
 	//--------------------------------------
 	// Setting Attributes
@@ -69,6 +70,14 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		return canShow;
 	}
 	
+	public bool canShowAdRandom()
+	{
+		bool hasInternet = InternetChecker.Instance.IsconnectedToInternet;
+		bool hasPro = GameSettings.Instance.IS_PRO_VERSION;
+		bool canShow = hasInternet && !string.IsNullOrEmpty(GameSettings.Instance.heyZapID) && !hasPro;
+		
+		return canShow;
+	}
 	protected void Start(){
 		StartCoroutine(handleInitializationWhenUsingInAppBilling());
 	}
@@ -133,6 +142,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			if ( adState.Equals("hide") ) {
 				// Do something after the ad hides itself
 				pauseGame(false);
+				OnVideoOrIntertisialFinished();
 			}
 			if ( adState.Equals("click") ) {
 				// Do something when an ad is clicked on
@@ -204,6 +214,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			if (adState.Equals ("hide")) {
 				// Do something after the ad hides itself
 				pauseGame(false);
+				OnVideoOrIntertisialFinished();
 			}
 			if (adState.Equals ("click")) {
 				// Do something when an ad is clicked on
@@ -247,7 +258,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			if(!pause)
 				hasPausedGame = pause;
 		}
-		else if(hasPausedGame || (!hasPausedGame && Time.timeScale != 0f)){
+		else if(BaseGameScreenController.Instance.Section != GameSection.GAME
+		        && (hasPausedGame || (!hasPausedGame && Time.timeScale != 0f))){
 			if(pause)
 				hasPausedGame = pause;
 			
@@ -263,6 +275,12 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		
 		if(!pause)
 			hasPausedGame = false;
+		
+		//TODO nei,trhow the finish event on test
+		#if UNITY_EDITOR
+		OnIncentivedVideoFinished();
+		#endif
+		
 	}
 	
 	//--------------------------------------
@@ -270,15 +288,27 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//--------------------------------------
 	public void testOnInterstitialOpen(){
 		//		OnInterstisialsOpen();
+		#if UNITY_EDITOR
+		pauseGame();
+		#endif
 	}
 	public void testOnInterstitialClose(){
 		//		OnInterstisialsClosed();
+		#if UNITY_EDITOR
+		pauseGame(false);
+		#endif
 	}
 	public void testOnVideoStarted(){
 		//		OnVideoStarted();
+		#if UNITY_EDITOR
+		pauseGame();
+		#endif
 	}
-	public void testOnInterstitialFinished(){
+	public void testOnVideoFinished(){
 		//		OnVideoFinished(true);
+		#if UNITY_EDITOR
+		pauseGame(false);
+		#endif
 	}
 	
 	

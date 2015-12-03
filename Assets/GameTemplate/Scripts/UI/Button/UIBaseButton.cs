@@ -6,6 +6,7 @@ Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Button))]
 public class UIBaseButton : MonoBehaviour {
@@ -16,10 +17,22 @@ public class UIBaseButton : MonoBehaviour {
 	}
 	
 	//--------------------------------------
+	// Constants
+	//--------------------------------------
+	private const string PP_BUTTON_CLICKS_COUNTER = "pp_button_clicks_counter_";
+	
+	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
+	[Tooltip("To identify this button. Mainly, it is used for save clicks counter for this button")]
+	private string id;
+	
+	[SerializeField]
 	private bool playSoundWhenPress = true;
+	
+	[SerializeField]
+	private bool playSoundWithoutWaitingPressDelay = true;
 	
 	[SerializeField]
 	private bool disableButtonWhenCantPress = false;
@@ -28,9 +41,31 @@ public class UIBaseButton : MonoBehaviour {
 	private bool changeLbBtnNameWhenCantPress = false;
 	
 	[SerializeField]
+	[Tooltip("By default, for Analitics purposes to know how may times this button has been clicked")]
+	private bool saveClicksCounter = false;
+	
+	[SerializeField]
+	[Range(-1,int.MaxValue)]
+	[Tooltip("< 0: Init clicks counter with saved value")]
+	private int initialValueClicksCounterOnAwake = -1;
+	
+	[SerializeField]
+	[Tooltip("Previous Sections we are coming from to reset clicks counter to zero of this button")]
+	private List<GameSection> prevSectionsToInitClicksCounterToZero;
+	
+	[SerializeField]
+	[Tooltip("Reset clicks counter of these buttons when the current instance button is pressed")]
+	private UIBaseButton[] btnsResetClicksCounterWhenClickThis;
+	
+	[SerializeField]
+	[Range(-100,100)]
+	protected int resetValueForResetButtons = -2;
+	
+	[SerializeField]
 	private float rateForCheckCanPress = 5;
 	
 	[SerializeField]
+	[Tooltip("If it has an external animator located in other GameObject")]
 	private Animator externalAnim;
 	
 	[SerializeField]
@@ -45,8 +80,8 @@ public class UIBaseButton : MonoBehaviour {
 	[SerializeField]
 	private string disableExtAnimTrigger = "Disable";
 	
-	[SerializeField]
-	private SoundTrigger trigger;
+	//	[SerializeField]
+	//	private SoundTrigger trigger;
 	
 	[SerializeField]
 	[Tooltip("Use BaseSoundIDs class or inherited to set this value")]
@@ -65,33 +100,119 @@ public class UIBaseButton : MonoBehaviour {
 	private float timeToWaitBeforePressAgain = 0;
 	
 	[SerializeField]
+	private bool hold = false;
+	
+	[SerializeField]
 	private Text lbButtonName;
 	
 	[SerializeField]
-	private string locAvailableAd = "lb_available_ad";
+	private string locCanPress = "lb_can_press";
 	
 	[SerializeField]
-	private string locNoAvailableAd = "lb_no_available_ad";
-	
-	
+	private string locCannotPress = "lb_cannot_press";
 	
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
-	protected Button button;
-	private float initialPressingTime = 0;
-	private float lastSuccesfulPressingTime = 0;
-	private float pressingTime = 0;
-	private float currentTime;
-	private bool pressingStoped = false;
-	private bool pressing = false;
-	private bool firstPress = true;
-	private bool disabled = false;
-	private bool shown = false;
+	protected Button 	button;
+	private float 		initialPressingTime = 0;
+	private float 		lastSuccesfulPressingTime = 0;
+	private float 		pressingTime = 0;
+	private float 		currentTime;
+	private bool 		pressingStoped = false;
+	private bool 		pressing = false;
+	private bool 		firstPress = true;
+	private bool 		disabled = false;
+	private bool 		shown = false;
+	private bool 		pointerDown;
+	private float 		timePointerDown;
+	private int			clicksCounter = 0;
+	private string		clicksCounterPPKey; //PlayerPrefs key for clicks counter
 	
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
+	#region getters/setters
+	public string Id {
+		get {
+			return this.id;
+		}
+	}
+	
+	public Button Button {
+		get {
+			return this.button;
+		}
+	}
+	
+	public float InitialPressingTime {
+		get {
+			return this.initialPressingTime;
+		}
+	}
+	
+	public float PressingTime {
+		get {
+			return this.pressingTime;
+		}
+	}
+	
+	public bool PressingStoped {
+		get {
+			return this.pressingStoped;
+		}
+	}
+	
+	public bool Pressing {
+		get {
+			return this.pressing;
+		}
+	}
+	
+	public bool FirstPress {
+		get {
+			return this.firstPress;
+		}
+	}
+	
+	public bool Disabled {
+		get {
+			return this.disabled;
+		}
+	}
+	
+	public bool Shown {
+		get {
+			return this.shown;
+		}
+	}
+	
+	public bool PointerDown {
+		get {
+			return this.pointerDown;
+		}
+	}
+	
+	public float TimePointerDown {
+		get {
+			return this.timePointerDown;
+		}
+	}
+	
+	public int ClicksCounter {
+		get {
+			return this.clicksCounter;
+		}
+	}
+	
+	public string ClicksCounterPPKey {
+		get {
+			return this.clicksCounterPPKey;
+		}
+	}
+	
+	
+	#endregion
 	
 	//--------------------------------------
 	// Unity Methods
@@ -111,6 +232,13 @@ public class UIBaseButton : MonoBehaviour {
 		
 	}
 	public virtual void Update(){
+		//if we want to hold a button pressed
+		//we need to press every frame because the EventTrigger API does not make this for us
+		if(hold && pointerDown){
+			timePointerDown += Time.deltaTime;
+			press();
+		}
+		
 		//stop the pressing proccess during maintaining press the button
 		if(timeToStopPressing > 0 && pressing && !pressingStoped){
 			currentTime = Time.time;
@@ -132,6 +260,7 @@ public class UIBaseButton : MonoBehaviour {
 			}
 		}
 	}
+	
 	#endregion
 	
 	//--------------------------------------
@@ -139,7 +268,7 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	private IEnumerator doCheckAvailability(){
 		if(disableButtonWhenCantPress){
-			checkAvailability();
+			checkAvailabilityForPressing();
 			yield return new WaitForSeconds(rateForCheckCanPress);
 			StartCoroutine(doCheckAvailability());
 		}
@@ -159,11 +288,45 @@ public class UIBaseButton : MonoBehaviour {
 		shown = false;
 		
 		if(changeLbBtnNameWhenCantPress && !lbButtonName){
-			GTDebug.logErrorAlways("Not found label for button name");
+			GTDebug.logErrorAlways(" btn "+ name + " Not found label for button name");
 		}
 		
 		if(disableButtonWhenCantPress)
-			checkAvailability();
+			checkAvailabilityForPressing();
+		
+		//clicks counter
+		if(saveClicksCounter && !string.IsNullOrEmpty(id)){
+			clicksCounterPPKey = PP_BUTTON_CLICKS_COUNTER+id;
+			
+			//init to zero the clicks count if previous section is in the list
+			if(prevSectionsToInitClicksCounterToZero != null && prevSectionsToInitClicksCounterToZero.Count > 0
+			   && prevSectionsToInitClicksCounterToZero.Contains(GameSettings.previousGameSection)){
+				resetClicksCounter();
+			}
+			else{
+				if(initialValueClicksCounterOnAwake >= 0){
+					clicksCounter = initialValueClicksCounterOnAwake;
+					PlayerPrefs.SetInt(clicksCounterPPKey, clicksCounter);
+				}
+				else{
+					clicksCounter = PlayerPrefs.GetInt(clicksCounterPPKey);
+				}
+			}
+		}
+		else if(saveClicksCounter && string.IsNullOrEmpty(id)){
+			GTDebug.logErrorAlways("You must indicate an identifier for this Button ("+gameObject.name+") for saving clicks counter");
+		}
+		
+		//Inits the reset value for reset buttons if we are redifining this method in a child class
+		initResetValueForResetButtons();
+	}
+	
+	public void OnPointerDown(){
+		pointerDown = true;
+	}
+	public void OnPointerUp(){
+		pointerDown = false;
+		timePointerDown = 0f;
 	}
 	
 	public void press(){
@@ -172,12 +335,71 @@ public class UIBaseButton : MonoBehaviour {
 		initialPressingTime = Time.time;
 		
 		if(canPress()){
+			//----
+			//reset clicks counter for these buttons
+			//we can initialize in a child class the value "resetValueForResetButtons" 
+			//if we need a different initialization mode than the default (setting the value in the inspector)
+			//----
+			if(btnsResetClicksCounterWhenClickThis != null && btnsResetClicksCounterWhenClickThis.Length > 0){
+				foreach(UIBaseButton b in btnsResetClicksCounterWhenClickThis){
+					//a button gameobject could have several UIBaseButton components
+					UIBaseButton[] btns = b.GetComponents<UIBaseButton>();
+					
+					//so we only are interesting only they have saveClicksCounter flag set to true
+					foreach(UIBaseButton bAux in btns){
+						if(bAux.saveClicksCounter)
+							bAux.resetClicksCounter(resetValueForResetButtons); 
+					}
+				}
+			}
+			
+			//----
+			//Play sound after press delay
+			//----
+			if(playSoundWhenPress && playSoundWithoutWaitingPressDelay && !pressingStoped){
+				BaseSoundManager.Instance.play(soundId);
+			}
 			lastSuccesfulPressingTime = Time.time;
 			StartCoroutine(doPressBeforeAWhile());
+			
+			//----
+			//save clicks counter
+			//----
+			if(saveClicksCounter && !string.IsNullOrEmpty(id)){
+				if(string.IsNullOrEmpty(clicksCounterPPKey))
+					clicksCounterPPKey = PP_BUTTON_CLICKS_COUNTER+id;
+				
+				clicksCounter++;
+				PlayerPrefs.SetInt(clicksCounterPPKey, clicksCounter);
+			}
 		}
 	}
 	
-	public virtual void checkAvailability(){
+	/// <summary>
+	/// Inits the reset value for reset buttons.
+	/// </summary>
+	public virtual void initResetValueForResetButtons(){
+		
+	}
+	
+	public void resetClicksCounter(int resetValue=-1){
+		if(!string.IsNullOrEmpty(id)){
+			if(string.IsNullOrEmpty(clicksCounterPPKey))
+				clicksCounterPPKey = PP_BUTTON_CLICKS_COUNTER+id;
+			
+			clicksCounter = resetValue;
+			PlayerPrefs.SetInt(clicksCounterPPKey, clicksCounter);
+		}
+		else{
+			GTDebug.logErrorAlways("Trying to reset clicks counter of this button ["+gameObject.name+"], but it has not an ID");
+		}
+	}
+	
+	
+	/// <summary>
+	/// Checks the availability for pressing this button
+	/// </summary>
+	public virtual void checkAvailabilityForPressing(){
 		bool canP = canPress();
 		
 		if(button){
@@ -222,10 +444,10 @@ public class UIBaseButton : MonoBehaviour {
 		
 		
 		if(lbButtonName && changeLbBtnNameWhenCantPress){
-			lbButtonName.text = canP ? Localization.Get(locAvailableAd) : Localization.Get(locNoAvailableAd);
+			lbButtonName.text = canP ? Localization.Get(locCanPress) : Localization.Get(locCannotPress);
 		}
 		else if(lbButtonName && !changeLbBtnNameWhenCantPress){
-			lbButtonName.text = Localization.Get(locAvailableAd);
+			lbButtonName.text = Localization.Get(locCanPress);
 		}
 	}
 	
@@ -236,15 +458,8 @@ public class UIBaseButton : MonoBehaviour {
 	}
 	
 	protected virtual void doPress(){
-		if(playSoundWhenPress && !pressingStoped){
-			//touch up
-			if(trigger == SoundTrigger.TOUCH_UP){
-				BaseSoundManager.Instance.play(soundId);
-			}
-			//touch down
-			else if(trigger == SoundTrigger.TOUCH_DOWN){
-				BaseSoundManager.Instance.play(soundId);
-			}
+		if(playSoundWhenPress && !playSoundWithoutWaitingPressDelay && !pressingStoped){
+			BaseSoundManager.Instance.play(soundId);
 		}
 	}
 	

@@ -42,17 +42,43 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 	}
 
 
+	public void LoadNetworkInfo() {
+		AndroidNativeUtility.instance.LoadNetworkInfo();
+		AndroidNativeUtility.ActionNetworkInfoLoaded += HandleActionNetworkInfoLoaded;
+	}
+
+	void HandleActionNetworkInfoLoaded (AN_NetworkInfo info) {
+		string infoString = "";
+		infoString += "IpAddress: " + info.IpAddress + " \n";
+		infoString += "SubnetMask: " + info.SubnetMask + " \n";
+		infoString += "MacAddress: " + info.MacAddress + " \n";
+		infoString += "SSID: " + info.SSID + " \n";
+		infoString += "BSSID: " + info.BSSID + " \n";
+
+		infoString += "LinkSpeed: " + info.LinkSpeed + " \n";
+		infoString += "NetworkId: " + info.NetworkId + " \n";
+
+		Debug.Log(infoString);
+
+		AndroidNativeUtility.ActionNetworkInfoLoaded -= HandleActionNetworkInfoLoaded;
+	}
+
+
 	public void CheckAppInstalation() {
-		AndroidNativeUtility.instance.OnPackageCheckResult += OnPackageCheckResult;
+
+		AndroidNativeUtility.OnPackageCheckResult += OnPackageCheckResult;
 		AndroidNativeUtility.instance.CheckIsPackageInstalled("com.google.android.youtube");
 	}
 
+
 	public void RunApp() {
-		AndroidNativeUtility.instance.RunPackage("com.google.android.youtube");
+		AndroidNativeUtility.OpenSettingsPage(AN_SettingsActivityAction.ACTION_APPLICATION_DETAILS_SETTINGS);
+		//AndroidNativeUtility.instance.RunPackage("com.google.android.youtube");
 	}
 
 
 	public void CheckAppLicense() {
+
 		AN_LicenseManager.OnLicenseRequestResult += LicenseRequestResult;
 		AN_LicenseManager.instance.StartLicenseRequest (AndroidNativeSettings.Instance.base64EncodedPublicKey);
 		SA_StatusBar.text =  "Get App License Request STARTED";
@@ -71,25 +97,25 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 	
 
 	public void GetAndroidId() {
-		AndroidNativeUtility.instance.OnAndroidIdLoaded += OnAndroidIdLoaded;
+		AndroidNativeUtility.OnAndroidIdLoaded += OnAndroidIdLoaded;
 		AndroidNativeUtility.instance.LoadAndroidId();
 	}
 	
 	void OnAndroidIdLoaded (string id) {
-		AndroidNativeUtility.instance.OnAndroidIdLoaded -= OnAndroidIdLoaded;
+		AndroidNativeUtility.OnAndroidIdLoaded -= OnAndroidIdLoaded;
 		AndroidMessage.Create("Android Id Loaded", id);
 	}
 
 	private void LoadAppInfo() {
 
-		AndroidAppInfoLoader.instance.addEventListener (AndroidAppInfoLoader.PACKAGE_INFO_LOADED, OnPackageInfoLoaded);
+		AndroidAppInfoLoader.ActionPacakgeInfoLoaded += OnPackageInfoLoaded; 
 		AndroidAppInfoLoader.instance.LoadPackageInfo ();
 	}
 
 
 	private void LoadAdressBook() {
-		AddressBookController.instance.LoadContacts ();
-		AddressBookController.instance.OnContactsLoadedAction += OnContactsLoaded;
+		AddressBookController.Instance.LoadContacts ();
+		AddressBookController.OnContactsLoadedAction += OnContactsLoaded;
 
 	}
 
@@ -109,13 +135,13 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 			AN_PoupsProxy.showMessage("On Package Check Result" , "Application  " + res.packageName + " is not installed on this device");
 		}
 
-		AndroidNativeUtility.instance.OnPackageCheckResult -= OnPackageCheckResult;
+		AndroidNativeUtility.OnPackageCheckResult -= OnPackageCheckResult;
 	}
 
 
 
 	void OnContactsLoaded () {
-		AddressBookController.instance.OnContactsLoadedAction -= OnContactsLoaded;
+		AddressBookController.OnContactsLoadedAction -= OnContactsLoaded;
 		AN_PoupsProxy.showMessage("On Contacts Loaded" , "Andress book has " + AddressBookController.instance.contacts.Count + " Contacts");
 	}
 	
@@ -148,16 +174,16 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 
 	}
 
-	private void OnPackageInfoLoaded() {
-		AndroidAppInfoLoader.instance.removeEventListener (AndroidAppInfoLoader.PACKAGE_INFO_LOADED, OnPackageInfoLoaded);
+	private void OnPackageInfoLoaded(PackageAppInfo PacakgeInfo) {
+		AndroidAppInfoLoader.ActionPacakgeInfoLoaded -= OnPackageInfoLoaded; 
 
 		string msg = "";
-		msg += "versionName: " + AndroidAppInfoLoader.instance.PacakgeInfo.versionName + "\n";
-		msg += "versionCode: " + AndroidAppInfoLoader.instance.PacakgeInfo.versionCode + "\n";
-		msg += "packageName" + AndroidAppInfoLoader.instance.PacakgeInfo.packageName + "\n";
-		msg += "lastUpdateTime:" + System.Convert.ToString(AndroidAppInfoLoader.instance.PacakgeInfo.lastUpdateTime) + "\n";
-		msg += "sharedUserId" + AndroidAppInfoLoader.instance.PacakgeInfo.sharedUserId + "\n";
-		msg += "sharedUserLabel"  + AndroidAppInfoLoader.instance.PacakgeInfo.sharedUserLabel;
+		msg += "versionName: " + PacakgeInfo.versionName + "\n";
+		msg += "versionCode: " + PacakgeInfo.versionCode + "\n";
+		msg += "packageName" + PacakgeInfo.packageName + "\n";
+		msg += "lastUpdateTime:" + System.Convert.ToString(PacakgeInfo.lastUpdateTime) + "\n";
+		msg += "sharedUserId" + PacakgeInfo.sharedUserId + "\n";
+		msg += "sharedUserLabel"  + PacakgeInfo.sharedUserLabel;
 
 		AN_PoupsProxy.showMessage("App Info Loaded", msg);
 	}
@@ -166,18 +192,18 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 
 
 	public void LoadInternal() {
-		AndroidNativeUtility.instance.InternalStoragePathLoaded += InternalStoragePathLoaded;
+		AndroidNativeUtility.InternalStoragePathLoaded += InternalStoragePathLoaded;
 		AndroidNativeUtility.instance.GetInternalStoragePath();
 
 	}
 
 	public void LoadExternal() {
-		AndroidNativeUtility.instance.ExternalStoragePathLoaded += ExternalStoragePathLoaded;
+		AndroidNativeUtility.ExternalStoragePathLoaded += ExternalStoragePathLoaded;
 		AndroidNativeUtility.instance.GetExternalStoragePath();
 	}
 
 	public void LoadLocaleInfo() {
-		AndroidNativeUtility.instance.LocaleInfoLoaded += LocaleInfoLoaded;
+		AndroidNativeUtility.LocaleInfoLoaded += LocaleInfoLoaded;
 		AndroidNativeUtility.instance.LoadLocaleInfo();
 	}
 
@@ -186,17 +212,17 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 		                          + locale.DisplayCountry + "  :   "
 		                          + locale.LanguageCode + "/" 
 		                          + locale.DisplayLanguage);
-		AndroidNativeUtility.instance.LocaleInfoLoaded -= LocaleInfoLoaded;
+		AndroidNativeUtility.LocaleInfoLoaded -= LocaleInfoLoaded;
 	}
 
 
 	void ExternalStoragePathLoaded (string path) {
 		AN_PoupsProxy.showMessage("External Storage Path:", path);
-		AndroidNativeUtility.instance.ExternalStoragePathLoaded -= ExternalStoragePathLoaded;
+		AndroidNativeUtility.ExternalStoragePathLoaded -= ExternalStoragePathLoaded;
 	}
 
 	void InternalStoragePathLoaded (string path) {
 		AN_PoupsProxy.showMessage("Internal Storage Path:", path);
-		AndroidNativeUtility.instance.InternalStoragePathLoaded -= InternalStoragePathLoaded;
+		AndroidNativeUtility.InternalStoragePathLoaded -= InternalStoragePathLoaded;
 	}
 }

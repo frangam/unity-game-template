@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 
-public class DefaultPreviewButton : EventDispatcher {
+public class DefaultPreviewButton : MonoBehaviour {
+
+	public event Action ActionClick =  delegate {};
 
 	public Texture normalTexture;
 	public Texture pressedTexture;
@@ -98,7 +100,7 @@ public class DefaultPreviewButton : EventDispatcher {
 		} 
 		GetComponent<AudioSource>().PlayOneShot(sound);
 		GetComponent<Renderer>().material.mainTexture = pressedTexture;
-		dispatch(BaseEvent.CLICK);
+		ActionClick();
 		CancelInvoke("OnTimeoutPress");
 		Invoke("OnTimeoutPress", 0.1f);
 	}

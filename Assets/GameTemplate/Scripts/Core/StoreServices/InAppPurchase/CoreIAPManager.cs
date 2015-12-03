@@ -162,7 +162,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	/// </summary>
 	public void initialCheckingForApplyProductsRewards(){
 		#if UNITY_ANDROID		
-		if(AndroidInAppPurchaseManager.instance.IsConnectd && _products != null && _products.Count > 0){
+		if(AndroidInAppPurchaseManager.instance.IsConnected && _products != null && _products.Count > 0){
 			foreach(UIBaseInAppItem product in _products){
 				//chisking if we already own some consuamble product but forget to consume those
 				//consume the purchase if the inapp product type is consumable
@@ -202,7 +202,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		#if UNITY_ANDROID
 		bool restore = false;
 		
-		if(AndroidInAppPurchaseManager.instance.IsConnectd && _products != null && _products.Count > 0){
+		if(AndroidInAppPurchaseManager.instance.IsConnected && _products != null && _products.Count > 0){
 			foreach(UIBaseInAppItem product in _products){
 				//chisking if we already own some consuamble product but forget to consume those
 				//consume the purchase if the inapp product type is consumable

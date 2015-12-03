@@ -6,10 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class TwitterAndroidUseExample : MonoBehaviour {
@@ -221,7 +218,7 @@ public class TwitterAndroidUseExample : MonoBehaviour {
 
 	private void RetrieveTimeLine() {
 		TW_UserTimeLineRequest r =  TW_UserTimeLineRequest.Create();
-		r.addEventListener(BaseEvent.COMPLETE, OnTimeLineRequestComplete);
+		r.ActionComplete += OnTimeLineRequestComplete;
 		r.AddParam("screen_name", "unity3d");
 		r.AddParam("count", "1");
 		r.Send();
@@ -230,7 +227,7 @@ public class TwitterAndroidUseExample : MonoBehaviour {
 
 	private void UserLookUpRequest() {
 		TW_UsersLookUpRequest r =  TW_UsersLookUpRequest.Create();
-		r.addEventListener(BaseEvent.COMPLETE, OnLookUpRequestComplete);
+		r.ActionComplete += OnLookUpRequestComplete;
 		r.AddParam("screen_name", "unity3d");
 		r.Send();
 	}
@@ -238,21 +235,21 @@ public class TwitterAndroidUseExample : MonoBehaviour {
 
 	private void FriedsidsRequest() {
 		TW_FriendsIdsRequest r =  TW_FriendsIdsRequest.Create();
-		r.addEventListener(BaseEvent.COMPLETE, OnIdsLoaded);
+		r.ActionComplete += OnIdsLoaded;
 		r.AddParam("screen_name", "unity3d");
 		r.Send();
 	}
 
 	private void FollowersidsRequest() {
 		TW_FollowersIdsRequest r =  TW_FollowersIdsRequest.Create();
-		r.addEventListener(BaseEvent.COMPLETE, OnIdsLoaded);
+		r.ActionComplete += OnIdsLoaded;
 		r.AddParam("screen_name", "unity3d");
 		r.Send();
 	}
 
 	private void TweetSearch() {
 		TW_SearchTweetsRequest r =  TW_SearchTweetsRequest.Create();
-		r.addEventListener(BaseEvent.COMPLETE, OnSearchRequestComplete);
+		r.ActionComplete += OnSearchRequestComplete;
 		r.AddParam("q", "@noradio");
 		r.AddParam("count", "1");
 		r.Send();
@@ -265,10 +262,7 @@ public class TwitterAndroidUseExample : MonoBehaviour {
 	// Events
 	// --------------------------------------
 
-	private void OnIdsLoaded(CEvent e) {
-		
-		TW_APIRequstResult result = e.data as TW_APIRequstResult;
-		
+	private void OnIdsLoaded(TW_APIRequstResult result) {
 		
 		if(result.IsSucceeded) {
 
@@ -282,11 +276,7 @@ public class TwitterAndroidUseExample : MonoBehaviour {
 	}
 
 
-	private void OnLookUpRequestComplete(CEvent e) {
-	
-		TW_APIRequstResult result = e.data as TW_APIRequstResult;
-		
-		
+	private void OnLookUpRequestComplete(TW_APIRequstResult result) {
 		if(result.IsSucceeded) {
 			string msg = "User Id: ";
 			msg+= result.users[0].id;
@@ -302,10 +292,8 @@ public class TwitterAndroidUseExample : MonoBehaviour {
 	}
 
 
-	private void OnSearchRequestComplete(CEvent e) {
-		TW_APIRequstResult result = e.data as TW_APIRequstResult;
-		
-		
+	private void OnSearchRequestComplete(TW_APIRequstResult result) {
+
 		if(result.IsSucceeded) {
 			string msg = "Tweet text:" + "\n";
 			msg+= result.tweets[0].text;
@@ -320,10 +308,7 @@ public class TwitterAndroidUseExample : MonoBehaviour {
 	}
 
 
-	private void OnTimeLineRequestComplete(CEvent e) {
-		TW_APIRequstResult result = e.data as TW_APIRequstResult;
-
-
+	private void OnTimeLineRequestComplete(TW_APIRequstResult result) {
 		if(result.IsSucceeded) {
 			string msg = "Last Tweet text:" + "\n";
 			msg+= result.tweets[0].text;

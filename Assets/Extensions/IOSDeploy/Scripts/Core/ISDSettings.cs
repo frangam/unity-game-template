@@ -11,7 +11,7 @@ using UnityEditor;
 public class ISDSettings : ScriptableObject
 {
 
-	public const string VERSION_NUMBER = "1.5";
+	public const string VERSION_NUMBER = "1.6";
 
 	public bool IsfwSettingOpen;
 	public bool IsLibSettingOpen;

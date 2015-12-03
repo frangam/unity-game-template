@@ -67,7 +67,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	
 	public void loadBestScoreFromStore(GK_Score gkScore){
 		if(gkScore != null){
-			string id = gkScore.leaderboardId;
+			string id = gkScore.LeaderboardId;
 			id = id.Replace("_", "-");
 			id = id.Replace(GameSettings.Instance.prefixScoresGroupOnIOS, "");
 			
@@ -81,16 +81,16 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				
 				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
 				//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
-				if(Application.platform == RuntimePlatform.IPhonePlayer && score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
-					double scoreSavedInServerDouble = gkScore.GetDoubleScore();
-					System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
-					long convertedValue = ((long) (timeSpan.TotalMilliseconds)); //milliseconds
-					GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + " Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServerDouble+"Secs. After: "+ convertedValue+"Ms");
-					loadBestScoreFromStore(score.Id, convertedValue);
-				}
-				else{
-					loadBestScoreFromStore(score.Id, gkScore.GetLongScore());
-				}
+				//				if(Application.platform == RuntimePlatform.IPhonePlayer && score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
+				//					double scoreSavedInServerDouble = gkScore.GetDoubleScore();
+				//					System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
+				//					long convertedValue = ((long) (timeSpan.TotalMilliseconds)); //milliseconds
+				//					GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + " Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServerDouble+"Secs. After: "+ convertedValue+"Ms");
+				//					loadBestScoreFromStore(score.Id, convertedValue);
+				//				}
+				//				else{
+				loadBestScoreFromStore(score.Id, gkScore.LongScore);
+				//				}
 			}
 			else{
 				GTDebug.log("Local score not found with LeaderboardID: "+ id);
@@ -358,14 +358,14 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
 				//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
 				if(score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
-					double scoreSavedInServerDouble = GameCenterManager.GetLeaderboard(score.IdForSaveOniOSStore).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).GetDoubleScore();
-					System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
-					long convertedValue = ((long) (timeSpan.TotalMilliseconds)); //milliseconds
+					//					System.TimeSpan scoreSavedInServerDouble = GameCenterManager.GetLeaderboard(score.IdForSaveOniOSStore).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).Seconds;
+					System.TimeSpan secondsSavedInServer = GameCenterManager.GetLeaderboard(score.IdForSaveOniOSStore).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).Seconds;//System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
+					long convertedValue = ((long) (secondsSavedInServer.TotalMilliseconds)); //milliseconds
 					GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + "Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServer+"Secs. After: "+ convertedValue+"Ms");
 					scoreSavedInServer = convertedValue;
 				}
 				else
-					scoreSavedInServer = GameCenterManager.GetLeaderboard(score.IdForSaveOniOSStore).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).GetLongScore();
+					scoreSavedInServer = GameCenterManager.GetLeaderboard(score.IdForSaveOniOSStore).GetCurrentPlayerScore(GK_TimeSpan.ALL_TIME, GK_CollectionType.GLOBAL).LongScore;
 				
 				GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + "Server score: "+scoreSavedInServer + ". Score to send to the server: "+scoreToSend);
 				GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + "Score Order: "+score.Order);
@@ -389,7 +389,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
 				//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
 				if(score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
-					System.TimeSpan timeSpan = System.TimeSpan.FromMilliseconds(scoreToSend);
+					System.TimeSpan timeSpan = System.TimeSpan.FromMilliseconds(scoreToSend); //scoreToSend is in Seconds
 					double scoreToSendInDouble = timeSpan.TotalSeconds; //seconds to send to Game Center
 					
 					GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + "Reporting Score [" + scoreToSendInDouble + "] (seconds) to server (format elapset time hudredths of a second)");
@@ -398,9 +398,9 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 					GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + "Score sent In Secs - Converted Ms to Seconds score."+scoreToSendInDouble);
 				}
 				//send long score
-				else{
+				else
 					GameCenterManager.ReportScore(scoreToSend, score.IdForSaveOniOSStore); //sending
-				}
+				
 				
 				GTDebug.log ("LeaderboardID: "+ score.IdForSaveOniOSStore + "Sending score to the server: " + scoreToSend);
 			}

@@ -479,7 +479,8 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 				//show product price on the button
 				foreach(UIBaseInAppButton button in inAppButtons){
 					if(button != null && button.Item != null && p.SKU.Equals(button.Item.Id)){
-						button.showPriceInfo(p.price, p.priceCurrencyCode);
+						//						button.showPriceInfo(p.Price.ToString(), p.PriceCurrencyCode);
+						button.showPriceInfo(p.LocalizedPrice);
 						break;
 					}
 				}
@@ -503,17 +504,17 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 			
 			foreach(IOSProductTemplate p in products){
 				if(GameSettings.Instance.showTestLogs)
-					Debug.Log("UIBaseInAppWin - product [id: " + p.id + ", title: " + p.title + ", desc: " + p.description + ", price: " + p.price + ", localizedPrice: " + p.localizedPrice
-					          + ", currency symbol" + p.currencySymbol + ", price code: " + p.currencyCode + "]");
+					Debug.Log("UIBaseInAppWin - product [id: " + p.Id + ", title: " + p.DisplayName + ", desc: " + p.Description + ", price: " + p.Price + ", localizedPrice: " + p.LocalizedPrice
+					          + ", currency symbol" + p.CurrencySymbol + ", price code: " + p.CurrencyCode + "]");
 				
 				//show product price on the button
 				if(inAppButtons != null && inAppButtons.Count > 0){
 					foreach(UIBaseInAppButton button in inAppButtons){
-						if(button != null && button.Item != null && p.id.Equals(button.Item.Id)){
+						if(button != null && button.Item != null && p.Id.Equals(button.Item.Id)){
 							if(GameSettings.Instance.showTestLogs)
 								Debug.Log("UIBaseInAppWin - Showing price info on the In App Button with id "+button.Item.Id);
 							
-							button.showPriceInfo(p.localizedPrice);
+							button.showPriceInfo(p.LocalizedPrice);
 							break;
 						}
 						else{

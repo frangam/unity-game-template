@@ -27,7 +27,7 @@ public class UIBaseGameOverWindow : UIBaseWindow {
 		}
 		
 		if(lbBestScore){
-			lbBestScore.text = ScoresHandler.Instance.getBestScore(GameController.Instance.Manager.getRankingID()).ToString();
+			lbBestScore.text = ScoresHandler.Instance.getBestScoreByID(GameController.Instance.Manager.getRankingID()).ToString();
 		}
 		
 		base.open ();

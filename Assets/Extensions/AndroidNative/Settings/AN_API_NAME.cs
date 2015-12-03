@@ -32,6 +32,7 @@ public class AN_API_NAME  {
 	public const string GoogleCloudSave = "Google Cloud Save";
 	public const string PushNotifications = "Push Notifications";
 	public const string PoupsandPreloaders = "Poups and Pre-loaders";
+	public const string NetworkInfo = "Network Info";
 
 
 	public const string CameraAPI = "Camera";

@@ -23,10 +23,15 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 
 
 	//Actinos
-	public Action<TWResult> OnTwitterInitedAction 				= delegate {};
-	public Action<TWResult> OnAuthCompleteAction 				= delegate {};
-	public Action<TWResult> OnPostingCompleteAction 			= delegate {};
-	public Action<TWResult> OnUserDataRequestCompleteAction 	= delegate {};
+	public event Action OnTwitterLoginStarted 						= delegate {};
+	public event Action OnTwitterLogOut 							= delegate {};
+	public event Action OnTwitterPostStarted						= delegate {};
+
+
+	public event Action<TWResult> OnTwitterInitedAction 			= delegate {};
+	public event Action<TWResult> OnAuthCompleteAction 				= delegate {};
+	public event Action<TWResult> OnPostingCompleteAction 			= delegate {};
+	public event Action<TWResult> OnUserDataRequestCompleteAction 	= delegate {};
 
 
 
@@ -42,6 +47,20 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 
 
 	public void Init() {
+		#if UNITY_ANDROID
+		
+		try {
+			Type soomla = Type.GetType("AN_SoomlaGrow");
+			System.Reflection.MethodInfo method  = soomla.GetMethod("Init", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+			
+			method.Invoke(null, null);
+		} catch(Exception ex) {
+			Debug.LogError("AndroidNative: Soomla Initalization failed" + ex.Message);
+		}
+		
+		#endif
+
+
 		Init(SocialPlatfromSettings.Instance.TWITTER_CONSUMER_KEY, SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET);
 	}
 
@@ -63,6 +82,8 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 
 
 	public void AuthenticateUser() {
+		OnTwitterLoginStarted();
+
 		if(_IsAuthed) {
 			OnAuthSuccess();
 		} else {
@@ -77,29 +98,32 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 			Debug.LogWarning("Auth user before loadin data, fail event generated");
 
 			TWResult res =  new TWResult(false, null);
-			dispatch(TwitterEvents.USER_DATA_FAILED_TO_LOAD, res);
 			OnUserDataRequestCompleteAction(res);
 		}
 	}
 	
 	public void Post(string status) {
+		OnTwitterPostStarted();
+
+
 		if(!_IsAuthed) {
 			Debug.LogWarning("Auth user before posting data, fail event generated");
 			TWResult res =  new TWResult(false, null);
-			dispatch(TwitterEvents.POST_FAILED, res);
 			OnPostingCompleteAction(res);
 			return;
 		} 
+
 
 		AndroidNative.TwitterPost(status);
 	}
 
 	public void Post(string status, Texture2D texture) {
 
+		OnTwitterPostStarted();
+
 		if(!_IsAuthed) {
 			Debug.LogWarning("Auth user before posting data, fail event generated");
 			TWResult res =  new TWResult(false, null);
-			dispatch(TwitterEvents.POST_FAILED, res);
 			OnPostingCompleteAction(res);
 			return;
 		} 
@@ -124,6 +148,8 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 	}
 
 	public void LogOut() {
+		OnTwitterLogOut();
+
 		_IsAuthed = false;
 		AndroidNative.LogoutFromTwitter();
 	}
@@ -174,34 +200,29 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 		}
 
 		TWResult res =  new TWResult(true, null);
-		dispatch(TwitterEvents.TWITTER_INITED, res);
 		OnTwitterInitedAction(res);
 	}
 
 	private void OnAuthSuccess() {
 		_IsAuthed = true;
 		TWResult res =  new TWResult(true, null);
-		dispatch(TwitterEvents.AUTHENTICATION_SUCCEEDED, res);
 		OnAuthCompleteAction(res);
 	}
 
 
 	private void OnAuthFailed() {
 		TWResult res =  new TWResult(false, null);
-		dispatch(TwitterEvents.AUTHENTICATION_FAILED, res);
 		OnAuthCompleteAction(res);
 	}
 
 	private void OnPostSuccess() {
 		TWResult res =  new TWResult(true, null);
-		dispatch(TwitterEvents.POST_SUCCEEDED, res);
 		OnPostingCompleteAction(res);
 	}
 	
 	
 	private void OnPostFailed() {
 		TWResult res =  new TWResult(false, null);
-		dispatch(TwitterEvents.POST_FAILED, res);
 		OnPostingCompleteAction(res);
 	}
 
@@ -210,7 +231,6 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 		_userInfo =  new TwitterUserInfo(data);
 
 		TWResult res =  new TWResult(true, data);
-		dispatch(TwitterEvents.USER_DATA_LOADED, res);
 		OnUserDataRequestCompleteAction(res);
 
 
@@ -219,7 +239,6 @@ public class AndroidTwitterManager : SA_Singleton<AndroidTwitterManager>, Twitte
 
 	private void OnUserDataLoadFailed() {
 		TWResult res =  new TWResult(false, null);
-		dispatch(TwitterEvents.USER_DATA_FAILED_TO_LOAD, res);
 		OnUserDataRequestCompleteAction(res);
 	}
 

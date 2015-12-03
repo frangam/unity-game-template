@@ -14,14 +14,14 @@ public class AddressBookExample : MonoBehaviour {
 	private List<AndroidContactInfo> all_contacts = new List<AndroidContactInfo>();
 
 	private void LoadAdressBook() {
-		AddressBookController.instance.LoadContacts ();
-		AddressBookController.instance.OnContactsLoadedAction += OnContactsLoaded;		
+		AddressBookController.Instance.LoadContacts ();
+		AddressBookController.OnContactsLoadedAction += OnContactsLoaded;		
 	}
 
 	
 	void OnContactsLoaded () {
-		AddressBookController.instance.OnContactsLoadedAction -= OnContactsLoaded;
-		all_contacts = AddressBookController.instance.contacts;
+		AddressBookController.OnContactsLoadedAction -= OnContactsLoaded;
+		all_contacts = AddressBookController.Instance.contacts;
 
 		AN_PoupsProxy.showMessage("On Contacts Loaded" , "Andress book has " + all_contacts.Count + " Contacts");
 

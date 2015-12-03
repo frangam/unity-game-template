@@ -68,7 +68,7 @@ public class MarketExample : BaseIOSFeaturePreview {
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Restore Purchases")) {
-			IOSInAppPurchaseManager.Instance.restorePurchases();
+			IOSInAppPurchaseManager.Instance.RestorePurchases();
 
 		}
 
@@ -82,14 +82,14 @@ public class MarketExample : BaseIOSFeaturePreview {
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Load Product View")) {
 			IOSStoreProductView view =  new IOSStoreProductView("333700869");
-			view.Disnissed += StoreProductViewDisnissed;
+			view.Dismissed += StoreProductViewDisnissed;
 			view.Load();
 		}
 
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Is Payments Enabled On device")) {
-			IOSInAppPurchaseManager.Instance.OnPurchasesStateSettingsLoaded += OnPurchasesStateSettingsLoaded;
+			IOSInAppPurchaseManager.OnPurchasesStateSettingsLoaded += OnPurchasesStateSettingsLoaded;
 			IOSInAppPurchaseManager.Instance.RequestInAppSettingState();
 		}
 
@@ -132,11 +132,11 @@ public class MarketExample : BaseIOSFeaturePreview {
 
 	void OnGUIDLoaded (ISN_DeviceGUID result) {
 		ISN_Security.OnGUIDLoaded -= OnGUIDLoaded;
-		IOSNativePopUpManager.showMessage("GUID Loaded", result.GetBase64String());
+		IOSNativePopUpManager.showMessage("GUID Loaded", result.Base64String);
 	}
 
 	void OnPurchasesStateSettingsLoaded (bool IsInAppPurchasesEnabled) {
-		IOSInAppPurchaseManager.Instance.OnPurchasesStateSettingsLoaded -= OnPurchasesStateSettingsLoaded;
+		IOSInAppPurchaseManager.OnPurchasesStateSettingsLoaded -= OnPurchasesStateSettingsLoaded;
 		IOSNativePopUpManager.showMessage("Payments Settings State", "Is Payments Enabled: " + IOSInAppPurchaseManager.Instance.IsInAppPurchasesEnabled);
 	}
 

@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -45,7 +44,7 @@ public class TW_UsersLookUpRequest : TW_APIRequest {
 		TW_APIRequstResult result = new TW_APIRequstResult(true, data);
 		result.users = loadedUsers;
 
-		dispatch(BaseEvent.COMPLETE, result);
+		SendCompleteResult(result);
 
 	}
 

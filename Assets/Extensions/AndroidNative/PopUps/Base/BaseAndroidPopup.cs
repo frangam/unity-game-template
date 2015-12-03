@@ -7,15 +7,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BaseAndroidPopup : EventDispatcher {
+public class BaseAndroidPopup : MonoBehaviour {
 	
 	
 	public string title;
 	public string message;
+
+	public event Action<AndroidDialogResult> ActionComplete = delegate{};
 	
 	
 	//--------------------------------------
@@ -35,8 +37,12 @@ public class BaseAndroidPopup : EventDispatcher {
 	//--------------------------------------
 
 	public void onDismissed(string data) {
-		dispatch(BaseEvent.COMPLETE, AndroidDialogResult.CLOSED);
+		ActionComplete(AndroidDialogResult.CLOSED);
 		Destroy(gameObject);
+	}
+
+	protected void DispatchAction(AndroidDialogResult res) {
+		ActionComplete(res);
 	}
 	
 	//--------------------------------------

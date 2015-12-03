@@ -7,11 +7,6 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 	//Actions
 	public Action<AndroidImagePickResult> OnImagePicked = delegate{};
 	public Action<GallerySaveResult> OnImageSaved = delegate{};
-	
-	//Events
-	public const string  IMAGE_PICKED = "image_picked";
-	public const string  IMAGE_SAVED = "image_saved";
-
 
 
 	private static string _lastImageName = string.Empty;
@@ -19,8 +14,10 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 	void Awake() {
 		DontDestroyOnLoad(gameObject);
 
-		int mode = (int) AndroidNativeSettings.Instance.CameraCaptureMode;
-		AndroidNative.InitCameraAPI(AndroidNativeSettings.Instance.GalleryFolderName, AndroidNativeSettings.Instance.MaxImageLoadSize, mode);
+		AndroidNative.InitCameraAPI(AndroidNativeSettings.Instance.GalleryFolderName,
+		                            AndroidNativeSettings.Instance.MaxImageLoadSize,
+		                            (int) AndroidNativeSettings.Instance.CameraCaptureMode,
+		                            (int) AndroidNativeSettings.Instance.ImageFormat);
 	}
 
 
@@ -74,25 +71,18 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 
 		AndroidImagePickResult result =  new AndroidImagePickResult(codeString, ImageData, ImagePathInfo);
 
-		dispatch(IMAGE_PICKED, result);
-		if(OnImagePicked != null) {
-			OnImagePicked(result);
-		}
+		OnImagePicked(result);
 
 	}
 
 	private void OnImageSavedEvent(string data) {
 		GallerySaveResult res =  new GallerySaveResult(data, true);
-
 		OnImageSaved(res);
-		dispatch(IMAGE_SAVED, res);
 	}
 
 	private void OnImageSaveFailedEvent(string data) {
 		GallerySaveResult res =  new GallerySaveResult("", false);
-		
 		OnImageSaved(res);
-		dispatch(IMAGE_SAVED, res);
 	}
 
 

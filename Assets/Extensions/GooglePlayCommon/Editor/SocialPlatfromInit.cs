@@ -14,19 +14,23 @@ public class SocialPlatfromInit  {
 
 	static SocialPlatfromInit () {
 
-		if(FileStaticAPI.IsFileExists("Extensions/UltimateMobile/Resources/UltimateMobileSettings.asset")) {
+		if(FileStaticAPI.IsFolderExists("Extensions/UltimateMobile/")) {
 			return;
 		}
 
-		if(SocialPlatfromSettingsEditor.IsFullVersion) {
-			if(!SocialPlatfromSettingsEditor.IsInstalled) {
+		if(FileStaticAPI.IsFolderExists("Extensions/AndroidNative/")) {
+			return;
+		}
+
+
+		if(!SocialPlatfromSettingsEditor.IsInstalled) {
+			EditorApplication.update += OnEditorLoaded;
+		} else {
+			if(!SocialPlatfromSettingsEditor.IsUpToDate) {
 				EditorApplication.update += OnEditorLoaded;
-			} else {
-				if(!SocialPlatfromSettingsEditor.IsUpToDate) {
-					EditorApplication.update += OnEditorLoaded;
-				}
 			}
 		}
+		
 	}
 	
 	private static void OnEditorLoaded() {

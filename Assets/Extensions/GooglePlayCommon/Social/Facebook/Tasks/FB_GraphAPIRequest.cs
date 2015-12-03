@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class FB_GraphAPIRequest : EventDispatcher   {
+public class FB_GraphAPIRequest : MonoBehaviour   {
+
+	public event Action<FB_APIResult> ActionComplete = delegate{};
 
 
 	private bool IsFirst = true;
 	private string GetParams = string.Empty;
-	
-	
+
 	private string requestUrl = "https://graph.facebook.com";
 
 	#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 
@@ -29,7 +30,7 @@ public class FB_GraphAPIRequest : EventDispatcher   {
 		if(SPFacebook.instance.IsLoggedIn) {
 			StartCoroutine(Request());
 		}  else {
-			dispatch(BaseEvent.COMPLETE, new FB_APIResult(false, "User not logged in"));
+			ActionComplete(new FB_APIResult(new FBResult("", "User not logged in")));
 			Destroy(gameObject);
 		}
 	}
@@ -82,12 +83,13 @@ public class FB_GraphAPIRequest : EventDispatcher   {
 			Debug.Log(kv.Key + " : " + kv.Value);
 		}
 
-		
+		FBResult r = new FBResult(www);
+
 		if(www.error == null) {
-			dispatch(BaseEvent.COMPLETE, new FB_APIResult(true, www.text));
+			ActionComplete( new FB_APIResult(r));
 			Destroy(gameObject);
 		} else {
-			dispatch(BaseEvent.COMPLETE, new FB_APIResult(false, www.error));
+			ActionComplete( new FB_APIResult(r));
 			Destroy(gameObject);
 		}
 

@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -43,7 +42,7 @@ public class TW_FriendsIdsRequest : TW_APIRequest {
 
 	
 
-		dispatch(BaseEvent.COMPLETE, result);
+		SendCompleteResult(result);
 
 	}
 

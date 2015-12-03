@@ -1,10 +1,12 @@
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 
-public class FBLikesRetrieveTask : EventDispatcher {
+public class FBLikesRetrieveTask : MonoBehaviour {
 
 	private string _userId;
+
+	public event Action<FBResult, FBLikesRetrieveTask> ActionComplete = delegate{};
 
 
 	public static FBLikesRetrieveTask Create(){
@@ -28,9 +30,10 @@ public class FBLikesRetrieveTask : EventDispatcher {
 			return _userId;
 		}
 	}
+	
 
 	private void OnUserLikesResult(FBResult result) {
-		dispatch(BaseEvent.COMPLETE, result);
+		ActionComplete(result, this);
 		Destroy(gameObject);
 	}
 }

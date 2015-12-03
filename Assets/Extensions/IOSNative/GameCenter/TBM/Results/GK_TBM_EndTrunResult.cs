@@ -9,8 +9,7 @@ public class GK_TBM_EndTrunResult : ISN_Result {
 		_Match = match;
 	}
 	
-	public GK_TBM_EndTrunResult(string errorData):base(false) {
-		SetErrorData(errorData);
+	public GK_TBM_EndTrunResult(string errorData):base(errorData) {
 	}
 	
 	

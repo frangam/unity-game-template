@@ -9,10 +9,10 @@
 
 
 using UnityEngine;
-using UnionAssets.FLE;
+using System;
 using System.Collections;
 
-public interface TwitterManagerInterface  : IDispatcher {
+public interface TwitterManagerInterface  {
 
 
 	void Init();
@@ -30,5 +30,10 @@ public interface TwitterManagerInterface  : IDispatcher {
 	bool IsAuthed {get;}
 	bool IsInited {get;}
 	TwitterUserInfo userInfo  {get;}
+
+	event Action<TWResult> OnTwitterInitedAction;
+	event Action<TWResult> OnAuthCompleteAction;
+	event Action<TWResult> OnPostingCompleteAction;
+	event Action<TWResult> OnUserDataRequestCompleteAction; 
 
 }

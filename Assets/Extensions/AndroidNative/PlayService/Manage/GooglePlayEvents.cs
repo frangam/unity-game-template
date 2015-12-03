@@ -5,10 +5,7 @@ using System.Collections.Generic;
 
 public class GooglePlayEvents : SA_Singleton<GooglePlayEvents> {
 
-
-	//events
-	public const string EVENTS_LOADED      = "events_loaded";
-
+	
 	//actions
 	public Action<GooglePlayResult> OnEventsLoaded =  delegate{};
 
@@ -89,7 +86,6 @@ public class GooglePlayEvents : SA_Singleton<GooglePlayEvents> {
 
 
 		OnEventsLoaded(result);
-		dispatch (EVENTS_LOADED, result);
 		Debug.Log ("OnGPEventsLoaded, total:" + _Events.Count.ToString());
 
 	}

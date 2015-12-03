@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class PlayServicFridnsLoadExample_New : MonoBehaviour {
@@ -24,16 +23,20 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 
 
 		//listen for GooglePlayConnection events
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-		GooglePlayConnection.instance.addEventListener(GooglePlayConnection.CONNECTION_RESULT_RECEIVED, OnConnectionResult);
+
+		GooglePlayConnection.ActionPlayerConnected +=  OnPlayerConnected;
+		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
+
+		GooglePlayConnection.ActionConnectionResultReceived += OnConnectionResult;
+
+	
 		
 
 	
 		GooglePlayManager.ActionFriendsListLoaded +=  OnFriendListLoaded;
 
 
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			//checking if player already connected
 			OnPlayerConnected ();
 		} 
@@ -42,13 +45,13 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 	}
 
 	private void ConncetButtonPress() {
-		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.state.ToString());
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.State.ToString());
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			SA_StatusBar.text = "Disconnecting from Play Service...";
-			GooglePlayConnection.instance.disconnect ();
+			GooglePlayConnection.Instance.Disconnect ();
 		} else {
 			SA_StatusBar.text = "Connecting to Play Service...";
-			GooglePlayConnection.instance.connect ();
+			GooglePlayConnection.Instance.Connect ();
 		}
 	}
 
@@ -58,7 +61,7 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 			row.Disable();
 		}
 
-		if(GooglePlayConnection.state != GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State != GPConnectionState.STATE_CONNECTED) {
 			return;
 		} 
 
@@ -100,7 +103,7 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 
 
 	void FixedUpdate() {
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			if(GooglePlayManager.instance.player.icon != null) {
 				avatar.GetComponent<Renderer>().material.mainTexture = GooglePlayManager.instance.player.icon;
 			}
@@ -110,7 +113,7 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 		
 		
 		string title = "Connect";
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			title = "Disconnect";
 			
 			foreach(DefaultPreviewButton btn in ConnectionDependedntButtons) {
@@ -123,7 +126,7 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 				btn.DisabledButton();
 				
 			}
-			if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED) {
+			if(GooglePlayConnection.State == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.State == GPConnectionState.STATE_UNCONFIGURED) {
 				
 				title = "Connect";
 			} else {
@@ -158,9 +161,8 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 		playerLabel.text = GooglePlayManager.instance.player.name;
 	}
 	
-	private void OnConnectionResult(CEvent e) {
-		
-		GooglePlayConnectionResult result = e.data as GooglePlayConnectionResult;
+	private void OnConnectionResult(GooglePlayConnectionResult result) {
+	
 		SA_StatusBar.text = "ConnectionResul:  " + result.code.ToString();
 		Debug.Log(result.code.ToString());
 	}

@@ -18,7 +18,7 @@ for frwrk in frameworks:
         project.remove_file(f)
     
     if len(frwrk) > 0:
-        project.add_file('System/Library/Frameworks/' + frwrk, tree='SDKROOT')
+        project.add_file('System/Library/Frameworks/' + frwrk, weak=True, tree='SDKROOT')
 
 print('Step 2: add system libraries ')
 for lib in libraries:

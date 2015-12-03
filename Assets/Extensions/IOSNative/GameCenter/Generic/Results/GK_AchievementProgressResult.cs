@@ -16,4 +16,10 @@ public class GK_AchievementProgressResult : ISN_Result {
 			return _tpl;
 		}
 	}
+
+	public GK_AchievementTemplate Achievement {
+		get {
+			return _tpl;
+		}
+	}
 }

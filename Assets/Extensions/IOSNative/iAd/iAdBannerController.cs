@@ -1,3 +1,5 @@
+#define IAD_API
+
 ////////////////////////////////////////////////////////////////////////////////
 //  
 // @module IOS Native Plugin for Unity3D 
@@ -10,16 +12,15 @@
 
 using UnityEngine;
 using System;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
-#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
 using System.Runtime.InteropServices;
 #endif
 
-public class iAdBannerController : EventDispatcher {
+public class iAdBannerController : ISN_Singleton<iAdBannerController> {
 
-	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+	#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
 	[DllImport ("__Internal")]
 	private static extern void _IADDestroyBanner(int id);
 
@@ -32,6 +33,8 @@ public class iAdBannerController : EventDispatcher {
 
 	[DllImport ("__Internal")]
 	private static extern void _IADShowInterstitialAd();
+	
+
 	#endif
 
 
@@ -40,11 +43,13 @@ public class iAdBannerController : EventDispatcher {
 	private static iAdBannerController _instance;
 	private Dictionary<int, iAdBanner> _banners; 
 
+	private bool _IsInterstisialsAdReady = false;
+
 	//Actions
-	public Action InterstitialDidFailWithErrorAction 	= delegate {};
-	public Action InterstitialAdWillLoadAction 			= delegate {};
-	public Action InterstitialAdDidLoadAction 			= delegate {};
-	public Action InterstitialAdDidFinishAction			= delegate {};
+	public static event Action InterstitialDidFailWithErrorAction 	= delegate {};
+	public static event Action InterstitialAdWillLoadAction 			= delegate {};
+	public static event Action InterstitialAdDidLoadAction 			= delegate {};
+	public static event Action InterstitialAdDidFinishAction			= delegate {};
 	
 
 	
@@ -57,22 +62,7 @@ public class iAdBannerController : EventDispatcher {
 		DontDestroyOnLoad(gameObject);
 	}
 
-
-	public static iAdBannerController instance {
-
-		get {
-			if (_instance == null) {
-				_instance = GameObject.FindObjectOfType(typeof(iAdBannerController)) as iAdBannerController;
-				if (_instance == null) {
-					_instance = new GameObject ("iAdBannerController").AddComponent<iAdBannerController> ();
-				}
-			}
-
-			return _instance;
-
-		}
-
-	}
+	
 
 	//--------------------------------------
 	//  PUBLIC METHODS
@@ -103,7 +93,7 @@ public class iAdBannerController : EventDispatcher {
 			if(_banners.ContainsKey(id)) {
 				_banners.Remove(id);
 				
-				#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+				#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
 					_IADDestroyBanner(id);
 				#endif
 			}
@@ -113,7 +103,7 @@ public class iAdBannerController : EventDispatcher {
 
 	public void StartInterstitialAd() {
 
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
 
 		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
 			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
@@ -142,7 +132,7 @@ public class iAdBannerController : EventDispatcher {
 	}
 	
 	public void LoadInterstitialAd() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
 
 		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
 			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
@@ -167,9 +157,14 @@ public class iAdBannerController : EventDispatcher {
 	}
 	
 	public void ShowInterstitialAd() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_IADShowInterstitialAd();
-		#endif
+		if(_IsInterstisialsAdReady) {
+
+			Invoke("interstitialAdActionDidFinish", 1f);
+			_IsInterstisialsAdReady = false;
+			#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
+				_IADShowInterstitialAd();
+			#endif
+		}
 	}
 
 	
@@ -184,7 +179,12 @@ public class iAdBannerController : EventDispatcher {
 		}
 	}
 
-
+	public bool IsInterstisialsAdReady {
+		get {
+			return _IsInterstisialsAdReady;
+		}
+	}
+	
 
 	
 	public iAdBanner GetBanner(int id) {
@@ -268,22 +268,21 @@ public class iAdBannerController : EventDispatcher {
 
 
 	private void interstitialdidFailWithError(string data) {
-		dispatch(iAdEvent.INTERSTITIAL_DID_FAIL_WITH_ERROR);
 		InterstitialDidFailWithErrorAction();
+		_IsInterstisialsAdReady = false;
 	}
 
 	private void interstitialAdWillLoad(string data) {
-		dispatch(iAdEvent.INTERSTITIAL_AD_WILL_LOAD);
 		InterstitialAdWillLoadAction();
+		_IsInterstisialsAdReady = false;
 	}
 
 	private void interstitialAdDidLoad(string data) {
-		dispatch(iAdEvent.INTERSTITIAL_AD_DID_LOAD);
 		InterstitialAdDidLoadAction();
+		_IsInterstisialsAdReady = true;
 	}
 
-	private void interstitialAdActionDidFinish(string data) {
-		dispatch(iAdEvent.INTERSTITIAL_AD_ACTION_DID_FINISH);
+	private void interstitialAdActionDidFinish() {
 		InterstitialAdDidFinishAction();
 	}
 

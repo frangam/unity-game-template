@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -61,9 +60,13 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 
 		
 		//listen for GooglePlayConnection events
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-		GooglePlayConnection.instance.addEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-		GooglePlayConnection.instance.addEventListener(GooglePlayConnection.CONNECTION_RESULT_RECEIVED, OnConnectionResult);
+
+		
+		GooglePlayConnection.ActionPlayerConnected +=  OnPlayerConnected;
+		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
+		
+		GooglePlayConnection.ActionConnectionResultReceived += OnConnectionResult;
+
 
 
 
@@ -71,10 +74,10 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 
 
 		//Same events, one with C# actions, one with FLE
-		GooglePlayManager.ActionScoreRequestReceived += ActionScoreRequestReceived;
+		GooglePlayManager.ActionScoresListLoaded += ActionScoreRequestReceived;
 
 
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			//checking if player already connected
 			OnPlayerConnected ();
 		} 
@@ -128,13 +131,13 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 
 
 	private void ConncetButtonPress() {
-		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.state.ToString());
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		Debug.Log("GooglePlayManager State  -> " + GooglePlayConnection.State.ToString());
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			SA_StatusBar.text = "Disconnecting from Play Service...";
-			GooglePlayConnection.instance.disconnect ();
+			GooglePlayConnection.Instance.Disconnect ();
 		} else {
 			SA_StatusBar.text = "Connecting to Play Service...";
-			GooglePlayConnection.instance.connect ();
+			GooglePlayConnection.Instance.Connect ();
 		}
 	}
 
@@ -163,7 +166,7 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 			  	displayRank = 1;
 			} else {
 				//Let's show 5 results before curent player Rank
-				displayRank = Mathf.Clamp(currentPlayerScore.rank - 5, 1, currentPlayerScore.rank);
+				displayRank = Mathf.Clamp(currentPlayerScore.Rank - 5, 1, currentPlayerScore.Rank);
 
 				//let's check if displayRank we what to display before player score is exists
 				while(loadedLeaderBoard.GetScore(displayRank, displayTime, displayCollection) == null) {
@@ -183,10 +186,10 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 				GPScore score = loadedLeaderBoard.GetScore(i, displayTime, displayCollection);
 				if(score != null) {
 					line.rank.text 			= i.ToString();
-					line.score.text 		= score.score.ToString();
-					line.playerId.text 		= score.playerId;
+					line.score.text 		= score.LongScore.ToString();
+					line.playerId.text 		= score.PlayerId;
 
-					GooglePlayerTemplate player = GooglePlayManager.instance.GetPlayerById(score.playerId);
+					GooglePlayerTemplate player = GooglePlayManager.instance.GetPlayerById(score.PlayerId);
 					if(player != null) {
 						line.playerName.text =  player.name;
 						if(player.hasIconImage) {
@@ -233,7 +236,7 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 
 
 		SubmitScoreButton.text = "Submit Score: " + score;
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			if(GooglePlayManager.instance.player.icon != null) {
 				avatar.GetComponent<Renderer>().material.mainTexture = GooglePlayManager.instance.player.icon;
 			}
@@ -248,11 +251,11 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 		
 		
 		
-		
+
 		
 		
 		string title = "Connect";
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			title = "Disconnect";
 			
 			foreach(DefaultPreviewButton btn in ConnectionDependedntButtons) {
@@ -296,7 +299,7 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 				btn.DisabledButton();
 				
 			}
-			if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED) {
+			if(GooglePlayConnection.State == GPConnectionState.STATE_DISCONNECTED || GooglePlayConnection.State == GPConnectionState.STATE_UNCONFIGURED) {
 				
 				title = "Connect";
 			} else {
@@ -334,9 +337,8 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 
 	}
 	
-	private void OnConnectionResult(CEvent e) {
-		
-		GooglePlayConnectionResult result = e.data as GooglePlayConnectionResult;
+	private void OnConnectionResult(GooglePlayConnectionResult result) {
+
 		SA_StatusBar.text = "Connection Resul:  " + result.code.ToString();
 		Debug.Log(result.code.ToString());
 	}
@@ -358,34 +360,33 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 		List<GPScore> scoresLB =  loadedLeaderBoard.GetScoresList(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL);
 
 		foreach(GPScore score in scoresLB) {
-			Debug.Log("OnScoreUpdated " + score.rank + " " + score.playerId + " " + score.score);
+			Debug.Log("OnScoreUpdated " + score.Rank + " " + score.PlayerId + " " + score.LongScore);
 		}
 
 		GPScore currentPlayerScore = loadedLeaderBoard.GetCurrentPlayerScore(displayTime, displayCollection);
 
-		Debug.Log("currentPlayerScore: " + currentPlayerScore.score + " rank:" + currentPlayerScore.rank);
+		Debug.Log("currentPlayerScore: " + currentPlayerScore.LongScore + " rank:" + currentPlayerScore.Rank);
 
 
 		UpdateScoresDisaplay();
 
 	}
 
-	void OnScoreSbumitted (GP_GamesResult result) {
+	void OnScoreSbumitted (GP_LeaderboardResult result) {
 		SA_StatusBar.text = "Score Submit Resul:  " + result.message;
 		LoadScore();
 	}
 
 	void OnDestroy() {
 
-		if(GooglePlayConnection.HasInstance) {
-			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_CONNECTED, OnPlayerConnected);
-			GooglePlayConnection.instance.removeEventListener (GooglePlayConnection.PLAYER_DISCONNECTED, OnPlayerDisconnected);
-			GooglePlayConnection.instance.removeEventListener(GooglePlayConnection.CONNECTION_RESULT_RECEIVED, OnConnectionResult);
-		}
+		GooglePlayConnection.ActionPlayerConnected +=  OnPlayerConnected;
+		GooglePlayConnection.ActionPlayerDisconnected += OnPlayerDisconnected;
+		
+		GooglePlayConnection.ActionConnectionResultReceived += OnConnectionResult;
 
 		
 		GooglePlayManager.ActionScoreSubmited -= OnScoreSbumitted;
-		GooglePlayManager.ActionScoreRequestReceived -= ActionScoreRequestReceived;
+		GooglePlayManager.ActionScoresListLoaded -= ActionScoreRequestReceived;
 
 	}
 }

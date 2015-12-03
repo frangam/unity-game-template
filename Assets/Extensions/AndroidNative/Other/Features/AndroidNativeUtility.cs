@@ -3,21 +3,20 @@ using UnityEngine;
 using System.Collections;
 
 public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
-
-
-	//Events
-	public static string PACKAGE_CHECK_RESPONCE = "package_check_responce";
-
+	
 
 	//Actions
-	public event Action<AN_PackageCheckResult> OnPackageCheckResult = delegate{};
-	public event Action<string> OnAndroidIdLoaded = delegate{};
+	public static event Action<AN_PackageCheckResult> OnPackageCheckResult = delegate{};
+	public static event Action<string> OnAndroidIdLoaded = delegate{};
 
-	public event Action<string> InternalStoragePathLoaded = delegate{};
-	public event Action<string> ExternalStoragePathLoaded = delegate{};
+	public static event Action<string> InternalStoragePathLoaded = delegate{};
+	public static event Action<string> ExternalStoragePathLoaded = delegate{};
 
 
-	public event Action<AN_Locale> LocaleInfoLoaded = delegate{};
+	public static event Action<AN_Locale> LocaleInfoLoaded = delegate{};
+	public static event Action<string[]> ActionDevicePackagesListLoaded = delegate{};
+	public static event Action<AN_NetworkInfo> ActionNetworkInfoLoaded = delegate{};
+	
 
 	
 	//--------------------------------------
@@ -58,10 +57,24 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 		AndroidNative.LoadLocaleInfo();
 	}
 
+	public void LoadPackagesList() {
+		AndroidNative.LoadPackagesList();
+	}
 
+
+	public void LoadNetworkInfo() {
+		AndroidNative.LoadNetworkInfo();
+	}
+
+
+	
 	//--------------------------------------
 	// Static Methods
 	//--------------------------------------
+
+	public static void OpenSettingsPage(string action) {
+		AndroidNative.OpenSettingsPage(action);
+	}
 
 	public static void ShowPreloader(string title, string message) {
 		AN_PoupsProxy.ShowPreloader(title, message);
@@ -83,6 +96,9 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 	}
 
 
+	
+
+
 	//--------------------------------------
 	// Events
 	//--------------------------------------
@@ -94,13 +110,11 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 	private void OnPacakgeFound(string packageName) {
 		AN_PackageCheckResult result = new AN_PackageCheckResult(packageName, true);
 		OnPackageCheckResult(result);
-		dispatch(PACKAGE_CHECK_RESPONCE, result);
 	}
 
 	private void OnPacakgeNotFound(string packageName) {
 		AN_PackageCheckResult result = new AN_PackageCheckResult(packageName, false);
 		OnPackageCheckResult(result);
-		dispatch(PACKAGE_CHECK_RESPONCE, result);
 	}
 
 
@@ -127,6 +141,32 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 		LocaleInfoLoaded(locale);
 
 	}
+
+	private void OnPackagesListLoaded(string data) {
+		string[] storeData;
+		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
+
+		ActionDevicePackagesListLoaded(storeData);
+	}
+
+	private void OnNetworkInfoLoaded (string data) {
+		string[] storeData;
+		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
+
+		AN_NetworkInfo info =  new AN_NetworkInfo();
+		info.SubnetMask = storeData[0];
+		info.IpAddress = storeData[1];
+		info.MacAddress =  storeData[2];
+		info.SSID = storeData[3];
+		info.BSSID = storeData[4];
+
+		info.LinkSpeed = System.Convert.ToInt32(storeData[5]);
+		info.NetworkId = System.Convert.ToInt32(storeData[6]);
+
+		ActionNetworkInfoLoaded(info);
+	
+	}
+	
 
 
 }

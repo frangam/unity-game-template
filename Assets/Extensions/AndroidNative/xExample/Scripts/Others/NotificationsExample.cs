@@ -25,14 +25,17 @@ public class NotificationsExample : MonoBehaviour {
 
 
 	void Awake() {
-		GoogleCloudMessageService.instance.addEventListener(GoogleCloudMessageService.CLOUD_MESSAGE_SERVICE_REGISTRATION_FAILED, OnRegFailed);
-		GoogleCloudMessageService.instance.addEventListener(GoogleCloudMessageService.CLOUD_MESSAGE_SERVICE_REGISTRATION_RECIVED, OnRegstred);
-		GoogleCloudMessageService.instance.addEventListener(GoogleCloudMessageService.CLOUD_MESSAGE_LOADED, OnMessageLoaded);
+
+		GoogleCloudMessageService.ActionCMDRegistrationResult += HandleActionCMDRegistrationResult;
+		GoogleCloudMessageService.ActionCouldMessageLoaded += OnMessageLoaded;
+
 
 		//GoogleCloudMessageService.instance.InitPushNotifications ();
 		//GoogleCloudMessageService.instance.InitOneSignalNotifications ();
 		//GoogleCloudMessageService.instance.InitParsePushNotifications ();
 	}
+
+
 
 	//--------------------------------------
 	//  PUBLIC METHODS
@@ -83,19 +86,22 @@ public class NotificationsExample : MonoBehaviour {
 	//--------------------------------------
 
 
-	private void OnRegFailed() {
-		AN_PoupsProxy.showMessage ("Reg Failed", "GCM Registration failed :(");
+	void HandleActionCMDRegistrationResult (GP_GCM_RegistrationResult res) {
+		if(res.isSuccess) {
+			AN_PoupsProxy.showMessage ("Regstred", "GCM REG ID: " + GoogleCloudMessageService.instance.registrationId);
+		} else {
+			AN_PoupsProxy.showMessage ("Reg Failed", "GCM Registration failed :(");
+		}
 	}
+
+
 
 	private void OnNotificationIdLoaded (int notificationid){
 		AN_PoupsProxy.showMessage ("Loaded", "App was laucnhed with notification id: " + notificationid);
 	}
+
 	
-	private void OnRegstred() {
-		AN_PoupsProxy.showMessage ("Regstred", "GCM REG ID: " + GoogleCloudMessageService.instance.registrationId);
-	}
-	
-	private void OnMessageLoaded() {
+	private void OnMessageLoaded(string msg) {
 		AN_PoupsProxy.showMessage ("Message Loaded", "Last GCM Message: " + GoogleCloudMessageService.instance.lastMessage);
 	}
 	

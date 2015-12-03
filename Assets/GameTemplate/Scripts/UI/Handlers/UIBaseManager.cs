@@ -14,7 +14,7 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Constants
 	//--------------------------------------
-	public const string ALL_WINDOWS_LOADED_AT_SCENE_AWAKE = "gt_all_windows_loaded_at_scene_awake";
+	public const string 			ALL_WINDOWS_LOADED_AT_SCENE_AWAKE = "gt_all_windows_loaded_at_scene_awake";
 	
 	//--------------------------------------
 	// Static Attributes
@@ -22,32 +22,32 @@ public class UIBaseManager : MonoBehaviour {
 	/// <summary>
 	/// Observer pattern
 	/// </summary>
-	private EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
+	private EventDispatcherBase 	_dispatcher  = new EventDispatcherBase ();
 	
 	//--------------------------------------
 	// Setting Attributes
 	//--------------------------------------
 	[SerializeField]
-	private bool isTheMainManager = true;
+	private bool 					isTheMainManager = false;	//We want a unique main UIBaseManager
 	
 	[SerializeField]
-	private bool locateAllWindows = true;
+	private bool 					locateAllWindows = true;
 	
 	[SerializeField]
 	[Tooltip("If locateAllWindows is true does not must fill this because automatically it will be filled. Be care with started closed windows.")]
-	private List<UIBaseWindow> windows;
+	private List<UIBaseWindow> 		windows;
 	
 	[SerializeField]
-	private CanvasGroup[] guiBlended;
+	private CanvasGroup[] 			guiBlended;
 	
 	[SerializeField]
-	private float alphaForGuiBlended = 0.75f;
+	private float 					alphaForGuiBlended = 0.75f;
 	
 	[SerializeField]
-	private float delayForGuiBlended = 2f;
+	private float 					delayForGuiBlended = 2f;
 	
 	[SerializeField]
-	private EventSystem eventSystm;
+	private EventSystem 			eventSystm;
 	
 	//--------------------------------------
 	// Private Attributes
@@ -57,6 +57,11 @@ public class UIBaseManager : MonoBehaviour {
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
+	public bool IsTheMainManager {
+		get {
+			return this.isTheMainManager;
+		}
+	}
 	public EventDispatcherBase dispatcher {
 		get {
 			return _dispatcher;
@@ -267,10 +272,11 @@ public class UIBaseManager : MonoBehaviour {
 			do{
 				yield return cd.result;
 				result = cd.result.ToString();
-				GTDebug.log("result is " + result);
+				//				GTDebug.log("window open ? " + result.Equals("finished"));
 			}
 			while(!result.Equals("finished"));
 			
+			//window is opened
 			if(result.Equals("finished")){
 				window.open();
 				
@@ -285,6 +291,21 @@ public class UIBaseManager : MonoBehaviour {
 				if(window.HideObjsWhenOpen != null && window.HideObjsWhenOpen.Count > 0){
 					foreach(GameObject g in window.HideObjsWhenOpen){
 						g.SetActive(false);
+					}
+				}
+				
+				//open windows when open the current one
+				if(window.OpenNewWinsWhenOpen != null && window.OpenNewWinsWhenOpen.Count > 0){
+					foreach(UIBaseWindow w in window.OpenNewWinsWhenOpen){
+						w.gameObject.SetActive(true);
+						w.open();
+					}
+				}
+				
+				//show gameobjects when the current window is opened
+				if(window.ShowObjsWhenOpen != null && window.ShowObjsWhenOpen.Count > 0){
+					foreach(GameObject g in window.ShowObjsWhenOpen){
+						g.SetActive(true);
 					}
 				}
 			}
@@ -314,7 +335,7 @@ public class UIBaseManager : MonoBehaviour {
 			else
 				window.forceClose();
 			
-			//open new window when close
+			//open new window when close the current win
 			if(window.OpenNewWinsWhenClose != null && window.OpenNewWinsWhenClose.Count > 0){
 				foreach(UIBaseWindow w in window.OpenNewWinsWhenClose){
 					w.gameObject.SetActive(true);
@@ -322,12 +343,28 @@ public class UIBaseManager : MonoBehaviour {
 				}
 			}
 			
-			//show gameobjects when the current window are close
+			//close new window when close the current win
+			if(window.CloseWinsWhenClose != null && window.CloseWinsWhenClose.Count > 0){
+				foreach(UIBaseWindow w in window.CloseWinsWhenClose){
+					w.gameObject.SetActive(false);
+					w.close();
+				}
+			}
+			
+			//show gameobjects when the current window is closed
 			if(window.ShowObjsWhenClose != null && window.ShowObjsWhenClose.Count > 0){
 				foreach(GameObject g in window.ShowObjsWhenClose){
 					g.SetActive(true);
 				}
 			}
+			
+			//hide gameobjects when the current window is closed
+			if(window.HideObjsWhenClose != null && window.HideObjsWhenClose.Count > 0){
+				foreach(GameObject g in window.HideObjsWhenClose){
+					g.SetActive(false);
+				}
+			}
+			
 			
 			//close at the end
 			CoroutineWithData cd =  new CoroutineWithData(this, setActiveOrInactive(window, show));			

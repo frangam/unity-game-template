@@ -68,7 +68,7 @@ public class UIBaseMIssionCompletedWin : UIBaseWindow {
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
-	public void init(BaseLevel pLevel){
+	public void initBestTime(BaseLevel pLevel){
 		level = pLevel;
 	}
 	

@@ -6,8 +6,7 @@ using System.Text.RegularExpressions;
 
 public class AddressBookController : SA_Singleton<AddressBookController> {
 
-	public const string ON_CONTACTS_LOADED = "on_contacts_loaded";
-	public Action OnContactsLoadedAction = delegate{};
+	public static event Action OnContactsLoadedAction = delegate{};
 	
 
 
@@ -43,7 +42,6 @@ public class AddressBookController : SA_Singleton<AddressBookController> {
 
 		_isLoaded = true;
 		Debug.Log ("OnContactsLoaded, total:" + _contacts.Count);
-		dispatch(ON_CONTACTS_LOADED);
 		OnContactsLoadedAction ();
 	}
 	

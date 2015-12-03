@@ -10,4 +10,8 @@ public class GK_TBM_LoadMatchesResult : ISN_Result {
 	public GK_TBM_LoadMatchesResult(bool IsResultSucceeded):base(IsResultSucceeded) {
 
 	}
+
+	public GK_TBM_LoadMatchesResult(string errorData):base(errorData) {
+		
+	}
 }

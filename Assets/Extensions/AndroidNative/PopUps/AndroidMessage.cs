@@ -8,15 +8,12 @@
 
 using UnityEngine;
 using System;
-using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 
 public class AndroidMessage : BaseAndroidPopup {
 	
-	
 	public string ok;
-
 	public Action OnComplete = delegate {} ;
 	
 	//--------------------------------------
@@ -57,8 +54,7 @@ public class AndroidMessage : BaseAndroidPopup {
 	//--------------------------------------
 	
 	public void onPopUpCallBack(string buttonIndex) {
-		OnComplete();
-		dispatch(BaseEvent.COMPLETE);
+		DispatchAction(AndroidDialogResult.CLOSED);
 		Destroy(gameObject);	
 	}
 	

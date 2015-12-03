@@ -837,7 +837,7 @@ public class GameSettingsEditor : Editor {
 				GUI.color = prevCol;
 				EditorGUILayout.EndHorizontal();
 				
-				scoresForEveryGameMultiversion(i);
+				scoresForEveryGameMultiversion(i);//nei
 				i++;
 			}
 			EditorGUI.indentLevel--;

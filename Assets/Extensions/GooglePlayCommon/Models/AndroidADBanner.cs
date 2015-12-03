@@ -11,10 +11,9 @@
 
 using UnityEngine;
 using System;
-using UnionAssets.FLE;
 using System.Collections;
 
-public class AndroidADBanner : EventDispatcherBase, GoogleMobileAdBanner {
+public class AndroidADBanner : GoogleMobileAdBanner {
 
 
 	private int _id;
@@ -98,6 +97,21 @@ public class AndroidADBanner : EventDispatcherBase, GoogleMobileAdBanner {
 		AN_GoogleAdProxy.RefreshAd (_id);
 	}
 
+	public void Pause() {
+		if(!_IsLoaded) {
+			return;
+		}
+		
+		AN_GoogleAdProxy.PauseAd (_id);
+	}
+
+	public void Resume() {
+		if(!_IsLoaded) {
+			return;
+		}
+		
+		AN_GoogleAdProxy.ResumeAd (_id);
+	}
 
 	public void SetBannerPosition(int x, int y) {
 		AN_GoogleAdProxy.SetBannerPosition(x, y, id);
@@ -284,27 +298,22 @@ public class AndroidADBanner : EventDispatcherBase, GoogleMobileAdBanner {
 		}
 
 		_OnLoadedAction(this);
-		dispatch(GoogleMobileAdEvents.ON_BANNER_AD_LOADED);
 	}
 	
 	public void OnBannerAdFailedToLoad() {
 		_OnFailedLoadingAction(this);
-		dispatch(GoogleMobileAdEvents.ON_BANNER_AD_FAILED_LOADING);
 	}
 	
 	public void OnBannerAdOpened() {
 		_OnOpenedAction(this);
-		dispatch(GoogleMobileAdEvents.ON_BANNER_AD_OPENED);
 	}
 	
 	public void OnBannerAdClosed() {
 		_OnClosedAction(this);
-		dispatch(GoogleMobileAdEvents.ON_BANNER_AD_CLOSED);
 	}
 	
 	public void OnBannerAdLeftApplication() {
-		_OnLeftApplicationAction(this);
-		dispatch(GoogleMobileAdEvents.ON_BANNER_AD_LEFT_APPLICATION);
+		_OnLeftApplicationAction(this);;
 	}
 
 	

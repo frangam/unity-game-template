@@ -7,10 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
- 
-
 using UnityEngine;
-using UnionAssets.FLE;
 using System.Collections;
 
 public class GoogleCloudUseExample : MonoBehaviour {
@@ -19,19 +16,20 @@ public class GoogleCloudUseExample : MonoBehaviour {
 	public GameObject[] showOnConnect;
 
 	void Awake() {
-		GoogleCloudManager.instance.addEventListener (GoogleCloudManager.ALL_STATES_LOADED, OnAllLoaded);
 
-		GoogleCloudManager.instance.addEventListener (GoogleCloudManager.STATE_LOADED,   OnStateUpdated);
-		GoogleCloudManager.instance.addEventListener (GoogleCloudManager.STATE_RESOLVED, OnStateUpdated);
-		GoogleCloudManager.instance.addEventListener (GoogleCloudManager.STATE_UPDATED,  OnStateUpdated);
 
-		GoogleCloudManager.instance.addEventListener (GoogleCloudManager.STATE_CONFLICT,  OnStateConflict);
+		GoogleCloudManager.ActionAllStatesLoaded += OnAllLoaded;
+		GoogleCloudManager.ActionStateLoaded += OnStateUpdated;
+		GoogleCloudManager.ActionStateResolved += OnStateUpdated;
+		GoogleCloudManager.ActionStateUpdated += OnStateUpdated;
 
-		GooglePlayConnection.instance.connect ();
+		GoogleCloudManager.ActionStateConflict += OnStateConflict;
+
+		GooglePlayConnection.instance.Connect ();
 	}
 
 	void FixedUpdate() {
-		if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {
+		if(GooglePlayConnection.State == GPConnectionState.STATE_CONNECTED) {
 			foreach(GameObject o in hideOnConnect) {
 				o.SetActive(false);
 			}
@@ -68,7 +66,7 @@ public class GoogleCloudUseExample : MonoBehaviour {
 
 	private void DeleteState() {
 		GoogleCloudManager.instance.deleteState(GoogleCloudSlot.SLOT_0);
-		GoogleCloudManager.instance.addEventListener (GoogleCloudManager.STATE_DELETED, OnStateDeleted);
+		GoogleCloudManager.ActionStateDeleted += OnStateDeleted;
 	}
 
 
@@ -77,8 +75,7 @@ public class GoogleCloudUseExample : MonoBehaviour {
 	//  EVENTS
 	//--------------------------------------
 
-	private void OnStateConflict(CEvent e) {
-		GoogleCloudResult result = e.data as GoogleCloudResult;
+	private void OnStateConflict(GoogleCloudResult result) {
 		AN_PoupsProxy.showMessage ("OnStateUpdated", result.message 
 		                           + "\n State ID: " + result.stateKey 
 		                           + "\n State Data: " + result.stateData
@@ -93,23 +90,18 @@ public class GoogleCloudUseExample : MonoBehaviour {
 
 
 
-	private void OnStateUpdated(CEvent e) {
-		GoogleCloudResult result = e.data as GoogleCloudResult;
+	private void OnStateUpdated(GoogleCloudResult result) {
+
 
 		AN_PoupsProxy.showMessage ("State Updated", result.message + "\n State ID: " + result.stateKey + "\n State Data: " + result.stateDataString);
 	}
 
 
-	private void OnAllLoaded(CEvent e) {
-		GoogleCloudResult result = e.data as GoogleCloudResult;
+	private void OnAllLoaded(GoogleCloudResult result) {
 		AN_PoupsProxy.showMessage ("All States Loaded", result.message + "\n" + "Total states: " + GoogleCloudManager.instance.states.Count);
 	}
 
-	private void OnStateDeleted(CEvent e) {
-		GoogleCloudManager.instance.removeEventListener (GoogleCloudManager.STATE_DELETED, OnStateDeleted);
-		GoogleCloudResult result = e.data as GoogleCloudResult;
-
-
+	private void OnStateDeleted(GoogleCloudResult result) {
 		AN_PoupsProxy.showMessage ("KeyDeleted", result.message + "\n for state key: " + result.stateKey.ToString());
 	}
 

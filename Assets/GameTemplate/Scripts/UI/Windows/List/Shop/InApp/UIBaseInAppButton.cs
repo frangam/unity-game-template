@@ -168,9 +168,22 @@ public class UIBaseInAppButton : UIBaseButton {
 		}
 	}
 	
-	public virtual void showPriceInfo(string price, string priceCurrencyCode = ""){
+	public virtual void showPriceInfo(float price, string priceCurrencyCode = ""){
 		if(lbRealMoneyPrice){
-			lbRealMoneyPrice.text = price.ToString();
+			lbRealMoneyPrice.text = price.ToString() + priceCurrencyCode;
+			
+			//			//TODO Poner moneda que corresponda
+			//			lbRealMoneyPrice.text += priceCurrencyCode;
+		}
+	}
+	
+	/// <summary>
+	/// Shows the localized price.
+	/// </summary>
+	/// <param name="localizedPrice">Localized price.</param>
+	public virtual void showPriceInfo(string localizedPrice){
+		if(lbRealMoneyPrice){
+			lbRealMoneyPrice.text = localizedPrice;
 			
 			//			//TODO Poner moneda que corresponda
 			//			lbRealMoneyPrice.text += priceCurrencyCode;

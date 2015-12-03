@@ -267,7 +267,7 @@ public class BaseGameManager : MonoBehaviour {
 	}
 	
 	public virtual bool canShowAdDuringGamePlay(){
-		return true;
+		return AdsHandler.Instance.canShowAdRandom();
 	}
 	
 	private void handleGameOverAdShowing(){
