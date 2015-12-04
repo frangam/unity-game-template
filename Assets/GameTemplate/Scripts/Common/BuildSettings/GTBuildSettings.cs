@@ -47,6 +47,8 @@ public class GTBuildSettings {
 	public string 				androidKeyaliasPass;
 	public string				androidKeyStoreFBHash			= "2QYMs5g2X8L29Bpec0kYA1TPS3E=";
 	public string				androidBillingBase64Key;
+
+	public bool					useAnalytics					= false;
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -283,6 +285,12 @@ public class GTBuildSettings {
 		}
 		set {
 			androidBillingBase64Key = value;
+		}
+	}
+
+	public bool UseAnalytics {
+		get {
+			return this.useAnalytics;
 		}
 	}
 	

@@ -331,6 +331,13 @@ public class BuildSettingsEditor : Editor {
 			GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBillingBase64Key = EditorGUILayout.TextField(GTBuildSettingsConfig.Instance.packs[packIndex].build.androidBillingBase64Key).Trim();
 			EditorGUILayout.EndHorizontal();
 
+			//---------------------------------------
+			// Use Analytics
+			//--------------------------------------
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Use Analytics:",GUILayout.Width(180));
+			GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalytics = EditorGUILayout.Toggle(GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalytics);
+			EditorGUILayout.EndHorizontal();
 
 			//---------------------------------------
 			// Android Keystore settings
