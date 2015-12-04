@@ -84,6 +84,18 @@ public class UIBaseListWindow : UIBaseWindow {
 			return res;
 		}
 	}
+
+	public UIBaseButton BtnPrevItem {
+		get {
+			return this.btnPrevItem;
+		}
+	}
+
+	public UIBaseButton BtnNextItem {
+		get {
+			return this.btnNextItem;
+		}
+	}
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -167,7 +179,7 @@ public class UIBaseListWindow : UIBaseWindow {
 		return res;
 	}
 	
-	public void updateNavigationButtons(){
+	public virtual void updateNavigationButtons(){
 		if(btnPrevItem)
 			btnPrevItem.gameObject.SetActive(hasPrevious());
 		if(btnNextItem)

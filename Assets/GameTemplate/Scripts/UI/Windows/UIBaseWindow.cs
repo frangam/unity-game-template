@@ -270,6 +270,8 @@ public class UIBaseWindow : MonoBehaviour {
 			return this.buttons;
 		}
 	}
+
+
 	
 	//--------------------------------------
 	// Unity Methods
