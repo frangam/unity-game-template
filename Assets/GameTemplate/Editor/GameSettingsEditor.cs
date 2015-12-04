@@ -149,7 +149,7 @@ public class GameSettingsEditor : Editor {
 	
 	
 	public static void UpdateVersionInfo() {
-		FileStaticAPI.Write(version_info_file, GameSettings.VERSION_NUMBER);
+		FileStaticAPI.Write(version_info_file, DataVersion);
 	}
 	
 	private void GeneralOptions() {

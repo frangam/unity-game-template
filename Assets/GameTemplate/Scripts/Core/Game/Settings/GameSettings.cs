@@ -55,7 +55,7 @@ public class GameSettings : ScriptableObject {
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
-	public const string	 						VERSION_NUMBER 					= "1.0";
+	public const string	 						VERSION_NUMBER 					= "2.1.0";
 	public static int 							contInterstitialAdsDEFAULT 		= 0;
 	public static int 							contInterstitialAdsHARDMODE 	= 0;
 	public static int 							contInterstitialAdsNORMALMODE 	= 0;
