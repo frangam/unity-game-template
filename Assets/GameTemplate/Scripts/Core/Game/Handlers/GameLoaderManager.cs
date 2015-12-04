@@ -161,7 +161,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		
 		if(initedAllSevices){
 			GTDebug.log("Inited all Services -> Loading next scene");
-
+			
 			handleInitialAdShowing();
 			loadingNextScene = true;
 			
@@ -243,7 +243,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		///-----
 		GTDebug.log("InApp Billing inited ? "+inAppInited);
 		
-		if(!inAppInited){
+		if(!Application.isEditor && GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && !inAppInited){
 			float startTime = 0, currentTime = 0, elapsedTime = 0;
 			startTime = Time.realtimeSinceStartup;
 			StartCoroutine(showProgressBySeconds((int)WAIT_TIME_TO_INIT_INAPP));
@@ -264,7 +264,7 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		///-----
 		GTDebug.log("Wait time if wa are restoring purchases ? "+InAppNeedRestoreProducts);
 		
-		if(InAppNeedRestoreProducts){
+		if(!Application.isEditor && GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && InAppNeedRestoreProducts){
 			float startTime = 0, currentTime = 0, elapsedTime = 0;
 			startTime = Time.realtimeSinceStartup;
 			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_RESTORE_PURCHASES));
@@ -278,69 +278,69 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			GTDebug.log("All purchases restored ? "+inAppAllProductsRestored);
 		}
 		
-		///-----
-		/// Wait time for each platform
-		///-----
-
-		#if UNITY_ANDROID
-		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
-//			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
-//			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION);
-
-			float startTime = 0, currentTime = 0, elapsedTime = 0;
-			startTime = Time.realtimeSinceStartup;
-			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
-			do{
-				currentTime = Time.realtimeSinceStartup;
-				elapsedTime = currentTime-startTime;
-				yield return null;
+		if (!Application.isEditor) {
+			///-----
+			/// Wait time for each platform
+			///-----
+			#if UNITY_ANDROID
+			if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
+				//			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
+				//			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION);
+				
+				float startTime = 0, currentTime = 0, elapsedTime = 0;
+				startTime = Time.realtimeSinceStartup;
+				StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
+				do{
+					currentTime = Time.realtimeSinceStartup;
+					elapsedTime = currentTime-startTime;
+					yield return null;
+				}
+				while(!gcPrepared && elapsedTime<MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION);
+				
+				GTDebug.log("Google Play Services Inited ? "+gpsPrepared);
+				GTDebug.log("Google Play Services Check time out ? "+(elapsedTime>=MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
+				
+				loadSceneAfterChecking();
 			}
-			while(!gcPrepared && elapsedTime<MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION);
-			
-			GTDebug.log("Google Play Services Inited ? "+gpsPrepared);
-			GTDebug.log("Google Play Services Check time out ? "+(elapsedTime>=MAX_WAIT_TIME_TO_CHECK_GPS_CONNECTION));
-
-			loadSceneAfterChecking();
-		}
-		#elif UNITY_IPHONE
-		if(GameSettings.Instance.USE_GAMECENTER){
-//			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
-//			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
-
-			float startTime = 0, currentTime = 0, elapsedTime = 0;
-			startTime = Time.realtimeSinceStartup;
-			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
-			do{
-				currentTime = Time.realtimeSinceStartup;
-				elapsedTime = currentTime-startTime;
-				yield return null;
+			#elif UNITY_IPHONE
+			if (GameSettings.Instance.USE_GAMECENTER) {
+				//			StartCoroutine(showProgressBySeconds((int)MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
+				//			yield return new WaitForSeconds (MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
+				
+				float startTime = 0, currentTime = 0, elapsedTime = 0;
+				startTime = Time.realtimeSinceStartup;
+				StartCoroutine (showProgressBySeconds ((int)MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
+				do {
+					currentTime = Time.realtimeSinceStartup;
+					elapsedTime = currentTime - startTime;
+					yield return null;
+				} while(!gcPrepared && elapsedTime<MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
+				
+				GTDebug.log ("Game Center Inited ? " + gcPrepared);
+				GTDebug.log ("Game Center Inited Check time out ? " + (elapsedTime >= MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
+				
+				loadSceneAfterChecking ();
 			}
-			while(!gcPrepared && elapsedTime<MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION);
+			#else
+			//		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
+			//		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
 			
-			GTDebug.log("Game Center Inited ? "+gcPrepared);
-			GTDebug.log("Game Center Inited Check time out ? "+(elapsedTime>=MAX_WAIT_TIME_TO_CHECK_GC_CONNECTION));
-
+			//		float startTime = 0, currentTime = 0, elapsedTime = 0;
+			//		startTime = Time.realtimeSinceStartup;
+			//		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
+			//		do{
+			//			currentTime = Time.realtimeSinceStartup;
+			//			elapsedTime = currentTime-startTime;
+			//			yield return null;
+			//		}
+			//		while(! && elapsedTime<TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
+			//		
+			//		GTDebug.log("Google Play Services Inited ? "+gpsPrepared);
+			//		GTDebug.log("Google Play Services Check time out ? "+(elapsedTime>=TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
+			
 			loadSceneAfterChecking();
-		}
-		#else
-//		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
-//		yield return new WaitForSeconds(TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
-
-//		float startTime = 0, currentTime = 0, elapsedTime = 0;
-//		startTime = Time.realtimeSinceStartup;
-//		StartCoroutine(showProgressBySeconds((int)TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
-//		do{
-//			currentTime = Time.realtimeSinceStartup;
-//			elapsedTime = currentTime-startTime;
-//			yield return null;
-//		}
-//		while(! && elapsedTime<TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION);
-//		
-//		GTDebug.log("Google Play Services Inited ? "+gpsPrepared);
-//		GTDebug.log("Google Play Services Check time out ? "+(elapsedTime>=TIEMPO_ESPERA_COMPROBAR_WP8_CONEXION));
-
-		loadSceneAfterChecking();
-		#endif
+			#endif
+		} //end_if(!Application.isEditor)
 		
 		float wait = 0;
 		bool inappNotInited = (GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE && (!inAppInited || (inAppInited && inAppNeedRestoreProducts && !inAppAllProductsRestored)));
@@ -349,16 +349,16 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		///-----
 		/// Wait more time
 		///-----
-		if(twNotInited ||  fbNotInited || inappNotInited){
+		if(!Application.isEditor && (twNotInited ||  fbNotInited || inappNotInited)){
 			if(inappNotInited)
 				wait += WAIT_TIME_TO_INIT_INAPP;
 			else if(twNotInited || fbNotInited)
 				wait += MAX_WAIT_TIME_TO_CHECK_FB_CONNECTION;
 			
 			
-//			yield return new WaitForSeconds (wait);
-
-
+			//			yield return new WaitForSeconds (wait);
+			
+			
 			float startTime = 0, currentTime = 0, elapsedTime = 0;
 			startTime = Time.realtimeSinceStartup;
 			StartCoroutine(showProgressBySeconds((int)wait));
@@ -371,13 +371,29 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 			
 			GTDebug.log("InApp Inited ? "+!inappNotInited+", Twitter Inited ? " +!twNotInited+", FB Inited ? "+fbNotInited);
 			GTDebug.log("Check time out ? "+(elapsedTime>=wait));
-
-
+			
+			
 			loadSceneAfterChecking();
 		}
 		//Wait a dummy time if we not use any service
-		else if(!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER && !GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE){
-//			yield return new WaitForSeconds (DUMMY_WAIT_TIME);
+		else if(Application.isEditor || 
+		        (!GameSettings.Instance.USE_TWITTER && !GameSettings.Instance.USE_FACEBOOK 
+		 && !GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && !GameSettings.Instance.USE_GAMECENTER 
+		 && !GameSettings.Instance.USE_IN_APP_PURCHASES_SERVICE
+		 )
+		        ){
+			
+			//Wait a dummy time
+			float startTime = 0, currentTime = 0, elapsedTime = 0;
+			startTime = Time.realtimeSinceStartup;
+			StartCoroutine(showProgressBySeconds((int)DUMMY_WAIT_TIME));
+			do{
+				currentTime = Time.realtimeSinceStartup;
+				elapsedTime = currentTime-startTime;
+				yield return null;
+			}
+			while(elapsedTime<wait);
+			
 			loadSceneAfterChecking();
 		}
 	}
