@@ -23,15 +23,19 @@ public class UIBaseWindow : MonoBehaviour {
 	private string 							id;
 	
 	[SerializeField]
+	[Tooltip("True for starting closed this window at start")]
 	private bool 							startClosed 								= true;
 
 	[SerializeField]
+	[Tooltip("True for closing setting alpha canvas group component")]
 	private bool 							closeIsSetAlpha 							= false;
 
 	[SerializeField]
+	[Tooltip("Alpha value for setting Canvas Group Component when window is closed (Only if 'CloseISSetAlpha' is True)")]
 	private float			 				closeAlphaValue 							= 0f;
 
 	[SerializeField]
+	[Tooltip("Alpha value for setting Canvas Group Component when window is opened (Only if 'CloseISSetAlpha' is True)")]
 	private float 							openAlphaValue 								= 1f;
 	
 	[SerializeField]
@@ -43,12 +47,15 @@ public class UIBaseWindow : MonoBehaviour {
 	private float 							waitForcloseAfterOpen 						= 0f;
 
 	[SerializeField]
+	[Tooltip("True for ignoring Time Scale while window is waiting for closing it after opening event happens")]
 	private bool 							ignoreTimeScaleInWaitingForCloseAfterOpen 	= false;
 	
 	[SerializeField]
+	[Tooltip("Animator Trigger Name for opening window")]
 	private string 							openAnimTrigger 							= "";
 	
 	[SerializeField]
+	[Tooltip("Animator Trigger Name for closing window")]
 	private string 							closeAnimTrigger 							= "";
 
 	[SerializeField]
@@ -84,12 +91,15 @@ public class UIBaseWindow : MonoBehaviour {
 	private List<GameObject> 				hideObjsWhenClose;
 	
 	[SerializeField]
+	[Tooltip("Hold sound ids for playing them when window is opened")]
 	private List<string> 					soundIdsPlayWhenOpen;
 	
 	[SerializeField]
+	[Tooltip("Auto Type effects for starting them when window is opened")]
 	private List<AutoType> 					autotypeEffects;
 	
 	[SerializeField]
+	[Tooltip("Hold sound ids for stoping them when window is opened")]
 	private List<string> 					soundIdsStopWhenOpen;
 	
 	[SerializeField]
@@ -248,6 +258,18 @@ public class UIBaseWindow : MonoBehaviour {
 			return this.anim;
 		}
 	}
+
+	public CanvasGroup[] CanvasGroups {
+		get {
+			return this.canvasGroups;
+		}
+	}
+
+	public Button[] Buttons {
+		get {
+			return this.buttons;
+		}
+	}
 	
 	//--------------------------------------
 	// Unity Methods
@@ -278,7 +300,12 @@ public class UIBaseWindow : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	private void activeInterectablesChildren(bool active = true){
+
+
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+	public virtual void activeInterectablesChildren(bool active = true){
 		//interactable canvas
 		if(canvasGroups != null && canvasGroups.Length > 0){
 			foreach(CanvasGroup g in canvasGroups){
@@ -286,19 +313,16 @@ public class UIBaseWindow : MonoBehaviour {
 				g.blocksRaycasts = active;
 			}
 		}
-
+		
 		//interactable buttons
 		if(buttons != null && buttons.Length > 0){
 			foreach(Button b in buttons){
 				if(b!=null)
-				b.interactable = active;
+					b.interactable = active;
 			}
 		}
 	}
 
-	//--------------------------------------
-	// Public Methods
-	//--------------------------------------
 	public virtual void open(){
 		activeInterectablesChildren(); //active button children
 
