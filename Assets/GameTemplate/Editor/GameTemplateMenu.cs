@@ -67,6 +67,12 @@ public class GameTemplateMenu : EditorWindow {
 		Selection.activeObject = LevelPacks.Instance;
 	}
 	
+	[MenuItem("GameTemplate/Analytics Settings/Google Analytics Settings", false, -29)]
+	public static void GameTemplateAnalyticsSettingsGoogleAnalyticsSettings() {
+		Selection.activeObject = GTGoogleAnalyticsSettings.Instance;
+	}
+
+	
 	//--------------------------------------
 	//  Documentation
 	//--------------------------------------
