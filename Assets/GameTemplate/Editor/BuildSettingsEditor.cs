@@ -332,11 +332,27 @@ public class BuildSettingsEditor : Editor {
 			EditorGUILayout.EndHorizontal();
 
 			//---------------------------------------
-			// Use Analytics
+			// Use Analytics (Android)
 			//--------------------------------------
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Use Analytics:",GUILayout.Width(180));
-			GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalytics = EditorGUILayout.Toggle(GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalytics);
+			EditorGUILayout.LabelField("Use Analytics (Android):",GUILayout.Width(180));
+			GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalyticsInAndroid = EditorGUILayout.Toggle(GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalyticsInAndroid);
+			EditorGUILayout.EndHorizontal();
+
+			//---------------------------------------
+			// Use Analytics (iOS)
+			//--------------------------------------
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Use Analytics (iOS):",GUILayout.Width(180));
+			GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalyticsInIOS = EditorGUILayout.Toggle(GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalyticsInIOS);
+			EditorGUILayout.EndHorizontal();
+
+			//---------------------------------------
+			// Use Analytics (iOS)
+			//--------------------------------------
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Use Analytics (Others):",GUILayout.Width(180));
+			GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalyticsInOTher = EditorGUILayout.Toggle(GTBuildSettingsConfig.Instance.packs[packIndex].build.useAnalyticsInOTher);
 			EditorGUILayout.EndHorizontal();
 
 			//---------------------------------------

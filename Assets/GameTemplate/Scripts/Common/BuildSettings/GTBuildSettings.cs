@@ -48,7 +48,9 @@ public class GTBuildSettings {
 	public string				androidKeyStoreFBHash			= "2QYMs5g2X8L29Bpec0kYA1TPS3E=";
 	public string				androidBillingBase64Key;
 
-	public bool					useAnalytics					= false;
+	public bool					useAnalyticsInAndroid			= false;
+	public bool					useAnalyticsInIOS				= false;
+	public bool					useAnalyticsInOTher				= false;
 	//--------------------------------------
 	// Getters/Setters
 	//--------------------------------------
@@ -288,12 +290,33 @@ public class GTBuildSettings {
 		}
 	}
 
-	public bool UseAnalytics {
+	public bool UseAnalyticsInAndroid {
 		get {
-			return this.useAnalytics;
+			return this.useAnalyticsInAndroid;
+		}
+		set {
+			useAnalyticsInAndroid = value;
 		}
 	}
-	
+
+	public bool UseAnalyticsInIOS {
+		get {
+			return this.useAnalyticsInIOS;
+		}
+		set {
+			useAnalyticsInIOS = value;
+		}
+	}
+
+	public bool UseAnalyticsInOTher {
+		get {
+			return this.useAnalyticsInOTher;
+		}
+		set {
+			useAnalyticsInOTher = value;
+		}
+	}
+
 	//--------------------------------------
 	// Constructors
 	//--------------------------------------

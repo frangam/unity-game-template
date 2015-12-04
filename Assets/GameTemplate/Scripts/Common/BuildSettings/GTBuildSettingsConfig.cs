@@ -32,10 +32,30 @@ public class GTBuildSettingsConfig : ScriptableObject {
 	public GTBuildSettingsPack CurrentBuildPack{
 		get{
 			if(packs != null && packs.Count > GameSettings.Instance.currentGameMultiversion) return packs[GameSettings.Instance.currentGameMultiversion];
-			else return null;
+			else{ 
+				GTDebug.logErrorAlways("Current Build for Game Multiversion "+GameSettings.Instance.currentGameMultiversion.ToString()+" not found");
+				return null;
+			}
 		}
 	}
 
+	public bool UseAnalytics{
+		get{
+			bool use = false;
+ 
+			if(CurrentBuildPack != null){
+#if UNITY_ANDROID
+				use = CurrentBuildPack.build.UseAnalyticsInAndroid;
+#elif UNITY_IPHONE
+				use = CurrentBuildPack.build.UseAnalyticsInIOS;
+#else
+				use = CurrentBuildPack.build.UseAnalyticsInOTher;
+#endif
+			}
+
+			return use;
+		}
+	}
 
 
 
