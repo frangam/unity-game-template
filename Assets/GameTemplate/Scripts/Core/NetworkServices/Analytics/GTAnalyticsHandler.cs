@@ -21,7 +21,7 @@ public class GTAnalyticsHandler : PersistentSingleton<GTAnalyticsHandler> {
 	// Unity Methods
 	//--------------------------------------
 	#region Unity Methods
-	public void Awake(){
+	protected override void Awake(){
 		useAnalytics = GTBuildSettingsConfig.Instance.UseAnalytics;
 		
 		if(useAnalytics){
@@ -33,12 +33,28 @@ public class GTAnalyticsHandler : PersistentSingleton<GTAnalyticsHandler> {
 				GTDebug.logWarningAlways("Not found GoogleAnalyticsV4 prefab");
 		}
 	}
+	
+	public void Start(){
+		startSession ();
+	}
+	
+	
 	#endregion
 	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	#region Public Methods
+	public void startSession(){
+		if (useAnalytics)
+			googleAnalytics.StartSession();
+	}
+	
+	public void stopSession(){
+		if (useAnalytics)
+			googleAnalytics.StopSession();
+	}
+	
 	public void logCurrentGameSection(){
 		if(useAnalytics)
 			googleAnalytics.LogScreen (BaseGameScreenController.Instance.Section.ToString ());

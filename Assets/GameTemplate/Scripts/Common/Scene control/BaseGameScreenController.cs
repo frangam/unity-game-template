@@ -41,7 +41,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 		
 		#if  (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
 		//refresh banner in every Screen loaded
-//		AdsHandler.Instance.refrescarBanner();
+		//		AdsHandler.Instance.refrescarBanner();
 		#endif
 		//stop visual loader indicator
 		ScreenLoaderVisualIndicator.Instance.finishLoad ();
@@ -79,16 +79,19 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 			GameController.Instance.Manager.Paused = paused;
 		}
 		
-
+		
 		if(!paused){ //resume
 			ScreenLoaderVisualIndicator.Instance.finishLoad();
 		}
 		#endif
 	}
-
+	
 	public virtual void OnApplicationQuit() {
 		//Analytic to know in wich section user has exited game
 		GTAnalyticsHandler.Instance.logEvent (GAEventCategories.GAME, GAEventActions.FORCED + " " + GAEventActions.QUIT, Section.ToString());
+		
+		//Analytics notify session is stopped
+		GTAnalyticsHandler.Instance.stopSession ();
 	}
 	
 	#endregion
