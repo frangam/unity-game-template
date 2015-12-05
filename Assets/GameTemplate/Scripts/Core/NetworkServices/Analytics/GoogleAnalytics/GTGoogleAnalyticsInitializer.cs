@@ -17,7 +17,6 @@ using System.Collections;
   So, go to Edit / Project Settings / Script Execution Order and put this script
   above Default time if it is not appear yet here.
 */
-
 public class GTGoogleAnalyticsInitializer : MonoBehaviour {
 	void Awake(){
 		GoogleAnalyticsV4 ga = FindObjectOfType<GoogleAnalyticsV4>();

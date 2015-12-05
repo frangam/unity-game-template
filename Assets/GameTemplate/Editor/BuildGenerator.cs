@@ -11,21 +11,18 @@ using System.Collections;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-/// <summary>
-/// Build generator.
-/// 
-/// based on: http://answers.unity3d.com/questions/1006132/unable-to-build-to-android-and-ios-using-buildpipe.html
-/// </summary>
+/*
+  Build generator.
+
+  based on: http://answers.unity3d.com/questions/1006132/unable-to-build-to-android-and-ios-using-buildpipe.html
+*/
 public class BuildGenerator {
 	public enum IOSArchitecture{
 		ARMv7 		= 0,
 		ARM64 		= 1,
 		Universal 	= 2
 	}
-	
-	//	//TODO change this
-	//	private static string [] scenes = { "Assets/Scenes/CorporativeLogoSplash.unity", "Assets/Scenes/Loader.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Game.unity" };
-	
+
 	private static string path;
 	private static GTBuildSettings build;
 	

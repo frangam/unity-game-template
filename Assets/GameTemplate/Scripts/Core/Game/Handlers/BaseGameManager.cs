@@ -166,20 +166,20 @@ public class BaseGameManager : MonoBehaviour {
 		initGame();
 		
 		//Game Analytics event name
-		string gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
+		string gaEventCat = GAEventCategories.CAMPAIGN_LEVEL;
 		switch(gameMode){
 		case GameMode.QUICKGAME:
-			gaEvent = GAEvents.QUICKGAME_LEVEL_OPENED;
+			gaEventCat = GAEventCategories.QUICKGAME_LEVEL;
 			break;
 		case GameMode.CAMPAIGN:
-			gaEvent = GAEvents.CAMPAIGN_LEVEL_OPENED;
+			gaEventCat = GAEventCategories.CAMPAIGN_LEVEL;
 			BaseLevelLoaderController.dispatcher.addEventListener(BaseLevelLoaderController.LEVEL_LOADED, OnLevelLoaded);
 			BaseQuestManager.dispatcher.addEventListener(BaseQuestManager.ALL_QUESTS_COMPLETED, OnQuestsCompleted);
 			BaseQuestManager.Instance.resetProperties();
 			break;
 			
 		case GameMode.SURVIVAL:
-			gaEvent = GAEvents.SURVIVAL_LEVEL_OPENED;
+			gaEventCat = GAEventCategories.SURVIVAL_LEVEL;
 			break;
 			
 		}
@@ -188,8 +188,8 @@ public class BaseGameManager : MonoBehaviour {
 		isLocalMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_LOCAL_MULTIPLAYER) != 0 ? true:false;
 		isOnlineMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_ONLINE_MULTIPLAYER) != 0 ? true:false;
 		
-		//GA
-		//TODO Analytics
+		//ANALYTICS
+		GTAnalyticsHandler.Instance.logEvent (gaEventCat, GAEventActions.STARTED);
 	}
 	protected virtual void Start(){
 		if(startGameAtTheStartMoment)
@@ -418,10 +418,10 @@ public class BaseGameManager : MonoBehaviour {
 		
 		//show interstitial ad
 		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0)){
-			AdsHandler.Instance.showInterstitial();
+			AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd();
 			
-			//GA
-			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
+			//ANALYTICS
+			GTAnalyticsHandler.Instance.logEvent(GAEventCategories.RANDOM_AD, GAEventActions.SHOWN, GAEventLabels.GAMEOVER);
 		}
 	}
 	
@@ -432,7 +432,7 @@ public class BaseGameManager : MonoBehaviour {
 		
 		PlayerPrefs.SetInt(GameSettings.PP_LAST_LEVEL_PLAYED, currentLevelSelected); //for analytics
 		
-		string gaEvent = GAEvents.CAMPAIGN_LEVEL_PLAYED; //analytics
+		string gaEvent = GAEventCategories.CAMPAIGN_LEVEL; //analytics
 		
 		//show gameover windows
 		switch(gameMode){
@@ -461,11 +461,11 @@ public class BaseGameManager : MonoBehaviour {
 			break;
 			
 		case GameMode.SURVIVAL:
-			gaEvent = GAEvents.SURVIVAL_LEVEL_PLAYED;
+			gaEvent = GAEventCategories.SURVIVAL_LEVEL;
 			UIController.Instance.Manager.open(UIBaseWindowIDs.GAMEOVER);
 			break;
 		case GameMode.QUICKGAME:
-			gaEvent = GAEvents.QUICKGAME_LEVEL_PLAYED;
+			gaEvent = GAEventCategories.QUICKGAME_LEVEL;
 			UIController.Instance.Manager.open(UIBaseWindowIDs.GAMEOVER);
 			break;
 			
@@ -552,7 +552,7 @@ public class BaseGameManager : MonoBehaviour {
 	
 	public void playerForcesFinishGame(){
 		if(showAdWhenPlayerForcesFinishGame){
-			AdsHandler.Instance.showInterstitial();
+			AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd();
 			
 			//GA
 			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO

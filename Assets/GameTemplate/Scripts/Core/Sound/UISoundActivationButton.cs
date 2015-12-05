@@ -46,7 +46,20 @@ public class UISoundActivationButton : UIBaseButton {
 		base.doPress ();
 		
 		active = BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(type);
-		
+
+		/*** ANALYTICS **/
+		string gaEventAction = active ? GAEventActions.ENABLED : GAEventActions.DISABLED;
+		string gaEventCat = GAEventCategories.SOUND;
+		switch(type){
+		case SoundType.FX:
+			gaEventCat = GAEventCategories.SOUND; break;
+		case SoundType.MUSIC:
+			gaEventCat = GAEventCategories.MUSIC; break;
+		}
+		GTAnalyticsHandler.Instance.logEvent (gaEventCat, gaEventAction);
+		/*** ANALYTICS **/
+
+
 //		if(hideActive)
 //			imgActive.gameObject.SetActive(active);
 //		

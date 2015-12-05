@@ -43,10 +43,34 @@ public class BtnShowAd : UIBaseButton {
 			GTDebug.log ("Showing Ad ["+adType+"]");
 
 			switch(adType){
-			case AdType.INTERSTITIAL: AdsHandler.Instance.showInterstitial(); break;
-			case AdType.VIDEO: AdsHandler.Instance.PlayAVideo(); break;
-			case AdType.RANDOM_INTERSTITIAL_VIDEO: AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd(); break;
-			case AdType.VIDEO_V4VC: AdsHandler.Instance.playVideoV4VC(); break;
+			case AdType.INTERSTITIAL: 
+				AdsHandler.Instance.showInterstitial(); 
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INTERSTITIAL_AD, GAEventActions.REQUESTED
+				                                     , GAEventLabels.BTN_SHOW_AD + "( "+ name + ") in " + BaseGameScreenController.Instance.Section.ToString());
+				break;
+			case AdType.VIDEO: 
+				AdsHandler.Instance.PlayAVideo(); 
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_AD, GAEventActions.REQUESTED
+				                                     , GAEventLabels.BTN_SHOW_AD + "( "+ name + ") in " + BaseGameScreenController.Instance.Section.ToString());
+				break;
+			case AdType.RANDOM_INTERSTITIAL_VIDEO: 
+				AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd(); 
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.RANDOM_AD, GAEventActions.REQUESTED
+				                                     , GAEventLabels.BTN_SHOW_AD + "( "+ name + ") in " + BaseGameScreenController.Instance.Section.ToString());
+				break;
+			case AdType.VIDEO_V4VC: 
+				AdsHandler.Instance.playVideoV4VC(); 
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_REWARD_AD, GAEventActions.REQUESTED
+				                                     , GAEventLabels.BTN_SHOW_AD + "( "+ name + ") in " + BaseGameScreenController.Instance.Section.ToString());
+				break;
 			}
 		}
 	}

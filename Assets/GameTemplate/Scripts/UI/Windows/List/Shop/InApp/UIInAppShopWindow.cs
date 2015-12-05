@@ -27,8 +27,9 @@ public class UIInAppShopWindow : UIBaseWindow {
 	
 	public override void open ()
 	{
-		//GA
-		//TODO Analytics GAEvents.INAPP_WIN_OPEN
+		//ANALYTICS
+		if(StartClosed || (!StartClosed && !FirstOpen))
+			GTAnalyticsHandler.Instance.logEvent (GAEventCategories.INAPP, GAEventActions.OPENED);
 		
 		base.open ();
 		
@@ -41,6 +42,10 @@ public class UIInAppShopWindow : UIBaseWindow {
 	
 	public override void close ()
 	{
+		//ANALYTICS
+		if(!FirstClose)
+			GTAnalyticsHandler.Instance.logEvent (GAEventCategories.INAPP, GAEventActions.OPENED);
+
 		if(IsOpen && gralInAppWin)
 			gralInAppWin.closeLoading(true);
 		

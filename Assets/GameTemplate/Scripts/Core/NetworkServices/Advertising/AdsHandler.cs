@@ -121,12 +121,21 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		HZBannerAd.setDisplayListener(delegate(string adState, string adTag){
 			if (adState == "loaded") {
 				// Do something when the banner ad is loaded
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.BANNER_AD, GAEventActions.SHOWN);
 			}
 			if (adState == "error") {
 				// Do something when the banner ad fails to load (they can fail when refreshing after successfully loading)
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.BANNER_AD, GAEventActions.FAILED);
 			}
 			if (adState == "click") {
 				// Do something when the banner ad is clicked, like pause your game
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.BANNER_AD, GAEventActions.PRESSED);
 			}
 		});
 		
@@ -146,10 +155,16 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
             }
 			if ( adState.Equals("click") ) {
 				// Do something when an ad is clicked on
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INTERSTITIAL_AD, GAEventActions.PRESSED);
 			}
 			if ( adState.Equals("failed") ) {
 				// Do something when an ad fails to show
 				pauseGame(false);
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INTERSTITIAL_AD, GAEventActions.FAILED);
 			}
 			if ( adState.Equals("available") ) {
 				// Do something when an ad has successfully been fetched
@@ -174,6 +189,9 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			if (adState.Equals ("show")) {
 				// Do something when the ad shows, like pause your game
 				pauseGame();
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_REWARD_AD, GAEventActions.SHOWN);
 			}
 			if (adState.Equals ("hide")) {
 				// Do something after the ad hides itself
@@ -181,9 +199,15 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 			}
 			if (adState.Equals ("click")) {
 				// Do something when an ad is clicked on
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_REWARD_AD, GAEventActions.PRESSED);
 			}
 			if (adState.Equals ("failed")) {
 				// Do something when an ad fails to show
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_REWARD_AD, GAEventActions.FAILED);
 			}
 			if (adState.Equals ("available")) {
 				// Do something when an ad has successfully been fetched
@@ -195,16 +219,22 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 				// The user has watched the entire video and should be given a reward.
 				pauseGame(false);
 				OnIncentivedVideoFinished();
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_REWARD_AD, GAEventActions.COMPLETED);
 			}
 			if (adState.Equals ("incentivized_result_incomplete")) {
 				// The user did not watch the entire video and should not be given a reward.
 				pauseGame(false);
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_REWARD_AD, GAEventActions.INCOMPLETED);
 			}
 		});
 		
 		
 		//------
-		//Reward Videos
+		// Videos
 		//------
 		HZVideoAd.setDisplayListener( delegate(string adState, string adTag){
 			if (adState.Equals ("show")) {
@@ -218,9 +248,15 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
             }
 			if (adState.Equals ("click")) {
 				// Do something when an ad is clicked on
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_AD, GAEventActions.PRESSED);
 			}
 			if (adState.Equals ("failed")) {
 				// Do something when an ad fails to show
+
+				//ANALYTICS
+				GTAnalyticsHandler.Instance.logEvent(GAEventCategories.VIDEO_AD, GAEventActions.FAILED);
 			}
 			if (adState.Equals ("available")) {
 				// Do something when an ad has successfully been fetched

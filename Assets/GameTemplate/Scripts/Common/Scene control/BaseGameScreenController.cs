@@ -31,7 +31,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		
+		GTAnalyticsHandler.Instance.logCurrentGameSection (); //Analytic to know which screen has been opened
 	}
 	
 	public virtual void Start () {
@@ -74,7 +74,7 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 			Time.timeScale = paused ? 0f : 1f;
 		}
 		else if(paused && !GameController.Instance.Manager.Finished && GameController.Instance.Manager.Started){
-			GTDebug.log("Pausing game in Game Scene");
+			GTDebug.log("Pausing game in Game Screen Controller");
 			
 			GameController.Instance.Manager.Paused = paused;
 		}
@@ -84,6 +84,11 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 			ScreenLoaderVisualIndicator.Instance.finishLoad();
 		}
 		#endif
+	}
+
+	public virtual void OnApplicationQuit() {
+		//Analytic to know in wich section user has exited game
+		GTAnalyticsHandler.Instance.logEvent (GAEventCategories.GAME, GAEventActions.FORCED + " " + GAEventActions.QUIT, Section.ToString());
 	}
 	
 	#endregion
