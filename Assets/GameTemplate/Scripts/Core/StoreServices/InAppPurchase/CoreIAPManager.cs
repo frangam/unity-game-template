@@ -182,9 +182,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			}
 		}
 		#elif UNITY_IPHONE
-//		if(IOSInAppPurchaseManager.instance != null && IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
-//			//			IOSInAppPurchaseManager.instance.restorePurchases();
-//		}
+		//		if(IOSInAppPurchaseManager.instance != null && IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled){
+		//			//			IOSInAppPurchaseManager.instance.restorePurchases();
+		//		}
 		#endif
 	}
 	
@@ -192,11 +192,17 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		#if UNITY_ANDROID
 		AndroidInAppPurchaseManager.instance.purchase(SKU);
 		#elif UNITY_IPHONE
-		if(IOSInAppPurchaseManager.instance != null)
+		if(IOSInAppPurchaseManager.instance != null){
 			IOSInAppPurchaseManager.instance.buyProduct(SKU);
+		}
 		#elif UNITY_WP8
-		WP8InAppPurchasesManager.instance.purchase(SKU);			
+		WP8InAppPurchasesManager.instance.purchase(SKU);
 		#endif
+		
+		//ANALYTICS
+		string producName = getProducNameByID(SKU);
+		long producPrice = getProducPriceByID(SKU);
+		GTAnalyticsHandler.Instance.logEvent (GAEventCategories.INAPP, GAEventActions.REQUESTED + " " + GAEventActions.PURCHASED, producName, producPrice);
 	}
 	public void RestorePurchase(){
 		#if UNITY_ANDROID
@@ -209,7 +215,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE
 				   && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)){
 					AndroidInAppPurchaseManager.instance.consume(product.Id);
-
+					
 					GTDebug.log("Consuming product we forget to consume previously. Id: "+ product.Id);
 				}
 				
@@ -220,12 +226,12 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				else if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.NON_CONSUMABLE 
 				        && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)) {
 					restore = true;
-
+					
 					GTDebug.log("Must restore, so we are going to apply rewards. Id: "+ product.Id);
 				}
 				else{
 					GTDebug.log("No restore any thing. Purchased previously? "
-							+AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)+". Id: "+ product.Id);
+					            +AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)+". Id: "+ product.Id);
 				}
 			}
 			
@@ -313,16 +319,16 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		//if all goes right...
 		if(result.isSuccess){
 			UIBaseInAppItem product = getProductByID(result.purchase.SKU); //get the product purchase info
-
+			
 			GTDebug.log("Product Id: "+result.purchase.SKU + ", type: " + product.IaType);
-
+			
 			//consume the purchase if the inapp product type is consumable
 			if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE)
 				AndroidInAppPurchaseManager.instance.consume(result.purchase.SKU);
 			
 			//event to process this purchase
 			OnProcessingPurchaseProduct (result.purchase.SKU, product != null);
-
+			
 		} 
 		else{
 			OnProcessingPurchaseProduct (result.purchase.SKU, false);
@@ -358,7 +364,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(result.isSuccess) {
 			//cambiamos la bandera para avisar que la tienda esta lista
 			IsInited = true;
-
+			
 			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 				GameLoaderManager.Instance.InAppInited = true;
 			
@@ -391,7 +397,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		if(result.IsSucceeded) {
 			GTDebug.log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			IsInited = true;
-
+			
 			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 				GameLoaderManager.Instance.InAppInited = true;
 			
@@ -411,7 +417,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	}
 	void OnTransactionComplete (IOSStoreKitResult response){
 		GTDebug.log("Product ID: " + response.ProductIdentifier + ". State: " + response.State);
-
+		
 		
 		switch(response.State) {
 		case InAppPurchaseState.Restored:
@@ -475,10 +481,10 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	void OnInitComplete() {
 		if(WP8InAppPurchasesManager.instance.products != null){
 			IsInited = true;
-
+			
 			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
 				GameLoaderManager.Instance.InAppInited = true;
-
+			
 			numProducts = WP8InAppPurchasesManager.instance.products.Count;
 			productsWP = WP8InAppPurchasesManager.instance.products;
 			//			dispatcher.dispatch(RETRIEVED_PRODUCTS, WP8InAppPurchasesManager.instance.products);
@@ -547,20 +553,20 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	public virtual void OnProcessingPurchaseProduct (string SKU, bool success = true, bool deferred = false)
 	{
 		if(success && !deferred){
-			//GA
-			//TODO Analytics GAEvents.INAPP_ITEM_PURCHASED +":"+ SKU
+			//ANALYTICS
+			GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INAPP, GAEventActions.PURCHASED, getProducNameByID(SKU));
 			
 			dispatcher.dispatch(PURCHASE_COMPLETED, getProductByID(SKU));
 		}
 		else if(!success && !deferred){
-			//GA
-			//TODO Analytics GAEvents.INAPP_ITEM_PURCHASE_FAILED +":"+ SKU
+			//ANALYTICS
+			GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INAPP, GAEventActions.FAILED, getProducNameByID(SKU));
 			
 			dispatcher.dispatch(PURCHASE_FAILED, getProductByID(SKU));
 		}
 		else if(deferred){
-			//GA
-			//TODO Analytics GAEvents.INAPP_ITEM_PURCHASE_CANCELED +":"+ SKU
+			//ANALYTICS
+			GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INAPP, GAEventActions.REJECTED, getProducNameByID(SKU));
 			
 			dispatcher.dispatch(DEFERRED_PURCHASE_COMPLETED, getProductByID(SKU));
 		}
@@ -569,14 +575,14 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	public virtual void OnProcessingRestorePurchases (bool success = true)
 	{
 		if(success){
-			//GA
-			//TODO Analytics GAEvents.INAPP_PURCHASES_RESTORED
+			//ANALYTICS
+			GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INAPP, GAEventActions.RESTORED);
 			
 			dispatcher.dispatch(RESTORE_PURCHASE_COMPLETED);
 		}
 		else{
-			//GA
-			//TODO Analytics GAEvents.INAPP_PURCHASES_NO_RESTORED
+			//ANALYTICS
+			GTAnalyticsHandler.Instance.logEvent(GAEventCategories.INAPP, GAEventActions.NOT_RESTORED);
 			
 			dispatcher.dispatch(RESTORE_PURCHASE_FAILED);
 		}
@@ -585,7 +591,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	public virtual void OnRetrievedProducts (bool success = true)
 	{
 		GTDebug.log("Succes? "+success);
-
+		
 		if(success){
 			#if UNITY_ANDROID
 			List<GoogleProductTemplate> products = AndroidInAppPurchaseManager.instance.inventory.products;
@@ -598,7 +604,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 				if(product != null && product.IaType == UIBaseInAppItem.InAppItemType.COMSUMABLE
 				   && AndroidInAppPurchaseManager.instance.inventory.IsProductPurchased(product.Id)){
 					AndroidInAppPurchaseManager.instance.consume(product.Id);
-
+					
 					GTDebug.log("Consuming previous product not consumed. Id: "+product.Id);
 				}
 				
@@ -619,9 +625,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 					product.applyReward();
 				}
 			}
-
+			
 			GTDebug.log("Need to restore products? "+needRestore);
-
+			
 			if(needRestore && BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN){
 				GameLoaderManager.Instance.InAppAllProductsRestored = true;
 				GameLoaderManager.Instance.InAppInited = true;
@@ -674,9 +680,9 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	
 	private UIBaseInAppItem getProductByID(string id){
 		UIBaseInAppItem product = null;
-
+		
 		GTDebug.log("Product id " + id + ". Products? "+(_products != null));
-
+		
 		if(_products != null){
 			foreach(UIBaseInAppItem p in _products){
 				if(p.Id.Equals(id)){
@@ -688,5 +694,83 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		
 		return product;
 	}
+	
+	private IOSProductTemplate getIOSProductTemplateByID(string id){
+		IOSProductTemplate product = null;
+		
+		GTDebug.log("Product id " + id + ". Products? "+(productsIOS != null));
+		
+		if(productsIOS != null){
+			foreach(IOSProductTemplate p in productsIOS){
+				if(p.Id.Equals(id)){
+					product = p;
+					break;
+				}
+			}
+		}
+		
+		return product;
+	}
+	
+	private GoogleProductTemplate getAndroidProductTemplateByID(string id){
+		GoogleProductTemplate product = null;
+		
+		GTDebug.log("Product id " + id + ". Products? "+(productsGoogle != null));
+		
+		if(productsGoogle != null){
+			foreach(GoogleProductTemplate p in productsGoogle){
+				if(p.SKU.Equals(id)){
+					product = p;
+					break;
+				}
+			}
+		}
+		
+		return product;
+	}
+	
+	private WP8ProductTemplate getWPProductTemplateByID(string id){
+		WP8ProductTemplate product = null;
+		
+		GTDebug.log("Product id " + id + ". Products? "+(productsWP != null));
+		
+		if(productsWP != null){
+			foreach(WP8ProductTemplate p in productsWP){
+				if(p.ProductId.Equals(id)){
+					product = p;
+					break;
+				}
+			}
+		}
+		
+		return product;
+	}
+	
+	private string getProducNameByID(string id){
+		string res = "";
+		
+		#if UNITY_IPHONE
+		res = getIOSProductTemplateByID(id).DisplayName;
+		#elif UNITY_ANDROID
+		res = getAndroidProductTemplateByID(id).Title;
+		#elif UNITY_WP8
+		res = getWPProductTemplateByID(id).Name;
+		#endif
+		return res;
+	}
+	
+	private long getProducPriceByID(string id){
+		long res = 0L;
+		
+		#if UNITY_IPHONE
+		res = (long) getIOSProductTemplateByID(id).Price;
+		#elif UNITY_ANDROID
+		res = (long) getAndroidProductTemplateByID(id).Price;
+		#elif UNITY_WP8
+		res = (long) getWPProductTemplateByID(id).Price;
+		#endif
+		return res;
+	}
+	
 	#endregion
 }

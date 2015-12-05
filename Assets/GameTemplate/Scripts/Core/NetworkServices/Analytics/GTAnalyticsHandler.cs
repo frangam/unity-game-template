@@ -23,42 +23,44 @@ public class GTAnalyticsHandler : PersistentSingleton<GTAnalyticsHandler> {
 	#region Unity Methods
 	public void Awake(){
 		useAnalytics = GTBuildSettingsConfig.Instance.UseAnalytics;
-
+		
 		if(useAnalytics){
 			googleAnalytics = FindObjectOfType<GoogleAnalyticsV4> ();
-
+			
+			useAnalytics = useAnalytics && googleAnalytics;
+			
 			if(googleAnalytics == null)
-				GTDebug.logErrorAlways("Not found GoogleAnalyticsV4 prefab");
+				GTDebug.logWarningAlways("Not found GoogleAnalyticsV4 prefab");
 		}
 	}
 	#endregion
-
+	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
 	#region Public Methods
 	public void logCurrentGameSection(){
 		if(useAnalytics)
-			GoogleAnalyticsV4.instance.LogScreen (BaseGameScreenController.Instance.Section.ToString ());
+			googleAnalytics.LogScreen (BaseGameScreenController.Instance.Section.ToString ());
 	}
-
+	
 	public void logEvent(string eventCategory, string eventAction){
 		if(useAnalytics)
-			GoogleAnalyticsV4.instance.LogEvent (new EventHitBuilder().SetEventCategory(eventCategory).SetEventAction(eventAction));
+			googleAnalytics.LogEvent (new EventHitBuilder().SetEventCategory(eventCategory).SetEventAction(eventAction));
 	}
 	public void logEvent(string eventCategory, string eventAction, string eventLabel){
 		if(useAnalytics)
-			GoogleAnalyticsV4.instance.LogEvent (new EventHitBuilder().SetEventCategory(eventCategory).SetEventAction(eventAction).SetEventLabel(eventLabel));
+			googleAnalytics.LogEvent (new EventHitBuilder().SetEventCategory(eventCategory).SetEventAction(eventAction).SetEventLabel(eventLabel));
 	}
 	public void logEvent(string eventCategory, string eventAction, long evenValue){
 		if(useAnalytics)
-			GoogleAnalyticsV4.instance.LogEvent (new EventHitBuilder().SetEventCategory(eventCategory).SetEventAction(eventAction).SetEventValue(evenValue));
+			googleAnalytics.LogEvent (new EventHitBuilder().SetEventCategory(eventCategory).SetEventAction(eventAction).SetEventValue(evenValue));
 	}
 	public void logEvent(string eventCategory, string eventAction, string eventLabel, long eventValue){
 		if(useAnalytics)
-			GoogleAnalyticsV4.instance.LogEvent (eventCategory, eventAction, eventLabel, eventValue);
+			googleAnalytics.LogEvent (eventCategory, eventAction, eventLabel, eventValue);
 	}
-
-
+	
+	
 	#endregion
 }
