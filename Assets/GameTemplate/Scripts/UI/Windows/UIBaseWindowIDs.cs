@@ -11,7 +11,7 @@ using System.Collections;
 /// 
 /// Extend from it to have more ids
 /// </summary>
-public static class UIBaseWindowIDs {
+public class UIBaseWindowIDs {
 	public const string RATE_GAME_POPUP 								= "bwi_000000";
 	public const string MORE_GAMES_POPUP 								= "bwi_000001";
 	public const string SOUND_AND_MUSIC_POPUP 							= "bwi_000002";
