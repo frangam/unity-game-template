@@ -39,6 +39,10 @@ public class UIBaseListWindow : UIBaseWindow {
 	private UIBaseButton 					btnNextItem;
 	
 	[SerializeField]
+	[Tooltip("True for Updating navigation buttons when open this win")]
+	private bool							updateNavBtnAtOpen = true;
+	
+	[SerializeField]
 	[Tooltip("Leave < 0 if we want to hanle it with the lenght of the items list. Set it if we want to specify another last item, i.e. when we want to show a list of the available missions to complete that in this case we will show only navigable unlocked levels.")]
 	/// <summary>
 	/// Leave < 0 if we want to hanle it with the lenght of the items list. Set it if we want to specify another last item, i.e. when we want to show a list of the available missions to complete that in this case we will show only navigable unlocked levels.
@@ -84,16 +88,31 @@ public class UIBaseListWindow : UIBaseWindow {
 			return res;
 		}
 	}
-
+	
 	public UIBaseButton BtnPrevItem {
 		get {
 			return this.btnPrevItem;
 		}
+		set {
+			btnPrevItem = value;
+		}
 	}
-
+	
 	public UIBaseButton BtnNextItem {
 		get {
 			return this.btnNextItem;
+		}
+		set {
+			btnNextItem = value;
+		}
+	}
+	
+	public bool UpdateNavBtnAtOpen {
+		get {
+			return this.updateNavBtnAtOpen;
+		}
+		set {
+			updateNavBtnAtOpen = value;
 		}
 	}
 	
@@ -130,12 +149,11 @@ public class UIBaseListWindow : UIBaseWindow {
 			}
 			
 			//navigation Buttons
-			updateNavigationButtons();
+			if(updateNavBtnAtOpen)
+				updateNavigationButtons();
 			
 			showItem(currentItemSelected);
 		}
-		
-		
 	}
 	
 	//--------------------------------------
