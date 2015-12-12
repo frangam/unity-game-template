@@ -11,7 +11,7 @@ using System.Collections;
 /// 
 /// Extend from it to have more ids
 /// </summary>
-public static class BaseSoundIDs {
+public class BaseSoundIDs {
 	public const string MENU_MUSIC			 				= "bsi_000000";
 	public const string GAME_MUSIC			 				= "bsi_000001";
 	public const string PAUSE_MUSIC							= "bsi_000002";
