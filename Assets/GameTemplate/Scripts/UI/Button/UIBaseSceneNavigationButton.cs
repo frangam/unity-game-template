@@ -13,7 +13,7 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	//--------------------------------------
 	[SerializeField]
 	private bool showLoadingPanelImmediately = false;
-
+	
 	[SerializeField]
 	[Tooltip("Game Section represented")]
 	private GameSection section;
@@ -31,6 +31,7 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	//--------------------------------------
 	// GETTERS && SETTERS
 	//--------------------------------------
+	#region Getters/Setters
 	public string SceneToGo {
 		get {
 			return this.sceneToGo;
@@ -40,6 +41,43 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 		}
 	}
 	
+	public bool ShowLoadingPanelImmediately {
+		get {
+			return this.showLoadingPanelImmediately;
+		}
+		set {
+			showLoadingPanelImmediately = value;
+		}
+	}
+	
+	public GameSection Section {
+		get {
+			return this.section;
+		}
+		set {
+			section = value;
+		}
+	}
+	
+	public bool LocalMultiplayer {
+		get {
+			return this.localMultiplayer;
+		}
+		set {
+			localMultiplayer = value;
+		}
+	}
+	
+	public bool OnlineMultiplayer {
+		get {
+			return this.onlineMultiplayer;
+		}
+		set {
+			onlineMultiplayer = value;
+		}
+	}
+	#endregion
+	
 	//--------------------------------------
 	// Overriden Methods
 	//--------------------------------------
@@ -47,10 +85,10 @@ public class UIBaseSceneNavigationButton : UIBaseButton {
 	{
 		if(showLoadingPanelImmediately)
 			UILoadingPanel.Instance.show();
-
+		
 		return base.doPressBeforeAWhile ();
 	}
-
+	
 	protected override void doPress ()
 	{
 		base.doPress ();
