@@ -5,14 +5,14 @@ using System.Collections.Generic;
 public sealed class ObjectPool : MonoBehaviour
 {
 	public enum StartupPoolMode { Awake, Start, CallManually };
-
+	
 	[System.Serializable]
 	public class StartupPool
 	{
 		public int size;
 		public GameObject prefab;
 	}
-
+	
 	static ObjectPool _instance;
 	static List<GameObject> tempList = new List<GameObject>();
 	
@@ -21,22 +21,22 @@ public sealed class ObjectPool : MonoBehaviour
 	
 	public StartupPoolMode startupPoolMode;
 	public StartupPool[] startupPools;
-
+	
 	bool startupPoolsCreated;
-
+	
 	void Awake()
 	{
 		_instance = this;
 		if (startupPoolMode == StartupPoolMode.Awake)
 			CreateStartupPools();
 	}
-
+	
 	void Start()
 	{
 		if (startupPoolMode == StartupPoolMode.Start)
 			CreateStartupPools();
 	}
-
+	
 	public static void CreateStartupPools()
 	{
 		if (!instance.startupPoolsCreated)
@@ -48,7 +48,7 @@ public sealed class ObjectPool : MonoBehaviour
 					CreatePool(pools[i].prefab, pools[i].size);
 		}
 	}
-
+	
 	public static void CreatePool<T>(T prefab, int initialPoolSize) where T : Component
 	{
 		CreatePool(prefab.gameObject, initialPoolSize);
@@ -59,7 +59,7 @@ public sealed class ObjectPool : MonoBehaviour
 		{
 			var list = new List<GameObject>();
 			instance.pooledObjects.Add(prefab, list);
-
+			
 			if (initialPoolSize > 0)
 			{
 				bool active = prefab.activeSelf;
@@ -126,7 +126,7 @@ public sealed class ObjectPool : MonoBehaviour
 					return obj;
 				}
 			}
-			obj = (GameObject)Object.Instantiate(prefab);
+			obj = (GameObject)Object.Instantiate(prefab, position, rotation);
 			trans = obj.transform;
 			trans.parent = parent;
 			trans.localPosition = position;
@@ -164,7 +164,7 @@ public sealed class ObjectPool : MonoBehaviour
 	{
 		return Spawn(prefab, null, Vector3.zero, Quaternion.identity);
 	}
-
+	
 	public static void Recycle<T>(T obj) where T : Component
 	{
 		Recycle(obj.gameObject);
@@ -175,7 +175,8 @@ public sealed class ObjectPool : MonoBehaviour
 		if (instance.spawnedObjects.TryGetValue(obj, out prefab))
 			Recycle(obj, prefab);
 		else
-			Object.Destroy(obj);
+			Destroy(obj);
+		//			Object.Destroy(obj);
 	}
 	static void Recycle(GameObject obj, GameObject prefab)
 	{
@@ -184,7 +185,7 @@ public sealed class ObjectPool : MonoBehaviour
 		obj.transform.parent = instance.transform;
 		obj.SetActive(false);
 	}
-
+	
 	public static void RecycleAll<T>(T prefab) where T : Component
 	{
 		RecycleAll(prefab.gameObject);
@@ -210,7 +211,7 @@ public sealed class ObjectPool : MonoBehaviour
 	{
 		return instance.spawnedObjects.ContainsKey(obj);
 	}
-
+	
 	public static int CountPooled<T>(T prefab) where T : Component
 	{
 		return CountPooled(prefab.gameObject);
@@ -222,7 +223,7 @@ public sealed class ObjectPool : MonoBehaviour
 			return list.Count;
 		return 0;
 	}
-
+	
 	public static int CountSpawned<T>(T prefab) where T : Component
 	{
 		return CountSpawned(prefab.gameObject);
@@ -235,7 +236,7 @@ public sealed class ObjectPool : MonoBehaviour
 				++count;
 		return count;
 	}
-
+	
 	public static int CountAllPooled()
 	{
 		int count = 0;
@@ -243,7 +244,7 @@ public sealed class ObjectPool : MonoBehaviour
 			count += list.Count;
 		return count;
 	}
-
+	
 	public static List<GameObject> GetPooled(GameObject prefab, List<GameObject> list, bool appendList)
 	{
 		if (list == null)
@@ -267,7 +268,7 @@ public sealed class ObjectPool : MonoBehaviour
 				list.Add(pooled[i].GetComponent<T>());
 		return list;
 	}
-
+	
 	public static List<GameObject> GetSpawned(GameObject prefab, List<GameObject> list, bool appendList)
 	{
 		if (list == null)
@@ -291,7 +292,7 @@ public sealed class ObjectPool : MonoBehaviour
 				list.Add(item.Key.GetComponent<T>());
 		return list;
 	}
-
+	
 	public static void DestroyPooled(GameObject prefab)
 	{
 		List<GameObject> pooled;
@@ -306,7 +307,7 @@ public sealed class ObjectPool : MonoBehaviour
 	{
 		DestroyPooled(prefab.gameObject);
 	}
-
+	
 	public static void DestroyAll(GameObject prefab)
 	{
 		RecycleAll(prefab);
@@ -316,18 +317,18 @@ public sealed class ObjectPool : MonoBehaviour
 	{
 		DestroyAll(prefab.gameObject);
 	}
-
+	
 	public static ObjectPool instance
 	{
 		get
 		{
 			if (_instance != null)
 				return _instance;
-
+			
 			_instance = Object.FindObjectOfType<ObjectPool>();
 			if (_instance != null)
 				return _instance;
-
+			
 			var obj = new GameObject("ObjectPool");
 			obj.transform.localPosition = Vector3.zero;
 			obj.transform.localRotation = Quaternion.identity;
@@ -336,10 +337,19 @@ public sealed class ObjectPool : MonoBehaviour
 			return _instance;
 		}
 	}
+	
+	public static void recycleAfterADelay(GameObject obj, float delay){
+		instance.StartCoroutine(recycleAfterDelay(obj, delay));
+	}
+	private static IEnumerator recycleAfterDelay(GameObject obj, float delay){
+		yield return new WaitForSeconds(delay);
+		Recycle(obj.gameObject);
+	}
 }
 
 public static class ObjectPoolExtensions
 {
+	
 	public static void CreatePool<T>(this T prefab) where T : Component
 	{
 		ObjectPool.CreatePool(prefab, 0);
@@ -414,7 +424,15 @@ public static class ObjectPoolExtensions
 	{
 		ObjectPool.Recycle(obj);
 	}
-
+	public static void Recycle(this GameObject obj, float delay)
+	{
+		ObjectPool.recycleAfterADelay(obj, delay);
+	}
+	
+	
+	
+	
+	
 	public static void RecycleAll<T>(this T prefab) where T : Component
 	{
 		ObjectPool.RecycleAll(prefab);
@@ -423,7 +441,7 @@ public static class ObjectPoolExtensions
 	{
 		ObjectPool.RecycleAll(prefab);
 	}
-
+	
 	public static int CountPooled<T>(this T prefab) where T : Component
 	{
 		return ObjectPool.CountPooled(prefab);
@@ -432,7 +450,7 @@ public static class ObjectPoolExtensions
 	{
 		return ObjectPool.CountPooled(prefab);
 	}
-
+	
 	public static int CountSpawned<T>(this T prefab) where T : Component
 	{
 		return ObjectPool.CountSpawned(prefab);
@@ -441,7 +459,7 @@ public static class ObjectPoolExtensions
 	{
 		return ObjectPool.CountSpawned(prefab);
 	}
-
+	
 	public static List<GameObject> GetSpawned(this GameObject prefab, List<GameObject> list, bool appendList)
 	{
 		return ObjectPool.GetSpawned(prefab, list, appendList);
@@ -466,7 +484,7 @@ public static class ObjectPoolExtensions
 	{
 		return ObjectPool.GetSpawned(prefab, null, false);
 	}
-
+	
 	public static List<GameObject> GetPooled(this GameObject prefab, List<GameObject> list, bool appendList)
 	{
 		return ObjectPool.GetPooled(prefab, list, appendList);
@@ -491,7 +509,7 @@ public static class ObjectPoolExtensions
 	{
 		return ObjectPool.GetPooled(prefab, null, false);
 	}
-
+	
 	public static void DestroyPooled(this GameObject prefab)
 	{
 		ObjectPool.DestroyPooled(prefab);
@@ -500,7 +518,7 @@ public static class ObjectPoolExtensions
 	{
 		ObjectPool.DestroyPooled(prefab.gameObject);
 	}
-
+	
 	public static void DestroyAll(this GameObject prefab)
 	{
 		ObjectPool.DestroyAll(prefab);
