@@ -6,19 +6,20 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 	public GameObject image;
 	public Texture2D helloWorldTexture;
 
-
-
-
+	void Start() {
+		LoadNetworkInfo();
+	}
 
 	public void SaveToGalalry() {
 		AndroidCamera.instance.OnImageSaved += OnImageSaved;
-		AndroidCamera.instance.SaveImageToGallery(helloWorldTexture);
+		AndroidCamera.instance.SaveImageToGallery(helloWorldTexture, "Screenshot" + AndroidCamera.GetRandomString());
 
 	}
 
+
 	public void SaveScreenshot() {
 		AndroidCamera.instance.OnImageSaved += OnImageSaved;
-		AndroidCamera.instance.SaveScreenshotToGallery();
+		AndroidCamera.instance.SaveScreenshotToGallery("Screenshot" + AndroidCamera.GetRandomString());
 
 	}
 
@@ -43,8 +44,8 @@ public class AnOtherFeaturesPreview : MonoBehaviour {
 
 
 	public void LoadNetworkInfo() {
-		AndroidNativeUtility.instance.LoadNetworkInfo();
 		AndroidNativeUtility.ActionNetworkInfoLoaded += HandleActionNetworkInfoLoaded;
+		AndroidNativeUtility.instance.LoadNetworkInfo();
 	}
 
 	void HandleActionNetworkInfoLoaded (AN_NetworkInfo info) {

@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2|| UNITY_5_3
+#else
+using UnityEngine.SceneManagement;
+#endif
+
 public class SA_BackButton : DefaultPreviewButton {
 
 	public static string firstLevel = string.Empty;
@@ -14,13 +19,16 @@ public class SA_BackButton : DefaultPreviewButton {
 
 		DontDestroyOnLoad(gameObject);
 		if(firstLevel == string.Empty) {
-			firstLevel = Application.loadedLevelName;
+
+			firstLevel = LevelName;
+
+
 		}
 	}
 
 
 	void FixedUpdate() {
-		if(Application.loadedLevelName.Equals(firstLevel)) {
+		if(LevelName.Equals(firstLevel)) {
 			GetComponent<Renderer>().enabled = false;
 			GetComponent<Collider>().enabled = false;
 		} else {
@@ -32,11 +40,19 @@ public class SA_BackButton : DefaultPreviewButton {
 	protected override void OnClick() {
 		base.OnClick();
 		GoBack();
-		//Invoke("GoBack", 0.8f);
-
 	}
 
 	private void GoBack() {
 		SALevelLoader.instance.LoadLevel(firstLevel);
+	}
+
+	public string LevelName {
+		get {
+						#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2|| UNITY_5_3
+			return Application.loadedLevelName;
+			#else
+			return SceneManager.GetActiveScene().name;
+			#endif
+		}
 	}
 }

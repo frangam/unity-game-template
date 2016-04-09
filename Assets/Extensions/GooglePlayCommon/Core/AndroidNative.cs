@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using UnityEngine;
+using System;
+using System.Text;
 using System.Collections;
 
 public class AndroidNative {
@@ -18,6 +20,21 @@ public class AndroidNative {
 	public const string DATA_SPLITTER = "|";
 	public const string DATA_EOF = "endofline";
 	public const string DATA_SPLITTER2 = "|%|";
+
+
+	public static string[] StringToArray(string val) {
+		return val.Split(AndroidNative.DATA_SPLITTER [0]);
+	}
+	
+
+	public static string ArrayToString(string[] array) {
+		StringBuilder builder = new StringBuilder();
+		foreach (string value in array) {
+			builder.Append(value);
+			builder.Append(DATA_SPLITTER);
+		}
+		return builder.ToString().TrimEnd(DATA_SPLITTER[0]);
+	}
 	
 
 
@@ -102,7 +119,11 @@ public class AndroidNative {
 	public static void OpenSettingsPage (string action) {
 		CallUtility("openSettingsPage", action);
 	}
-	
+
+	public static void LaunchApplication (string bundle, string data) {
+		CallUtility("launchApplication", bundle, data);
+	}
+
 	//--------------------------------------
 	// Other Features
 	//--------------------------------------
@@ -158,6 +179,10 @@ public class AndroidNative {
 	
 	private static void CallAndroidNativeBridge(string methodName, params object[] args) {
 		AN_ProxyPool.CallStatic(CLASS_NAME, methodName, args);
+	}
+
+	private static void CallStatic(string className, string methodName, params object[] args) {
+		AN_ProxyPool.CallStatic(className, methodName, args);
 	}
 
 }

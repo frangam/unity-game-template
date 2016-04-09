@@ -27,6 +27,7 @@ public abstract class AN_ProxyPool  {
 			} else {
 				bridge = new AndroidJavaObject(className);
 				pool.Add(className, bridge);
+
 			}
 			
 			AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer"); 
@@ -40,5 +41,38 @@ public abstract class AN_ProxyPool  {
 		}
 		#endif
 	}
-	
+
+	#if UNITY_ANDROID
+	public static ReturnType CallStatic<ReturnType>(string className, string methodName, params object[] args) {
+
+		
+		
+
+		Debug.Log("AN: Using proxy for class: " + className + " method:" + methodName);
+		
+		try {
+			
+			AndroidJavaObject bridge;
+			if(pool.ContainsKey(className)) {
+				bridge = pool[className];
+			} else {
+				bridge = new AndroidJavaObject(className);
+				pool.Add(className, bridge);
+				
+			}
+			
+			return bridge.CallStatic<ReturnType>(methodName, args); 
+			
+			
+		} catch(System.Exception ex) {
+			Debug.LogWarning(ex.Message);
+		}
+
+		return default(ReturnType);
+
+
+	}
+	#endif
+
+
 }

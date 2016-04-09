@@ -16,6 +16,9 @@ public class UIButtonOpenWin : UIBaseButton {
 	
 	[SerializeField]
 	private List<UIBaseWindow> closeWindows;
+
+	[SerializeField]
+	private float delay = 0f;
 	
 	//--------------------------------------
 	// Overriden Methods
@@ -26,12 +29,12 @@ public class UIButtonOpenWin : UIBaseButton {
 		
 		if(closeWindows != null && closeWindows.Count > 0){
 			foreach(UIBaseWindow w in closeWindows)
-				UIController.Instance.Manager.close(w);
+				UIController.Instance.Manager.waitForClose(w,delay);
 		}
 		
 		if(openWindows != null && openWindows.Count > 0){
 			foreach(UIBaseWindow w in openWindows)
-				UIController.Instance.Manager.open(w);
+				UIController.Instance.Manager.waitForOpen(w,delay);
 		}
 	}
 }

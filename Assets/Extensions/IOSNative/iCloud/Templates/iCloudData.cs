@@ -31,7 +31,7 @@ public class iCloudData  {
 
 		if(_val.Equals("null")) {
 			if(!IOSNativeSettings.Instance.DisablePluginLogs) 
-				Debug.Log ("empty set");
+				Debug.Log ("ISN iCloud Empty set");
 			_IsEmpty = true;
 		}
 	}
@@ -78,15 +78,7 @@ public class iCloudData  {
 				return null;
 			}
 
-			string[] array;
-			array = _val.Split("," [0]);
-
-			List<byte> l = new List<byte> ();
-			foreach(string s in array) {
-				l.Add (System.Convert.ToByte(s));
-			}
-
-			return l.ToArray ();
+			return System.Convert.FromBase64String(_val);
 		}
 	}
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class QuestAndEventsExample : MonoBehaviour {
@@ -63,6 +63,50 @@ public class QuestAndEventsExample : MonoBehaviour {
 	}
 	
 
+
+	private void SendInvitation() {
+
+		GP_AppInviteBuilder builder =  new GP_AppInviteBuilder("Test Title");
+		builder.SetMessage("Test Message");
+		builder.SetDeepLink("http://testUrl");
+		builder.SetCallToActionText("Test Text");
+
+		GP_AppInvitesController.ActionAppInvitesSent += HandleActionAppInvitesSent;
+		GP_AppInvitesController.Instance.StartInvitationDialog(builder);
+
+	}
+
+	void HandleActionAppInvitesSent (GP_SendAppInvitesResult res) {
+		if(res.IsSucceeded) {
+			Debug.Log("Invitation was sent to " + res.InvitationIds.Length + " people");
+		} else {
+			Debug.Log("App invite failed" + res.Message);
+		}
+
+		GP_AppInvitesController.ActionAppInvitesSent -= HandleActionAppInvitesSent;
+	}
+
+
+	private void GetInvitation() {
+		GP_AppInvitesController.ActionAppInviteRetrieved += HandleActionAppInviteRetrieved;
+		GP_AppInvitesController.Instance.GetInvitation(true);
+	}
+
+	void HandleActionAppInviteRetrieved (GP_RetrieveAppInviteResult res) {
+		GP_AppInvitesController.ActionAppInviteRetrieved -= HandleActionAppInviteRetrieved;
+
+
+		if(res.IsSucceeded) {
+			Debug.Log("Invitation Retrieved");
+
+			GP_AppInvite invite = res.AppInvite;
+			Debug.Log("Invitation Id: " + invite.Id);
+			Debug.Log("Invitation Deep Link: " + invite.DeepLink);
+			Debug.Log("Is Opened From PlayStore: " + invite.IsOpenedFromPlayStore);
+		} else {
+			Debug.Log("No invitation data found");
+		}
+	}
 	
 	
 
@@ -152,7 +196,7 @@ public class QuestAndEventsExample : MonoBehaviour {
 	private void OnEventsLoaded (GooglePlayResult result) {
 		Debug.Log ("Total Events: " + GooglePlayEvents.instance.Events.Count);
 		AN_PoupsProxy.showMessage ("Events Loaded", "Total Events: " + GooglePlayEvents.instance.Events.Count);
-		SA_StatusBar.text = "OnEventsLoaded:  " + result.response.ToString();
+		SA_StatusBar.text = "OnEventsLoaded:  " + result.Response.ToString();
 
 		foreach(GP_Event ev in GooglePlayEvents.instance.Events) {
 			Debug.Log(ev.Id);
@@ -165,24 +209,24 @@ public class QuestAndEventsExample : MonoBehaviour {
 	}
 
 	private void OnQuestsAccepted (GP_QuestResult result) {
-		AN_PoupsProxy.showMessage ("On Quests Accepted", "Quests Accepted, ID: " + result.questId);
+		AN_PoupsProxy.showMessage ("On Quests Accepted", "Quests Accepted, ID: " + result.GetQuest().Id);
 
-		SA_StatusBar.text = "OnQuestsAccepted:  " + result.response.ToString();
+		SA_StatusBar.text = "OnQuestsAccepted:  " + result.Response.ToString();
 	}
 
 	private void OnQuestsCompleted (GP_QuestResult result) {
-		Debug.Log ("Quests Completed, Reward: " + result.reward);
+		Debug.Log ("Quests Completed, Reward: " + result.GetQuest().RewardData);
 
-		AN_PoupsProxy.showMessage ("On Quests Completed", "Quests Completed, Reward: " + result.reward);
+		AN_PoupsProxy.showMessage ("On Quests Completed", "Quests Completed, Reward: " + result.GetQuest().RewardData);
 
-		SA_StatusBar.text = "OnQuestsCompleted:  " + result.response.ToString();
+		SA_StatusBar.text = "OnQuestsCompleted:  " + result.Response.ToString();
 	}
 
 	private void OnQuestsLoaded (GooglePlayResult result) {
 		Debug.Log ("Total Quests: " + GooglePlayQuests.instance.GetQuests().Count);
 		AN_PoupsProxy.showMessage ("Quests Loaded", "Total Quests: " + GooglePlayQuests.instance.GetQuests().Count);
 
-		SA_StatusBar.text = "OnQuestsLoaded:  " + result.response.ToString();
+		SA_StatusBar.text = "OnQuestsLoaded:  " + result.Response.ToString();
 
 		foreach(GP_Quest quest in GooglePlayQuests.instance.GetQuests()) {
 			Debug.Log(quest.Id);

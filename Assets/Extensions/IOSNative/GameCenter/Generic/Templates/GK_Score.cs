@@ -148,17 +148,17 @@ public class GK_Score  {
 
 	
 	//--------------------------------------
-	// Deprectaed
+	// Depreciated
 	//--------------------------------------
 
-	[System.Obsolete("rank is deprectaed, plase use Rank instead")]
+	[System.Obsolete("rank is deprecated, plase use Rank instead")]
 	public int rank {
 		get {
 			return _Rank;
 		}
 	}
 
-	[System.Obsolete("score is deprectaed, plase use LongScore instead")]
+	[System.Obsolete("score is deprecated, plase use LongScore instead")]
 	public long score {
 		get {
 			return _Score;
@@ -166,14 +166,14 @@ public class GK_Score  {
 	}
 
 
-	[System.Obsolete("playerId is deprectaed, plase use PlayerId instead")]
+	[System.Obsolete("playerId is deprecated, plase use PlayerId instead")]
 	public string playerId {
 		get {
 			return _PlayerId;
 		}
 	}
 	
-	[System.Obsolete("leaderboardId is deprectaed, plase use LeaderboardId instead")]
+	[System.Obsolete("leaderboardId is deprecated, plase use LeaderboardId instead")]
 	public string leaderboardId {
 		get {
 			return _LeaderboardId;
@@ -181,7 +181,7 @@ public class GK_Score  {
 	}
 
 
-	[System.Obsolete("timeSpan is deprectaed, plase use TimeSpan instead")]
+	[System.Obsolete("timeSpan is deprecated, plase use TimeSpan instead")]
 	public GK_TimeSpan timeSpan {
 		get {
 			return _TimeSpan;
@@ -189,7 +189,7 @@ public class GK_Score  {
 	}
 
 
-	[System.Obsolete("collection is deprectaed, plase use Collection instead")]
+	[System.Obsolete("collection is deprecated, plase use Collection instead")]
 	public GK_CollectionType collection {
 		get {
 			return _Collection;

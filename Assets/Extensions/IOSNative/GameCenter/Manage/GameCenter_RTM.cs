@@ -141,7 +141,7 @@ public class GameCenter_RTM : ISN_Singleton<GameCenter_RTM> {
 		#endif
 	}
 
-	public void CancelMatchSeartch() {
+	public void CancelMatchSearch() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
 		ISN_RTM_CancelMatchSeartch();
 		#endif

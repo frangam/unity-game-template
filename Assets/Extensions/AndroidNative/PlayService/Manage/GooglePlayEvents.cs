@@ -61,7 +61,7 @@ public class GooglePlayEvents : SA_Singleton<GooglePlayEvents> {
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 		
 		GooglePlayResult result = new GooglePlayResult (storeData [0]);
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			
 			for(int i = 1; i < storeData.Length; i+=5) {
 				if(storeData[i] == AndroidNative.DATA_EOF) {

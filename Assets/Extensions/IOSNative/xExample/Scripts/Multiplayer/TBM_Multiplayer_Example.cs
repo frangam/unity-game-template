@@ -189,7 +189,7 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 		
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Remove Match")) {
 			GameCenter_TBM.Instance.RemoveMatch(CurrentMatch.Id);
-			GameCenter_TBM.ActionMacthRemoved += ActionMacthRemoved;
+			GameCenter_TBM.ActionMatchRemoved += ActionMacthRemoved;
 			
 		}
 	}
@@ -254,7 +254,7 @@ public class TBM_Multiplayer_Example : BaseIOSFeaturePreview {
 	}
 
 	void ActionMacthRemoved (GK_TBM_MatchRemovedResult result) {
-		GameCenter_TBM.ActionMacthRemoved -= ActionMacthRemoved;
+		GameCenter_TBM.ActionMatchRemoved -= ActionMacthRemoved;
 		Debug.Log("ActionMacthRemoved IsSucceeded: " + result.IsSucceeded);
 
 		if(result.IsFailed) {

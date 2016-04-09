@@ -174,7 +174,9 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		
 		
 		//		checkMaxAmountOfMoneyRaised();
-		StartCoroutine(waitAtStartForCloseIfNotLoaded());
+//		StartCoroutine(waitAtStartForCloseIfNotLoaded());
+
+		closeWinWhenErrorAtInit();
 	}
 	
 	public void checkMaxAmountOfMoneyRaised(){
@@ -231,12 +233,12 @@ public class UIBaseInAppWin : UIBaseShopListWindow {
 		if(pnlInAppServiceNotInited && shopWindow && shopWindow.IsOpen)
 			UIController.Instance.Manager.waitForClose(pnlInAppServiceNotInited, delayForCloseWin);
 		
-		if(callFromShopWin){
-			if(shopWindow)
-				UIController.Instance.Manager.close(shopWindow);
-			
-			showPanelLoading(false);
+		if (callFromShopWin) {
+			if (shopWindow)
+				UIController.Instance.Manager.close (shopWindow);
 		}
+			showPanelLoading(false);
+//		}
 	}
 	
 	public IEnumerator waitAtStartForCloseIfNotLoaded(bool callFromShopWin = false){

@@ -1,13 +1,72 @@
+8.2:
+New Features:
+IOS Native Settings is no under the StansAssetsConfig folder
+Ability to Dectect IS App runing  at release mode. Read more: https://goo.gl/A224K4
+Saved Games API Added. Read more: https://goo.gl/dzUvDj
+
+
+Fixes:
+IOS 9.2 iAd API bug
+Local notification callbacks bug
+Unity 4.7 compilation issue
+Camera / Gallery photo rotation bug 
+iCloud Data read / write speed
+Game Center TBM match createtion date bug
+Game Center login popup bug
+
+
+8.1.1
+Fixes:
+Turn based multiplayer events fixed
+
+Updates:
+Unity 4.7.x compatibility update
+Unity 5.3.x compatibility update
+
+New Features:
+iCloud Conflict Managing updated
+
+Fixes:
+Minor Spelling Issues
+
+8.1:
+New Features
+Cloud Kit. Read more: https://goo.gl/qxMHNf
+
+
+Fixes:
+Unity 5.3 compatibility
+Apple TV compilation
+
+
+8.0.7
+New Features:
+Device Info API added: Read More: https://goo.gl/ziEsCI
+
+Fixes:
+Push Notifications Crash fixed
+
+8.0.6
+GamceCenterManager.IsPlayerUnderage property added
+
+8.0.5
+Replay Kit IsMicEnabled property added
+Replay Kit IsRecodingAvailableToShare property added
+Replay Kit DiscardRecording method added
+Game Center API minor fix
+
+Guided Access. Read more: https://goo.gl/HOf7sf
+
 8.0.4
 Replay Kit IsAvaliavble property added
 IOSProductTemplate.Price is now float
-iAd Interstisials fixed
+iAd Interstitials fixed
 iAdBannerController IsInterstisialsAdReady property added
 
 8.0.3
-Improvments:
-Ediotr Settings Redisigned
-Reaply Kit: ability to choose view mode on iPad
+Improvements:
+Editor Settings Redesigned
+Replay Kit: ability to choose view mode on iPad
 
 Fixes:
 Minor Popups dismissing fix
@@ -16,7 +75,7 @@ TRB multiplayer example scene fixes
 Push notification API compilation dependencies fix
 
 Refactor:
-IOSProductTemplate class, all filed names now strating from the capital letter
+IOSProductTemplate class, all filed names now starting from the capital letter
 
 8.0.2
 Local notifications, ability to set custom sound.  Read more: https://goo.gl/bVQG0s
@@ -51,19 +110,19 @@ New update system
 Fixes:
 Leaderboard MaxRange bug fixed.
 IOS 6,7 compatibility fix
-In app user info bug fixed
+In-app user info bug fixed
 Game Center errors data fixed
 
 7.1
 New Features:
 Editor Plugin Cleanup
 Media Player API. Read more: https://goo.gl/7pDs88
-Application Bages Number API. Read more: https://goo.gl/qhv8IO
+Application Badges Number API. Read more: https://goo.gl/qhv8IO
 Local Notification API refactor + new features. Read more: https://goo.gl/8xHhxV
 
 Update: 
-Popups API updated due to new IOS standarts 
-IOSStoreKitResult ApplicationUsername propertie added
+Popups API updated due to new IOS standards 
+IOSStoreKitResult ApplicationUsername properties added
 
 Fixes:
 ISN Camera memory leak fixed
@@ -71,9 +130,7 @@ IOSInAppPurchaseManager Editor Fake events fixed
 Game Center black view on popup dismiss fixed
 Game Center player score dynamic update fixed
 Game Center player signature retrieval fixed
-Game Center leaderboards range retrive API fixed
-
-
+Game Center leaderboards range retrieve API fixed
 
 Refactor:
 Please remove following files before update:
@@ -93,7 +150,7 @@ Most of action is now static. Check the examples.
 
 7.0:
 New Feature:
-Trun-Based multiplayer API
+Turn-Based multiplayer API
 Fully upgraded Real Time API
 Game Center Code refactor
 Minor fixes for Unity 5
@@ -108,8 +165,8 @@ Assets/Plugins/IOS/IOSGameCenterManager.mm
 
 6.1:
 New Features:
-Resore Purchases API Extended. Read more: http://goo.gl/T9KBq9
-Leaderboard max range propery added: https://goo.gl/K0sDJf
+Restore Purchases API Extended. Read more: http://goo.gl/T9KBq9
+Leaderboard max range property added: https://goo.gl/K0sDJf
 AchievementTemplate, Description added
 
 6.0:
@@ -135,7 +192,7 @@ Local Receipts Validation. Read more:  http://goo.gl/KacbY6
 
 Fixes:
 Social sharing dialogs orientation fixed
-iAd Interstisial Ad fixes
+iAd Interstitial Ad fixes
 Camera Image picking on IOS7 fixed
 ISN_ShowInterstisialAd action fixed
 ISN_HideBanner action fixed
@@ -188,7 +245,7 @@ ProductTemplate -> IOSProductTemplate (please remove old ProductTemplate.cs file
 
 Fixes:
 GameCenterManager.OnAchievementsLoaded action result fixed
-GameCenter long long score submission fixed
+GameCenter long-long score submission fixed
 TransactionServer error description fixed
 
 IOSStoreKitError object added as representation of transaction error, update in-app purchases guide can be found here: http://goo.gl/CkP6GU
@@ -266,7 +323,7 @@ Pre-loader Size for IOS8 fixed
 Local Notification fixed and updated for IOS8
 iCloudManager Singleton implementation fixed 
 
-Refractor:
+Refactor:
 
 IOSInAppPurchaseManager.PRODUCT_BOUGHT and IOSInAppPurchaseManager.TRANSACTION_FAILED
 events remove and replaced by IOSInAppPurchaseManager.TRANSACTION_COMPLETE event
@@ -419,7 +476,7 @@ Example Scenes Improved
 4.3:
 New Features:
 Save texture to camera roll API
-Save screenshot to camera roll API
+Save screen-shot to camera roll API
 Camera Roll PlayMaker Actions
 
 Fixes:
@@ -443,11 +500,11 @@ IOSNative.h -> Removed
 IOSNative.mm -> Removed
 InAppPurchaseManager.m -> Removed
 IOSNative.instance.init -> Removed
-you do no have to call it anymore on your game init
+you do no have to call it anymore on your game initialization
 
 
 Fixes:
-Biling init event.
-Game Cneter player avatar loading 
+Billing initialization event.
+Game Center player avatar loading 
 Unity 4.5 compatibility fix
 WP8 Compatibility Fix

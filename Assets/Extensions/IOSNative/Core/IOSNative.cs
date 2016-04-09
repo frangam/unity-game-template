@@ -22,7 +22,7 @@ public class IOSNative {
 	public const string DATA_SPLITTER2 = "|%|";
 	public const string DATA_EOF = "endofline";
 
-
+	
 	public static string SerializeArray(string[] array) {
 
 		if(array == null) {
@@ -61,4 +61,50 @@ public class IOSNative {
 
 		return ParsedArray.ToArray();
 	}
+
+	/*
+	public static class Debug {
+		
+		static string prefix = "ISN = ";
+		
+		static string getTimestamp()
+		{
+			return System.DateTime.UtcNow.ToString ("HH:mm:ss: ");
+		}
+		public static void Log (object message)
+		{   if (!IOSNativeSettings.Instance.DisablePluginLogs)
+			UnityEngine.Debug.Log (getTimestamp() + prefix + message);
+			
+		}
+		
+		public static void Log (object message, UnityEngine.Object context)
+		{   if (!IOSNativeSettings.Instance.DisablePluginLogs)
+			UnityEngine.Debug.Log (getTimestamp() + prefix +  message, context);
+			
+		}
+		
+		
+		public static void LogError (object message)
+		{   if (!IOSNativeSettings.Instance.DisablePluginLogs)
+			UnityEngine.Debug.LogError (getTimestamp() + prefix +  message);
+			;
+		}
+		
+		public static void LogError (object message, UnityEngine.Object context)
+		{   if (!IOSNativeSettings.Instance.DisablePluginLogs)
+			UnityEngine.Debug.LogError (getTimestamp() + prefix +  message, context);
+			
+		}
+		
+		public static void LogWarning (object message)
+		{   if (!IOSNativeSettings.Instance.DisablePluginLogs)
+			UnityEngine.Debug.LogWarning (getTimestamp() + prefix +  message.ToString ());
+		}
+		
+		public static void LogWarning (object message, UnityEngine.Object context)
+		{   if (!IOSNativeSettings.Instance.DisablePluginLogs)
+			UnityEngine.Debug.LogWarning (getTimestamp() + prefix +  message.ToString (), context);
+		}
+	}
+	*/
 }

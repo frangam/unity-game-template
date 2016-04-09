@@ -1,7 +1,10 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
-public class AndroidSocialGate  {
+public class AndroidSocialGate : SA_Singleton<AndroidSocialGate> {
+
+	public static event Action<bool, string> OnShareIntentCallback = delegate {};
 
 	public static void StartGooglePlusShare(string text, Texture2D texture = null) {
 		AN_SocialSharingProxy.StartGooglePlusShareIntent(text, texture == null ? string.Empty : System.Convert.ToBase64String(texture.EncodeToPNG()));

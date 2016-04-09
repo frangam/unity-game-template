@@ -147,7 +147,7 @@ public class PlayServicFridnsLoadExample_New : MonoBehaviour {
 
 	private void OnFriendListLoaded(GooglePlayResult result) {
 		GooglePlayManager.ActionFriendsListLoaded -=  OnFriendListLoaded;
-		SA_StatusBar.text = "Load Friends Result:  " + result.response.ToString();
+		SA_StatusBar.text = "Load Friends Result:  " + result.Response.ToString();
 	}
 
 	

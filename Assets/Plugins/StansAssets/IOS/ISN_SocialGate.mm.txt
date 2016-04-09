@@ -1,3 +1,5 @@
+#if !TARGET_OS_TV
+
 //
 //  SocialGate.m
 //  Unity-iPhone
@@ -21,7 +23,7 @@
 @interface ISN_SocialGate : NSObject<MFMailComposeViewControllerDelegate>
 
 
-//@property (nonatomic, strong) UIDocumentInteractionController * documentInteractionController;
+@property (nonatomic, strong) UIDocumentInteractionController * documentInteractionController;
 
 + (id) sharedInstance;
 
@@ -32,6 +34,11 @@
 
 - (void) mediaShare:(NSString*)text media: (NSString*) media;
 - (void) sendEmail:(NSString*)subject body: (NSString*) body recipients: (NSString*) recipients media: (NSString*) media;
+
+- (void)whatsappShareText:(NSString *)msg;
+- (void)whatsappShareImage:(NSString *)media;
+
+
 @end
 
 
@@ -50,8 +57,21 @@ static ISN_SocialGate * cg_sharedInstance;
     
     return cg_sharedInstance;
 }
-/*
+
+
+#define MMM_WHATSAPP_URL @"whatsapp://"
+#define MMM_WHATSAPP_IMAGEFILENAME @"wa.wai"
+#define MMM_WHATSAPP_IMAGEUTI @"net.whatsapp.image"
+
+-(BOOL)whatsappInstalled{
+    return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:MMM_WHATSAPP_URL]];
+}
+
+
 -(void)whatsappShareText:(NSString *)msg {
+    
+   
+    
     NSString * urlWhats = [NSString stringWithFormat:@"whatsapp://send?text=%@",msg];
     NSURL * whatsappURL = [NSURL URLWithString:[urlWhats stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     if ([[UIApplication sharedApplication] canOpenURL: whatsappURL]) {
@@ -59,35 +79,52 @@ static ISN_SocialGate * cg_sharedInstance;
     } else {
         //Probably report the errror
     }
+    
 }
 
 -(void)whatsappShareImage:(NSString *)media {
-   
-    if ([[UIApplication sharedApplication] canOpenURL: [NSURL URLWithString:@"whatsapp://app"]]){
+    
+    NSData *imageData = [[NSData alloc] initWithBase64Encoding:media];
+    UIImage *image = [[UIImage alloc] initWithData:imageData];
+    
+    NSString *filepath=[NSTemporaryDirectory() stringByAppendingPathComponent:MMM_WHATSAPP_IMAGEFILENAME];
+    NSURL *fileURL = [NSURL fileURLWithPath:filepath];
+    
+    // save image to path..
+    if([UIImagePNGRepresentation(image) writeToFile:filepath atomically:YES]){
+        
+        // setup a document interaction controller with our file ..
+        UIDocumentInteractionController *dic = [self setupControllerWithURL:fileURL  usingDelegate:nil];
+        self.documentInteractionController=dic;
+        dic.UTI = MMM_WHATSAPP_IMAGEUTI;
+        dic.name = MMM_WHATSAPP_IMAGEFILENAME;
+        
+        dic.annotation=@{@"message":@"Test Text",@"text":@"Test Text"};
+        
+        
         UIViewController *vc =  UnityGetGLViewController();
 
+        [dic presentOpenInMenuFromRect:vc.view.bounds inView:vc.view animated:YES];
         
-        NSData *imageData = [[NSData alloc] initWithBase64Encoding:media];
-        UIImage *iconImage = [[UIImage alloc] initWithData:imageData];
-        
-        NSString    * savePath  = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/whatsAppTmp.wai"];
-        
-        [UIImageJPEGRepresentation(iconImage, 1.0) writeToFile:savePath atomically:YES];
-        
-        _documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:savePath]];
-        _documentInteractionController.UTI = @"net.whatsapp.image";
-      //  _documentInteractionController.delegate = self;
-        
-        [_documentInteractionController presentOpenInMenuFromRect:CGRectMake(0, 0, 0, 0) inView:vc.view animated: YES];
-        
-        
-    } else {
-        //Probably report the errror
+        // exit; we're not calling activityDidFinish here, but later in documentInteractionControllerDidDismissOpenInMenu.
+        return;
     }
+
 }
-*/
+
+- (UIDocumentInteractionController *) setupControllerWithURL: (NSURL*) fileURL
+                                               usingDelegate: (id <UIDocumentInteractionControllerDelegate>) interactionDelegate {
+    
+    UIDocumentInteractionController *interactionController =
+    [UIDocumentInteractionController interactionControllerWithURL: fileURL];
+    interactionController.delegate = interactionDelegate;
+    
+    return interactionController;
+}
+
 
 -(void) mediaShare:(NSString *)text  media:(NSString *)media {
+    
     NSLog(@"ISN: mediaShare");
     UIActivityViewController *controller;
                                             
@@ -849,6 +886,17 @@ extern "C" {
         [[ISN_SocialGate sharedInstance] sendEmail:mailSubject body:mailBody recipients:mailRecipients media:media];
     }
     
+    void _ISN_WP_ShareText(char* text) {
+        NSString *msg = [ISN_DataConvertor charToNSString:text];
+        [[ISN_SocialGate sharedInstance] whatsappShareText:msg];
+      
+    }
+    
+    
+    void _ISN_WP_ShareMedia(char* encodedMedia) {
+          NSString *media = [ISN_DataConvertor charToNSString:encodedMedia];
+        [[ISN_SocialGate sharedInstance] whatsappShareImage:media];
+    }
     
     //--------------------------------------
     //  Mobile Social Plugin Section
@@ -931,5 +979,5 @@ extern "C" {
 }
 
 
-
+#endif
 

@@ -111,12 +111,21 @@ public class GameCenterManager : MonoBehaviour {
 	[DllImport ("__Internal")]
 	private static extern  void _ISN_ShowNotificationBanner (string title, string message);
 	
+	[DllImport ("__Internal")]
+	private static extern  void _ISN_LoadAchievements ();
+
+	[DllImport ("__Internal")]
+	private static extern bool _ISN_GK_IsUnderage();
+
+	[DllImport ("__Internal")]
+	private static extern bool _ISN_GK_IsAuthenticated();
+
+
 
 	#endif
 
 
 	private  static bool _IsInitialized = false;
-	private  static bool _IsPlayerAuthenticated = false;
 	private  static bool _IsAchievementsInfoLoaded = false;
 	
 
@@ -383,6 +392,12 @@ public class GameCenterManager : MonoBehaviour {
 
 
 
+	public static void LoadAchievements() {
+		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+		_ISN_LoadAchievements();
+		#endif
+	}
+
 
 	public static void IssueAchievementChallenge(string achievementId, string message, string[] playerIds) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
@@ -563,7 +578,11 @@ public class GameCenterManager : MonoBehaviour {
 
 	public static bool IsPlayerAuthenticated {
 		get {
-			return _IsPlayerAuthenticated;
+			#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+			return _ISN_GK_IsAuthenticated();
+			#else
+			return false;
+			#endif
 		}
 	}
 
@@ -579,6 +598,17 @@ public class GameCenterManager : MonoBehaviour {
 		}
 	}
 
+
+
+	public static bool IsPlayerUnderage {
+		get {
+			#if (UNITY_IPHONE && !UNITY_EDITOR && GAME_CENTER_ENABLED) || SA_DEBUG_MODE
+			return _ISN_GK_IsUnderage();
+			#else
+			return false;
+			#endif
+		}
+	}
 
 
 	
@@ -789,26 +819,14 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_CacheManager.SendAchievementCachedRequest();
 
-		_IsPlayerAuthenticated = true;
-
-
-		ISN_Result result = new ISN_Result (_IsPlayerAuthenticated);
+		ISN_Result result = new ISN_Result (IsPlayerAuthenticated);
 		OnAuthFinished (result);
 	}
 	
 	
 	private void onAuthenticationFailed(string  errorData) {
 
-		_IsPlayerAuthenticated = false;
-
-		ISN_Result result;
-		if(errorData.Length > 0) {
-			result = new ISN_Result(errorData);
-		} else {
-			result	= new ISN_Result (_IsPlayerAuthenticated);
-		}
-
-			
+		ISN_Result result = new ISN_Result(errorData);
 		OnAuthFinished (result);
 	}
 

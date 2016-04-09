@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
+using System;
  
 
 
@@ -43,29 +43,37 @@ public class GooglePlayResult {
 	// GET / SET
 	//--------------------------------------
 
-	public GP_GamesStatusCodes response {
+	[Obsolete("response is deprecated, please use Response instead.")]
+	public GP_GamesStatusCodes response { get { return Response; } }
+	public GP_GamesStatusCodes Response {
 		get {
 			return _response;
 		}
 	}
 
-	public string message {
+
+	[Obsolete("message is deprecated, please use Message instead.")]
+	public string message { get { return Message; } }
+	public string Message {
 		get {
 			return _message;
 		}
 	}
 
 
-
-	public bool isSuccess  {
+	[Obsolete("isSuccess is deprecated, please use IsSucceeded instead.")]
+	public bool isSuccess  { get { return IsSucceeded; }}
+	public bool IsSucceeded {
 		get {
 			return _response == GP_GamesStatusCodes.STATUS_OK;
 		}
 	}
 
-	public bool isFailure {
+	[Obsolete("isFailure is deprecated, please use IsFailed instead.")]
+	public bool isFailure { get { return IsFailed; } }
+	public bool IsFailed {
 		get {
-			return !isSuccess;
+			return !IsSucceeded;
 		}
 	}
 

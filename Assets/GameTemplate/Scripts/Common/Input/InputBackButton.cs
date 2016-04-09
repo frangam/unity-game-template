@@ -129,7 +129,14 @@ public class InputBackButton : Singleton<InputBackButton> {
 			else{
 				switch(action){
 				case Action.QUIT:
-					Application.Quit(); 
+					#if UNITY_ANDROID && !UNITY_EDITOR
+								using (AndroidJavaClass javaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
+									AndroidJavaObject unityActivity = javaClass.GetStatic<AndroidJavaObject>("currentActivity");
+									unityActivity.Call<bool>("moveTaskToBack", true);
+								}
+					#else
+					Application.Quit();
+					#endif 
 					break;
 					
 				case Action.GAME_SCREEN:

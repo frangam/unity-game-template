@@ -217,10 +217,10 @@ public class RTM_Game_Example : AndroidNativeExampleBase {
 	}
 
 	void OnFriendListLoaded (GooglePlayResult result) {
-		Debug.Log("OnFriendListLoaded: " + result.message);
+		Debug.Log("OnFriendListLoaded: " + result.Message);
 		GooglePlayManager.ActionFriendsListLoaded -=  OnFriendListLoaded;
 
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			Debug.Log("Friends Load Success");
 
 			int i = 0;

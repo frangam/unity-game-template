@@ -1,3 +1,4 @@
+#define SA_DEBUG_MODE
 ////////////////////////////////////////////////////////////////////////////////
 //  
 // @module IOS Native Plugin for Unity3D 
@@ -20,8 +21,10 @@ public class iCloudManager : ISN_Singleton<iCloudManager> {
 	
 
 	//Actions
-	public static event Action<ISN_Result> OnCloundInitAction = delegate {};
+	public static event Action<ISN_Result> OnCloudInitAction = delegate {};
 	public static event Action<iCloudData> OnCloudDataReceivedAction = delegate {};
+	public static event Action<List<iCloudData>> OnStoreDidChangeExternally = delegate {};
+
 
 
 	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
@@ -70,19 +73,11 @@ public class iCloudManager : ISN_Singleton<iCloudManager> {
 	}
 
 	public void setData(string key, byte[] val) {
+
+
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-
-			string b = "";
-			int len = val.Length;
-			for(int i = 0; i < len; i++) {
-				if(i != 0) {
-					b += ",";
-				}
-
-				b += val[i].ToString();
-			}
-
-			_setData(key, b);
+			string bytesString = System.Convert.ToBase64String (val);
+			_setData(key, bytesString);
 		#endif
 	}
 
@@ -107,22 +102,37 @@ public class iCloudManager : ISN_Singleton<iCloudManager> {
 
 	private void OnCloudInit() {
 		ISN_Result res =  new ISN_Result(true);
-		OnCloundInitAction(res);
+		OnCloudInitAction(res);
 	}
 
 	private void OnCloudInitFail() {
 		ISN_Result res =  new ISN_Result(false);
-		OnCloundInitAction(res);
+		OnCloudInitAction(res);
 	}
 
-	private void OnCloudDataChanged() {
-		//OnCloundDataChangedAction();
+	private void OnCloudDataChanged(string data) {
+
+		List<iCloudData> changedData =  new List<iCloudData>();
+
+		string[] DataArray = data.Split(IOSNative.DATA_SPLITTER); 
+
+		for(int i = 0; i < DataArray.Length; i += 2 ) {
+			if(DataArray[i] == IOSNative.DATA_EOF) {
+				break;
+			}
+
+			iCloudData pair =  new iCloudData(DataArray[i], DataArray[i + 1]);
+			changedData.Add(pair);
+		}
+
+		OnStoreDidChangeExternally(changedData);
+
 	}
 
 
 	private void OnCloudData(string array) {
 		string[] data;
-		data = array.Split("|" [0]);
+		data = array.Split(IOSNative.DATA_SPLITTER); 
 
 		iCloudData package = new iCloudData (data[0], data [1]);
 
@@ -131,7 +141,7 @@ public class iCloudManager : ISN_Singleton<iCloudManager> {
 
 	private void OnCloudDataEmpty(string array) {
 		string[] data;
-		data = array.Split("|" [0]);
+		data = array.Split(IOSNative.DATA_SPLITTER); 
 
 		iCloudData package = new iCloudData (data[0], "null");
 

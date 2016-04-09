@@ -20,6 +20,7 @@
 
 - (void) startRecordingWithMicrophoneEnabled:(BOOL)microphoneEnabled;
 - (void) stopRecording;
+- (void) discardRecording;
 - (void) showVideoShareDialog:(int)ipadViewMode;
 
 @end
@@ -88,6 +89,13 @@ static ISN_ReplayKit * rpk_sharedInstance;
 }
 
 
+- (void) discardRecording {
+    [[RPScreenRecorder sharedRecorder] discardRecordingWithHandler:^{
+        
+         [self setRpk_previewViewController:NULL];
+          UnitySendMessage("ISN_ReplayKit", "OnRecordDiscard", "");
+    }];
+}
 
 - (void) stopRecording {
     [[RPScreenRecorder sharedRecorder] stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController, NSError * _Nullable error) {
@@ -144,7 +152,8 @@ static ISN_ReplayKit * rpk_sharedInstance;
 
 
 - (void)screenRecorderDidChangeAvailability:(RPScreenRecorder *)screenRecorder {
-    // NSLog(@"screenRecorderDidChangeAvailability  delegate block");
+    NSLog(@"ISN_ReplayKit screenRecorderDidChangeAvailability  delegate block");
+    UnitySendMessage("ISN_ReplayKit", "OnRecorderDidChangeAvailability", "");
 }
 
 @end
@@ -155,12 +164,6 @@ extern "C" {
         [[ISN_ReplayKit sharedInstance] startRecordingWithMicrophoneEnabled:microphoneEnabled];
     }
     
-    
-    BOOL ISN_IsReplayKitAvaliable() {
-        return   [[RPScreenRecorder sharedRecorder] isAvailable];
-    }
-    
-    
     void _ISN_StopRecording () {
         [[ISN_ReplayKit sharedInstance] stopRecording];
     }
@@ -168,4 +171,25 @@ extern "C" {
     void _ISN_ShowVideoShareDialog (int ipadViewMode) {
         [[ISN_ReplayKit sharedInstance] showVideoShareDialog:ipadViewMode];
     }
+    
+    void _ISN_DiscardRecording () {
+        [[ISN_ReplayKit sharedInstance] discardRecording];
+    }
+    
+    BOOL ISN_IsReplayKitAvaliable() {
+        return   [[RPScreenRecorder sharedRecorder] isAvailable];
+    }
+    
+    BOOL ISN_IsReplayKitRecording() {
+        return   [[RPScreenRecorder sharedRecorder] isRecording];
+    }
+    
+    BOOL ISN_IsReplayKitMicEnabled() {
+        return   [[RPScreenRecorder sharedRecorder] isMicrophoneEnabled];
+    }
+    
+   
+    
+    
+   
 }

@@ -1,77 +1,92 @@
 ﻿using UnityEngine;
-using DG.Tweening;
 using UnityEngine.UI;
+
+
 
 [RequireComponent(typeof(ScrollRect))]
 public class ScrollRectEnsureVisible : MonoBehaviour
 {
-	
+
 	#region Public Variables
-	
-	public float _AnimTime = 0.15f;
-	public bool _Snap = false;
-	public RectTransform _MaskTransform;
-	
+
+	public float AnimTime = 0.15f;
+	public bool Snap = false;
+	public RectTransform MaskTransform;
+
 	#endregion
-	
+
 	#region Private Variables
-	
-	private ScrollRect mScrollRect;
-	private RectTransform mScrollTransform;
-	private RectTransform mContent;
-	
+
+	private ScrollRect _mScrollRect;
+	private RectTransform _mScrollTransform;
+	private RectTransform _mContent;
+
 	#endregion
-	
+
 	#region Unity Methods
-	
-	private void Awake ()
+
+	private void Awake()
 	{
-		mScrollRect = GetComponent<ScrollRect> ();
-		mScrollTransform = mScrollRect.transform  as RectTransform;
-		mContent = mScrollRect.content;
+		_mScrollRect = GetComponent<ScrollRect>();
+		_mScrollTransform = _mScrollRect.transform as RectTransform;
+		_mContent = _mScrollRect.content;
 	}
-	
+
 	#endregion
-	
+
 	#region Public Methods
-	
+
 	public void CenterOnItem(RectTransform target)
 	{
 		// Item is here
-		var itemCenterPositionInScroll = GetWorldPointInWidget(mScrollTransform, GetWidgetWorldPoint(target));
-		Debug.Log("Item Anchor Pos In Scroll: " + itemCenterPositionInScroll);
+		var itemCenterPositionInScroll = GetWorldPointInWidget(_mScrollTransform, GetWidgetWorldPoint(target));
 		// But must be here
-		var targetPositionInScroll = GetWorldPointInWidget(mScrollTransform, GetWidgetWorldPoint(_MaskTransform));
-		Debug.Log("Target Anchor Pos In Scroll: " + targetPositionInScroll);
+		var targetPositionInScroll = GetWorldPointInWidget(_mScrollTransform, GetWidgetWorldPoint(MaskTransform));
 		// So it has to move this distance
 		var difference = targetPositionInScroll - itemCenterPositionInScroll;
 		difference.z = 0f;
-		
+
 		//clear axis data that is not enabled in the scrollrect
-		if (!mScrollRect.horizontal)
+		if (!_mScrollRect.horizontal)
 		{
 			difference.x = 0f;
 		}
-		
-		if (!mScrollRect.vertical)
+		if (!_mScrollRect.vertical)
 		{
 			difference.y = 0f;
 		}
-		
-		//this is the wanted new position for the content
-		var newAnchoredPosition = mContent.anchoredPosition3D + difference;
-		
-		if (_Snap) {
-			mContent.anchoredPosition3D = newAnchoredPosition;
-		} else {
-			DOTween.To (() => mContent.anchoredPosition, x => mContent.anchoredPosition = x, newAnchoredPosition, _AnimTime);
+
+		Debug.Log("Difference: " + difference);
+
+		var normalizedDifference = new Vector2(
+			difference.x / (_mContent.rect.size.x - _mScrollTransform.rect.size.x),
+			difference.y / (_mContent.rect.size.y - _mScrollTransform.rect.size.y));
+
+		Debug.Log("Normalized difference: " + normalizedDifference);
+
+		var newNormalizedPosition = _mScrollRect.normalizedPosition - normalizedDifference;
+		Debug.Log("New normalized position: " + newNormalizedPosition);
+		if (_mScrollRect.movementType != ScrollRect.MovementType.Unrestricted)
+		{
+			newNormalizedPosition.x = Mathf.Clamp01(newNormalizedPosition.x);
+			newNormalizedPosition.y = Mathf.Clamp01(newNormalizedPosition.y);
+			Debug.Log("Clamped normalized position: " + newNormalizedPosition);
+		}
+
+		if (Snap)
+		{
+			_mScrollRect.normalizedPosition = newNormalizedPosition;
+		}
+		else
+		{
+			Go.to(_mScrollRect, AnimTime, new GoTweenConfig().vector2Prop("normalizedPosition", newNormalizedPosition));
 		}
 	}
-	
+
 	#endregion
-	
+
 	#region Private Methods
-	
+
 	Vector3 GetWidgetWorldPoint(RectTransform target)
 	{
 		//pivot position + item size has to be included
@@ -82,7 +97,7 @@ public class ScrollRectEnsureVisible : MonoBehaviour
 		var localPosition = target.localPosition + pivotOffset;
 		return target.parent.TransformPoint(localPosition);
 	}
-	
+
 	Vector3 GetWorldPointInWidget(RectTransform target, Vector3 worldPoint)
 	{
 		return target.InverseTransformPoint(worldPoint);

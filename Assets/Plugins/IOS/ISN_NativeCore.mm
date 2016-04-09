@@ -36,7 +36,7 @@ NSString * const UNITY_EOF = @"endofline";
 }
 
 +(const char *)NSIntToChar:(NSInteger)value {
-    NSString *tmp = [NSString stringWithFormat:@"%d", value];
+    NSString *tmp = [NSString stringWithFormat:@"%ld", (long)value];
     return [tmp UTF8String];
 }
 
@@ -87,7 +87,8 @@ NSString * const UNITY_EOF = @"endofline";
     if(error.description != nil) {
         description = error.description;
     }
-    return  [self serializeErrorWithDataToNSString:description code:error.code];
+    
+    return  [self serializeErrorWithDataToNSString:description code: (int) error.code];
 }
 
 + (NSString *)serializeErrorWithDataToNSString:(NSString *)description code:(int)code {
@@ -189,13 +190,17 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
 
 
 -(void) setApplicationBagesNumber:(int) count {
+    
+#if !TARGET_OS_TV
     [UIApplication sharedApplication].applicationIconBadgeNumber = count;
+#endif
 }
 
 
 
 - (void) ShowSpinner {
     
+    #if !TARGET_OS_TV
     [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
     
     if([self spinner] != nil) {
@@ -208,13 +213,18 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
     [self setSpinner:[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge]];
     
     
+
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+
+    
+    
     
     NSArray *vComp = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     if ([[vComp objectAtIndex:0] intValue] >= 8) {
         NSLog(@"iOS 8 detected");
         [[self spinner] setFrame:CGRectMake(0,0, vc.view.frame.size.width, vc.view.frame.size.height)];
     } else {
+        
         if([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait || [[UIDevice currentDevice] orientation] == UIDeviceOrientationPortraitUpsideDown) {
             NSLog(@"portrait detected");
             [[self spinner] setFrame:CGRectMake(0,0, vc.view.frame.size.width, vc.view.frame.size.height)];
@@ -225,9 +235,6 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
         }
         
     }
-    
-    
-    
     
     
     [self spinner].opaque = NO;
@@ -245,6 +252,8 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
     [[self spinner] startAnimating];
     
     //  [[self spinner] retain];
+    
+    #endif
     
 }
 
@@ -279,13 +288,17 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
     
     UIViewController *vc =  UnityGetGLViewController();
     
-    bool IsLandscape;
+    bool IsLandscape = true;
+    
+    #if !TARGET_OS_TV
+    
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     if(orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight) {
         IsLandscape = true;
     } else {
         IsLandscape = false;
     }
+    #endif
     
     CGFloat w;
     if(IsLandscape) {
@@ -304,6 +317,7 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
     return w;
 }
 
+#if !TARGET_OS_TV
 
 - (void)DP_changeDate:(UIDatePicker *)sender {
     
@@ -450,8 +464,12 @@ UIDatePicker *datePicker;
     [UIView commitAnimations];
 }
 
+#endif
+
 
 - (void) GetIFA {
+    
+    /*
     
 #if UNITY_VERSION < 500
     NSString* ifa = [[[NSClassFromString(@"ASIdentifierManager") sharedManager] advertisingIdentifier] UUIDString];
@@ -463,7 +481,7 @@ UIDatePicker *datePicker;
     
     UnitySendMessage("IOSSharedApplication", "OnAdvertisingIdentifierLoaded", [ISN_DataConvertor NSStringToChar:@""]);
     
-    
+    */
 }
 
 - (void) GetLocale {
@@ -551,25 +569,7 @@ static CloudManager * cm_sharedInstance;
         UnitySendMessage("iCloudManager", "OnCloudInitFail", [ISN_DataConvertor NSStringToChar:@""]);
     }
     
-    /*
-     
-     NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-     NSURL *storeURL = [documentsDirectory URLByAppendingPathComponent:@"CoreData.sqlite"];
-     NSError *error = nil;
-     NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:<# your managed object model #>];
-     NSDictionary *storeOptions =
-     @{NSPersistentStoreUbiquitousContentNameKey: @"MyAppCloudStore"};
-     NSPersistentStore *store = [coordinator addPersistentStoreWithType:NSSQLiteStoreType
-     configuration:nil
-     URL:storeURL
-     options:storeOptions
-     error:&error];
-     
-     NSURL *finaliCloudURL = [store URL];
-     */
-    
-    
-    NSLog(@"initialize");
+    NSLog(@"iCloud Initialize");
     
 }
 
@@ -605,7 +605,7 @@ static CloudManager * cm_sharedInstance;
     
     NSMutableString * array = [[NSMutableString alloc] init];
     [array appendString:key];
-    [array appendString:@"|"];
+    [array appendString:UNITY_SPLITTER];
     
     
     NSString* stringData;
@@ -616,21 +616,8 @@ static CloudManager * cm_sharedInstance;
         }
         
         if([data isKindOfClass:[NSData class]]) {
-            
             NSData *b = (NSData*) data;
-            
-            NSMutableString *str = [[NSMutableString alloc] init];
-            const char *db = (const char *) [b bytes];
-            for (int i = 0; i < [b length]; i++) {
-                if(i != 0) {
-                    [str appendFormat:@","];
-                }
-                
-                [str appendFormat:@"%i", (unsigned char)db[i]];
-            }
-            
-            stringData = str;
-            
+            stringData = [b base64Encoding]; 
         }
         
         if([data isKindOfClass:[NSNumber class]]) {
@@ -667,7 +654,76 @@ static CloudManager * cm_sharedInstance;
 
 
 - (void)storeDidChange:(NSNotification *)notification {
-    UnitySendMessage("iCloudManager", "OnCloudDataChanged", [ISN_DataConvertor NSStringToChar:@""]);
+    NSDictionary* userInfo = [notification userInfo];
+    NSNumber* reasonForChange = [userInfo objectForKey:NSUbiquitousKeyValueStoreChangeReasonKey];
+    NSInteger reason = -1;
+    
+    // If a reason could not be determined, do not update anything.
+    if (!reasonForChange)
+        return;
+    
+    
+    NSMutableString * array = [[NSMutableString alloc] init];
+    
+
+    
+    // Update only for changes from the server.
+    reason = [reasonForChange integerValue];
+    if ((reason == NSUbiquitousKeyValueStoreServerChange) || (reason == NSUbiquitousKeyValueStoreInitialSyncChange)) {
+    
+        NSArray* changedKeys = [userInfo objectForKey:NSUbiquitousKeyValueStoreChangedKeysKey];
+        NSUbiquitousKeyValueStore* store = [NSUbiquitousKeyValueStore defaultStore];
+        
+        for (NSString* key in changedKeys) {
+            id value = [store objectForKey:key];
+            
+            [array appendString:key];
+            [array appendString:UNITY_SPLITTER];
+            
+            NSString* stringData;
+            
+            if(value != nil) {
+                if([value isKindOfClass:[NSString class]]) {
+                    stringData = (NSString*) value;
+                }
+                
+                if([value isKindOfClass:[NSData class]]) {
+                    
+                    NSData *b = (NSData*) value;
+                    
+                    NSMutableString *str = [[NSMutableString alloc] init];
+                    const char *db = (const char *) [b bytes];
+                    for (int i = 0; i < [b length]; i++) {
+                        if(i != 0) {
+                            [str appendFormat:@","];
+                        }
+                        
+                        [str appendFormat:@"%i", (unsigned char)db[i]];
+                    }
+                    
+                    stringData = str;
+                    
+                }
+                
+                if([value isKindOfClass:[NSNumber class]]) {
+                    NSNumber* n = (NSNumber*) value;
+                    stringData = [n stringValue];
+                }
+                
+            } else {
+                stringData = @"null";
+            }
+            
+            
+            [array appendString:stringData];
+            [array appendString:UNITY_SPLITTER];
+        }
+        
+        [array appendString:UNITY_EOF];
+        
+    }
+    
+    UnitySendMessage("iCloudManager", "OnCloudDataChanged", [ISN_DataConvertor NSStringToChar:array]);
 }
 
 -(void) iCloudAccountAvailabilityChanged {
@@ -865,6 +921,8 @@ static ISN_NativePopUpsManager *_sharedInstance;
 //  IOS 6,7 implementation
 //--------------------------------------
 
+#if !TARGET_OS_TV
+
 static UIAlertView* _currentAllert =  nil;
 
 + (void) unregisterAllertView_old {
@@ -942,7 +1000,7 @@ static UIAlertView* _currentAllert =  nil;
     UnitySendMessage("IOSPopUp", "onPopUpCallBack",  [ISN_DataConvertor NSIntToChar:buttonIndex]);
     UnitySendMessage("IOSRateUsPopUp", "onPopUpCallBack",  [ISN_DataConvertor NSIntToChar:buttonIndex]);
 }
-
+#endif
 
 @end
 
@@ -987,6 +1045,9 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
 
 #pragma mark Music notification handlers
 
+
+
+#if !TARGET_OS_TV
 
 - (void) handle_NotificationEvent: (NSNotification *) receivedNotification {
     
@@ -1037,29 +1098,35 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
     
 }
 
+#endif
+
 - (void) RegisterForNotifications {
+    #if !TARGET_OS_TV
     
     NSArray *vComp = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     if ([[vComp objectAtIndex:0] intValue] >= 8) {
         [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
         
     }
+    #endif
 }
 
 -(void) requestNotificationSettings {
+    #if !TARGET_OS_TV
+    
     UIUserNotificationSettings* NotificationSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
     
     NSString *str = [NSString stringWithFormat:@"%d", NotificationSettings.types];
     
     UnitySendMessage("IOSNotificationController", "OnNotificationSettingsInfoRetrived", [ISN_DataConvertor NSStringToChar:str]);
     
-    
+    #endif
 }
 
 
 -(void) scheduleNotification:(int)time message:(NSString *)message sound:(bool *)sound alarmID:(NSString *)alarmID badges:(int)badges notificationData:(NSString *)notificationData notificationSoundName:(NSString *)notificationSoundName{
     
-    
+     #if !TARGET_OS_TV
     
     NSArray *vComp = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     if ([[vComp objectAtIndex:0] intValue] >= 8) {
@@ -1145,8 +1212,10 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
     
     UnitySendMessage("IOSNotificationController", "OnNotificationScheduleResultAction", [ISN_DataConvertor NSStringToChar:data]);
     
-    
+     #endif
 }
+
+#if !TARGET_OS_TV
 
 - (UILocalNotification *)existingNotificationWithAlarmID:(NSString *)alarmID {
     for (UILocalNotification *notification in [[UIApplication sharedApplication] scheduledLocalNotifications]) {
@@ -1158,7 +1227,13 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
     return nil;
 }
 
+ #endif
+
+
+
 - (void)cleanUpLocalNotificationWithAlarmID:(NSString *)alarmID {
+    #if !TARGET_OS_TV
+    
     NSLog(@"cleanUpLocalNotificationWithAlarmID AlarmKey: %@", alarmID);
     
     UILocalNotification *notification = [self existingNotificationWithAlarmID:alarmID];
@@ -1166,6 +1241,8 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
         NSLog(@"notification canceled");
         [[UIApplication sharedApplication] cancelLocalNotification:notification];
     }
+    
+    #endif
 }
 
 
@@ -1174,11 +1251,15 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
 
 
 - (void) cancelNotifications {
+     #if !TARGET_OS_TV
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    #endif
 }
 
 - (void) applicationIconBadgeNumber:(int) badges {
+     #if !TARGET_OS_TV
     [UIApplication sharedApplication].applicationIconBadgeNumber = badges;
+     #endif
 }
 
 
@@ -1227,7 +1308,9 @@ extern "C" {
     //--------------------------------------
     
     void _ISN_ShowDP(int mode) {
+         #if !TARGET_OS_TV
         [[ISN_NativeUtility sharedInstance] DP_show:mode];
+        #endif
     }
     
     
@@ -1262,6 +1345,130 @@ extern "C" {
     
     void _ISN_GetLocale() {
         [[ISN_NativeUtility sharedInstance] GetLocale];
+    }
+    
+    
+    void _ISN_RequestGuidedAccessSession(bool enable) {
+        UIAccessibilityRequestGuidedAccessSession(enable, ^(BOOL didSucceed) {
+            if(didSucceed) {
+                 UnitySendMessage("IOSNativeUtility", "OnGuidedAccessSessionRequestResult", "true");
+            } else {
+                 UnitySendMessage("IOSNativeUtility", "OnGuidedAccessSessionRequestResult", "false");
+            }
+        });
+    }
+    
+    bool _ISN_IsGuidedAccessEnabled() {
+      
+        return UIAccessibilityIsGuidedAccessEnabled;
+    }
+    
+    bool _ISN_IsRunningTestFlightBeta() {
+        if ([[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"]) {
+            // TestFlight
+            return true;
+        } else {
+            // App Store (and Apple reviewers too)
+            return false;
+        }
+    }
+
+    
+    // Helper method to create C string copy
+    char* ISN_MakeStringCopy (const char* string)
+    {
+        if (string == NULL)
+            return NULL;
+        
+        char* res = (char*)malloc(strlen(string) + 1);
+        strcpy(res, string);
+        return res;
+    }
+    
+    const char* _ISN_RetriveDeviceData() {
+        
+       
+        
+    
+	    NSMutableString * data = [[NSMutableString alloc] init];
+        
+        if([[UIDevice currentDevice] name] != nil) {
+            [data appendString:[[UIDevice currentDevice] name]];
+          
+        } else {
+            [data appendString:@""];
+        }
+        [data appendString:@"|"];
+        
+        
+        if([[UIDevice currentDevice] systemName] != nil) {
+            [data appendString:[[UIDevice currentDevice] systemName]];
+        
+        } else {
+            [data appendString:@""];
+        }
+        [data appendString:@"|"];
+        
+        
+        if([[UIDevice currentDevice] model] != nil) {
+            [data appendString:[[UIDevice currentDevice] model]];
+          
+        } else {
+            [data appendString:@""];
+        }
+        [data appendString:@"|"];
+        
+        
+        
+        if([[UIDevice currentDevice] localizedModel] != nil) {
+            [data appendString:[[UIDevice currentDevice] localizedModel]];
+          
+        } else {
+            [data appendString:@""];
+        }
+        [data appendString:@"|"];
+        
+        
+        
+        [data appendString:[[UIDevice currentDevice] systemVersion]];
+        [data appendString:@"|"];
+        
+        [data appendString:[NSString stringWithFormat: @"%d", [ISN_NativeUtility majorIOSVersion]]];
+        [data appendString:@"|"];
+        
+        
+        int Idiom = -1;
+        switch ([[UIDevice currentDevice] userInterfaceIdiom]) {
+            case UIUserInterfaceIdiomPhone:
+                Idiom = 0;
+                break;
+            case UIUserInterfaceIdiomPad:
+                Idiom = 1;
+                break;
+                
+            default:
+                Idiom = -1;
+                break;
+        }
+        
+        [data appendString:[NSString stringWithFormat: @"%d", Idiom]];
+        [data appendString:@"|"];
+
+        
+        NSUUID *vendorIdentifier = [[UIDevice currentDevice] identifierForVendor];
+        uuid_t uuid;
+        [vendorIdentifier getUUIDBytes:uuid];
+            
+        NSData *vendorData = [NSData dataWithBytes:uuid length:16];
+        NSString *encodedString = [vendorData base64Encoding];
+        [data appendString:encodedString];
+
+  
+	    #if UNITY_VERSION < 500
+	    [data autorelease];
+		#endif
+
+         return ISN_MakeStringCopy([ISN_DataConvertor NSStringToChar:data]);
     }
     
  
@@ -1313,22 +1520,13 @@ extern "C" {
         [[CloudManager sharedInstance] setDouble:v key:k];
     }
     
-    void _setData(char* key, char* val) {
+    void _setData(char* key, char* data) {
         NSString* k = [ISN_DataConvertor charToNSString:key];
-        NSString* v = [ISN_DataConvertor charToNSString:val];
         
-        NSArray *bytes = [v componentsSeparatedByString:@","];
+        NSString* mDataString = [ISN_DataConvertor charToNSString:data];
+        NSData *mData = [[NSData alloc] initWithBase64Encoding:mDataString];
         
-        
-        NSMutableData* d = [[NSMutableData alloc] init];
-        for(NSString* s in bytes) {
-            int v = [s intValue];
-            char * c = (char*)(&v);
-            [d appendBytes:c length:1];
-            
-        }
-        
-        [[CloudManager sharedInstance] setData:d key:k];
+        [[CloudManager sharedInstance] setData:mData key:k];
         
     }
     
@@ -1380,7 +1578,12 @@ extern "C" {
         if([ISN_NativeUtility majorIOSVersion] >= 8) {
             [ISN_NativePopUpsManager showRateUsPopUp:[ISN_DataConvertor charToNSString:title] message:[ISN_DataConvertor charToNSString:message] b1:[ISN_DataConvertor charToNSString:b1] b2:[ISN_DataConvertor charToNSString:b2] b3:[ISN_DataConvertor charToNSString:b3]];
         } else {
+            
+            #if !TARGET_OS_TV
+            
             [ISN_NativePopUpsManager showRateUsPopUp_old:[ISN_DataConvertor charToNSString:title] message:[ISN_DataConvertor charToNSString:message] b1:[ISN_DataConvertor charToNSString:b1] b2:[ISN_DataConvertor charToNSString:b2] b3:[ISN_DataConvertor charToNSString:b3]];
+            
+            #endif
         }
     }
     
@@ -1390,7 +1593,12 @@ extern "C" {
         if([ISN_NativeUtility majorIOSVersion] >= 8) {
             [ISN_NativePopUpsManager showDialog:[ISN_DataConvertor charToNSString:title] message:[ISN_DataConvertor charToNSString:message] yesTitle:[ISN_DataConvertor charToNSString:yes] noTitle:[ISN_DataConvertor charToNSString:no]];
         } else {
+            
+            #if !TARGET_OS_TV
+            
             [ISN_NativePopUpsManager showDialog_old:[ISN_DataConvertor charToNSString:title] message:[ISN_DataConvertor charToNSString:message] yesTitle:[ISN_DataConvertor charToNSString:yes] noTitle:[ISN_DataConvertor charToNSString:no]];
+            
+            #endif
         }
         
     }
@@ -1399,7 +1607,11 @@ extern "C" {
         if([ISN_NativeUtility majorIOSVersion] >= 8) {
             [ISN_NativePopUpsManager showMessage:[ISN_DataConvertor charToNSString:title] message:[ISN_DataConvertor charToNSString:message] okTitle:[ISN_DataConvertor charToNSString:ok]];
         } else {
+            
+            #if !TARGET_OS_TV
+            
             [ISN_NativePopUpsManager showMessage_old:[ISN_DataConvertor charToNSString:title] message:[ISN_DataConvertor charToNSString:message] okTitle:[ISN_DataConvertor charToNSString:ok]];
+            #endif
         }
     }
     
@@ -1409,7 +1621,9 @@ extern "C" {
         if([ISN_NativeUtility majorIOSVersion] >= 8) {
             [ISN_NativePopUpsManager dismissCurrentAlert];
         } else {
+             #if !TARGET_OS_TV
             [ISN_NativePopUpsManager dismissCurrentAlert_old];
+             #endif
         }
         
     }
@@ -1476,11 +1690,15 @@ extern "C" {
     
     
     void _ISN_RegisterForRemoteNotifications(int types) {
+        #if !TARGET_OS_TV
+        
         NSLog(@"_ISN_RegisterForRemoteNotifications");
         
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |  UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         [[UIApplication sharedApplication] registerForRemoteNotifications];
+        
+        #endif
     }
     
     

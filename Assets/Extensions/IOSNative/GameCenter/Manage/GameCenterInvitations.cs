@@ -24,7 +24,7 @@ public class GameCenterInvitations : ISN_Singleton<GameCenterInvitations> {
 
 	public void Init() {
 		//empty method just to create GameCenterInvitations,
-		//will be called on Game Center initializtion
+		//will be called on Game Center initialization
 	}
 
 

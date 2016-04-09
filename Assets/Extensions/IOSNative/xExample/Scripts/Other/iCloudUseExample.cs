@@ -11,7 +11,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class iCloudUseExample : MonoBehaviour {
+public class iCloudUseExample : BaseIOSFeaturePreview {
 
 	//--------------------------------------
 	// INITIALIZE
@@ -22,13 +22,21 @@ public class iCloudUseExample : MonoBehaviour {
 	void Awake() {
 
 		//initialize icloud and listed for events
-		iCloudManager.OnCloundInitAction += OnCloundInitAction;
+		iCloudManager.OnCloudInitAction += OnCloundInitAction;
 		iCloudManager.OnCloudDataReceivedAction += OnCloudDataReceivedAction;
+		iCloudManager.OnStoreDidChangeExternally += HandleOnStoreDidChangeExternally;
 
-		iCloudManager.instance.init ();
+
+		iCloudManager.Instance.init ();
 	
 
 	
+	}
+
+	void HandleOnStoreDidChangeExternally (System.Collections.Generic.List<iCloudData> changedData) {
+		foreach(iCloudData data in changedData) {
+			Debug.Log("Cloud data with key:  " + data.key + " was chnaged");
+		}
 	}
 
 	//--------------------------------------
@@ -37,11 +45,11 @@ public class iCloudUseExample : MonoBehaviour {
 
 	void OnGUI() {
 		if(GUI.Button(new Rect(170, 70, 150, 50), "Set String")) {
-			iCloudManager.instance.setString ("TestStringKey", "Hello World");
+			iCloudManager.Instance.setString ("TestStringKey", "Hello World");
 		}
 
 		if(GUI.Button(new Rect(170, 130, 150, 50), "Get String")) {
-			iCloudManager.instance.requestDataForKey ("TestStringKey");
+			iCloudManager.Instance.requestDataForKey ("TestStringKey");
 		}
 
 
@@ -49,11 +57,11 @@ public class iCloudUseExample : MonoBehaviour {
 
 		if(GUI.Button(new Rect(330, 70, 150, 50), "Set Float")) {
 			v += 1.1f;
-			iCloudManager.instance.setFloat ("TestFloatKey", v);
+			iCloudManager.Instance.setFloat ("TestFloatKey", v);
 		}
 
 		if(GUI.Button(new Rect(330, 130, 150, 50), "Get Float")) {
-			iCloudManager.instance.requestDataForKey ("TestFloatKey");
+			iCloudManager.Instance.requestDataForKey ("TestFloatKey");
 		}
 
 
@@ -61,15 +69,15 @@ public class iCloudUseExample : MonoBehaviour {
 			string msg = "hello world";
 			System.Text.UTF8Encoding  encoding = new System.Text.UTF8Encoding();
 			byte[] data = encoding.GetBytes(msg);
-			iCloudManager.instance.setData ("TestByteKey", data);
+			iCloudManager.Instance.setData ("TestByteKey", data);
 		}
 
 		if(GUI.Button(new Rect(490, 130, 150, 50), "Get Bytes")) {
-			iCloudManager.instance.requestDataForKey ("TestByteKey");
+			iCloudManager.Instance.requestDataForKey ("TestByteKey");
 		}
 
 		if(GUI.Button(new Rect(170, 500, 150, 50), "TestConnection")) {
-            Application.LoadLevel("Peer-To-PeerGameExample");
+            LoadLevel("Peer-To-PeerGameExample");
 		}
 
 	}
@@ -100,10 +108,6 @@ public class iCloudUseExample : MonoBehaviour {
 		}
 	}	
 	
-
-	private void OnCloundDataChangedAction () {
-		IOSNativePopUpManager.showMessage("iCloud", "Cloud Data Was Changed On Other Device");
-	}
 	
 	//--------------------------------------
 	//  PRIVATE METHODS
@@ -114,7 +118,7 @@ public class iCloudUseExample : MonoBehaviour {
 	//--------------------------------------
 
 	void OnDestroy() {
-		iCloudManager.OnCloundInitAction -= OnCloundInitAction;
+		iCloudManager.OnCloudInitAction -= OnCloundInitAction;
 		iCloudManager.OnCloudDataReceivedAction -= OnCloudDataReceivedAction;
 	}
 

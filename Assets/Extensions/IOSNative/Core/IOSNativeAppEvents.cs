@@ -12,7 +12,6 @@ public class IOSNativeAppEvents : ISN_Singleton<IOSNativeAppEvents> {
 	[DllImport ("__Internal")]
 	private static extern void _ISNsubscribe();
 	#endif
-	
 
 	public static event Action OnApplicationDidEnterBackground	 = delegate {};
 	public static event Action OnApplicationDidBecomeActive = delegate {};

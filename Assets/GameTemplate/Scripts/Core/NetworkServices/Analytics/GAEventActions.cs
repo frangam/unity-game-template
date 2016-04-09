@@ -1,6 +1,6 @@
 ﻿/***************************************************************************
 Project:     Game Template
-Copyright (c) Frills Games
+Copyright (c) Altasy
 Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 ***************************************************************************/
 using UnityEngine;
@@ -18,6 +18,7 @@ public class GAEventActions : MonoBehaviour {
 	// Constants
 	//--------------------------------------
 	#region Constants
+	public const string LOADED 			= "Loaded";
 	public const string PRESSED 		= "Pressed";
 	public const string OPENED 			= "Opened";
 	public const string CLOSED 			= "Closed";
@@ -49,5 +50,7 @@ public class GAEventActions : MonoBehaviour {
 	public const string COMPLETED		= "Completed";
 	public const string INCOMPLETED		= "Incompleted";
 	public const string REQUESTED		= "Requested";
+	public const string SKIPPED			= "Skipped";
+	public const string REWARDED		= "Rewarded";
 	#endregion
 }

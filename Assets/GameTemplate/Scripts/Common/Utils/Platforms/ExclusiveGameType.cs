@@ -22,7 +22,8 @@ public class ExclusiveGameType : MonoBehaviour {
 		foreach (GameType t in gameTypes) {
 			show = (GameController.Instance.Manager.IsOnlineMultiplayerGame && t == GameType.ONLINE_MULTIPLAYER)
 				|| (GameController.Instance.Manager.IsLocalMultiplayerGame && t == GameType.OFFLINE_MULTIPLAYER)
-				|| (!GameController.Instance.Manager.IsLocalMultiplayerGame && t == GameType.OFFLINE_SINGLE_PLAYER);
+				|| (!GameController.Instance.Manager.IsLocalMultiplayerGame 
+					&& !GameController.Instance.Manager.IsOnlineMultiplayerGame && t == GameType.OFFLINE_SINGLE_PLAYER);
 			
 			if(show)
 				break;

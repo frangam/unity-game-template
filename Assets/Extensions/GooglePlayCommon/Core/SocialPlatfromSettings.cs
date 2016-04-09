@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class SocialPlatfromSettings : ScriptableObject {
 
-	public const string VERSION_NUMBER = "7.1.1";
+	public const string VERSION_NUMBER = "7.4";
 	public const string FB_SDK_VERSION_NUMBER = "6.2.2";
 
 	public bool ShowImageSharingSettings = false;
@@ -33,7 +33,6 @@ public class SocialPlatfromSettings : ScriptableObject {
 	
 
 	private const string ISNSettingsAssetName = "SocialSettings";
-	private const string ISNSettingsPath = "Extensions/GooglePlayCommon/Resources";
 	private const string ISNSettingsAssetExtension = ".asset";
 
 
@@ -62,7 +61,7 @@ public class SocialPlatfromSettings : ScriptableObject {
 					#if UNITY_EDITOR
 					//string properPath = Path.Combine(Application.dataPath, ISNSettingsPath);
 
-					FileStaticAPI.CreateFolder(ISNSettingsPath);
+					FileStaticAPI.CreateFolder(SA_Config.SettingsPath);
 
 					/*
 					if (!Directory.Exists(properPath)) {
@@ -71,7 +70,7 @@ public class SocialPlatfromSettings : ScriptableObject {
 					}
 					*/
 					
-					string fullPath = Path.Combine(Path.Combine("Assets", ISNSettingsPath),
+					string fullPath = Path.Combine(Path.Combine("Assets", SA_Config.SettingsPath),
 					                               ISNSettingsAssetName + ISNSettingsAssetExtension
 					                               );
 					
@@ -86,22 +85,7 @@ public class SocialPlatfromSettings : ScriptableObject {
 			return instance;
 		}
 	}
-
-
-	public string fb_scopes {
-		get {
-			string scopes = "";
-			foreach(string s in fb_scopes_list) {
-				scopes+= s + ",";
-			}
-
-			if(scopes.Length > 0) {
-				scopes = scopes.Substring(0, scopes.Length - 1);
-			}
-
-			return scopes;
-		}
-	}
+	
 
 	public void AddDefaultScopes() {
 	

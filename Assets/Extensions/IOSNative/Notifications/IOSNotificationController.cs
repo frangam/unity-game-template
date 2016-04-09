@@ -20,8 +20,7 @@ using System.Runtime.InteropServices;
 
 
 
-
-#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 
+#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 #else
 #if UNITY_IOS || UNITY_IPHONE
 using UnityEngine.iOS;
@@ -58,7 +57,7 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 
 	#if UNITY_IOS || UNITY_IPHONE
 
-	#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+	#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 	public static event Action<RemoteNotification> OnRemoteNotificationReceived = delegate {};
 	#else
 	public static event Action<UnityEngine.iOS.RemoteNotification> OnRemoteNotificationReceived = delegate {};
@@ -110,7 +109,7 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 
 		#if UNITY_IPHONE || UNITY_IOS
 
-		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 		if( NotificationServices.localNotificationCount > 0) {
 			LocalNotification n = NotificationServices.localNotifications[0];
 			
@@ -177,7 +176,7 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 
 	#if UNITY_IPHONE
 
-	#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+	#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 	public void RegisterForRemoteNotifications(RemoteNotificationType notificationTypes) {
 	#else
 	public void RegisterForRemoteNotifications(NotificationType notificationTypes) {;
@@ -195,7 +194,7 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 			_ISN_RegisterForRemoteNotifications((int) notificationTypes);
 		} 
 
-		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 		NotificationServices.RegisterForRemoteNotificationTypes(notificationTypes);
 		#else
 		NotificationServices.RegisterForNotifications(notificationTypes);
@@ -212,6 +211,11 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 	//--------------------------------------
 
 	public void RequestNotificationPermissions() {
+			if(ISN_Device.CurrentDevice.MajorSystemVersion < 8) {
+				return;
+			}
+
+
 			#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			_ISN_RequestNotificationPermissions ();
 		#endif

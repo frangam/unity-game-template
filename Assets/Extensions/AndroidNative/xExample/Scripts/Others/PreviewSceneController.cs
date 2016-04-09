@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class PreviewSceneController : MonoBehaviour {
 
@@ -7,11 +7,6 @@ public class PreviewSceneController : MonoBehaviour {
 
 	void Awake() {
 		title.text = "Android Native Unity3d Plugin (" +  AndroidNativeSettings.VERSION_NUMBER + ")";
-
-		//Init Gamethrive Push Notifications if this option is enabled in AndroidNative Inspector window
-		if (AndroidNativeSettings.Instance.UseGameThrivePushNotifications) {
-			GoogleCloudMessageService.instance.InitOneSignalNotifications ();		
-		}
 	}
 
 

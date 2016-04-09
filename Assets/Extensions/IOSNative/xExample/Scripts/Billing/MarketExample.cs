@@ -20,7 +20,7 @@ public class MarketExample : BaseIOSFeaturePreview {
 	
 	void Awake() {
 
-		//Best practise is to init billing on app launch
+		//Best practice is to init billing on app launch
 		//But for this example we will use a button for initialization
 		//PaymentManagerExample.init();
 	}
@@ -89,8 +89,7 @@ public class MarketExample : BaseIOSFeaturePreview {
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Is Payments Enabled On device")) {
-			IOSInAppPurchaseManager.OnPurchasesStateSettingsLoaded += OnPurchasesStateSettingsLoaded;
-			IOSInAppPurchaseManager.Instance.RequestInAppSettingState();
+			IOSNativePopUpManager.showMessage("Payments Settings State", "Is Payments Enabled: " + IOSInAppPurchaseManager.Instance.IsInAppPurchasesEnabled);
 		}
 
 
@@ -107,16 +106,11 @@ public class MarketExample : BaseIOSFeaturePreview {
 			ISN_Security.Instance.RetrieveLocalReceipt();
 		}
 
-		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Retrive Device GUID")) {
-			ISN_Security.OnGUIDLoaded += OnGUIDLoaded;
-			ISN_Security.Instance.RetrieveDeviceGUID();
-		}
 
 	}
 
 	void StoreProductViewDisnissed () {
-		Debug.Log("Store Product View was Disnissed");
+		Debug.Log("Store Product View was dismissed");
 	}	
 
 
@@ -128,17 +122,8 @@ public class MarketExample : BaseIOSFeaturePreview {
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
+	
 
-
-	void OnGUIDLoaded (ISN_DeviceGUID result) {
-		ISN_Security.OnGUIDLoaded -= OnGUIDLoaded;
-		IOSNativePopUpManager.showMessage("GUID Loaded", result.Base64String);
-	}
-
-	void OnPurchasesStateSettingsLoaded (bool IsInAppPurchasesEnabled) {
-		IOSInAppPurchaseManager.OnPurchasesStateSettingsLoaded -= OnPurchasesStateSettingsLoaded;
-		IOSNativePopUpManager.showMessage("Payments Settings State", "Is Payments Enabled: " + IOSInAppPurchaseManager.Instance.IsInAppPurchasesEnabled);
-	}
 
 	void OnReceiptLoaded (ISN_LocalReceiptResult result) {
 		Debug.Log("OnReceiptLoaded");

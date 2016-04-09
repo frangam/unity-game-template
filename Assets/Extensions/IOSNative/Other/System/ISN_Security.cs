@@ -13,9 +13,7 @@ public class ISN_Security : ISN_Singleton<ISN_Security> {
 
 	[DllImport ("__Internal")]
 	private static extern void _ISN_RetrieveLocalReceipt();
-
-	[DllImport ("__Internal")]
-	private static extern void _ISN_RetrieveDeviceGUID();
+	
 
 	[DllImport ("__Internal")]
 	private static extern void _ISN_ReceiptRefreshRequest();
@@ -26,9 +24,12 @@ public class ISN_Security : ISN_Singleton<ISN_Security> {
 
 
 	public static event Action<ISN_LocalReceiptResult> OnReceiptLoaded = delegate{};
-	public static event Action<ISN_DeviceGUID> OnGUIDLoaded = delegate{};
 	public static event Action<ISN_Result> OnReceiptRefreshComplete = delegate{};
 
+
+	void Awake() {
+		DontDestroyOnLoad(gameObject);
+	}
 
 
 	public void RetrieveLocalReceipt() {
@@ -37,13 +38,7 @@ public class ISN_Security : ISN_Singleton<ISN_Security> {
 		#endif
 	}
 
-
-	public void RetrieveDeviceGUID() {
-		#if (UNITY_IPHONE && !UNITY_EDITOR && INAPP_API_ENABLED) || SA_DEBUG_MODE
-		_ISN_RetrieveDeviceGUID();
-		#endif
-	}
-
+	
 
 	public void StartReceiptRefreshRequest() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR && INAPP_API_ENABLED) || SA_DEBUG_MODE
@@ -52,13 +47,7 @@ public class ISN_Security : ISN_Singleton<ISN_Security> {
 	}
 
 
-
-
-	private void Event_GUIDLoaded(string data) { 
-		ISN_DeviceGUID GUID = new ISN_DeviceGUID(data);
-		OnGUIDLoaded(GUID);
-	}
-
+	
 
 	private void Event_ReceiptLoaded(string data) {
 		ISN_LocalReceiptResult result =  new ISN_LocalReceiptResult(data);

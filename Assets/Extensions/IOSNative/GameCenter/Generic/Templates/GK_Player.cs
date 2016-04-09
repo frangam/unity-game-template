@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GK_Player {
@@ -25,14 +26,21 @@ public class GK_Player {
 	public event Action<GK_UserPhotoLoadResult> OnPlayerPhotoLoaded =  delegate {};
 
 
+	private static Dictionary<string, Texture2D> LocalPhotosCache =  new Dictionary<string, Texture2D>();
+
+
 	//--------------------------------------
-	// INITIALIZE
+	// Initialization
 	//--------------------------------------
 
 	public GK_Player (string pId, string pName, string pAlias) {
 		_PlayerId = pId;
 		_DisplayName = pName;
 		_Alias = pAlias;
+
+
+		_SmallPhoto = GetLocalCachedPhotoByKey(SmallPhotoCacheKey);
+		_BigPhoto 	= GetLocalCachedPhotoByKey(BigPhotoCacheKey);
 
 		if(IOSNativeSettings.Instance.AutoLoadUsersBigImages) {
 			LoadPhoto(GK_PhotoSize.GKPhotoSizeNormal);
@@ -52,10 +60,14 @@ public class GK_Player {
 	public void LoadPhoto(GK_PhotoSize size) {
 		if(size == GK_PhotoSize.GKPhotoSizeSmall) {
 			if(_SmallPhoto != null) {
+				GK_UserPhotoLoadResult result = new GK_UserPhotoLoadResult(size, _SmallPhoto);
+				OnPlayerPhotoLoaded(result);
 				return;
 			}
 		} else {
 			if(_BigPhoto != null) {
+				GK_UserPhotoLoadResult result = new GK_UserPhotoLoadResult(size, _BigPhoto);
+				OnPlayerPhotoLoaded(result);
 				return;
 			}
 		}
@@ -81,8 +93,10 @@ public class GK_Player {
 
 		if(size == GK_PhotoSize.GKPhotoSizeSmall) {
 			_SmallPhoto = loadedPhoto;
+			UpdatePhotosCache(SmallPhotoCacheKey, _SmallPhoto);
 		} else {
 			_BigPhoto = loadedPhoto;
+			UpdatePhotosCache(BigPhotoCacheKey, _BigPhoto);
 		}
 
 		GK_UserPhotoLoadResult result = new GK_UserPhotoLoadResult(size, loadedPhoto);
@@ -96,7 +110,7 @@ public class GK_Player {
 
 
 	//--------------------------------------
-	// GET / SET
+	// Get / Set
 	//--------------------------------------
 
 	public string Id {
@@ -130,6 +144,41 @@ public class GK_Player {
 	public Texture2D BigPhoto {
 		get {
 			return _BigPhoto;
+		}
+	}
+
+
+	private string SmallPhotoCacheKey {
+		get {
+			return Id + GK_PhotoSize.GKPhotoSizeSmall.ToString();
+		}
+	}
+
+
+	//--------------------------------------
+	// Private Section
+	//--------------------------------------
+
+	private string BigPhotoCacheKey {
+		get {
+			return Id + GK_PhotoSize.GKPhotoSizeNormal.ToString();
+		}
+	}
+
+
+	public static void UpdatePhotosCache(string key, Texture2D photo) {
+		if(LocalPhotosCache.ContainsKey(key)) {
+			LocalPhotosCache[key] = photo;
+		} else {
+			LocalPhotosCache.Add(key, photo);
+		}
+	}
+
+	public static Texture2D GetLocalCachedPhotoByKey(string key) {
+		if(LocalPhotosCache.ContainsKey(key)) {
+			return LocalPhotosCache[key];
+		} else {
+			return null;
 		}
 	}
 }

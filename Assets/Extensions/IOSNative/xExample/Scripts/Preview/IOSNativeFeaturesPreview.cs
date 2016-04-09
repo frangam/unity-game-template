@@ -13,6 +13,8 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		if(back == null) {
 			back = IOSNativePreviewBackButton.Create();
 		}
+
+
 	}
 
 
@@ -23,18 +25,18 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		
 		StartY+= YLableStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Basic Features")) {
-			Application.LoadLevel("GameCenterGeneral");
+			LoadLevel("GameCenterGeneral");
 		}
 		
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Friends Load Example")) {
-			Application.LoadLevel("FriendsLoadExample");
+			LoadLevel("FriendsLoadExample");
 		}
 
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Custom Leaderboard GUI")) {
-			Application.LoadLevel("CustomLeaderboardGUIExample");
+			LoadLevel("CustomLeaderboardGUIExample");
 		}
 
 
@@ -47,42 +49,54 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Billing")) {
-			Application.LoadLevel("BillingExample");
+			LoadLevel("BillingExample");
 		}
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "iAd App Network")) {
-			Application.LoadLevel("iAdExample");
+			LoadLevel("iAdExample");
 		}
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "iAd No Coding Example")) {
-			Application.LoadLevel("iAdNoCodingExample");
+			LoadLevel("iAdNoCodingExample");
 		}
 
 		StartX = XStartPos;
 		StartY += YButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "iCloud")) {
-			Application.LoadLevel("iCloudExampleScene");
+			LoadLevel("iCloudExampleScene");
 		}
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Social Posting")) {
-			Application.LoadLevel("SocialPostingExample");
+			LoadLevel("SocialPostingExample");
 		}
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Local And Push Notifications")) {
-			Application.LoadLevel("NotificationExample");
+			LoadLevel("NotificationExample");
 
 		}
 
 		StartX = XStartPos;
 		StartY += YButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "ReplayKit")) {
-			Application.LoadLevel("ReplayKitExampleScene");
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Replay Kit")) {
+			LoadLevel("ReplayKitExampleScene");
 		}
 
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Cloud Kit")) {
+			LoadLevel("CloudKitExampleScene");
+
+		}
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Game Saves")) {
+			LoadLevel("GameSavesExample");
+
+		}
 
 		StartX = XStartPos;
 		StartY += YLableStep;
@@ -93,19 +107,19 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "TBM Multiplayer Example")) {
-			Application.LoadLevel("TMB_Multiplayer_Example");
+			LoadLevel("TMB_Multiplayer_Example");
 		}
 
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "RTM Multiplayer Example")) {
-			Application.LoadLevel("RTM_Multiplayer_Example");
+			LoadLevel("RTM_Multiplayer_Example");
 		}
 
 		
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "P2P Game Example")) {
-			Application.LoadLevel("Peer-To-PeerGameExample");
+			LoadLevel("Peer-To-PeerGameExample");
 		}
 
 
@@ -117,17 +131,17 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Native Popups and Events")) {
-			Application.LoadLevel("PopUpsAndAppEventsHandler");
+			LoadLevel("PopUpsAndAppEventsHandler");
 		}
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Media Player API")) {
-			Application.LoadLevel("MediaExample");
+			LoadLevel("MediaExample");
 		}
 
 		StartX += XButtonStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "IOS Native Actions")) {
-			Application.LoadLevel("NativeIOSActionsExample");
+			LoadLevel("NativeIOSActionsExample");
 		}
 	}
 

@@ -122,6 +122,9 @@ public class BaseGameManager : MonoBehaviour {
 		get {
 			return this.started;
 		}
+		set{
+			this.started = value;
+		}
 	}
 	
 	public bool Inited {
@@ -187,9 +190,9 @@ public class BaseGameManager : MonoBehaviour {
 		//multiplayer options
 		isLocalMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_LOCAL_MULTIPLAYER) != 0 ? true:false;
 		isOnlineMultiplayerGame = PlayerPrefs.GetInt(GameSettings.PP_ONLINE_MULTIPLAYER) != 0 ? true:false;
-		
-		//ANALYTICS
-		GTAnalyticsHandler.Instance.logEvent (gaEventCat, GAEventActions.STARTED);
+//		
+//		//ANALYTICS
+//		GTAnalyticsHandler.Instance.logEvent (gaEventCat, GAEventActions.STARTED);
 	}
 	protected virtual void Start(){
 		if(startGameAtTheStartMoment)
@@ -466,7 +469,12 @@ public class BaseGameManager : MonoBehaviour {
 			break;
 		case GameMode.QUICKGAME:
 			gaEvent = GAEventCategories.QUICKGAME_LEVEL;
-			UIController.Instance.Manager.open(UIBaseWindowIDs.GAMEOVER);
+			if(isGameOver){
+				UIController.Instance.Manager.open(UIBaseWindowIDs.GAMEOVER);
+			}
+			else{
+				UIController.Instance.Manager.open(UIBaseWindowIDs.PLAYER_WINS_WINDOW);
+			}
 			break;
 			
 		}
@@ -658,11 +666,11 @@ public class BaseGameManager : MonoBehaviour {
 			
 			if (paused)
 			{
-				//release touch down of game control buttons when pause a started game
-				if(started && useGameControlButtonsWin){
-					UIBaseGameControlButtonsWindow win = (UIBaseGameControlButtonsWindow)UIController.Instance.Manager.getWindow(UIBaseWindowIDs.GAME_CONTROL_BUTTONS);
-					if(win != null)	win.releaseTouchDown();
-				}
+//				//release touch down of game control buttons when pause a started game
+//				if(started && useGameControlButtonsWin){
+//					UIBaseGameControlButtonsWindow win = (UIBaseGameControlButtonsWindow)UIController.Instance.Manager.getWindow(UIBaseWindowIDs.GAME_CONTROL_BUTTONS);
+//					if(win != null)	win.releaseTouchDown();
+//				}
 				
 				if(!AdsHandler.Instance.HasPausedGame && started)
 					UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);

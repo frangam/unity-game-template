@@ -50,9 +50,7 @@ public class SA_RemoveTool  {
 		FileStaticAPI.DeleteFolder ("Extensions/StansAssetsCommon");
 		FileStaticAPI.DeleteFolder ("Extensions/StansAssetsPreviewUI");
 		FileStaticAPI.DeleteFolder ("Extensions/IOSDeploy");
-		FileStaticAPI.DeleteFolder ("Facebook");
-		
-		
+
 		
 		if (SA_VersionsManager.Is_AN_Installed) {
 			FileStaticAPI.DeleteFolder ("Extensions/AndroidNative");
@@ -109,17 +107,8 @@ public class SA_RemoveTool  {
 	private static void RemoveAndroidPart() {
 		FileStaticAPI.DeleteFile(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "androidnative.jar");
 		FileStaticAPI.DeleteFile(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "mobilenativepopups.jar");
-		
-		
-		FileStaticAPI.DeleteFolder (PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "facebook");
+
 		FileStaticAPI.DeleteFolder (PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "libs");
-		
-		/*
-		FileStaticAPI.DeleteFile ("Plugins/Android/res/values/analytics.xml");
-		FileStaticAPI.DeleteFile ("Plugins/Android/res/values/ids.xml");
-		FileStaticAPI.DeleteFile ("Plugins/Android/res/values/version.xml");
-		FileStaticAPI.DeleteFile ("Plugins/Android/res/xml/file_paths.xml");
-		*/
 	}
 	
 	

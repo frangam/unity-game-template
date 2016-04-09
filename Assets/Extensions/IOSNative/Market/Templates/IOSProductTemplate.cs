@@ -126,6 +126,13 @@ public class IOSProductTemplate  {
 		}
 	}
 
+	public int PriceInMicros {
+		get {
+			return System.Convert.ToInt32(_Price * 1000000f);
+		} 
+
+	}
+
 	public string LocalizedPrice {
 		get {
 			if(_LocalizedPrice.Equals(string.Empty)) {

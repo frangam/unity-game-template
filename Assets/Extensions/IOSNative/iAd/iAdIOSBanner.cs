@@ -11,6 +11,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3
+#else
+using UnityEngine.SceneManagement;
+#endif
+
+
 
 //Attach the script to the empty gameobject on your sceneS
 public class iAdIOSBanner : MonoBehaviour {
@@ -84,7 +90,14 @@ public class iAdIOSBanner : MonoBehaviour {
 
 	public string sceneBannerId {
 		get {
+			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3
 			return Application.loadedLevelName + "_" + this.gameObject.name;
+			#else
+			return SceneManager.GetActiveScene().name + "_" + this.gameObject.name;
+			#endif
+
+
+
 		}
 	}
 

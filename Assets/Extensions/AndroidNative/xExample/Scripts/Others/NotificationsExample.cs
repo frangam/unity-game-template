@@ -15,27 +15,44 @@ using System.Collections.Generic;
 
 public class NotificationsExample : MonoBehaviour {
 
-	//--------------------------------------
-	// INITIALIZE
-	//--------------------------------------
-	
+	public Texture2D bigPicture;
 
 	private int LastNotificationId = 0;
 
-
+	//--------------------------------------
+	// INITIALIZE
+	//--------------------------------------
 
 	void Awake() {
 
 		GoogleCloudMessageService.ActionCMDRegistrationResult += HandleActionCMDRegistrationResult;
 		GoogleCloudMessageService.ActionCouldMessageLoaded += OnMessageLoaded;
-
-
-		//GoogleCloudMessageService.instance.InitPushNotifications ();
-		//GoogleCloudMessageService.instance.InitOneSignalNotifications ();
-		//GoogleCloudMessageService.instance.InitParsePushNotifications ();
+		GoogleCloudMessageService.ActionGCMPushLaunched += HandleActionGCMPushLaunched;
+		GoogleCloudMessageService.ActionGCMPushReceived += HandleActionGCMPushReceived;
+		GoogleCloudMessageService.Instance.Init();
 	}
 
+	void HandleActionGCMPushReceived (string message, Dictionary<string, object> data)
+	{
+		Debug.Log("[HandleActionGCMPushReceived]");
+		Debug.Log("Message: " + message);
+		foreach (KeyValuePair<string, object> pair in data) {
+			Debug.Log("Data Entity: " + pair.Key + " " + pair.Value.ToString());
+		}
 
+		AN_PoupsProxy.showMessage (message, ANMiniJSON.Json.Serialize(data));
+	}
+
+	void HandleActionGCMPushLaunched (string message, Dictionary<string, object> data)
+	{
+		Debug.Log("[HandleActionGCMPushLaunched]");
+		Debug.Log("Message: " + message);
+		foreach (KeyValuePair<string, object> pair in data) {
+			Debug.Log("Data Entity: " + pair.Key + " " + pair.Value.ToString());
+		}
+
+		AN_PoupsProxy.showMessage (message, ANMiniJSON.Json.Serialize(data));
+	}
 
 	//--------------------------------------
 	//  PUBLIC METHODS
@@ -46,7 +63,14 @@ public class NotificationsExample : MonoBehaviour {
 	}
 
 	private void Local() {
-		LastNotificationId = AndroidNotificationManager.instance.ScheduleLocalNotification("Hello", "This is local notification", 5);
+		//LastNotificationId = AndroidNotificationManager.instance.ScheduleLocalNotification("Hello", "This is local notification", 5);
+
+		AndroidNotificationBuilder builder = new AndroidNotificationBuilder(SA_IdFactory.NextId,
+		                                                                    "Local Notification Title",
+		                                                                    "Big Picture Style Notification for AndroidNative Preview",
+		                                                                    3);
+		builder.SetBigPicture (bigPicture);
+		AndroidNotificationManager.Instance.ScheduleLocalNotification(builder);
 	}
 
 	private void LoadLaunchNotification (){
@@ -87,7 +111,7 @@ public class NotificationsExample : MonoBehaviour {
 
 
 	void HandleActionCMDRegistrationResult (GP_GCM_RegistrationResult res) {
-		if(res.isSuccess) {
+		if(res.IsSucceeded) {
 			AN_PoupsProxy.showMessage ("Regstred", "GCM REG ID: " + GoogleCloudMessageService.instance.registrationId);
 		} else {
 			AN_PoupsProxy.showMessage ("Reg Failed", "GCM Registration failed :(");

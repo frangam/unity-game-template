@@ -26,6 +26,7 @@ public class ReplayKitUseExample : BaseIOSFeaturePreview {
 		ISN_ReplayKit.ActionRecordInterrupted += HandleActionRecordInterrupted;
 
 		ISN_ReplayKit.ActionShareDialogFinished += HandleActionShareDialogFinished;
+		ISN_ReplayKit.ActionRecorderDidChangeAvailability += HandleActionRecorderDidChangeAvailability;
 
 		IOSNativePopUpManager.showMessage ("Welcome", "Hey there, welcome to the ReplayKit testing scene!");
 
@@ -108,6 +109,19 @@ public class ReplayKitUseExample : BaseIOSFeaturePreview {
 		}
 		ISN_ReplayKit.ActionRecordStarted -= HandleActionRecordStarted;
 	}
+
+
+	void HandleActionRecorderDidChangeAvailability (bool IsRecordingAvaliable) 	{
+		Debug.Log("Is Recording Avaliable: " + IsRecordingAvaliable);
+
+		ISN_ReplayKit.ActionRecordDiscard += HandleActionRecordDiscard;
+		ISN_ReplayKit.Instance.DiscardRecording();
+	}
+
+	void HandleActionRecordDiscard () {
+		Debug.Log("Record Discarded");
+	}
+	
 
 	
 	//--------------------------------------

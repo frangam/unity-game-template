@@ -10,9 +10,14 @@
 
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
 
 public class WWWTextureLoader : MonoBehaviour {
+
+
+	public static Dictionary<string, Texture2D> LocalCache =  new Dictionary<string, Texture2D>();
+
 
 	private string _url;
 
@@ -24,6 +29,11 @@ public class WWWTextureLoader : MonoBehaviour {
 
 	public void LoadTexture(string url) {
 		_url = url;
+		if(LocalCache.ContainsKey(_url)) {
+			OnLoad(LocalCache[_url]);
+			Destroy(gameObject);
+			return;
+		}
 		StartCoroutine(LoadCoroutin());
 	}
 
@@ -36,11 +46,18 @@ public class WWWTextureLoader : MonoBehaviour {
 		yield return www;
 
 		if(www.error == null) {
+			UpdateLocalCache(_url, www.texture);
 			OnLoad(www.texture);
 
 		} else {
 			OnLoad(null);
 		}
+
+		Destroy(gameObject);
+
+	}
+
+	private static void UpdateLocalCache(string url, Texture2D image) {
 
 	}
 

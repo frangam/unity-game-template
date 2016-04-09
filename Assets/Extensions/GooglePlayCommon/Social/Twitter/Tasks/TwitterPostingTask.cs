@@ -39,7 +39,7 @@ public class TwitterPostingTask : AsyncTask {
 		_controller.OnTwitterInitedAction -= OnTWInited;
 
 		if(_controller.IsAuthed) {
-			OnTWAuth(null);
+			OnTWAuth(new TWResult(true, "Auth Success"));
 		} else {
 			_controller.OnAuthCompleteAction += OnTWAuth;
 			_controller.AuthenticateUser();
@@ -60,7 +60,7 @@ public class TwitterPostingTask : AsyncTask {
 				_controller.Post(_status);
 			}
 		} else {
-			TWResult res =  new TWResult(false, "Auth failed");
+			TWResult res =  new TWResult(false, "Auth Failed");
 			ActionComplete(res);
 		}
 

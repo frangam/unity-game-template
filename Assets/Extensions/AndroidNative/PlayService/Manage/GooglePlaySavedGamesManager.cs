@@ -99,7 +99,14 @@ public class GooglePlaySavedGamesManager :  SA_Singleton<GooglePlaySavedGamesMan
 
 
 	private static string GetString(byte[] bytes) {
-		char[] chars = new char[bytes.Length / sizeof(char)];
+		char[] chars;
+		if (bytes.Length % 2 != 0) {
+			chars = new char[(bytes.Length / sizeof(char)) + 1];
+		}
+		else {
+			chars = new char[bytes.Length / sizeof(char)];
+		}
+
 		System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
 		return new string(chars);
 	}
@@ -116,7 +123,7 @@ public class GooglePlaySavedGamesManager :  SA_Singleton<GooglePlaySavedGamesMan
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 		
 		GooglePlayResult result = new GooglePlayResult (storeData [0]);
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			
 			_AvailableGameSaves.Clear ();
 			
@@ -152,7 +159,7 @@ public class GooglePlaySavedGamesManager :  SA_Singleton<GooglePlaySavedGamesMan
 
 
 		GP_SpanshotLoadResult result = new GP_SpanshotLoadResult (storeData [0]);
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			string Title = storeData [1];
 			long LastModifiedTimestamp = System.Convert.ToInt64(storeData [2]) ;
 			string Description = storeData [3];
@@ -187,7 +194,7 @@ public class GooglePlaySavedGamesManager :  SA_Singleton<GooglePlaySavedGamesMan
 		
 		
 		GP_SpanshotLoadResult result = new GP_SpanshotLoadResult (storeData [0]);
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			string Title = storeData [1];
 			long LastModifiedTimestamp = System.Convert.ToInt64(storeData [2]) ;
 			string Description = storeData [3];
@@ -277,7 +284,7 @@ public class GooglePlaySavedGamesManager :  SA_Singleton<GooglePlaySavedGamesMan
 		
 		
 		GP_DeleteSnapshotResult result = new GP_DeleteSnapshotResult (storeData [0]);
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			result.SetId(storeData [1]);
 		}
 

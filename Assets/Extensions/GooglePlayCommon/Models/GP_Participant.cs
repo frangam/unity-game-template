@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class GP_Participant  {
@@ -10,10 +11,20 @@ public class GP_Participant  {
 	private string _DisplayName;
 
 	private GP_ParticipantResult _result = null;
-
-
-
 	private GP_RTM_ParticipantStatus _status = GP_RTM_ParticipantStatus.STATUS_UNRESPONSIVE;
+
+
+	public event Action<Texture2D> BigPhotoLoaded =  delegate {};
+	public event Action<Texture2D> SmallPhotoLoaded =  delegate {};
+
+	private Texture2D _SmallPhoto = null;
+	private Texture2D _BigPhoto = null;
+
+
+
+	//--------------------------------------
+	// Initialization
+	//--------------------------------------
 
 
 	public GP_Participant(string uid, string playerUid, string stat, string hiResImg, string IconImg, string Name) {
@@ -25,9 +36,47 @@ public class GP_Participant  {
 		_DisplayName = Name;
 	}
 
+
+	//--------------------------------------
+	// Public Methods
+	//--------------------------------------
+
 	public void SetResult(GP_ParticipantResult r) {
 		_result = r;
 	}
+
+	public void LoadBigPhoto() {
+		WWWTextureLoader loader = WWWTextureLoader.Create();
+		loader.OnLoad += HandheBigPhotoLoaed;
+		loader.LoadTexture(_HiResImageUrl);
+	}
+	
+	
+	public void LoadSmallPhoto() {
+		
+		WWWTextureLoader loader = WWWTextureLoader.Create();
+		loader.OnLoad += HandheSmallPhotoLoaed;
+		loader.LoadTexture(_IconImageUrl);
+
+	}
+	
+
+	public Texture2D SmallPhoto {
+		get {
+			return _SmallPhoto;
+		}
+	}
+
+	public Texture2D BigPhoto {
+		get {
+			return _BigPhoto;
+		}
+	}
+
+	//--------------------------------------
+	// Get / Set
+	//--------------------------------------
+
 
 	public string id {
 		get {
@@ -70,4 +119,20 @@ public class GP_Participant  {
 			return _result;
 		}
 	}
+
+	//--------------------------------------
+	// Handlers
+	//--------------------------------------
+
+	private void HandheBigPhotoLoaed(Texture2D tex) {
+		_BigPhoto = tex;
+		BigPhotoLoaded(_BigPhoto);
+	}
+	
+	private void HandheSmallPhotoLoaed(Texture2D tex) {
+		_SmallPhoto = tex;
+		SmallPhotoLoaded(_SmallPhoto);
+		
+	}
+
 }

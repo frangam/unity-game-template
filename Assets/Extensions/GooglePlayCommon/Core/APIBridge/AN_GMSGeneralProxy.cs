@@ -9,28 +9,22 @@ public class AN_GMSGeneralProxy : MonoBehaviour {
 		AN_ProxyPool.CallStatic(CLASS_NAME, methodName, args);
 	}
 
+#if UNITY_ANDROID
+	private static ReturnType CallActivityFunction<ReturnType>(string methodName, params object[] args) {
+		return AN_ProxyPool.CallStatic<ReturnType>(CLASS_NAME, methodName, args);
+	}
+#endif
+
 	//--------------------------------------
 	// Play Service
 	//--------------------------------------
 
-	public static void initTagManager(string containerId, string binDataId) {
-		CallActivityFunction("initTagManager", containerId, binDataId);
-	}
-
-	public static void getValueFromContainer(string key) {
-		CallActivityFunction("getValueFromContainer", key);
-	}
-
-	public static void refreshContainer() {
-		CallActivityFunction("refreshContainer");
-	}
-
-	public static void pushValue(string key, string value) {
-		CallActivityFunction("pushValue", key, value);
-	}
-
-	public static void pushEvent(string tagEvent, string key, string value) {
-		CallActivityFunction("pushEvent", tagEvent, key, value);
+	public static GP_PlayServicesStatus GetPlayServicesStatus() {
+#if UNITY_ANDROID
+		return (GP_PlayServicesStatus)CallActivityFunction<int>("GetPlayServicesStatus");
+#else
+		return GP_PlayServicesStatus.SERVICE_MISSING;
+#endif
 	}
 
 	public static void loadGoogleAccountNames() {
@@ -64,7 +58,10 @@ public class AN_GMSGeneralProxy : MonoBehaviour {
 	public static void invalidateToken(string token) {
 		CallActivityFunction("invalidateToken", token);
 	}
-	
+
+	public static void GetGamesServerAuthCode() {
+		CallActivityFunction("GetGamesServerAuthCode");
+	}
 	
 	public static void playServiceDisconnect() {
 		CallActivityFunction("playServiceDisconnect");

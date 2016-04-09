@@ -27,14 +27,19 @@ public class GPlusButton : UIBaseButton {
 	
 	[SerializeField]
 	private int yPosition = 0;
+
+	[SerializeField]
+	private bool enableAtFirstTime = false;
 	
 	
 	private AN_PlusButton gPlusButton;
+	private bool firstTime = true;
 	
 	public override void Awake ()
 	{
 		base.Awake ();
-		
+
+		firstTime = true;
 		gPlusButton =  new AN_PlusButton(GameSettings.Instance.CurrentAndroidAppLink, size, annotation);
 		
 		if(gPlusButton != null){
@@ -78,7 +83,9 @@ public class GPlusButton : UIBaseButton {
 	}
 	
 	void OnEnable(){
-		if(gPlusButton != null && !gPlusButton.IsShowed)
+		bool showAtEnable = enableAtFirstTime || (!enableAtFirstTime && !firstTime);
+
+		if(showAtEnable && gPlusButton != null && !gPlusButton.IsShowed)
 			gPlusButton.Show();
 	}
 	
@@ -91,5 +98,11 @@ public class GPlusButton : UIBaseButton {
 		if(gPlusButton != null && gPlusButton.IsShowed)
 			gPlusButton.Hide();
 	}
-	
+
+	void OnLevelWasLoaded(int level) {
+		if (gPlusButton != null && !gPlusButton.IsShowed) {
+			gPlusButton.Show ();
+			firstTime = false;
+		}
+	}
 }

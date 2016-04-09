@@ -88,6 +88,10 @@ public class UIBaseButton : MonoBehaviour {
 	private string soundId = BaseSoundIDs.UI_BUTTON_CLICK_FX;
 
 	[SerializeField]
+	[Tooltip("Time to wait before can press the button. 0 if not wait and doing press inmediately.")]
+	private float timeToWaitBeforeCanPress = 0;
+
+	[SerializeField]
 	[Tooltip("Time to wait before to do the press effect if we want to wait a while. 0 if not wait and doing press effect inmediately.")]
 	private float timeToWaitBeforeDoPress = 0;
 	
@@ -128,6 +132,7 @@ public class UIBaseButton : MonoBehaviour {
 	private float 		timePointerDown;
 	private int			clicksCounter = 0;
 	private string		clicksCounterPPKey; //PlayerPrefs key for clicks counter
+	private float 		initialTimeWhenEnable = 0;
 
 	//--------------------------------------
 	// Getters/Setters
@@ -219,6 +224,7 @@ public class UIBaseButton : MonoBehaviour {
 	//--------------------------------------
 	#region Unity
 	public virtual void OnEnable(){
+		initialTimeWhenEnable = Time.time;
 		StartCoroutine(doCheckAvailability());
 	}
 	public virtual void OnDisable(){}
@@ -238,6 +244,18 @@ public class UIBaseButton : MonoBehaviour {
 			timePointerDown += Time.deltaTime;
 			press();
 		}
+
+		//stop the pressing process during we want to wait a time befor press
+		if(timeToWaitBeforeCanPress > 0 && lastSuccesfulPressingTime == 0){
+			currentTime = Time.time - initialTimeWhenEnable;
+
+			if (currentTime <= timeToWaitBeforeCanPress) {
+				pressingStoped = true;
+			} else {
+				pressingStoped = false;
+			}
+		}
+
 		
 		//stop the pressing proccess during maintaining press the button
 		if(timeToStopPressing > 0 && pressing && !pressingStoped){

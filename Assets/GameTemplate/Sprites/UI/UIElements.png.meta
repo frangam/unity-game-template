@@ -64,7 +64,7 @@ TextureImporter:
   bumpmap:
     convertToNormalMap: 0
     externalNormalMap: 0
-    heightScale: .25
+    heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
   grayScaleToAlpha: 0
@@ -89,7 +89,7 @@ TextureImporter:
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
-  spritePivot: {x: .5, y: .5}
+  spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaIsTransparency: 1
@@ -105,8 +105,17 @@ TextureImporter:
         width: 151
         height: 151
       alignment: 9
-      pivot: {x: .466887414, y: .533112586}
+      pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -55.5, y: 70.5}
+        - {x: -70.5, y: 37.5}
+        - {x: -70.5, y: -56.5}
+        - {x: -46.5, y: -80.5}
+        - {x: 43.5, y: -80.5}
+        - {x: 80.5, y: -56.5}
+        - {x: 80.5, y: 37.5}
+        - {x: 51.5, y: 70.5}
     - name: buttons-btnAction
       rect:
         serializedVersion: 2
@@ -115,8 +124,24 @@ TextureImporter:
         width: 220
         height: 224
       alignment: 9
-      pivot: {x: .49545455, y: .493303567}
+      pivot: {x: 0.49545455, y: 0.49330357}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 111, y: 33.5}
+        - {x: 100, y: 62.5}
+        - {x: 74, y: 93.5}
+        - {x: 37, y: 113.5}
+        - {x: -43, y: 113.5}
+        - {x: -93, y: 69.5}
+        - {x: -101, y: 52.5}
+        - {x: -109, y: 29.5}
+        - {x: -109, y: -36.5}
+        - {x: -95, y: -72.5}
+        - {x: -50, y: -110.5}
+        - {x: 45, y: -110.5}
+        - {x: 55, y: -103.5}
+        - {x: 96, y: -72.5}
+        - {x: 111, y: -36.5}
     - name: buttons-btnBack
       rect:
         serializedVersion: 2
@@ -125,8 +150,17 @@ TextureImporter:
         width: 151
         height: 151
       alignment: 9
-      pivot: {x: .466887414, y: .533112586}
+      pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -55.5, y: 70.5}
+        - {x: -70.5, y: 37.5}
+        - {x: -70.5, y: -56.5}
+        - {x: -46.5, y: -80.5}
+        - {x: 43.5, y: -80.5}
+        - {x: 80.5, y: -56.5}
+        - {x: 80.5, y: 37.5}
+        - {x: 51.5, y: 70.5}
     - name: buttons-btnCancel
       rect:
         serializedVersion: 2
@@ -135,8 +169,26 @@ TextureImporter:
         width: 428
         height: 120
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 214, y: -35}
+        - {x: 214, y: 38}
+        - {x: 202, y: 54}
+        - {x: 195, y: 58}
+        - {x: 191, y: 60}
+        - {x: -191, y: 60}
+        - {x: -202, y: 54}
+        - {x: -210, y: 45}
+        - {x: -214, y: 34}
+        - {x: -214, y: -35}
+        - {x: -213, y: -40}
+        - {x: -202, y: -53}
+        - {x: -195, y: -58}
+        - {x: -191, y: -60}
+        - {x: 191, y: -60}
+        - {x: 202, y: -54}
+        - {x: 210, y: -45}
     - name: buttons-btnClose
       rect:
         serializedVersion: 2
@@ -145,8 +197,19 @@ TextureImporter:
         width: 96
         height: 99
       alignment: 9
-      pivot: {x: .489583343, y: .484848499}
+      pivot: {x: 0.48958334, y: 0.4848485}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 30, y: 51}
+        - {x: -45, y: 51}
+        - {x: -47, y: 45}
+        - {x: -47, y: -41}
+        - {x: -36, y: -47}
+        - {x: -27, y: -48}
+        - {x: 34, y: -48}
+        - {x: 48, y: -35}
+        - {x: 49, y: -30}
+        - {x: 49, y: 33}
     - name: buttons-btnFaceboockConnect
       rect:
         serializedVersion: 2
@@ -155,8 +218,26 @@ TextureImporter:
         width: 428
         height: 120
       alignment: 9
-      pivot: {x: .501168251, y: .495833337}
+      pivot: {x: 0.50116825, y: 0.49583334}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 213.5, y: -34.5}
+        - {x: 213.5, y: 38.5}
+        - {x: 201.5, y: 54.5}
+        - {x: 194.5, y: 58.5}
+        - {x: 190.5, y: 60.5}
+        - {x: -191.5, y: 60.5}
+        - {x: -202.5, y: 54.5}
+        - {x: -210.5, y: 45.5}
+        - {x: -214.5, y: 34.5}
+        - {x: -214.5, y: -34.5}
+        - {x: -213.5, y: -39.5}
+        - {x: -202.5, y: -52.5}
+        - {x: -195.5, y: -57.5}
+        - {x: -191.5, y: -59.5}
+        - {x: 190.5, y: -59.5}
+        - {x: 201.5, y: -53.5}
+        - {x: 209.5, y: -44.5}
     - name: buttons-btnGPSLogin
       rect:
         serializedVersion: 2
@@ -165,8 +246,25 @@ TextureImporter:
         width: 219
         height: 224
       alignment: 9
-      pivot: {x: .502283096, y: .491071433}
+      pivot: {x: 0.5022831, y: 0.49107143}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 109, y: 35}
+        - {x: 95, y: 72}
+        - {x: 44, y: 113}
+        - {x: 41, y: 114}
+        - {x: -35, y: 114}
+        - {x: -59, y: 111}
+        - {x: -96, y: 71}
+        - {x: -110, y: 35}
+        - {x: -110, y: -37}
+        - {x: -94, y: -70}
+        - {x: -77, y: -91}
+        - {x: -39, y: -110}
+        - {x: 35, y: -110}
+        - {x: 70, y: -93}
+        - {x: 103, y: -54}
+        - {x: 109, y: -31}
     - name: buttons-btnMusicOn
       rect:
         serializedVersion: 2
@@ -175,8 +273,17 @@ TextureImporter:
         width: 109
         height: 109
       alignment: 9
-      pivot: {x: .495412856, y: .495412856}
+      pivot: {x: 0.49541286, y: 0.49541286}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -39, y: 55}
+        - {x: -54, y: 45}
+        - {x: -54, y: -33}
+        - {x: -43, y: -54}
+        - {x: 36, y: -54}
+        - {x: 55, y: -43}
+        - {x: 55, y: 41}
+        - {x: 51, y: 55}
     - name: buttons-btnPause
       rect:
         serializedVersion: 2
@@ -185,8 +292,17 @@ TextureImporter:
         width: 151
         height: 151
       alignment: 9
-      pivot: {x: .466887414, y: .533112586}
+      pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -55.5, y: 70.5}
+        - {x: -70.5, y: 37.5}
+        - {x: -70.5, y: -56.5}
+        - {x: -46.5, y: -80.5}
+        - {x: 43.5, y: -80.5}
+        - {x: 80.5, y: -56.5}
+        - {x: 80.5, y: 37.5}
+        - {x: 51.5, y: 70.5}
     - name: buttons-btnPlay
       rect:
         serializedVersion: 2
@@ -195,8 +311,17 @@ TextureImporter:
         width: 151
         height: 151
       alignment: 9
-      pivot: {x: .466887414, y: .533112586}
+      pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -55.5, y: 70.5}
+        - {x: -70.5, y: 37.5}
+        - {x: -70.5, y: -56.5}
+        - {x: -46.5, y: -80.5}
+        - {x: 43.5, y: -80.5}
+        - {x: 80.5, y: -56.5}
+        - {x: 80.5, y: 37.5}
+        - {x: 51.5, y: 70.5}
     - name: buttons-btnRanking
       rect:
         serializedVersion: 2
@@ -205,8 +330,17 @@ TextureImporter:
         width: 151
         height: 151
       alignment: 9
-      pivot: {x: .466887414, y: .533112586}
+      pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -55.5, y: 70.5}
+        - {x: -70.5, y: 37.5}
+        - {x: -70.5, y: -56.5}
+        - {x: -46.5, y: -80.5}
+        - {x: 43.5, y: -80.5}
+        - {x: 80.5, y: -56.5}
+        - {x: 80.5, y: 37.5}
+        - {x: 51.5, y: 70.5}
     - name: buttons-btnSettings
       rect:
         serializedVersion: 2
@@ -215,8 +349,19 @@ TextureImporter:
         width: 163
         height: 163
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 69.5, y: 81.5}
+        - {x: -66.5, y: 81.5}
+        - {x: -81.5, y: 58.5}
+        - {x: -81.5, y: -52.5}
+        - {x: -79.5, y: -62.5}
+        - {x: -39.5, y: -81.5}
+        - {x: 63.5, y: -81.5}
+        - {x: 81.5, y: -49.5}
+        - {x: 81.5, y: 74.5}
+        - {x: 76.5, y: 80.5}
     - name: buttons-btnSimple
       rect:
         serializedVersion: 2
@@ -225,8 +370,26 @@ TextureImporter:
         width: 428
         height: 120
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 214, y: -35}
+        - {x: 214, y: 38}
+        - {x: 202, y: 54}
+        - {x: 195, y: 58}
+        - {x: 191, y: 60}
+        - {x: -191, y: 60}
+        - {x: -202, y: 54}
+        - {x: -210, y: 45}
+        - {x: -214, y: 34}
+        - {x: -214, y: -35}
+        - {x: -213, y: -40}
+        - {x: -202, y: -53}
+        - {x: -195, y: -58}
+        - {x: -191, y: -60}
+        - {x: 191, y: -60}
+        - {x: 202, y: -54}
+        - {x: 210, y: -45}
     - name: buttons-btnSoundOn
       rect:
         serializedVersion: 2
@@ -235,8 +398,17 @@ TextureImporter:
         width: 109
         height: 109
       alignment: 9
-      pivot: {x: .495412856, y: .495412856}
+      pivot: {x: 0.49541286, y: 0.49541286}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -39, y: 55}
+        - {x: -54, y: 45}
+        - {x: -54, y: -33}
+        - {x: -43, y: -54}
+        - {x: 36, y: -54}
+        - {x: 55, y: -43}
+        - {x: 55, y: 41}
+        - {x: 51, y: 55}
     - name: buttons-toggleOff
       rect:
         serializedVersion: 2
@@ -245,8 +417,16 @@ TextureImporter:
         width: 125
         height: 125
       alignment: 9
-      pivot: {x: .495999992, y: .504000008}
+      pivot: {x: 0.496, y: 0.504}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -58, y: 62}
+        - {x: -62, y: 60}
+        - {x: -62, y: -63}
+        - {x: 41, y: -63}
+        - {x: 63, y: -33}
+        - {x: 63, y: 52}
+        - {x: 35, y: 62}
     - name: buttons-toggleOn
       rect:
         serializedVersion: 2
@@ -255,8 +435,18 @@ TextureImporter:
         width: 86
         height: 86
       alignment: 9
-      pivot: {x: .488372087, y: .511627913}
+      pivot: {x: 0.4883721, y: 0.5116279}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -28, y: 42}
+        - {x: -32, y: 41}
+        - {x: -42, y: 26}
+        - {x: -42, y: -38}
+        - {x: -24, y: -44}
+        - {x: 32, y: -44}
+        - {x: 44, y: -29}
+        - {x: 44, y: 26}
+        - {x: 27, y: 42}
     - name: sliders-basicSlider-slBackground
       rect:
         serializedVersion: 2
@@ -265,8 +455,22 @@ TextureImporter:
         width: 555
         height: 66
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 277.5, y: 24}
+        - {x: 270.5, y: 31}
+        - {x: 265.5, y: 33}
+        - {x: -266.5, y: 33}
+        - {x: -272.5, y: 30}
+        - {x: -277.5, y: 24}
+        - {x: -277.5, y: -24}
+        - {x: -270.5, y: -31}
+        - {x: -265.5, y: -33}
+        - {x: 266.5, y: -33}
+        - {x: 269.5, y: -32}
+        - {x: 272.5, y: -30}
+        - {x: 277.5, y: -24}
     - name: sliders-basicSlider-slForeground
       rect:
         serializedVersion: 2
@@ -275,8 +479,21 @@ TextureImporter:
         width: 546
         height: 56
       alignment: 9
-      pivot: {x: .499084234, y: .5}
+      pivot: {x: 0.49908423, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 273.5, y: 21}
+        - {x: 268.5, y: 26}
+        - {x: 263.5, y: 28}
+        - {x: -262.5, y: 28}
+        - {x: -267.5, y: 26}
+        - {x: -272.5, y: 21}
+        - {x: -272.5, y: -22}
+        - {x: -267.5, y: -26}
+        - {x: -262.5, y: -28}
+        - {x: 263.5, y: -28}
+        - {x: 268.5, y: -26}
+        - {x: 273.5, y: -22}
     - name: sliders-basicSlider-slOverGloss
       rect:
         serializedVersion: 2
@@ -285,8 +502,9 @@ TextureImporter:
         width: 526
         height: 23
       alignment: 9
-      pivot: {x: .499049425, y: -.0869565234}
+      pivot: {x: 0.49904943, y: -0.08695652}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: sprites-Level selection-spCurrentLevelIndicator
       rect:
         serializedVersion: 2
@@ -295,8 +513,18 @@ TextureImporter:
         width: 96
         height: 178
       alignment: 9
-      pivot: {x: .546875, y: .522471905}
+      pivot: {x: 0.546875, y: 0.5224719}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 40.5, y: 85}
+        - {x: -42.5, y: 85}
+        - {x: -52.5, y: 70}
+        - {x: -52.5, y: -53}
+        - {x: -48.5, y: -93}
+        - {x: 39.5, y: -93}
+        - {x: 42.5, y: -89}
+        - {x: 43.5, y: -35}
+        - {x: 43.5, y: 66}
     - name: sprites-Level selection-spLevelBase0
       rect:
         serializedVersion: 2
@@ -305,8 +533,17 @@ TextureImporter:
         width: 123
         height: 116
       alignment: 9
-      pivot: {x: .556910574, y: .512931049}
+      pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -40.5, y: 56.5}
+        - {x: -68.5, y: 24.5}
+        - {x: -68.5, y: -37.5}
+        - {x: -53.5, y: -59.5}
+        - {x: 34.5, y: -59.5}
+        - {x: 54.5, y: -55.5}
+        - {x: 54.5, y: 42.5}
+        - {x: 33.5, y: 56.5}
     - name: sprites-Level selection-spLevelBase1
       rect:
         serializedVersion: 2
@@ -315,8 +552,18 @@ TextureImporter:
         width: 123
         height: 116
       alignment: 9
-      pivot: {x: .556910574, y: .512931049}
+      pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 48.5, y: 56.5}
+        - {x: -47.5, y: 56.5}
+        - {x: -68.5, y: 45.5}
+        - {x: -68.5, y: -50.5}
+        - {x: -63.5, y: -59.5}
+        - {x: 40.5, y: -59.5}
+        - {x: 54.5, y: -29.5}
+        - {x: 54.5, y: 34.5}
+        - {x: 51.5, y: 46.5}
     - name: sprites-Level selection-spLevelBase2
       rect:
         serializedVersion: 2
@@ -325,8 +572,18 @@ TextureImporter:
         width: 123
         height: 116
       alignment: 9
-      pivot: {x: .556910574, y: .512931049}
+      pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 48.5, y: 56.5}
+        - {x: -47.5, y: 56.5}
+        - {x: -68.5, y: 45.5}
+        - {x: -68.5, y: -50.5}
+        - {x: -63.5, y: -59.5}
+        - {x: 40.5, y: -59.5}
+        - {x: 54.5, y: -29.5}
+        - {x: 54.5, y: 34.5}
+        - {x: 51.5, y: 46.5}
     - name: sprites-Level selection-spLevelBase3
       rect:
         serializedVersion: 2
@@ -335,8 +592,17 @@ TextureImporter:
         width: 123
         height: 116
       alignment: 9
-      pivot: {x: .556910574, y: .512931049}
+      pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -40.5, y: 56.5}
+        - {x: -68.5, y: 24.5}
+        - {x: -68.5, y: -37.5}
+        - {x: -53.5, y: -59.5}
+        - {x: 34.5, y: -59.5}
+        - {x: 54.5, y: -55.5}
+        - {x: 54.5, y: 42.5}
+        - {x: 33.5, y: 56.5}
     - name: sprites-Level selection-spLevelPathNode
       rect:
         serializedVersion: 2
@@ -345,8 +611,16 @@ TextureImporter:
         width: 54
         height: 56
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -27, y: 28}
+        - {x: -27, y: -26}
+        - {x: -24, y: -28}
+        - {x: 19, y: -28}
+        - {x: 27, y: -26}
+        - {x: 27, y: 27}
+        - {x: 24, y: 28}
     - name: sprites-Level selection-spLevelStar
       rect:
         serializedVersion: 2
@@ -355,8 +629,17 @@ TextureImporter:
         width: 71
         height: 68
       alignment: 9
-      pivot: {x: .542253494, y: .529411793}
+      pivot: {x: 0.5422535, y: 0.5294118}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -12.5, y: 32}
+        - {x: -38.5, y: 18}
+        - {x: -38.5, y: -30}
+        - {x: -36.5, y: -36}
+        - {x: 22.5, y: -36}
+        - {x: 32.5, y: -8}
+        - {x: 32.5, y: 20}
+        - {x: 17.5, y: 32}
     - name: sprites-spEmptyStar
       rect:
         serializedVersion: 2
@@ -365,8 +648,18 @@ TextureImporter:
         width: 165
         height: 157
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 36.5, y: 78.5}
+        - {x: -33.5, y: 78.5}
+        - {x: -82.5, y: 55.5}
+        - {x: -82.5, y: -34.5}
+        - {x: -60.5, y: -78.5}
+        - {x: 56.5, y: -78.5}
+        - {x: 59.5, y: -77.5}
+        - {x: 82.5, y: 4.5}
+        - {x: 82.5, y: 32.5}
     - name: sprites-spFacebook
       rect:
         serializedVersion: 2
@@ -375,8 +668,13 @@ TextureImporter:
         width: 77
         height: 77
       alignment: 9
-      pivot: {x: .506493509, y: .5}
+      pivot: {x: 0.5064935, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -39, y: 38.5}
+        - {x: -39, y: -38.5}
+        - {x: 38, y: -38.5}
+        - {x: 38, y: 38.5}
     - name: sprites-spForbidden
       rect:
         serializedVersion: 2
@@ -385,8 +683,15 @@ TextureImporter:
         width: 67
         height: 81
       alignment: 9
-      pivot: {x: .49253732, y: .481481493}
+      pivot: {x: 0.49253732, y: 0.4814815}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 21, y: 42}
+        - {x: -33, y: -20}
+        - {x: -33, y: -39}
+        - {x: -20, y: -39}
+        - {x: 34, y: 28}
+        - {x: 34, y: 42}
     - name: sprites-spFriendProfImgFrame
       rect:
         serializedVersion: 2
@@ -395,8 +700,20 @@ TextureImporter:
         width: 149
         height: 130
       alignment: 9
-      pivot: {x: .516778529, y: .469230771}
+      pivot: {x: 0.5167785, y: 0.46923077}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -77, y: 69}
+        - {x: -77, y: 32}
+        - {x: -63, y: -58}
+        - {x: -58, y: -61}
+        - {x: 56, y: -61}
+        - {x: 72, y: 34}
+        - {x: 72, y: 69}
+      - - {x: -37, y: -31}
+        - {x: -47, y: 48}
+        - {x: 40, y: 48}
+        - {x: 33, y: -23}
     - name: sprites-spPlayerProfImgFrame
       rect:
         serializedVersion: 2
@@ -405,8 +722,20 @@ TextureImporter:
         width: 149
         height: 130
       alignment: 9
-      pivot: {x: .516778529, y: .469230771}
+      pivot: {x: 0.5167785, y: 0.46923077}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -77, y: 69}
+        - {x: -77, y: 32}
+        - {x: -63, y: -58}
+        - {x: -58, y: -61}
+        - {x: 56, y: -61}
+        - {x: 72, y: 34}
+        - {x: 72, y: 69}
+      - - {x: -37, y: -31}
+        - {x: -47, y: 48}
+        - {x: 40, y: 48}
+        - {x: 33, y: -23}
     - name: sprites-spProfileImgAnon
       rect:
         serializedVersion: 2
@@ -415,8 +744,13 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 9
-      pivot: {x: .504761934, y: .495238096}
+      pivot: {x: 0.50476193, y: 0.4952381}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -53, y: 53}
+        - {x: -53, y: -52}
+        - {x: 52, y: -52}
+        - {x: 52, y: 53}
     - name: sprites-spStar
       rect:
         serializedVersion: 2
@@ -425,8 +759,18 @@ TextureImporter:
         width: 165
         height: 157
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 36.5, y: 78.5}
+        - {x: -33.5, y: 78.5}
+        - {x: -82.5, y: 55.5}
+        - {x: -82.5, y: -34.5}
+        - {x: -60.5, y: -78.5}
+        - {x: 56.5, y: -78.5}
+        - {x: 59.5, y: -77.5}
+        - {x: 82.5, y: 4.5}
+        - {x: 82.5, y: 32.5}
     - name: sprites-spWhiteSquare
       rect:
         serializedVersion: 2
@@ -435,8 +779,14 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -16, y: 16}
+        - {x: -16, y: -16}
+        - {x: 16, y: -16}
+        - {x: 16, y: 16}
+    outline: []
   spritePackingTag: 
   userData: 
   assetBundleName: 

@@ -53,10 +53,6 @@ public class GooglePlayConnection : SA_Singleton<GooglePlayConnection> {
 			connectionString += "GamesAPI";
 		}
 
-		if(AndroidNativeSettings.Instance.EnableAppStateAPI) {
-			connectionString += "AppStateAPI";
-		}
-
 		if(AndroidNativeSettings.Instance.EnablePlusAPI) {
 			connectionString += "PlusAPI";
 		}
@@ -64,6 +60,11 @@ public class GooglePlayConnection : SA_Singleton<GooglePlayConnection> {
 		if(AndroidNativeSettings.Instance.EnableDriveAPI) {
 			connectionString += "DriveAPI";
 		}
+
+		if(AndroidNativeSettings.Instance.EnableAppInviteAPI) {
+			connectionString += "AppInvite";
+		}
+
 
 		AN_GMSGeneralProxy.setConnectionParams (AndroidNativeSettings.Instance.ShowConnectingPopup);
 		AN_GMSGeneralProxy.playServiceInit(connectionString);

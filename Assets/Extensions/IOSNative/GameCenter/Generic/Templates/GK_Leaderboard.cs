@@ -19,6 +19,8 @@ public class GK_Leaderboard  {
 	//Editor Use Only
 	public bool IsOpen = true;
 
+	private bool _CurrentPlayerScoreLoaded = false;
+
 	public GK_ScoreCollection SocsialCollection =  new GK_ScoreCollection();
 	public GK_ScoreCollection GlobalCollection =  new GK_ScoreCollection();
 
@@ -173,6 +175,11 @@ public class GK_Leaderboard  {
 		}
 	}
 
+	public bool CurrentPlayerScoreLoaded {
+		get {
+			return _CurrentPlayerScoreLoaded;
+		}
+	}
 
 	//--------------------------------------
 	// Internal Use
@@ -194,16 +201,16 @@ public class GK_Leaderboard  {
 		foreach(GK_Score s in newScores) {
 			CurrentPlayerScore.Add(s);
 		}
+		_CurrentPlayerScoreLoaded = true;
 	}
 
 	public void UpdateCurrentPlayerScore(GK_Score score) {
-	
 		GK_Score currentScore = GetCurrentPlayerScore(score.TimeSpan, score.Collection);
-		CurrentPlayerScore.Remove(currentScore);
-
-
+		if (currentScore != null) {
+			CurrentPlayerScore.Remove(currentScore);
+		}
 		CurrentPlayerScore.Add(score);
-
+		_CurrentPlayerScoreLoaded = true;
 	}
 
 	public void ReportLocalPlayerScoreUpdateFail(string errorData, int requestId) {
@@ -252,7 +259,7 @@ public class GK_Leaderboard  {
 	
 
 	
-	[System.Obsolete("id is deprectaed, plase use Id instead")]
+	[System.Obsolete("id is depreciated, plase use Id instead")]
 	public string id {
 		get {
 			return _info.Identifier;

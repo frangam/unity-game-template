@@ -30,6 +30,8 @@ public class GPLeaderBoard  {
 
 	[SerializeField]
 	private Texture2D _Texture;
+
+	private bool _CurrentPlayerScoreLoaded = false;
 	
 	public GPScoreCollection SocsialCollection =  new GPScoreCollection();
 	public GPScoreCollection GlobalCollection  =  new GPScoreCollection();
@@ -172,13 +174,16 @@ public class GPLeaderBoard  {
 		foreach (GPScore score in newScores) {
 			CurrentPlayerScore.Add(score);
 		}
+		_CurrentPlayerScoreLoaded = true;
 	}
 
 	public void UpdateCurrentPlayerScore(GPScore score) {		
 		GPScore currentScore = GetCurrentPlayerScore(score.TimeSpan, score.Collection);
-		CurrentPlayerScore.Remove(currentScore);		
-		
-		CurrentPlayerScore.Add(score);		
+		if (currentScore != null) {
+			CurrentPlayerScore.Remove(currentScore);
+		}		
+		CurrentPlayerScore.Add(score);
+		_CurrentPlayerScoreLoaded = true;
 	}
 	
 	public void UpdateScore(GPScore score) {
@@ -253,6 +258,12 @@ public class GPLeaderBoard  {
 		}
 		set {
 			_Texture = value;
+		}
+	}
+
+	public bool CurrentPlayerScoreLoaded {
+		get {
+			return _CurrentPlayerScoreLoaded;
 		}
 	}
 

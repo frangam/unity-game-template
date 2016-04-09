@@ -31,10 +31,12 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	//--------------------------------------
 	#region Unity
 	public virtual void Awake(){
-		GTAnalyticsHandler.Instance.logCurrentGameSection (); //Analytic to know which screen has been opened
+		
 	}
 	
 	public virtual void Start () {
+//		GTAnalyticsHandler.Instance.logCurrentGameSection (currentSection); //Analytic to know which screen has been opened
+
 		//set Timemanager fixed timestep
 		BaseGameScreenController.Instance.resetFixedTimeStepOfTimeManager();
 		
@@ -70,13 +72,15 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	
 	public virtual void OnApplicationPause(bool paused){
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
-		if(currentSection != GameSection.GAME){
-			Time.timeScale = paused ? 0f : 1f;
-		}
-		else if(paused && !GameController.Instance.Manager.Finished && GameController.Instance.Manager.Started){
-			GTDebug.log("Pausing game in Game Screen Controller");
-			
-			GameController.Instance.Manager.Paused = paused;
+		if(!AdsHandler.Instance.ShowingFullScreenAd){
+			if(currentSection != GameSection.GAME){
+				Time.timeScale = paused ? 0f : 1f;
+			}
+			else if(paused && !GameController.Instance.Manager.Finished && GameController.Instance.Manager.Started){
+				GTDebug.log("Pausing game in Game Screen Controller");
+				
+				GameController.Instance.Manager.Paused = paused;
+			}
 		}
 		
 		
@@ -87,11 +91,11 @@ public class BaseGameScreenController : Singleton<BaseGameScreenController> {
 	}
 	
 	public virtual void OnApplicationQuit() {
-		//Analytic to know in wich section user has exited game
-		GTAnalyticsHandler.Instance.logEvent (GAEventCategories.GAME, GAEventActions.FORCED + " " + GAEventActions.QUIT, Section.ToString());
-		
-		//Analytics notify session is stopped
-		GTAnalyticsHandler.Instance.stopSession ();
+//		//Analytic to know in wich section user has exited game
+//		GTAnalyticsHandler.Instance.logEvent (GAEventCategories.GAME, GAEventActions.FORCED + " " + GAEventActions.QUIT, Section.ToString());
+//		
+//		//Analytics notify session is stopped
+//		GTAnalyticsHandler.Instance.stopSession ();
 	}
 	
 	#endregion

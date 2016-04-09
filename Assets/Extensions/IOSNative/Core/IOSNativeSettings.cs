@@ -10,7 +10,7 @@ using UnityEditor;
 
 public class IOSNativeSettings : ScriptableObject {
 
-	public const string VERSION_NUMBER = "8.0.4";
+	public const string VERSION_NUMBER = "8.2";
 
 	public string AppleId = "XXXXXXXXX";
 
@@ -46,7 +46,8 @@ public class IOSNativeSettings : ScriptableObject {
 	public bool EnableMediaPlayerAPI = true;
 	public bool EnableiAdAPI = true;
 	public bool EnableReplayKit = false;
-
+	public bool EnableCloudKit = false;
+	public bool EnableSoomla = false;
 
 	public bool EnablePushNotificationsAPI = false;
 
@@ -69,13 +70,24 @@ public class IOSNativeSettings : ScriptableObject {
 
 	public int RPK_iPadViewType = 0;
 
+
+
+	//Soomla
+	public string SoomlaDownloadLink = "http://goo.gl/7LYwuj";
+	public string SoomlaDocsLink = "https://goo.gl/JFkpNa";
+	public string SoomlaGameKey = "" ;
+	public string SoomlaEnvKey = "" ;
+
+	//One Signal
+	public bool OneSignalEnabled = false;
+	public string OneSignalDocsLink = "https://goo.gl/Royty6";
+
+
 	private const string ISNSettingsAssetName = "IOSNativeSettings";
-	private const string ISNSettingsPath = "Extensions/IOSNative/Resources";
 	private const string ISNSettingsAssetExtension = ".asset";
 
 	private static IOSNativeSettings instance = null;
 
-	
 	public static IOSNativeSettings Instance {
 
 		
@@ -89,7 +101,7 @@ public class IOSNativeSettings : ScriptableObject {
 					instance = CreateInstance<IOSNativeSettings>();
 					#if UNITY_EDITOR
 
-					FileStaticAPI.CreateFolder(ISNSettingsPath);
+					FileStaticAPI.CreateFolder(SA_Config.SettingsPath);
 				
 					/*string properPath = Path.Combine(Application.dataPath, ISNSettingsPath);
 					if (!Directory.Exists(properPath)) {
@@ -98,7 +110,7 @@ public class IOSNativeSettings : ScriptableObject {
 					}
 					*/
 					
-					string fullPath = Path.Combine(Path.Combine("Assets", ISNSettingsPath),
+					string fullPath = Path.Combine(Path.Combine("Assets", SA_Config.SettingsPath),
 					                               ISNSettingsAssetName + ISNSettingsAssetExtension
 					                               );
 					

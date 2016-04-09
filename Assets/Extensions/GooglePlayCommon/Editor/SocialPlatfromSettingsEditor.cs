@@ -12,16 +12,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 
 
-	static GUIContent TConsumerKey   = new GUIContent("API Key [?]:", "Twitter register app consumer key");
-	static GUIContent TConsumerSecret   = new GUIContent("API Secret [?]:", "Twitter register app consumer secret");
 
-	static GUIContent TAccessToken   = new GUIContent("Access Token [?]:", "Twitter Access Token for editor testing only");
-	static GUIContent TAccessTokenSecret   = new GUIContent("Access Token Secret [?]:", "Twitter Access Token Secret for editor testing only");
-
-	static GUIContent FBdkVersion   = new GUIContent("Facebook SDK Version [?]", "Version of Unity Facebook SDK Plugin");
-
-	
-	
 	static GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is Plugin version.  If you have problems or compliments please include this so we know exactly what version to look out for.");
 	static GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical quastion, feel free to drop an e-mail");
 
@@ -39,7 +30,45 @@ public class SocialPlatfromSettingsEditor : Editor {
 		if(IsInstalled && IsUpToDate) {
 			PluginsInstalationUtil.IOS_Install_SocialPart();
 			UpdateManifest();
+
+			UpdatePluginDefines();
 		}
+	}
+
+
+	public static string SP_FB_API_v7_Path = "Extensions/GooglePlayCommon/Social/Facebook/Manage/SP_FB_API_v7.cs";
+	public static string SP_FB_GrapRequest_V7_Path = "Extensions/GooglePlayCommon/Social/Facebook/Tasks/FB_GrapRequest_V7.cs";
+
+	public static string SP_FB_API_v6_Path = "Extensions/GooglePlayCommon/Social/Facebook/Manage/SP_FB_API_v6.cs";
+	public static string SP_FB_GrapRequest_V6_Path = "Extensions/GooglePlayCommon/Social/Facebook/Tasks/FB_GrapRequest_V6.cs";
+
+
+	public static void UpdatePluginDefines() {
+
+		if(PluginsInstalationUtil.IsFacebookInstalled) {
+			int version = SA_ModulesInfo.FB_SDK_MajorVersionCode;
+			if(version != 0) {
+				if(version >= 7) {
+					SA_EditorTool.ChnageDefineState(SP_FB_API_v7_Path, "FBV7_API_ENABLED", 	true);
+					SA_EditorTool.ChnageDefineState(SP_FB_GrapRequest_V7_Path, "FBV7_API_ENABLED", 	true);
+				} else {
+					SA_EditorTool.ChnageDefineState(SP_FB_API_v6_Path, "FBV6_API_ENABLED", 	true);
+					SA_EditorTool.ChnageDefineState(SP_FB_GrapRequest_V6_Path, "FBV6_API_ENABLED", 	true);
+				}
+			} else {
+				DisableFBAPI();
+			}
+		} else {
+			DisableFBAPI();
+		}
+	}
+
+	public static void DisableFBAPI() {
+		SA_EditorTool.ChnageDefineState(SP_FB_API_v6_Path, "FBV6_API_ENABLED", 	false);
+		SA_EditorTool.ChnageDefineState(SP_FB_GrapRequest_V6_Path, "FBV6_API_ENABLED", 	false);
+		
+		SA_EditorTool.ChnageDefineState(SP_FB_API_v7_Path, "FBV7_API_ENABLED", 	false);
+		SA_EditorTool.ChnageDefineState(SP_FB_GrapRequest_V7_Path, "FBV7_API_ENABLED", 	false);
 	}
 
 	public override void OnInspectorGUI() {
@@ -78,9 +107,9 @@ public class SocialPlatfromSettingsEditor : Editor {
 		GeneralOptions();
 		GeneralSettings();
 		EditorGUILayout.Space();
-		FacebookSettings();
+		SocialPlatfromSettingsHelper.FacebookSettings();
 		EditorGUILayout.Space();
-		TwitterSettings();
+		SocialPlatfromSettingsHelper.TwitterSettings();
 		EditorGUILayout.Space();
 
 		AboutGUI();
@@ -127,18 +156,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 		}
 	}
 	
-
-	public static bool IsFacebookInstalled {
-		get {
-			if(!FileStaticAPI.IsFolderExists("Facebook")) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-	}
-
-
+	
 
 	private void GeneralOptions() {
 		
@@ -203,7 +221,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 	public static void DrawAPIsList() {
 		EditorGUILayout.BeginHorizontal();
 		GUI.enabled = false;
-		EditorGUILayout.Toggle("Facebook",  IsFacebookInstalled);
+		EditorGUILayout.Toggle("Facebook",  PluginsInstalationUtil.IsFacebookInstalled);
 		GUI.enabled = true;
 		SocialPlatfromSettings.Instance.TwitterAPI = EditorGUILayout.Toggle("Twitter",  SocialPlatfromSettings.Instance.TwitterAPI);
 		EditorGUILayout.EndHorizontal();
@@ -296,8 +314,10 @@ public class SocialPlatfromSettingsEditor : Editor {
 		AN_ActivityTemplate FBUnityDeepLinkingActivity = application.GetOrCreateActivityWithName("com.facebook.unity.FBUnityDeepLinkingActivity");
 		AN_ActivityTemplate FBUnityDialogsActivity = application.GetOrCreateActivityWithName("com.facebook.unity.FBUnityDialogsActivity");
 
+		//This activity used for Facebook SDK v7.x
+		AN_ActivityTemplate FacebookActivity = application.GetOrCreateActivityWithName("com.facebook.FacebookActivity");
 
-		if(IsFacebookInstalled) {
+		if(PluginsInstalationUtil.IsFacebookInstalled) {
 
 
 
@@ -309,11 +329,9 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 				if(FB_Resourse != null) {
 					Type fb_settings = FB_Resourse.GetType();
-					Debug.Log(fb_settings);
 					System.Reflection.PropertyInfo propert  = fb_settings.GetProperty("AppId", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
 					FBAppId = (string) propert.GetValue(null, null);
 				}
-
 
 			} catch(Exception ex) {
 				Debug.LogError("AndroidNative. FBSettings.AppId reflection failed: " + ex.Message);
@@ -335,6 +353,15 @@ public class SocialPlatfromSettingsEditor : Editor {
 			FBUnityDialogsActivity.SetValue("android:configChanges", "fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen");
 
 			FBUnityDeepLinkingActivity.SetValue("android:exported", "true");
+
+			if (SA_ModulesInfo.FB_SDK_MajorVersionCode >= 7) {
+				FacebookActivity.SetValue("android:configChanges", "keyboard|keyboardHidden|screenLayout|screenSize|orientation");
+				FacebookActivity.SetValue("android:theme", "@android:style/Theme.Translucent.NoTitleBar");
+				FacebookActivity.SetValue("android:label", "@string/app_name");
+			} else {
+				application.RemoveActivity(FacebookActivity);
+			}
+
 			#endif
 
 			
@@ -344,6 +371,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 			application.RemoveActivity(FBUnityLoginActivity);
 			application.RemoveActivity(FBUnityDeepLinkingActivity);
 			application.RemoveActivity(FBUnityDialogsActivity);
+			application.RemoveActivity(FacebookActivity);
 		}
 		
 		
@@ -431,7 +459,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 		SocialPlatfromSettings.Instance.ShowActions = EditorGUILayout.Foldout(SocialPlatfromSettings.Instance.ShowActions, "More Actions");
 		if(SocialPlatfromSettings.Instance.ShowActions) {
 				
-			if(!IsFacebookInstalled) {
+			if(!PluginsInstalationUtil.IsFacebookInstalled) {
 				GUI.enabled = false;
 			}	
 				
@@ -439,15 +467,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 			EditorGUILayout.Space();
 				
 			if(GUILayout.Button("Remove Facebook SDK",  GUILayout.Width(160))) {
-				bool result = EditorUtility.DisplayDialog(
-					"Removing Facebook SDK",
-					"Warning action can not be undone without reimporting the plugin",
-					"Remove",
-					"Cansel");
-				if(result) {
-					PluginsInstalationUtil.Remove_FB_SDK();
-				}
-					
+				PluginsInstalationUtil.Remove_FB_SDK_WithDialog();
 			}
 
 			if(GUILayout.Button("Reset Settings",  GUILayout.Width(160))) {
@@ -515,104 +535,6 @@ public class SocialPlatfromSettingsEditor : Editor {
 		}
 	}
 	
-	private static string newPermition = "";
-	public static void FacebookSettings() {
-		EditorGUILayout.Space();
-		EditorGUILayout.HelpBox("Facebook Settings", MessageType.None);
-
-		if (SocialPlatfromSettings.Instance.fb_scopes_list.Count == 0) {
-			SocialPlatfromSettings.Instance.AddDefaultScopes();
-		}
-
-		SocialPlatfromSettings.Instance.showPermitions = EditorGUILayout.Foldout(SocialPlatfromSettings.Instance.showPermitions, "Facebook Permissions");
-		if(SocialPlatfromSettings.Instance.showPermitions) {
-			foreach(string s in SocialPlatfromSettings.Instance.fb_scopes_list) {
-				EditorGUILayout.BeginVertical (GUI.skin.box);
-				EditorGUILayout.BeginHorizontal();
-
-				EditorGUILayout.SelectableLabel(s, GUILayout.Height(16));
-				
-				if(GUILayout.Button("x",  GUILayout.Width(20))) {
-					SocialPlatfromSettings.Instance.fb_scopes_list.Remove(s);
-					return;
-				}
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.EndVertical();
-			}
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Add new permition: ");
-			newPermition = EditorGUILayout.TextField(newPermition);
-			
-			
-			EditorGUILayout.EndHorizontal();
-			
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			
-			EditorGUILayout.Space();
-			if(GUILayout.Button("Documentation",  GUILayout.Width(100))) {
-				Application.OpenURL("https://developers.facebook.com/docs/facebook-login/permissions/v2.0");
-			}
-			
-			
-			
-			if(GUILayout.Button("Add",  GUILayout.Width(100))) {
-				
-				if(newPermition != string.Empty) {
-					newPermition = newPermition.Trim();
-					if(!SocialPlatfromSettings.Instance.fb_scopes_list.Contains(newPermition)) {
-						SocialPlatfromSettings.Instance.fb_scopes_list.Add(newPermition);
-					}
-					
-					newPermition = string.Empty;
-				}
-			}
-			EditorGUILayout.EndHorizontal();
-		
-		}
-
-	}
-
-	public static void TwitterSettings() {
-		EditorGUILayout.HelpBox("Twitter Settings", MessageType.None);
-
-
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(TConsumerKey);
-		SocialPlatfromSettings.Instance.TWITTER_CONSUMER_KEY	 	= EditorGUILayout.TextField(SocialPlatfromSettings.Instance.TWITTER_CONSUMER_KEY);
-		SocialPlatfromSettings.Instance.TWITTER_CONSUMER_KEY 		= SocialPlatfromSettings.Instance.TWITTER_CONSUMER_KEY.Trim();
-		EditorGUILayout.EndHorizontal();
-
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(TConsumerSecret);
-		SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET	 	= EditorGUILayout.TextField(SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET);
-		SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET	 	= SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET.Trim();
-		EditorGUILayout.EndHorizontal();
-
-			EditorGUI.indentLevel++;
-			SocialPlatfromSettings.Instance.ShowEditorOauthTestingBlock = EditorGUILayout.Foldout(SocialPlatfromSettings.Instance.ShowEditorOauthTestingBlock, "OAuth Testing In Editor");
-			if(SocialPlatfromSettings.Instance.ShowEditorOauthTestingBlock) {
-
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField(TAccessToken);
-				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN	 	= EditorGUILayout.TextField(SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN);
-				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN 		= SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN.Trim();
-				EditorGUILayout.EndHorizontal();
-				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField(TAccessTokenSecret);
-				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET	 	= EditorGUILayout.TextField(SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET);
-				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET	 	= SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET.Trim();
-				EditorGUILayout.EndHorizontal();
-		
-			}
-
-			EditorGUI.indentLevel--;
-	}
 
 
 
@@ -623,10 +545,8 @@ public class SocialPlatfromSettingsEditor : Editor {
 		EditorGUILayout.HelpBox("About Mobile Social Plugin", MessageType.None);
 		EditorGUILayout.Space();
 		
-		SelectableLabelField(SdkVersion, SocialPlatfromSettings.VERSION_NUMBER);
-		if(IsFacebookInstalled) {
-			SelectableLabelField(FBdkVersion, SocialPlatfromSettings.FB_SDK_VERSION_NUMBER);
-		}
+		SA_EditorTool.SelectableLabelField(SdkVersion, SocialPlatfromSettings.VERSION_NUMBER);
+		SA_EditorTool.FBSdkVersionLabel();
 		SelectableLabelField(SupportEmail, "stans.assets@gmail.com");
 
 		

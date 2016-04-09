@@ -1,5 +1,32 @@
 fileFormatVersion: 2
-guid: e00a9170062a94045b5f09e71efa265e
+guid: 243a781cad112c75d0008dfa8d76c639
+labels:
+- Hardsurface
+- Lowpoly
+- Prop
+- Building
+- Buildings
+- Pagoda
+- Lamp
+- Wall
+- Japanese
+- Asia
+- Mobile
+- Game
+- House
+- Temple
+- Construction
+- Fence
+- Barrier
+- Skyscaper
+- Highrise
+- Apartment
+- Tower
+- City
+- Town
+- Banners
+- Signs
+- Cointainers
 MonoImporter:
   serializedVersion: 2
   defaultReferences:

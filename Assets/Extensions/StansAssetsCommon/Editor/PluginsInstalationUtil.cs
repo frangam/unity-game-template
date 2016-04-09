@@ -35,8 +35,9 @@ public class PluginsInstalationUtil : MonoBehaviour {
 		FileStaticAPI.CopyFile(PluginsInstalationUtil.IOS_SOURCE_PATH + "ISN_InApp.mm.txt", 		PluginsInstalationUtil.IOS_DESTANATION_PATH + "ISN_InApp.mm");
 		FileStaticAPI.CopyFile(PluginsInstalationUtil.IOS_SOURCE_PATH + "ISN_Media.mm.txt", 		PluginsInstalationUtil.IOS_DESTANATION_PATH + "ISN_Media.mm");
 		FileStaticAPI.CopyFile(PluginsInstalationUtil.IOS_SOURCE_PATH + "ISN_ReplayKit.mm.txt", 	PluginsInstalationUtil.IOS_DESTANATION_PATH + "ISN_ReplayKit.mm");
+		FileStaticAPI.CopyFile(PluginsInstalationUtil.IOS_SOURCE_PATH + "ISN_CloudKit.mm.txt", 		PluginsInstalationUtil.IOS_DESTANATION_PATH + "ISN_CloudKit.mm");
 		FileStaticAPI.CopyFile(PluginsInstalationUtil.IOS_SOURCE_PATH + "ISN_NSData+Base64.h.txt", 	PluginsInstalationUtil.IOS_DESTANATION_PATH + "ISN_NSData+Base64.h");
-		FileStaticAPI.CopyFile(PluginsInstalationUtil.IOS_SOURCE_PATH + "ISN_NSData+Base64.m.txt", PluginsInstalationUtil.IOS_DESTANATION_PATH + "ISN_NSData+Base64.m");
+		FileStaticAPI.CopyFile(PluginsInstalationUtil.IOS_SOURCE_PATH + "ISN_NSData+Base64.m.txt", 	PluginsInstalationUtil.IOS_DESTANATION_PATH + "ISN_NSData+Base64.m");
 		
 		
 		IOS_Install_SocialPart();
@@ -64,35 +65,51 @@ public class PluginsInstalationUtil : MonoBehaviour {
 
 
 
-	private static string AN_SoomlaGrowContent = "Extensions/AndroidNative/Other/Soomla/AN_SoomlaGrow.cs";
 
-
+	public static void Remove_FB_SDK_WithDialog() {
+		bool result = EditorUtility.DisplayDialog(
+			"Removing Facebook SDK",
+			"Are you sure you want to remove Facebook OAuth API?",
+			"Remove",
+			"Cansel");
+		
+		if(result) {
+			Remove_FB_SDK();
+		}
+	}
 	public static void Remove_FB_SDK() {
 
-
 		FileStaticAPI.DeleteFolder(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "facebook");
-		FileStaticAPI.DeleteFolder("Facebook");
-		FileStaticAPI.DeleteFolder("Extensions/GooglePlayCommon/Social/Facebook");
-
-
-		//AM
-		FileStaticAPI.DeleteFile("Extensions/AndroidNative/xExample/Scripts/Social/FacebookAndroidUseExample.cs");
-		FileStaticAPI.DeleteFile("Extensions/AndroidNative/xExample/Scripts/Social/FacebookAnalyticsExample.cs");
-		FileStaticAPI.DeleteFile("Extensions/AndroidNative/xExample/Scripts/Social/FacebookAndroidTurnBasedAndGiftsExample.cs");
-
+		FileStaticAPI.DeleteFolder("Plugins/facebook", false);
+		FileStaticAPI.DeleteFolder("Facebook", false);
+		FileStaticAPI.DeleteFolder("FacebookSDK", false);
 
 		//MSP
-		FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSPFacebookUseExample.cs");
-		FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSP_FacebookAnalyticsExample.cs");
-		FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSP_FacebookAndroidTurnBasedAndGiftsExample.cs");
+		FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSPFacebookUseExample.cs", false);
+		FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSP_FacebookAnalyticsExample.cs", false);
+		FileStaticAPI.DeleteFile("Extensions/MobileSocialPlugin/Example/Scripts/MSP_FacebookAndroidTurnBasedAndGiftsExample.cs", false);
 
+		//FB v7
+		FileStaticAPI.DeleteFolder("Examples", false);
+		FileStaticAPI.DeleteFolder(PluginsInstalationUtil.IOS_DESTANATION_PATH + "Facebook", false);
+
+
+		FileStaticAPI.DeleteFolder(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "libs/bolts-android-1.2.0.jar");
+		FileStaticAPI.DeleteFolder(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "libs/facebook-android-sdk-4.7.0.jar");
+		FileStaticAPI.DeleteFolder(PluginsInstalationUtil.ANDROID_DESTANATION_PATH + "libs/facebook-android-wrapper-release.jar");
+
+		AssetDatabase.Refresh();
+	}
+
+
+	private static string AN_SoomlaGrowContent = "Extensions/AndroidNative/Other/Soomla/AN_SoomlaGrow.cs";
+	public static void DisableSoomlaFB() {
 		ChnageDefineState(AN_SoomlaGrowContent, "FACEBOOK_ENABLED", false);
-
-
 	}
 
 
 
+	
 
 	private static void ChnageDefineState(string file, string tag, bool IsEnabled) {
 
@@ -174,6 +191,7 @@ public class PluginsInstalationUtil : MonoBehaviour {
 		RemoveIOSFile("ISN_NativeCore");
 		RemoveIOSFile("ISN_SocialGate");
 		RemoveIOSFile("ISN_ReplayKit");
+		RemoveIOSFile("ISN_CloudKit");
 		RemoveIOSFile("ISN_Soomla");
 		
 		
@@ -324,10 +342,11 @@ public class PluginsInstalationUtil : MonoBehaviour {
 		
 		
 		
-		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + "libs/android-support-v4.txt", ANDROID_DESTANATION_PATH + "libs/android-support-v4.jar");
-		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + "androidnative.txt", 	        ANDROID_DESTANATION_PATH + "androidnative.jar");
+		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + "libs/android-support-v4.txt", 	ANDROID_DESTANATION_PATH + "libs/android-support-v4.jar");
+		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + "androidnative.txt", 	        	ANDROID_DESTANATION_PATH + "androidnative.jar");
 		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + "mobilenativepopups.txt", 	        ANDROID_DESTANATION_PATH + "mobilenativepopups.jar");
-		
+		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + "sa_analytics.txt", 	        	ANDROID_DESTANATION_PATH + "sa_analytics.jar");
+
 		
 		
 		
@@ -352,30 +371,33 @@ public class PluginsInstalationUtil : MonoBehaviour {
 		
 		
 		string file;
-		file = "res/values/" + "analytics.xml";
+		file = "AN_Res/res/values/analytics.xml";
 		if(!FileStaticAPI.IsFileExists(ANDROID_DESTANATION_PATH + file)) {
 			FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + file, 	ANDROID_DESTANATION_PATH + file);
 		}
 		
 		
-		file = "res/values/" + "ids.xml";
+		file = "AN_Res/res/values/ids.xml";
 		if(!FileStaticAPI.IsFileExists(ANDROID_DESTANATION_PATH + file)) {
 			FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + file, 	ANDROID_DESTANATION_PATH + file);
 		}
 		
-		file = "res/xml/" + "file_paths.xml";
+		file = "AN_Res/res/xml/file_paths.xml";
 		if(!FileStaticAPI.IsFileExists(ANDROID_DESTANATION_PATH + file)) {
 			FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + file, 	ANDROID_DESTANATION_PATH + file);
 		}
 		
 		
-		file = "res/values/" + "version.xml";
+		file = "AN_Res/res/values/version.xml";
+		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + file, 	ANDROID_DESTANATION_PATH + file);
+
+		file = "AN_Res/project.properties";
 		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + file, 	ANDROID_DESTANATION_PATH + file);
 		
+		file = "AN_Res/AndroidManifest.xml";
+		FileStaticAPI.CopyFile(ANDROID_SOURCE_PATH + file, 	ANDROID_DESTANATION_PATH + file);
 		
-		
-		//First install dependense
-		
+		//First install dependense		
 		
 		file = "AndroidManifest.xml";
 		if(!FileStaticAPI.IsFileExists(ANDROID_DESTANATION_PATH + file)) {
@@ -385,4 +407,14 @@ public class PluginsInstalationUtil : MonoBehaviour {
 		AssetDatabase.Refresh();
 		
 	}
+
+
+
+	public static bool IsFacebookInstalled {
+		get {
+			return FileStaticAPI.IsFileExists("Facebook/Scripts/FB.cs") || FileStaticAPI.IsFileExists("FacebookSDK/SDK/Scripts/FB.cs");
+		}
+	}
+
+
 }

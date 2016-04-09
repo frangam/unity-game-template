@@ -29,8 +29,20 @@ public class IOSNativeUtility : ISN_Singleton<IOSNativeUtility> {
 	[DllImport ("__Internal")]
 	private static extern void _ISN_GetLocale();
 
+	[DllImport ("__Internal")]
+	private static extern bool _ISN_IsGuidedAccessEnabled();
+
+
+	[DllImport ("__Internal")]
+	private static extern bool _ISN_IsRunningTestFlightBeta();
+
+
+	[DllImport ("__Internal")]
+	private static extern void _ISN_RequestGuidedAccessSession(bool enable);
+
 	#endif
 	public static event Action<ISN_Locale> OnLocaleLoaded = delegate {};
+	public static event Action<bool> GuidedAccessSessionRequestResult = delegate {};
 
 
 	void Awake() {
@@ -74,10 +86,46 @@ public class IOSNativeUtility : ISN_Singleton<IOSNativeUtility> {
 		#endif
 	}
 
+	public void RequestGuidedAccessSession(bool enabled) {
+		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		_ISN_RequestGuidedAccessSession(enabled);
+		#endif
+	}
+
+	//--------------------------------------
+	//  Get / Set
+	//--------------------------------------
+
+	public bool IsGuidedAccessEnabled {
+		get {
+			#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+			return _ISN_IsGuidedAccessEnabled();
+			#else
+			return false;
+			#endif
+		}
+	}
+
+
+	public static bool IsRunningTestFlightBeta {
+		get {
+			#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+			return _ISN_IsRunningTestFlightBeta();
+			#else
+			return true;
+			#endif
+		} 
+	}
+
 
 	//--------------------------------------
 	//  Handlers
 	//--------------------------------------
+
+	private void OnGuidedAccessSessionRequestResult(string data) {
+		bool result = System.Convert.ToBoolean(data);
+		GuidedAccessSessionRequestResult(result);
+	}
 
 
 	private void OnLocaleLoadedHandler(string data)  {

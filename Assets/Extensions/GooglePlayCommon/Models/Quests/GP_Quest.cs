@@ -16,6 +16,11 @@ public class GP_Quest {
 	public long AcceptedTimestamp;
 	public long EndTimestamp;
 
+	public byte[] RewardData;
+
+	public long CurrentProgress;
+	public long TargetProgress;
+
 	private Texture2D _icon = null;
 	private Texture2D _banner = null;
 

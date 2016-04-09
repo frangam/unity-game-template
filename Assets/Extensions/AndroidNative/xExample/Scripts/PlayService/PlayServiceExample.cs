@@ -322,7 +322,7 @@ public class PlayServiceExample : AndroidNativeExampleBase {
 
 	private void OnAchievementsLoaded(GooglePlayResult result) {
 		GooglePlayManager.ActionAchievementsLoaded -= OnAchievementsLoaded;
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 
 			foreach (GPAchievement achievement in GooglePlayManager.Instance.Achievements) {
 				Debug.Log(achievement.Id);
@@ -337,15 +337,15 @@ public class PlayServiceExample : AndroidNativeExampleBase {
 			SA_StatusBar.text = "Total Achievement: " + GooglePlayManager.Instance.Achievements.Count.ToString();
 			AN_PoupsProxy.showMessage ("Achievments Loaded", "Total Achievements: " + GooglePlayManager.Instance.Achievements.Count.ToString());
 		} else {
-			SA_StatusBar.text = result.message;
-			AN_PoupsProxy.showMessage ("Achievments Loaded error: ", result.message);
+			SA_StatusBar.text = result.Message;
+			AN_PoupsProxy.showMessage ("Achievments Loaded error: ", result.Message);
 		}
 
 	}
 
 	private void OnAchievementUpdated(GP_AchievementResult result) {
-		SA_StatusBar.text = "Achievment Updated: Id: " + result.achievementId + "\n status: " + result.message;
-		AN_PoupsProxy.showMessage ("Achievment Updated ", "Id: " + result.achievementId + "\n status: " + result.message);
+		SA_StatusBar.text = "Achievment Updated: Id: " + result.achievementId + "\n status: " + result.Message;
+		AN_PoupsProxy.showMessage ("Achievment Updated ", "Id: " + result.achievementId + "\n status: " + result.Message);
 	}
 
 	
@@ -353,7 +353,7 @@ public class PlayServiceExample : AndroidNativeExampleBase {
 	private void OnLeaderBoardsLoaded(GooglePlayResult result) {
 		GooglePlayManager.ActionLeaderboardsLoaded -= OnLeaderBoardsLoaded;
 
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			if( GooglePlayManager.Instance.GetLeaderBoard(LEADERBOARD_ID) == null) {
 				AN_PoupsProxy.showMessage("Leader boards loaded", LEADERBOARD_ID + " not found in leader boards list");
 				return;
@@ -363,8 +363,8 @@ public class PlayServiceExample : AndroidNativeExampleBase {
 			SA_StatusBar.text = LEADERBOARD_NAME + "  score  " + GooglePlayManager.Instance.GetLeaderBoard(LEADERBOARD_ID).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.FRIENDS).LongScore.ToString();
 			AN_PoupsProxy.showMessage (LEADERBOARD_NAME + "  score",  GooglePlayManager.Instance.GetLeaderBoard(LEADERBOARD_ID).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.FRIENDS).LongScore.ToString());
 		} else {
-			SA_StatusBar.text = result.message;
-			AN_PoupsProxy.showMessage ("Leader-Boards Loaded error: ", result.message);
+			SA_StatusBar.text = result.Message;
+			AN_PoupsProxy.showMessage ("Leader-Boards Loaded error: ", result.Message);
 		}
 
 		UpdateBoardInfo();
@@ -389,12 +389,12 @@ public class PlayServiceExample : AndroidNativeExampleBase {
 	}
 
 	private void OnScoreSubmited(GP_LeaderboardResult result) {
-		if (result.isSuccess) {
-			SA_StatusBar.text = "Score Submited:  " + result.message
+		if (result.IsSucceeded) {
+			SA_StatusBar.text = "Score Submited:  " + result.Message
 			+ " LeaderboardId: " + result.Leaderboard.Id
 			+ " LongScore: " + result.Leaderboard.GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).LongScore;
 		} else {
-			SA_StatusBar.text = "Score Submit Fail:  " + result.message;
+			SA_StatusBar.text = "Score Submit Fail:  " + result.Message;
 		}
 	}
 

@@ -1,5 +1,32 @@
 fileFormatVersion: 2
 guid: 34c3946ab5378473cb34bedd1c8194ba
+labels:
+- Hardsurface
+- Lowpoly
+- Prop
+- Building
+- Buildings
+- Pagoda
+- Lamp
+- Wall
+- Japanese
+- Asia
+- Mobile
+- Game
+- House
+- Temple
+- Construction
+- Fence
+- Barrier
+- Skyscaper
+- Highrise
+- Apartment
+- Tower
+- City
+- Town
+- Banners
+- Signs
+- Cointainers
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
@@ -7,3 +34,5 @@ MonoImporter:
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 

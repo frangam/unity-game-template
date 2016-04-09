@@ -67,6 +67,7 @@ public class GooglePlayerTemplate {
 	public void LoadImage() {
 		
 		if(image != null) {
+			BigPhotoLoaded(image);
 			return;
 		}
 		
@@ -80,6 +81,7 @@ public class GooglePlayerTemplate {
 	public void LoadIcon() {
 		
 		if(icon != null) {
+			SmallPhotoLoaded(icon);
 			return;
 		}
 

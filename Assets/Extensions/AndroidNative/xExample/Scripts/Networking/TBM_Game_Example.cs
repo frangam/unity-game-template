@@ -139,8 +139,8 @@ public class TBM_Game_Example : AndroidNativeExampleBase {
 	}
 
 	void ActionMatchInitiated (GP_TBM_MatchInitiatedResult result) {
-		if(!result.isSuccess) {
-			AndroidMessage.Create("Match Initi Failed", "Status code: " + result.response);
+		if(!result.IsSucceeded) {
+			AndroidMessage.Create("Match Initi Failed", "Status code: " + result.Response);
 			return;
 		}
 

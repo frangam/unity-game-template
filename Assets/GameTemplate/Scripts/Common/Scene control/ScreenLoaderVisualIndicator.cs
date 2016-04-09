@@ -7,6 +7,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+//#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3
+//#else
+using UnityEngine.SceneManagement;
+//#endif
+
 public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator> {
 	
 	private IEnumerator Load(string escena, bool showLoadIndicator = true,  bool showLoadingPanel = true){
@@ -26,8 +31,8 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		//		yield return null;
 		//		Application.LoadLevel (escena);
 		//		finCarga ();
-		
-		AsyncOperation async = Application.LoadLevelAsync(escena);
+
+		AsyncOperation async =  UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (escena);
 		if(async == null)
 			async.allowSceneActivation = false;
 		while (!async.isDone) {
@@ -60,7 +65,7 @@ public class ScreenLoaderVisualIndicator : Singleton<ScreenLoaderVisualIndicator
 		//		yield return null;
 		//		finCarga ();
 		//		Application.LoadLevel (escena);
-		AsyncOperation async = Application.LoadLevelAsync(escena);
+		AsyncOperation async =  Application.LoadLevelAsync(escena);
 		if(async == null)
 			async.allowSceneActivation = false;
 		while (!async.isDone) {

@@ -6,6 +6,7 @@ Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 using UnityEngine;
 using System.Collections;
 using UnionAssets.FLE;
+using System.Collections.Generic;
 
 public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 	//--------------------------------------
@@ -13,11 +14,39 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 	//--------------------------------------
 	public const string MAXIMUM_MONEY_RAISED = "gt_max_money_raised";
 	public const string MAXIMUM_GEMS_RAISED = "gt_max_gems_raised";
+
+	public const string MONEY_GEMS 			= "gems";
+	public const string MONEY_COINS 		= "coins";
 	
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
 	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
+
+	//--------------------------------------
+	// Overriden Methods
+	//--------------------------------------
+	protected override void Awake ()
+	{
+		base.Awake ();
+
+//		if (GameSettings.Instance.useBackendForSaveGameMoney)
+//			LoggerManager.OnLoggedSuccessful += OnLoggedOK;
+	}
+
+	public void OnDestroy(){
+//		if (GameSettings.Instance.useBackendForSaveGameMoney)
+//			LoggerManager.OnLoggedSuccessful -= OnLoggedOK;
+	}
+
+	//--------------------------------------
+	// Events
+	//--------------------------------------
+	public void OnLoggedOK(){
+		if (GameSettings.Instance.useBackendForSaveGameMoney) {
+			updateMoneyOnBackendServer (MONEY_COINS);
+		}
+	}
 	
 	//--------------------------------------
 	// Public Methods
@@ -31,6 +60,9 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 			money -= price;
 			PlayerPrefs.SetString(GameSettings.PP_TOTAL_MONEY, money.ToString());
 			purchased = true;
+
+			if (GameSettings.Instance.useBackendForSaveGameMoney)
+				updateMoneyOnBackendServer ();
 		}
 		
 		return purchased;
@@ -45,6 +77,9 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 			gems -= price;
 			PlayerPrefs.SetString(GameSettings.PP_TOTAL_GEMS, gems.ToString());
 			purchased = true;
+
+			if (GameSettings.Instance.useBackendForSaveGameMoney)
+				updateMoneyOnBackendServer (MONEY_GEMS);
 		}
 		
 		return purchased;
@@ -159,6 +194,9 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 			long total = getTotalMoney();
 			long final = total-price;
 			PlayerPrefs.SetString(GameSettings.PP_TOTAL_MONEY, final.ToString());
+
+			if (GameSettings.Instance.useBackendForSaveGameMoney)
+				updateMoneyOnBackendServer ();
 		}
 		
 		return purchased;
@@ -172,6 +210,9 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 			long total = getTotalGems();
 			long final = total-pPrice;
 			PlayerPrefs.SetString(GameSettings.PP_TOTAL_GEMS, final.ToString());
+
+			if (GameSettings.Instance.useBackendForSaveGameMoney)
+				updateMoneyOnBackendServer (MONEY_GEMS);
 		}
 		
 		return purchased;
@@ -207,6 +248,9 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 		}
 		
 		PlayerPrefs.SetString(GameSettings.PP_TOTAL_MONEY, moneyToAdd.ToString());
+
+		if (GameSettings.Instance.useBackendForSaveGameMoney)
+			updateMoneyOnBackendServer ();
 	}
 	
 	public void addGems(long quantity){
@@ -224,13 +268,54 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 		}
 		
 		PlayerPrefs.SetString(GameSettings.PP_TOTAL_GEMS, gemsToAdd.ToString());
+
+		if (GameSettings.Instance.useBackendForSaveGameMoney)
+			updateMoneyOnBackendServer (MONEY_GEMS);
 	}
 	
 	public void resetMoney(){
 		PlayerPrefs.SetString(GameSettings.PP_TOTAL_MONEY, "0");
+
+		if (GameSettings.Instance.useBackendForSaveGameMoney)
+			updateMoneyOnBackendServer ();
 	}
 	
 	public void resetGems(){
 		PlayerPrefs.SetString(GameSettings.PP_TOTAL_GEMS, "0");
+
+		if (GameSettings.Instance.useBackendForSaveGameMoney)
+			updateMoneyOnBackendServer (MONEY_GEMS);
+	}
+
+	public void updateMoneyOnBackendServer(string moneyType = MONEY_COINS){
+//		if (LoggerManager.Instance.IsLogged && LoggerManager.Instance.UserProfile != null
+//		   && LoggerManager.Instance.UserProfile.profile != null) {
+//			long money = 0;
+//
+//			switch(moneyType){
+//			case MONEY_COINS: 
+//				money=getTotalMoney(); 
+//				break;
+//			case MONEY_GEMS: 
+//				money=getTotalGems(); 
+//				break;
+//			}
+//
+//			if (money > 0) {
+//				if (!LoggerManager.Instance.UserProfile.profile.ContainsKey (moneyType)) {
+//					LoggerManager.Instance.UserProfile.profile.Add (moneyType, money);
+//				} else {
+//					LoggerManager.Instance.UserProfile.profile [moneyType] = money;
+//
+//					GamedoniaUsers.UpdateUser (LoggerManager.Instance.UserProfile.profile, delegate (bool success) {
+//						if (success) {
+//
+//						} else {
+//
+//						}
+//					});
+//				}
+//			}
+//		}
 	}
 }

@@ -22,6 +22,10 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 	
 
 	//Actions
+	public static event Action OnRestoreStarted 				= delegate{};
+	public static event Action<string> OnTransactionStarted 	= delegate{};
+
+
 	public static event Action<IOSStoreKitResult> OnTransactionComplete = delegate{};
 	public static event Action<IOSStoreKitRestoreResult> OnRestoreComplete = delegate{};
 	public static event Action<ISN_Result> OnStoreKitInitComplete = delegate{};
@@ -31,7 +35,6 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 	
 	private bool _IsStoreLoaded = false;
 	private bool _IsWaitingLoadResult = false;
-	private bool _IsInAppPurchasesEnabled = true;
 	private static int _nextId = 1;
 
 
@@ -84,6 +87,7 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 			ids += Products[i].Id;
 		}
 
+		ISN_SoomlaGrow.Init();
 
 		#if !UNITY_EDITOR
 		IOSNativeMarketBridge.loadStore(ids);
@@ -94,12 +98,7 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 		#endif
 		
 	}
-
-	public void RequestInAppSettingState() {
-		IOSNativeMarketBridge.ISN_RequestInAppSettingState();
-	}
-
-
+	
 
 	[System.Obsolete("buyProduct is deprecated, please use BuyProduct instead.")]
 	public void buyProduct(string productId) {
@@ -108,8 +107,12 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 
 	public void BuyProduct(string productId) {
 
+
+
 		#if !UNITY_EDITOR
 
+		OnTransactionStarted(productId);
+	
 		if(!_IsStoreLoaded) {
 
 			if(!IOSNativeSettings.Instance.DisablePluginLogs) 
@@ -192,6 +195,8 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 			return;
 		}
 
+		OnRestoreStarted();
+
 		#if !UNITY_EDITOR
 		IOSNativeMarketBridge.restorePurchases();
 		#else
@@ -249,7 +254,7 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 
 	public bool IsInAppPurchasesEnabled {
 		get {
-			return _IsInAppPurchasesEnabled;
+			return IOSNativeMarketBridge.ISN_InAppSettingState();
 		}
 	}
 
@@ -271,16 +276,6 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 	//  EVENTS
 	//--------------------------------------
 
-	private void onStoreKitStart(string data) {
-		int satus = System.Convert.ToInt32(data);
-		if(satus == 1) {
-			_IsInAppPurchasesEnabled = true;
-		} else {
-			_IsInAppPurchasesEnabled = false;
-		}
-
-		OnPurchasesStateSettingsLoaded(_IsInAppPurchasesEnabled);
-	}
 
 	private void OnStoreKitInitFailed(string data) {
 
@@ -349,7 +344,11 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 			IsRestored = true;
 		}
 
-		FireProductBoughtEvent(data [0], data [2], data [3], data [4], IsRestored);
+		string productId = data [0];
+
+
+
+		FireProductBoughtEvent(productId, data [2], data [3], data [4], IsRestored);
 
 	}
 
@@ -366,7 +365,12 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 		string[] data;
 		data = array.Split("|" [0]);
 
-		SendTransactionFailEvent(data [0], data [1], (IOSTransactionErrorCode) System.Convert.ToInt32( data [2]));
+		string prodcutId = data [0];
+		int e = System.Convert.ToInt32(data [2]);
+		IOSTransactionErrorCode erroCode = (IOSTransactionErrorCode) e;
+
+
+		SendTransactionFailEvent(prodcutId, data [1], erroCode);
 	}
 	
 	
@@ -390,7 +394,6 @@ public class IOSInAppPurchaseManager : ISN_Singleton<IOSInAppPurchaseManager> {
 		ISN_Error e = new ISN_Error(array);
 
 		IOSStoreKitRestoreResult r =  new IOSStoreKitRestoreResult(e);
-
 
 		OnRestoreComplete (r);
 	}

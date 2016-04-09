@@ -133,6 +133,24 @@ public class IOSSocialUseExample : MonoBehaviour {
 		if(GUI.Button(new Rect(StartX, StartY, 150, 50), "Post Screenshot")) {
 			StartCoroutine(PostScreenshotInstagram());
 		}
+
+
+
+		StartY+= 80;
+		StartX = 10;
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "WhatsApp", style);
+		
+		StartY+= 40;
+		if(GUI.Button(new Rect(StartX, StartY, 150, 50), "Share Text")) {
+			IOSSocialManager.Instance.WhatsAppShareText("Some text");
+		}
+		
+		StartX += 170;
+		
+		if(GUI.Button(new Rect(StartX, StartY, 150, 50), "Share Image")) {
+			IOSSocialManager.Instance.WhatsAppShareImage(textureForPost);
+		}
+
 		
 		
 	}

@@ -1,3 +1,4 @@
+#define DISABLED
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -10,7 +11,7 @@ public class AN_ManifestManagerWindow : EditorWindow {
 	private AN_BaseTemplate _parentTemplate = null;
 
 	private List<string> _permissionsStrings = null;
-	private List<AN_Permissions> _permissionsArray = null;
+	private List<AN_ManifestPermission> _permissionsArray = null;
 
 
 	GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is Plugin version.  If you have problems or compliments please include this so we know exactly what version to look out for.");
@@ -229,7 +230,7 @@ public class AN_ManifestManagerWindow : EditorWindow {
 						dlg.onClose += OnPermissionDlgClose;
 						dlg.onAddClick += OnAddActivityClick;
 						
-						#if UNITY_5
+						#if UNITY_5 && !UNITY_5_0
 						dlg.titleContent.text = "Add Activity";
 						#else
 						dlg.title = "Add Activity";
@@ -294,7 +295,7 @@ public class AN_ManifestManagerWindow : EditorWindow {
 						dlg.onClose += OnPermissionDlgClose;
 						dlg.onAddClick += OnAddPermissionClick;
 						
-						#if UNITY_5
+						#if UNITY_5 && !UNITY_5_0
 						dlg.titleContent.text = "Add Permission";
 						#else
 						dlg.title = "Add Permission";
@@ -327,6 +328,9 @@ public class AN_ManifestManagerWindow : EditorWindow {
 		
 		SelectableLabelField(SdkVersion, AMMSettings.VERSION_NUMBER);
 		SelectableLabelField(SupportEmail, "stans.assets@gmail.com");
+
+
+		#if DISABLED
 		
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Note: ", EditorStyles.boldLabel);
@@ -349,6 +353,8 @@ public class AN_ManifestManagerWindow : EditorWindow {
 		}
 		
 		EditorGUILayout.EndHorizontal();
+
+		#endif
 	}
 
 	private void SelectableLabelField(GUIContent label, string value) {
@@ -472,7 +478,7 @@ public class AN_ManifestManagerWindow : EditorWindow {
 		dialog.onAddClick += OnAddValueClick;
 		dialog.onClose += OnValueDlgClose;
 
-		#if UNITY_5
+		#if UNITY_5 && !UNITY_5_0
 		dialog.titleContent.text = "Add Value";
 		#else
 		dialog.title = "Add Value";
@@ -488,7 +494,7 @@ public class AN_ManifestManagerWindow : EditorWindow {
 		dialog.onAddClick += OnAddPropertyClick;
 		dialog.onClose += OnPropertyDlgClose;
 
-		#if UNITY_5
+		#if UNITY_5 && !UNITY_5_0
 		dialog.titleContent.text = "Add Property";
 		#else
 		dialog.title = "Add Property";
@@ -525,12 +531,13 @@ public class AN_ManifestManagerWindow : EditorWindow {
 		AddPropertyDialog dlg = dialog as AddPropertyDialog;
 		dlg.onAddClick -= OnAddPropertyClick;
 		dlg.onClose -= OnValueDlgClose;
+
 	}
 
-	private List<AN_Permissions> PermissionsArray{
+	private List<AN_ManifestPermission> PermissionsArray{
 		get {
-			AN_Permissions[] permissions = (AN_Permissions[])Enum.GetValues(typeof(AN_Permissions));
-			_permissionsArray = new List<AN_Permissions>(permissions);
+			AN_ManifestPermission[] permissions = (AN_ManifestPermission[])Enum.GetValues(typeof(AN_ManifestPermission));
+			_permissionsArray = new List<AN_ManifestPermission>(permissions);
 
 			return _permissionsArray;
 		}
@@ -539,7 +546,7 @@ public class AN_ManifestManagerWindow : EditorWindow {
 	private List<string> PermissionsStrings {
 		get {
 			_permissionsStrings = new List<string>();
-			foreach (AN_Permissions p in PermissionsArray) {
+			foreach (AN_ManifestPermission p in PermissionsArray) {
 				_permissionsStrings.Add("android.permission." + p.ToString());
 			}
 			return _permissionsStrings;

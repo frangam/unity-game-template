@@ -81,6 +81,7 @@ public class GameSettingsEditor : Editor {
 		
 		GeneralOptions();
 		gameInfo();
+		backendServerSettings ();
 		//		EditorGUILayout.Space();
 		appLinks();
 		//		EditorGUILayout.Space();
@@ -271,6 +272,38 @@ public class GameSettingsEditor : Editor {
 			EditorGUI.indentLevel--;
 		}
 		EditorGUILayout.EndVertical();
+	}
+
+	protected virtual void backendServerSettings(){
+		EditorGUILayout.Space();
+
+		GameSettings.Instance.showBackendServerSettings = EditorGUILayout.Foldout(GameSettings.Instance.showBackendServerSettings, "BackendServer");
+		if (GameSettings.Instance.showBackendServerSettings) {
+			EditorGUI.indentLevel++;
+
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Save game money");
+			GameSettings.Instance.useBackendForSaveGameMoney = EditorGUILayout.Toggle(GameSettings.Instance.useBackendForSaveGameMoney);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Scores");
+			GameSettings.Instance.useBackendForScores = EditorGUILayout.Toggle(GameSettings.Instance.useBackendForScores);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Achievements");
+			GameSettings.Instance.useBackendForAchievements = EditorGUILayout.Toggle(GameSettings.Instance.useBackendForAchievements);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("InApps");
+			GameSettings.Instance.useBackendForInApps = EditorGUILayout.Toggle(GameSettings.Instance.useBackendForInApps);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUI.indentLevel--;
+		}
 	}
 	
 	protected virtual void inAppBilling(){
@@ -1813,7 +1846,7 @@ public class GameSettingsEditor : Editor {
 		SelectableLabelField(SdkVersion,   GameSettings.VERSION_NUMBER);
 		
 		
-		SelectableLabelField(SupportEmail, "frillsgamesstudio@gmail.com");
+		SelectableLabelField(SupportEmail, "garmodev@gmail.com");
 		
 		
 	}

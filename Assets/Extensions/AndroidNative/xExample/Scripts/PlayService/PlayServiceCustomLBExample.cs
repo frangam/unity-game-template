@@ -373,7 +373,7 @@ public class PlayServiceCustomLBExample : MonoBehaviour {
 	}
 
 	void OnScoreSbumitted (GP_LeaderboardResult result) {
-		SA_StatusBar.text = "Score Submit Resul:  " + result.message;
+		SA_StatusBar.text = "Score Submit Resul:  " + result.Message;
 		LoadScore();
 	}
 

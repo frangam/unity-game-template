@@ -58,6 +58,12 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 			IOSNativeUtility.SetApplicationBagesNumber(0);
 		}
 
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Show Device Info")) {
+			ShowDevoceInfo();
+		}
+
+
 
 		StartX = XStartPos;
 		StartY+= YButtonStep;
@@ -107,6 +113,7 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 			IOSVideoManager.instance.OpenYouTubeVideo("xzCEdSKMkdU");
 		}
 
+
 		
 		StartX = XStartPos;
 		StartY+= YButtonStep;
@@ -147,6 +154,8 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 
 
 
+
+
 		StartX = XStartPos;
 		StartY+= YButtonStep;
 		StartY+= YLableStep;
@@ -158,6 +167,19 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		}
 	
 
+	}
+
+	private void ShowDevoceInfo() {
+		ISN_Device device = ISN_Device.CurrentDevice;
+
+		IOSMessage.Create("Device Info", "Name: "  + device.Name + "\n"
+		                  + "System Name: " + device.SystemName + "\n"
+		                  + "Model: " + device.Model + "\n"
+		                  + "Localized Model: " + device.LocalizedModel + "\n"
+		                  + "System Version: " + device.SystemVersion + "\n"
+		                  + "Major System Version: " + device.MajorSystemVersion + "\n"
+		                  + "User Interface Idiom: " + device.InterfaceIdiom + "\n"
+		                  + "GUID in Base64: " + device.GUID.Base64String  );
 	}
 
 	void OnDateChanged (System.DateTime time) {

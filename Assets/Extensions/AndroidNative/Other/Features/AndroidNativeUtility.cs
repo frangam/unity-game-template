@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
 public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 	
@@ -36,14 +38,31 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 		AndroidNative.isPackageInstalled(packageName);
 	}
 
+	[System.Obsolete("")]
 	public void RunPackage(string packageName) {
-		AndroidNative.runPackage(packageName);
+		StartApplication(packageName);
+	}
+
+	public void StartApplication(string bundle) {
+		AndroidNative.runPackage(bundle);
+	}
+
+	public void StartApplication(string packageName, Dictionary<string, string> extras) {
+		StringBuilder builder = new StringBuilder();
+		foreach (KeyValuePair<string, string> extra in extras) {
+			builder.AppendFormat("{0}{1}{2}", extra.Key, AndroidNative.DATA_SPLITTER, extra.Value);
+			builder.Append(AndroidNative.DATA_SPLITTER2);
+		}
+		builder.Append(AndroidNative.DATA_EOF);
+
+		Debug.Log("[StartApplication] with Extras " + builder.ToString());
+
+		AndroidNative.LaunchApplication(packageName, builder.ToString());
 	}
 
 	public void LoadAndroidId() {
 		AndroidNative.LoadAndroidId();
 	}
-
 
 	public void GetInternalStoragePath() {
 		AndroidNative.GetInternalStoragePath();
@@ -93,6 +112,20 @@ public class AndroidNativeUtility : SA_Singleton<AndroidNativeUtility> {
 
 	public static void HideCurrentPopup() {
 		AN_PoupsProxy.HideCurrentPopup();
+	}
+
+	
+	public static int SDKLevel {
+		get {
+			#if UNITY_ANDROID
+			var clazz = AndroidJNI.FindClass("android.os.Build$VERSION");
+			var fieldID = AndroidJNI.GetStaticFieldID(clazz, "SDK_INT", "I");
+			var sdkLevel = AndroidJNI.GetStaticIntField(clazz, fieldID);
+			return sdkLevel;
+			#else
+			return 0;
+			#endif
+		}
 	}
 
 

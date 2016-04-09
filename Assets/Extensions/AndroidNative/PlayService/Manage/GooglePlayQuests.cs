@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 
 	//Actions
-	public Action<GooglePlayResult> OnQuestsLoaded =  delegate{};
+	public Action<GP_QuestResult> OnQuestsLoaded =  delegate{};
 	public Action<GP_QuestResult> OnQuestsAccepted =  delegate{};
 	public Action<GP_QuestResult> OnQuestsCompleted =  delegate{};
 
@@ -134,9 +134,7 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 
 		GP_QuestResult result = new GP_QuestResult (storeData [0]);
-		result.questId = storeData [1];
-		result.quest = GetQuestById (result.questId);
-
+		result.quest = GetQuestById (storeData [1]);
 
 		OnQuestsAccepted(result);
 
@@ -148,10 +146,7 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 		
 		GP_QuestResult result = new GP_QuestResult (storeData [0]);
-		result.questId = storeData [1];
-		result.quest = GetQuestById (result.questId);
-		result.reward = storeData [2];
-
+		result.quest = GetQuestById (storeData [1]);
 
 		OnQuestsCompleted(result);
 	
@@ -163,7 +158,7 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		string[] storeData;
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 		int i = 0;
-
+		
 		UpdateQuestInfo(
 			storeData[i],
 			storeData[i + 1],
@@ -173,7 +168,10 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 			storeData[i + 5],
 			storeData[i + 6],
 			storeData[i + 7],
-			storeData[i + 8]
+			storeData[i + 8],
+			storeData[i + 9],
+			storeData[i + 10],
+			storeData[i + 11]
 			);
 
 	}
@@ -183,10 +181,11 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		string[] storeData;
 		storeData = data.Split(AndroidNative.DATA_SPLITTER [0]);
 
-		GooglePlayResult result = new GooglePlayResult (storeData [0]);
-		if(result.isSuccess) {
+
+		GP_QuestResult result = new GP_QuestResult (storeData [0]);
+		if(result.IsSucceeded) {
 			
-			for(int i = 1; i < storeData.Length; i+=9) {
+			for(int i = 1; i < storeData.Length; i+=12) {
 				if(storeData[i] == AndroidNative.DATA_EOF) {
 					break;
 				}
@@ -200,7 +199,10 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 					storeData[i + 5],
 					storeData[i + 6],
 					storeData[i + 7],
-					storeData[i + 8]
+					storeData[i + 8],
+					storeData[i + 9],
+					storeData[i + 10],
+					storeData[i + 11]
 					);
 
 			}
@@ -215,7 +217,7 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 
 
 	private void UpdateQuestInfo(string id, string name, string descr, string icon, string banner, string state, 
-	                             string timeUpdated, string timeAccepted, string timeEnded ) {
+	                             string timeUpdated, string timeAccepted, string timeEnded, string rewardData, string currentProgress, string targetProgress) {
 
 		GP_Quest quest;
 		if(_Quests.ContainsKey(id)) {
@@ -238,6 +240,10 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		quest.AcceptedTimestamp 	= System.Convert.ToInt64(timeAccepted);
 		quest.EndTimestamp 			= System.Convert.ToInt64(timeEnded);
 
+		quest.RewardData = System.Text.Encoding.UTF8.GetBytes(rewardData);
+		quest.CurrentProgress = System.Convert.ToInt64(currentProgress);
+		quest.TargetProgress = System.Convert.ToInt64(targetProgress);
+		
 		if(AndroidNativeSettings.Instance.LoadQuestsIcons) {
 			quest.LoadIcon();
 		}
@@ -245,7 +251,6 @@ public class GooglePlayQuests : SA_Singleton<GooglePlayQuests> {
 		if(AndroidNativeSettings.Instance.LoadQuestsImages) {
 			quest.LoadBanner();
 		}
-
 	}
 
 }

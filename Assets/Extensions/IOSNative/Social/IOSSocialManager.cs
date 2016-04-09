@@ -1,4 +1,4 @@
-#define SOCIAL_API
+//#define SOCIAL_API
 ////////////////////////////////////////////////////////////////////////////////
 //  
 // @module IOS Native Plugin for Unity3D 
@@ -36,15 +36,30 @@ public class IOSSocialManager : ISN_Singleton<IOSSocialManager> {
 	private static extern void _ISN_InstaShare(string encodedMedia, string message);
 
 
+	[DllImport ("__Internal")]
+	private static extern void _ISN_WP_ShareText(string message);
+
+	[DllImport ("__Internal")]
+	private static extern void _ISN_WP_ShareMedia(string encodedMedia);
+
+
 	#endif
 	
 
 
 	//Actions
+
+	public static event Action OnFacebookPostStart = delegate {};
+	public static event Action OnTwitterPostStart = delegate {};
+	public static event Action OnInstagramPostStart = delegate {};
+
+
 	public static event Action<ISN_Result> OnFacebookPostResult = delegate {};
 	public static event Action<ISN_Result> OnTwitterPostResult = delegate {};
 	public static event Action<ISN_Result> OnInstagramPostResult = delegate {};
 	public static event Action<ISN_Result> OnMailResult = delegate {};
+
+
 
 	
 	//--------------------------------------
@@ -78,6 +93,7 @@ public class IOSSocialManager : ISN_Singleton<IOSSocialManager> {
 	}
 
 	public void TwitterPost(string text, string url = null, Texture2D texture = null) {
+		OnTwitterPostStart();
 		#if (UNITY_IPHONE && !UNITY_EDITOR && SOCIAL_API) || SA_DEBUG_MODE
 		if(text == null) {
 			text = "";
@@ -102,6 +118,7 @@ public class IOSSocialManager : ISN_Singleton<IOSSocialManager> {
 
 
 	public void FacebookPost(string text, string url = null, Texture2D texture = null) {
+		OnFacebookPostStart();
 		#if (UNITY_IPHONE && !UNITY_EDITOR && SOCIAL_API) || SA_DEBUG_MODE
 		if(text == null) {
 			text = "";
@@ -130,7 +147,8 @@ public class IOSSocialManager : ISN_Singleton<IOSSocialManager> {
 	
 	
 	public void InstagramPost(Texture2D texture, string message) {
-		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		OnInstagramPostStart();
+		#if (UNITY_IPHONE && !UNITY_EDITOR && SOCIAL_API) || SA_DEBUG_MODE
 		
 		byte[] val = texture.EncodeToPNG();
 		string bytesString = System.Convert.ToBase64String (val);
@@ -140,6 +158,26 @@ public class IOSSocialManager : ISN_Singleton<IOSSocialManager> {
 		
 		#endif
 		
+	}
+
+
+	public void WhatsAppShareText(string message) {
+		#if (UNITY_IPHONE && !UNITY_EDITOR && SOCIAL_API) || SA_DEBUG_MODE
+		_ISN_WP_ShareText(message);
+		#endif
+	}
+
+
+	public void WhatsAppShareImage(Texture2D texture) {
+
+		#if (UNITY_IPHONE && !UNITY_EDITOR && SOCIAL_API) || SA_DEBUG_MODE
+
+		byte[] val = texture.EncodeToPNG();
+		string bytesString = System.Convert.ToBase64String (val);
+
+		_ISN_WP_ShareMedia(bytesString);
+
+		#endif
 	}
 
 

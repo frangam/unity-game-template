@@ -292,7 +292,7 @@ public class BuildGenerator {
 			Texture2D[] icons = new Texture2D[iOSIcons.Count]; 
 			
 			for(int i=0; i<iOSIcons.Count; i++)
-				icons[i] = AssetDatabase.LoadMainAssetAtPath(initalPath + iOSIcons[i]) as Texture2D;
+				icons[i] = AssetDatabase.LoadMainAssetAtPath(initalPath + iOSIcons[i]+".png") as Texture2D;
 			
 			//			{
 			//				AssetDatabase.LoadMainAssetAtPath(initalPath + "AppIcon57x57.png") as Texture2D,

@@ -1,6 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2  || UNITY_5_3
+#else
+using UnityEngine.SceneManagement;
+#endif
+
+
 public class IOSNativePreviewBackButton : BaseIOSFeaturePreview {
 
 
@@ -13,7 +20,7 @@ public class IOSNativePreviewBackButton : BaseIOSFeaturePreview {
 
 	void Awake() {
 		DontDestroyOnLoad(gameObject);
-		initialSceneName = Application.loadedLevelName;
+		initialSceneName = loadedLevelName;
 	}
 
 
@@ -23,16 +30,26 @@ public class IOSNativePreviewBackButton : BaseIOSFeaturePreview {
 		float y = bw * 0.2f;
 
 
-		if(!Application.loadedLevelName.Equals(initialSceneName)) {
+		if(!loadedLevelName.Equals(initialSceneName)) {
 			Color customColor = GUI.color;
 			GUI.color = Color.green;
 
 			if(GUI.Button(new Rect(x, y, bw, bw * 0.4f), "Back")) {
-				Application.LoadLevel(initialSceneName);
+				LoadLevel(initialSceneName);
 			}
 
 			GUI.color = customColor;
 
+		}
+	}
+
+	public string loadedLevelName {
+		get {
+			#if UNITY_4_6 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_4_7  || UNITY_5_3
+			return Application.loadedLevelName;
+			#else
+			return SceneManager.GetActiveScene().name;
+			#endif
 		}
 	}
 	 

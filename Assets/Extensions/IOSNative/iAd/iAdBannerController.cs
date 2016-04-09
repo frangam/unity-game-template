@@ -1,4 +1,4 @@
-#define IAD_API
+//#define IAD_API
 
 ////////////////////////////////////////////////////////////////////////////////
 //  
@@ -105,7 +105,7 @@ public class iAdBannerController : ISN_Singleton<iAdBannerController> {
 
 		#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
 
-		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
 				if(!IOSNativeSettings.Instance.DisablePluginLogs) 	
 					Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");
@@ -134,7 +134,7 @@ public class iAdBannerController : ISN_Singleton<iAdBannerController> {
 	public void LoadInterstitialAd() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR && IAD_API) || SA_DEBUG_MODE
 
-		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 			if((iPhone.generation.ToString()).IndexOf("iPhone") == -1 && (iPhone.generation.ToString()).IndexOf("iPad") == -1){
 				if(!IOSNativeSettings.Instance.DisablePluginLogs) 	
 					Debug.Log("Device: " + iPhone.generation.ToString() + " is not supported by iAd");

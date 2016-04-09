@@ -257,4 +257,22 @@ public class BaseSoundManager : PersistentSingleton<BaseSoundManager> {
 			}				
 		}
 	}
+
+	public void playWithDelay(string id, float delay){
+		StartCoroutine(doPlayWithDelay(id, delay));
+	}
+
+	private IEnumerator doPlayWithDelay(string id, float delay){
+		yield return new WaitForSeconds (delay);
+		play (id);
+	}
+
+	public void stopWithDelay(string id, float delay){
+		StartCoroutine(doStopWithDelay(id, delay));
+	}
+
+	private IEnumerator doStopWithDelay(string id, float delay){
+		yield return new WaitForSeconds (delay);
+		stop (id);
+	}
 }

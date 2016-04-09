@@ -39,7 +39,7 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 
 
 
-	public void SaveScreenshotToGallery(String name = "") {
+	public void SaveScreenshotToGallery(String name = "Screenshot") {
 		_lastImageName = name;
 		SA_ScreenShotMaker.instance.OnScreenshotReady += OnScreenshotReady;
 		SA_ScreenShotMaker.instance.GetScreenshot();
@@ -55,9 +55,6 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 	public void GetImageFromCamera() {
 		AndroidNative.GetImageFromCamera(AndroidNativeSettings.Instance.SaveCameraImageToGallery);
 	}
-
-
-
 
 	private void OnImagePickedEvent(string data) {
 
@@ -85,11 +82,20 @@ public class AndroidCamera : SA_Singleton<AndroidCamera>  {
 		OnImageSaved(res);
 	}
 
-
-
 	private void OnScreenshotReady(Texture2D tex) {
 		SA_ScreenShotMaker.instance.OnScreenshotReady -= OnScreenshotReady;
 		SaveImageToGallery(tex, _lastImageName);
 
+	}
+
+	public static string GetRandomString() {
+		System.Guid g = System.Guid.NewGuid();
+
+		string GuidString = System.Convert.ToBase64String(g.ToByteArray());
+		GuidString = GuidString.Replace("=","");
+		GuidString = GuidString.Replace("+","");
+		GuidString = GuidString.Replace("/","");
+
+		return GuidString;
 	}
 }

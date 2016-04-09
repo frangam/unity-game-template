@@ -11,28 +11,37 @@ using UnityEditor;
 public class ISDSettings : ScriptableObject
 {
 
-	public const string VERSION_NUMBER = "1.6";
+	public const string VERSION_NUMBER = "2.1";
 
 	public bool IsfwSettingOpen;
 	public bool IsLibSettingOpen;
 	public bool IslinkerSettingOpne;
 	public bool IscompilerSettingsOpen;
-	public bool IsPlistSettingsOpen = true;
+	public bool IsPlistSettingsOpen;
+	public bool IsLanguageSettingOpen = true;
 
-	public List<string> frameworks =  new List<string>();
-	public List<string> libraries =  new List<string>();
+	public List<ISD_Framework> Frameworks =  new List<ISD_Framework>();
+	public List<ISD_Lib> Libraries =  new List<ISD_Lib>();
+
+
+
+
+
 	public List<string> compileFlags =  new List<string>();
 	public List<string> linkFlags =  new List<string>();
-	public List<string> plistkeys = new List<string> ();
-	public List<string> plisttags = new List<string> ();
-	public List<string> plistvalues = new List<string> ();
 
 
-	private const string ISDAssetPath = "Extensions/IOSDeploy/Resources";
+	public List<ISD_Variable>  PlistVariables =  new List<ISD_Variable>();
+
+	public List<string> langFolders = new List<string>();
+
+	
 	private const string ISDAssetName = "ISDSettingsResource";
 	private const string ISDAssetExtension = ".asset";
 
 	private static ISDSettings instance;
+
+	
 
 	public static ISDSettings Instance
 	{
@@ -47,9 +56,9 @@ public class ISDSettings : ScriptableObject
 					#if UNITY_EDITOR
 
 
-					FileStaticAPI.CreateFolder(ISDAssetPath);
+					FileStaticAPI.CreateFolder(SA_Config.SettingsPath);
 					
-					string fullPath = Path.Combine(Path.Combine("Assets", ISDAssetPath), ISDAssetName + ISDAssetExtension );
+					string fullPath = Path.Combine(Path.Combine("Assets", SA_Config.SettingsPath), ISDAssetName + ISDAssetExtension );
 					
 					AssetDatabase.CreateAsset(instance, fullPath);
 					#endif
@@ -58,6 +67,39 @@ public class ISDSettings : ScriptableObject
 			}
 			return instance;
 		}
+	}
+
+
+
+	public bool ContainsFreamworkWithName(string name) {
+		foreach(ISD_Framework f in ISDSettings.Instance.Frameworks) {
+			if(f.Name.Equals(name)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	public bool ContainsPlistVarkWithName(string name) {
+		foreach(ISD_Variable var in ISDSettings.Instance.PlistVariables) {
+			if(var.Name.Equals(name)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	public bool ContainsLibWithName(string name) {
+		foreach(ISD_Lib l in ISDSettings.Instance.Libraries) {
+			if(l.Name.Equals(name)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 

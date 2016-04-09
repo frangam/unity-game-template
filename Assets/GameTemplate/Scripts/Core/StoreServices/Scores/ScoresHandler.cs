@@ -6,8 +6,22 @@ Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
+using System.Collections.Generic;
+
 
 public class ScoresHandler : PersistentSingleton<ScoresHandler> {
+
+	//--------------------------------------
+	// events & delegates
+	//--------------------------------------
+	public delegate void checkPalyerPos (long playerPos);
+	public static event checkPalyerPos OnPlayerLeaderboardPosition;
+	public static event System.Action OnPlayerLeaderboardPositionFailed;
+
+	//--------------------------------------
+	// Settings Attributes
+	//--------------------------------------
+
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------
@@ -17,12 +31,91 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	// Private Methods
 	//--------------------------------------
 
+
+	//--------------------------------------
+	// Overriden Methods
+	//--------------------------------------
+	protected override void Awake ()
+	{
+		base.Awake ();
+//		LoggerManager.OnLoggedSuccessful += OnLoggedOK;
+
 	
+	}
+
+	public void OnDistroy(){
+//		LoggerManager.OnLoggedSuccessful -= OnLoggedOK;
+	}
+
+	//--------------------------------------
+	// Methods
+	//--------------------------------------
+	public void OnLoggedOK(){
+//		if (useGameDonia && InternetChecker.Instance.IsconnectedToInternet && LoggerManager.Instance.IsLogged && LoggerManager.Instance.UserProfile != null
+//		   && LoggerManager.Instance.UserProfile.profile != null) {
+//			initialCheckForGamedonia ();
+//
+//
+////			getPlayerScorePositionOnLeaderboard ();
+//		}
+	}
 	
 	
 	//--------------------------------------
 	// Public Methods
 	//--------------------------------------
+	public void initialCheckForGamedonia(){
+		initialLeaderboardsLoadBackendServer(new Score(GameSettings.Instance.CurrentUniqueRankingID));
+		initialLeaderboardsLoadBackendServer(new Score(GameSettings.Instance.CurrentUniqueSurvivalRankingID));
+
+		if(GameSettings.Instance.CurrentScores != null && GameSettings.Instance.CurrentScores.Count > 0){
+			foreach(Score score in GameSettings.Instance.CurrentScores){
+				initialLeaderboardsLoadBackendServer(score);
+			}
+		}
+
+	}
+
+	public void getPlayerScorePositionOnLeaderboard(){
+//		if (GameSettings.Instance.useBackendForScores && InternetChecker.Instance.IsconnectedToInternet && LoggerManager.Instance.IsLogged && LoggerManager.Instance.UserProfile != null
+//			&& LoggerManager.Instance.UserProfile._id != null) {
+//			Dictionary<string,object> parameters = new Dictionary<string, object> (){ {
+//					"curuserid",
+//					LoggerManager.Instance.UserProfile._id
+//				} };
+//			
+//			GamedoniaScripts.Run ("playerscoreposition", parameters, delegate (bool success, object data) {
+//				if (success) {
+//					long position = 0;
+//
+//					if (data != null && long.TryParse (data.ToString (), out position)) {
+//						OnPlayerLeaderboardPosition(position);
+//						GTDebug.log ("<color=green>Player Score Position: " + position + "</color>");
+//					}
+//				} else {
+//					GTDebug.logError ("<color=red>Fail</color>");
+//					OnPlayerLeaderboardPositionFailed();
+//				}
+//			});
+//		}
+	}
+
+	private void initialLeaderboardsLoadBackendServer(Score score){
+		if(score == null || (score != null && string.IsNullOrEmpty(score.Id))) return;
+		long scoreValueInServer = 0;
+
+//		if (LoggerManager.Instance.UserProfile.profile.ContainsKey ("score")) {
+//			scoreValueInServer = (long) LoggerManager.Instance.UserProfile.profile ["score"];
+//		} else {
+//			LoggerManager.Instance.UserProfile.profile.Add ("score", scoreValueInServer);
+//		}
+
+
+//		GTDebug.log("Leader board id " + score.Id + " current player "+LoggerManager.Instance.UserProfile._id + " score value: " + scoreValueInServer);
+		ScoresHandler.Instance.loadBestScoreFromStore(score.Id, scoreValueInServer);
+
+	}
+
 	public Score getScoreByIndex(int scoreIndex){
 		Score res = null;
 
@@ -296,14 +389,13 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		Score score = getScoreByID(id); //get the score by its id from gamesettings asset
 		if(score == null) return;
 
-
-		#if UNITY_IPHONE
-		if(!GameSettings.Instance.USE_GAMECENTER)
-			return;
-		#elif UNITY_ANDROID
-		if(!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
-			return;
-		#endif
+//		#if UNITY_IPHONE
+//		if(!GameSettings.Instance.USE_GAMECENTER)
+//			return;
+//		#elif UNITY_ANDROID
+//		if(!GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES)
+//			return;
+//		#endif
 
 		GTDebug.log("LeaderboardID: "+ id + ". New score: "+newScoreValue);
 
@@ -320,39 +412,77 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 
 		GTDebug.log("LeaderboardID: "+ id + ". Best Score saved in device: "+best);
 		GTDebug.log("LeaderboardID: "+ id + ". Score to send: "+scoreToSend);
+
+
+				//TODO UPDATE TO BACKEND SERVER
+//		if (GameSettings.Instance.useBackendForScores && LoggerManager.Instance.IsLogged && LoggerManager.Instance.UserProfile != null) {
+//			if (!LoggerManager.Instance.UserProfile.profile.ContainsKey ("score")) {
+//				LoggerManager.Instance.UserProfile.profile.Add ("score", scoreToSend);
+//			} else {
+//				scoreSavedInServer = (long) LoggerManager.Instance.UserProfile.profile ["score"];
+//
+//				//criteria order to know which is a best score to send to the server or not
+//				switch (score.Order) {
+//				case ScoreOrder.DESCENDING:
+//					sendScoreToServer = scoreSavedInServer < scoreToSend;
+//					break;
+//				case ScoreOrder.ASCENDING:
+//					sendScoreToServer = scoreSavedInServer <= 0 || (scoreSavedInServer > scoreToSend);
+//					break;
+//				}
+//
+//				//send score to the server
+//				if (sendScoreToServer){
+//					LoggerManager.Instance.UserProfile.profile ["score"] = scoreToSend;
+//					GamedoniaUsers.UpdateUser(LoggerManager.Instance.UserProfile.profile, delegate (bool success) {
+//						if (success) {
+//							
+//						} else {
+//							
+//						}
+//					});
+//
+//				
+//					GTDebug.log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+//				}
+//			}
+//
+//		} else {
 		
-		
-		#if UNITY_ANDROID
-		if(GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES){
-			if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){				
-				if(GooglePlayManager.instance.GetLeaderBoard (id) != null){
-					scoreSavedInServer = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore(GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).score;
+			#if UNITY_ANDROID
+			if (GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES && GameSettings.Instance.USE_GOOGLE_PLAY_SERVICES) {
+				if (GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED) {				
+					if (GooglePlayManager.instance.GetLeaderBoard (id) != null) {
+						scoreSavedInServer = GooglePlayManager.instance.GetLeaderBoard (id).GetCurrentPlayerScore (GPBoardTimeSpan.ALL_TIME, GPCollectionType.GLOBAL).score;
 					
-					GTDebug.log("ScoresHandler - Server score: "+scoreSavedInServer + ". Score to send to the server: "+scoreToSend);
+						GTDebug.log ("ScoresHandler - Server score: " + scoreSavedInServer + ". Score to send to the server: " + scoreToSend);
 
 
-					//criteria order to know which is a best score to send to the server or not
-					switch(score.Order){
-					case ScoreOrder.DESCENDING: sendScoreToServer = scoreSavedInServer < scoreToSend; break;
-					case ScoreOrder.ASCENDING: sendScoreToServer = scoreSavedInServer <= 0 || ( scoreSavedInServer > scoreToSend); break;
+						//criteria order to know which is a best score to send to the server or not
+						switch (score.Order) {
+						case ScoreOrder.DESCENDING:
+							sendScoreToServer = scoreSavedInServer < scoreToSend;
+							break;
+						case ScoreOrder.ASCENDING:
+							sendScoreToServer = scoreSavedInServer <= 0 || (scoreSavedInServer > scoreToSend);
+							break;
+						}
+					} else {
+						sendScoreToServer = true;
 					}
-				}
-				else{
-					sendScoreToServer = true;
-				}
 
-				//send score to the server
-				if(sendScoreToServer)
-					GooglePlayManager.instance.SubmitScoreById (id, scoreToSend);
+					//send score to the server
+					if (sendScoreToServer)
+						GooglePlayManager.instance.SubmitScoreById (id, scoreToSend);
 
-				if(sendScoreToServer)
-					GTDebug.log("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+					if (sendScoreToServer)
+						GTDebug.log ("Sending score to the server: " + scoreToSend + " a ranking: " + id);
+				}
+			
+			
 			}
-			
-			
-		}
-		#elif UNITY_IPHONE
-		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthenticated){
+			#elif UNITY_IPHONE
+		if(GameSettings.Instance.USE_GAMECENTER && GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthenticated){
 			//get player score saved in server side
 			if(GameCenterManager.GetLeaderboard(score.IdForSaveOniOSStore) != null){
 				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
@@ -405,7 +535,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 				GTDebug.log ("LeaderboardID: "+ score.IdForSaveOniOSStore + "Sending score to the server: " + scoreToSend);
 			}
 		}
-		#endif
+			#endif
+//		}
 		
 		
 		//--------------------------------------

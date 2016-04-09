@@ -1,3 +1,62 @@
+7.5
+New Features:
+Google Play Services update to 8487000 version
+Share with native Intent has the Callback Action Event!
+Push Notifications SetColor API, Editor Settings option added
+AndroidNatificationBuilder.SetColor API
+Steps field for Incremental Achievements
+NEW ResetAchievements Playmaker action
+Launch Push Notification click callback improvements
+
+Fixes:
+GP_Leaderboard GetCurrentPlayerScore return NULL FIX
+Saved Games Conflict detected callback FIX
+Saved Games via byte array FIX
+Twitter sharing with Native Intent FIX
+Facebook User ID equals string.Empty FIX
+Facebook Access Token equals string.Empty FIX
+New OneSignal SDK location FIX
+
+7.4:
+Updates:
+Turn-Based Multiplayer APIs update
+Compatibility update
+
+Fixes:
+Google Play Connection Freeze fix
+Turn-Based Multiplayer fixes
+
+7.3.1:
+Unity 4.7.0f1 compatibility update
+
+7.3:
+New Features:
+Push/Local Notification's Small & Large Icons setup added to Android Native Settings
+Big Picture style added for Push and Local Notifications
+
+Improvements:
+Unity v5.3 compatibility update
+
+Fixes:
+Twitter OAuth Posting NPE fix
+
+7.2:
+New Features:
+Facebook SDK v7.x support added!
+Runtime Permissions. https://goo.gl/ODTXXJ
+Google Play Services update to 8298000 version
+Start third-party Application with Extras API
+
+Refactor:
+All resources from Plugins\Android\res should be moved moved to Plugins\Android\AN_Res\res
+
+Fixes:
+Return Google Play Connection Result fix
+
+Improvements:
+CallPermissionCheck and RevokePermission(FBPermission permission) APIs added to SPFacebook
+GP_Quest has new fields: RewardData, CurrentProgress and TargetProgress
+
 7.1.1:
 Fixes:
 Fecabook SDK remove fix

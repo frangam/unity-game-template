@@ -19,11 +19,14 @@ public class GAEventCategories {
 	// Constants
 	//--------------------------------------
 	#region Constants
+	public const string SCENE 								= "Scene";
 	public const string GAME 								= "Game";
 	public const string SOUND 								= "Sound";
 	public const string MUSIC 								= "Music";
 	public const string BILLS_CURRENCY 						= "Bills";
 	public const string GEMS_CURRENCY 						= "Gems";
+	public const string	WINDOW 								= "Window";
+
 
 	public const string CAMPAIGN_LEVEL 						= "Campaign Level";
 	public const string SURVIVAL_LEVEL 						= "Survival Level";

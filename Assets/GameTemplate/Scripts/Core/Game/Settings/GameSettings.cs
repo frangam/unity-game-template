@@ -50,12 +50,13 @@ public class GameSettings : ScriptableObject {
 	public Dictionary<Achievement, bool> 		showSpecificAchievementsOfAPack								= new Dictionary<Achievement, bool>();
 	public Dictionary<Score, bool> 				showSpecificScoreOfAPack									= new Dictionary<Score, bool>();
 	public Dictionary<GameAction, bool> 		showAchievementsActions										= new Dictionary<GameAction, bool>();
+	public bool 								showBackendServerSettings 									= false;
 	
 	
 	//--------------------------------------
 	// Static Attributes
 	//--------------------------------------
-	public const string	 						VERSION_NUMBER 					= "2.1.3";
+	public const string	 						VERSION_NUMBER 					= "2.2.0";
 	public static int 							contInterstitialAdsDEFAULT 		= 0;
 	public static int 							contInterstitialAdsHARDMODE 	= 0;
 	public static int 							contInterstitialAdsNORMALMODE 	= 0;
@@ -102,6 +103,10 @@ public class GameSettings : ScriptableObject {
 	public bool 								ENABLE_ANDROID_IMMERSIVE_MODE	= true;
 	public bool 								showTestLogs					= false; //show debug log for test or not
 	public string								heyZapID;
+	public bool 								useBackendForScores				= false;
+	public bool 								useBackendForAchievements		= false;
+	public bool 								useBackendForInApps				= false;
+	public bool 								useBackendForSaveGameMoney		= false;
 	
 	//--------------------------------------
 	// Constants

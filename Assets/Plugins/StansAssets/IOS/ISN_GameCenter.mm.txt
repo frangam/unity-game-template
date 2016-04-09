@@ -1,3 +1,5 @@
+#if !TARGET_OS_TV
+
 //
 //  ISN_GameCenter.m
 //  Unity-iPhone
@@ -22,7 +24,196 @@ NSString * const UNITY_SPLITTER2 = @"|%|";
 NSString * const UNITY_EOF = @"endofline";
 
 
+@interface ISN_SaveGame : NSObject
 
+
+@property (nonatomic, strong) NSMutableDictionary* LoadedGameSaves;
+
+- (void) saveGameData:(NSData *)data withName:(NSString *)name;
+- (void) fetchSavedGames;
+- (void) deleteSavedGames:(NSString *)name;
+- (void) resolveConflictingSavedGames:(NSArray<NSString *> *)conflictingSavedGames  withData:(NSData *)data;
+- (void) loadSaveData:(NSString*)name;
+@end
+
+@implementation ISN_SaveGame
+
+static ISN_SaveGame *sg_sharedHelper = nil;
++ (ISN_SaveGame *) sharedInstance {
+    if (!sg_sharedHelper) {
+        sg_sharedHelper = [[ISN_SaveGame alloc] init];
+        
+    }
+    return sg_sharedHelper;
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        [self setLoadedGameSaves:[[NSMutableDictionary alloc] init]];
+    }
+    
+    return self;
+}
+
+-(void) saveGameData:(NSData *)data withName:(NSString *)name {
+    [[GKLocalPlayer localPlayer] saveGameData:data withName:name completionHandler:^(GKSavedGame * _Nullable savedGame, NSError * _Nullable error) {
+        if(error == NULL) {
+             UnitySendMessage("ISN_GameSaves", "OnSaveSuccess",  [ISN_DataConvertor NSStringToChar:[self SerlializeGameSave:savedGame]]);
+        } else {
+             UnitySendMessage("ISN_GameSaves", "OnSaveFailed",  [ISN_DataConvertor serializeError:error] );
+        }
+    }];
+}
+
+
+-(void) fetchSavedGames {
+    [[GKLocalPlayer localPlayer] fetchSavedGamesWithCompletionHandler:^(NSArray<GKSavedGame *> * _Nullable savedGames, NSError * _Nullable error) {
+        if(error == NULL) {
+            NSMutableString *savesData = [[NSMutableString alloc] init];
+            for (GKSavedGame *save in savedGames) {
+                NSString *serializedData = [self SerlializeGameSave:save];
+                [savesData appendString:serializedData];
+                [savesData appendString:UNITY_SPLITTER2];
+            }
+            
+            [savesData appendString:UNITY_EOF];
+            
+             UnitySendMessage("ISN_GameSaves", "OnFetchSuccess",  [ISN_DataConvertor NSStringToChar:savesData] );
+            
+        } else {
+            UnitySendMessage("ISN_GameSaves", "OnFetchFailed",  [ISN_DataConvertor serializeError:error] );
+        }
+    }];
+}
+
+-(void) deleteSavedGames:(NSString *)name {
+    [[GKLocalPlayer localPlayer] deleteSavedGamesWithName:name completionHandler:^(NSError * _Nullable error) {
+        if(error == NULL) {
+            UnitySendMessage("ISN_GameSaves", "OnDeleteSuccess",  [ISN_DataConvertor NSStringToChar:name]);
+        } else {
+            
+            NSMutableString * data = [[NSMutableString alloc] init];
+            [data appendString:name];
+            [data appendString:UNITY_SPLITTER2];
+            [data appendString:[ISN_DataConvertor serializeErrorToNSString:error]];
+            
+            UnitySendMessage("ISN_GameSaves", "OnDeleteFailed",  [ISN_DataConvertor NSStringToChar:data]);
+        }
+
+    }];
+}
+
+-(void) resolveConflictingSavedGames:(NSArray<NSString *> *)conflictingSavedGames withData:(NSData *)data {
+    NSMutableArray <GKSavedGame *> * conflicts = [[NSMutableArray alloc] init];
+    for (NSString *saveKey in conflictingSavedGames) {
+        GKSavedGame *save = [[self LoadedGameSaves] objectForKey:saveKey];
+        if(save != nil) {
+            [conflicts addObject:save];
+        }
+    }
+    
+    [[GKLocalPlayer localPlayer] resolveConflictingSavedGames:conflicts withData:data completionHandler:^(NSArray<GKSavedGame *> * _Nullable savedGames, NSError * _Nullable error) {
+        if(error == NULL) {
+            NSMutableString *resolvingData = [[NSMutableString alloc] init];
+            for (GKSavedGame *data in savedGames) {
+                NSString *serializedData = [self SerlializeGameSave:data];
+                [resolvingData appendString:serializedData];
+                [resolvingData appendString:UNITY_SPLITTER2];
+            }
+            
+            [resolvingData appendString:UNITY_EOF];
+            
+            UnitySendMessage("ISN_GameSaves", "OnResolveSuccess",  [ISN_DataConvertor NSStringToChar:resolvingData] );
+        } else {
+            UnitySendMessage("ISN_GameSaves", "OnResolveFailed",  [ISN_DataConvertor serializeError:error] );
+        }
+    }];
+}
+
+
+
+-(void) loadSaveData:(NSString *)name {
+    GKSavedGame *save = [[self LoadedGameSaves] objectForKey:name];
+    if(save != NULL) {
+        [save loadDataWithCompletionHandler:^(NSData * _Nullable data, NSError * _Nullable error) {
+            if(error == NULL) {
+                
+                NSMutableString * saveData = [[NSMutableString alloc] init];
+                NSString *SaveKey = [self CacheGameSave:save];
+                
+                
+                [saveData appendString:SaveKey];
+                [saveData appendString:UNITY_SPLITTER2];
+                [saveData appendString: [data base64Encoding]];
+                
+                UnitySendMessage("ISN_GameSaves", "OnSaveDataLoaded",  [ISN_DataConvertor NSStringToChar:saveData] );
+                
+            } else {
+                
+                NSMutableString * data = [[NSMutableString alloc] init];
+                [data appendString:name];
+                [data appendString:UNITY_SPLITTER2];
+                [data appendString:[ISN_DataConvertor serializeErrorToNSString:error]];
+                
+                UnitySendMessage("ISN_GameSaves", "OnSaveDataLoadFailed",  [ISN_DataConvertor NSStringToChar:data]);
+                
+    
+            }
+        }];
+    } else {
+        
+        NSMutableString * data = [[NSMutableString alloc] init];
+        [data appendString:name];
+        [data appendString:UNITY_SPLITTER2];
+        [data appendString:[ISN_DataConvertor serializeErrorWithDataToNSString:@"save not found" code:999]];
+        
+        UnitySendMessage("ISN_GameSaves", "OnSaveDataLoadFailed", [ISN_DataConvertor NSStringToChar:data]);
+    }
+
+}
+
+
+- (NSString*) SerlializeGameSave:(GKSavedGame *)save {
+    NSMutableString * serializedData = [[NSMutableString alloc] init];
+    
+    NSString* key = [self CacheGameSave:save];
+    
+    [serializedData appendString:key];
+    [serializedData appendString:UNITY_SPLITTER];
+    [serializedData appendString:[save name]];
+    [serializedData appendString:UNITY_SPLITTER];
+    [serializedData appendString:[save deviceName]];
+    [serializedData appendString:UNITY_SPLITTER];
+
+    
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+
+    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+    NSString *dateString = [dateFormatter stringFromDate:[save modificationDate]];
+    
+    [serializedData appendString:dateString];
+    
+    return serializedData;
+}
+
+ - (NSString*) CacheGameSave:(GKSavedGame *)save {
+     
+    NSMutableString * key = [[NSMutableString alloc] init];
+    [key appendString:[save name]];
+    [key appendString:[save deviceName]];
+     
+    NSString *dateString = [NSDateFormatter localizedStringFromDate:[save modificationDate] dateStyle:NSDateFormatterShortStyle  timeStyle:NSDateFormatterFullStyle];
+    [key appendString:dateString];
+     
+    [[self LoadedGameSaves] setObject:save forKey:key];
+     
+    return  key;
+}
+
+
+@end
 
 
 @interface ISN_GameCenterListner : NSObject <GKLocalPlayerListener> {
@@ -49,7 +240,6 @@ NSString * const UNITY_EOF = @"endofline";
 @end
 
 @interface ISN_GameCenterManager : NSObject <GKGameCenterControllerDelegate, GKAchievementViewControllerDelegate> {
-    BOOL isAchievementsWasLoaded;
     NSMutableDictionary* earnedAchievementCache;
     
 #if UNITY_VERSION < 500
@@ -62,6 +252,7 @@ NSString * const UNITY_EOF = @"endofline";
 //This property must be attomic to ensure that the cache is always in a viable state...
 @property (retain) NSMutableDictionary* earnedAchievementCache;
 @property (nonatomic, assign)  id <GameCenterManagerDelegate> delegate;
+@property (nonatomic, strong) UIViewController* GLViewController;
 
 
 + (ISN_GameCenterManager *) sharedInstance;
@@ -180,6 +371,8 @@ NSString * const UNITY_EOF = @"endofline";
 -(void) rematch:(NSString*) matchId;
 -(void) removeMatch:(NSString*) matchId;
 
+-(void) acceptInvite:(NSString*) matchId;
+-(void) declineInvite:(NSString*) matchId;
 
 
 -(NSString*) serializeMathcData:(GKTurnBasedMatch *)match;
@@ -247,7 +440,7 @@ static ISN_GameCenterListner *gcl_sharedHelper = nil;
             GKPlayer *player = (GKPlayer*) playerInfo;
             [[ISN_GameCenterManager sharedInstance] savePlayerInfo:player];
             [requestedInvitationsArray addObject:player.playerID];
-
+            
         } else {
             
             NSString *PlayerId =  (NSString*) playerInfo;
@@ -369,7 +562,6 @@ static ISN_GameCenterManager * gc_sharedInstance;
     self = [super init];
     if (self) {
         earnedAchievementCache= NULL;
-        isAchievementsWasLoaded = FALSE;
         loadedPlayers = [[NSMutableDictionary alloc] init];
         
 #if UNITY_VERSION < 500
@@ -377,6 +569,9 @@ static ISN_GameCenterManager * gc_sharedInstance;
 #endif
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        
+        
+        [self setGLViewController:UnityGetGLViewController()];
         
         NSLog(@"ISN IOSGameCenterManager initialized");
     }
@@ -393,91 +588,71 @@ static ISN_GameCenterManager * gc_sharedInstance;
 #endif
 }
 
-- (void) authenticateLocalPlayer {
-    NSLog(@"ISN authenticateLocalPlayer call");
-    
-    if([self isGameCenterAvailable]){
-        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-        
-        if(localPlayer.authenticated == NO) {
-            
-            
-            // [localPlayer setAuthenticateHandler:^(UIViewController *viewcontroller, NSError *error) {
-            [localPlayer authenticateWithCompletionHandler:^(NSError *error){ //OLD Code
-                if (localPlayer.isAuthenticated){
-                    
-                    NSMutableString * data = [[NSMutableString alloc] init];
-                    
-                    if(localPlayer.playerID != nil) {
-                        [data appendString:localPlayer.playerID];
-                    } else {
-                        [data appendString:@""];
-                    }
-                    [data appendString:UNITY_SPLITTER];
-                    
-                    
-                    if(localPlayer.displayName != nil) {
-                        [data appendString:localPlayer.displayName];
-                    } else {
-                        [data appendString:@""];
-                    }
-                    [data appendString:UNITY_SPLITTER];
-                    
-                    
-                    if(localPlayer.alias != nil) {
-                        [data appendString:localPlayer.alias];
-                    } else {
-                        [data appendString:@""];
-                    }
-                    
-                    
-                    
-                    NSString *str = [data copy];
-                    
-#if UNITY_VERSION < 500
-                    [str autorelease];
-#endif
-                    
-                    
-                    UnitySendMessage("GameCenterManager", "onAuthenticateLocalPlayer", [ISN_DataConvertor NSStringToChar:str]);
-                    
-                    if(localPlayer.alias != nil) {
-                        NSLog(@"ISN PLAYER AUTHENTICATED %@", localPlayer.alias);
-                    }
-                    
-                    
-                    
-                    [[ISN_GameCenterRTM sharedInstance] initNotificationHandler];
-                    [[ISN_GameCenterRTM sharedInstance] setVc:UnityGetGLViewController()];
-                    [[ISN_GameCenterTBM sharedInstance] setVc:UnityGetGLViewController()];
-                    
-                    [[ISN_GameCenterListner sharedInstance] subscribe];
-                    
-                    if(!isAchievementsWasLoaded) {
-                        [self loadAchievements];
-                    }
-                    
-                    [self savePlayerInfo:localPlayer];
-                    
-                } else {
-                    
-                    NSLog(@"ISN PLAYER NOT AUTHENTICATED");
-                    if(error != nil) {
-                        UnitySendMessage("GameCenterManager", "onAuthenticationFailed", [ISN_DataConvertor serializeError:error]);
-                        NSLog(@"ISN Error descr: %@", error.description);
-                    } else {
-                        UnitySendMessage("GameCenterManager", "onAuthenticationFailed", [ISN_DataConvertor NSStringToChar:@""]);
-                    }
-                    
-                    
-                }
-            }];
-        } else {
-            NSLog(@"ISN Do nothing - Player is already authenticated");
-        }
-    }
+
+
+-(void) sendPlayerAuthenticationFailedEvent: (NSError*) error {
+    UnitySendMessage("GameCenterManager", "onAuthenticationFailed", [ISN_DataConvertor serializeError:error]);
+    NSLog(@"ISN GK PLAYER AUTHENTICATION ERROR: %@", error.description);
 }
 
+-(void) sendPlayerAuthenticatedEvent {
+    NSMutableString * data = [[NSMutableString alloc] init];
+    
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    
+    if(localPlayer.playerID != nil) {
+        [data appendString:localPlayer.playerID];
+    } else {
+        [data appendString:@""];
+    }
+    [data appendString:UNITY_SPLITTER];
+    
+    
+    if(localPlayer.displayName != nil) {
+        [data appendString:localPlayer.displayName];
+    } else {
+        [data appendString:@""];
+    }
+    [data appendString:UNITY_SPLITTER];
+    
+    NSString* alias = @"";
+    if(localPlayer.alias != nil) {
+        alias =localPlayer.alias;
+    }
+    [data appendString:alias];
+    
+    NSLog(@"ISN GK PLAYER AUTHENTICATED %@", alias);
+    UnitySendMessage("GameCenterManager", "onAuthenticateLocalPlayer", [ISN_DataConvertor NSStringToChar:data]);
+    
+    [[ISN_GameCenterRTM sharedInstance] initNotificationHandler];
+    [[ISN_GameCenterRTM sharedInstance] setVc:UnityGetGLViewController()];
+    [[ISN_GameCenterTBM sharedInstance] setVc:UnityGetGLViewController()];
+    
+    [[ISN_GameCenterListner sharedInstance] subscribe];
+    
+    
+    [self savePlayerInfo:localPlayer];
+    
+    
+}
+
+- (void) authenticateLocalPlayer {
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    
+    [localPlayer setAuthenticateHandler:(^(UIViewController* viewcontroller, NSError *error) {
+        
+        if (!error && viewcontroller) {
+            [[self GLViewController]  presentViewController:viewcontroller animated:YES completion:nil];
+        } else {
+            if(!error) {
+                [self sendPlayerAuthenticatedEvent];
+            } else {
+                [self sendPlayerAuthenticationFailedEvent:error];
+            }
+        }
+    })];
+    
+}
 
 
 -(void) getSignature {
@@ -599,39 +774,39 @@ static ISN_GameCenterManager * gc_sharedInstance;
     NSLog(@"Show Leaderboard: %@", leaderboardId);
     
     leaderbaordsView = [[GKGameCenterViewController alloc] init];
-   
-        
-        leaderbaordsView.leaderboardIdentifier = leaderboardId;
-        
-        switch (scope) {
-            case 2:
-                leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeAllTime;
-                break;
-            case 1:
-                leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeWeek;
-                break;
-            case 0:
-                leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeToday;
-                break;
-                
-            default:
-                leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeAllTime;
-                break;
-        }
-        
-        leaderbaordsView.viewState = GKGameCenterViewControllerStateLeaderboards;
-        leaderbaordsView.gameCenterDelegate = self;
-        
-        
-        CGSize screenSize = [[UIScreen mainScreen] bounds].size;
-        
-        
-        UIViewController *vc =  UnityGetGLViewController();
-        
-        [vc presentViewController: leaderbaordsView animated: YES completion:nil];
-        leaderbaordsView.view.transform = CGAffineTransformMakeRotation(0.0f);
-        [leaderbaordsView.view setCenter:CGPointMake(screenSize.width/2, screenSize.height/2)];
-        leaderbaordsView.view.bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
+    
+    
+    leaderbaordsView.leaderboardIdentifier = leaderboardId;
+    
+    switch (scope) {
+        case 2:
+            leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeAllTime;
+            break;
+        case 1:
+            leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeWeek;
+            break;
+        case 0:
+            leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeToday;
+            break;
+            
+        default:
+            leaderbaordsView.leaderboardTimeScope = GKLeaderboardTimeScopeAllTime;
+            break;
+    }
+    
+    leaderbaordsView.viewState = GKGameCenterViewControllerStateLeaderboards;
+    leaderbaordsView.gameCenterDelegate = self;
+    
+    
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    
+    
+    UIViewController *vc =  UnityGetGLViewController();
+    
+    [vc presentViewController: leaderbaordsView animated: YES completion:nil];
+    leaderbaordsView.view.transform = CGAffineTransformMakeRotation(0.0f);
+    [leaderbaordsView.view setCenter:CGPointMake(screenSize.width/2, screenSize.height/2)];
+    leaderbaordsView.view.bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
 }
 
 
@@ -1171,22 +1346,22 @@ static ISN_GameCenterManager * gc_sharedInstance;
     
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if(!localPlayer.isAuthenticated) {
-         NSLog(@"ISN showAchievements requires player to be authenticated.  Call ignored");
+        NSLog(@"ISN showAchievements requires player to be authenticated.  Call ignored");
         return;
     }
     
     achievementView = [[GKAchievementViewController alloc] init];
     achievementView.viewState = GKGameCenterViewControllerStateAchievements;
-        
-        achievementView.achievementDelegate = self;
-        
-        CGSize screenSize = [[UIScreen mainScreen] bounds].size;
-        UIViewController *vc =  UnityGetGLViewController();
-        [vc presentViewController: achievementView animated: YES completion:nil];
-        
-        achievementView.view.transform = CGAffineTransformMakeRotation(0.0f);
-        [achievementView.view setCenter:CGPointMake(screenSize.width/2, screenSize.height/2)];
-        achievementView.view.bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
+    
+    achievementView.achievementDelegate = self;
+    
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    UIViewController *vc =  UnityGetGLViewController();
+    [vc presentViewController: achievementView animated: YES completion:nil];
+    
+    achievementView.view.transform = CGAffineTransformMakeRotation(0.0f);
+    [achievementView.view setCenter:CGPointMake(screenSize.width/2, screenSize.height/2)];
+    achievementView.view.bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
     
 }
 
@@ -1197,8 +1372,6 @@ static ISN_GameCenterManager * gc_sharedInstance;
             NSLog(@"ISN loadAchievementsWithCompletionHandler");
             NSLog(@"ISN count %lu", (unsigned long)achievements.count);
             
-            
-            isAchievementsWasLoaded = TRUE;
             NSMutableString * data = [[NSMutableString alloc] init];
             BOOL first = YES;
             for (GKAchievement* achievement in achievements) {
@@ -1749,7 +1922,7 @@ static ISN_GameCenterRTM * rtm_sharedHelper = nil;
                     }
                     
                 }
-
+                
                 
                 UnitySendMessage("GameCenterInvitations", "OnPlayerRequestedMatchWithRecipients_RTM", [ISN_DataConvertor NSStringsArrayToChar:requestedInvitationsArray]);
             }
@@ -1972,7 +2145,7 @@ static ISN_GameCenterRTM * rtm_sharedHelper = nil;
     
     NSLog(@"RTM match didReceiveData");
     NSLog(@"Match hash: %lu", (unsigned long)[match hash]);
-
+    
     
     if(CurrentMatchHash != (unsigned long) [match hash]) {
         NSLog(@"Ignoring the event from old match");
@@ -2011,7 +2184,7 @@ static ISN_GameCenterRTM * rtm_sharedHelper = nil;
     
     NSMutableString * str = [[NSMutableString alloc] init];
     
-
+    
     
     [str appendString:player.playerID];
     [str appendString: UNITY_SPLITTER];
@@ -2252,15 +2425,18 @@ static int tbm_playerAttributes = 0;
 -(void) loadMatch:(NSString *)matchId {
     [GKTurnBasedMatch loadMatchWithID:matchId withCompletionHandler:^(GKTurnBasedMatch *match, NSError *error) {
         if(error == nil) {
-            [match loadMatchDataWithCompletionHandler:^(NSData * _Nullable matchData, NSError * _Nullable error) {
+            
+            [match loadMatchDataWithCompletionHandler:^(NSData *matchData, NSError *error) {
                 if(error == nil) {
                     [self updateMatchInfo:match];
                     NSString* matchData = [self serializeMathcData:match];
                     UnitySendMessage("GameCenter_TBM", "OnLoadMatchResult", [ISN_DataConvertor NSStringToChar:matchData]);
                 } else {
-                     UnitySendMessage("GameCenter_TBM", "OnLoadMatchResultFailed",  [ISN_DataConvertor serializeError:error]);
+                    UnitySendMessage("GameCenter_TBM", "OnLoadMatchResultFailed",  [ISN_DataConvertor serializeError:error]);
                 }
             }];
+            
+            
             
             
         } else {
@@ -2308,6 +2484,14 @@ static int tbm_playerAttributes = 0;
     GKTurnBasedMatch* match = [self getMatchWithId:matchId];
     if(match != NULL) {
         
+        if(matchData.length == 0) {
+            matchData = [match matchData];
+        }
+
+  
+        if(matchData == nil) {
+            matchData = [[NSData alloc] init];
+        }
         
         GKTurnBasedMatchOutcome participantOutcome = [ISN_GameCenterTBM getOutcomeByIntValue:outcome];
         GKTurnBasedParticipant *nextParticipantObject = [self getMathcParticipantById:match playerId:nextPlayerId];
@@ -2449,6 +2633,43 @@ static int tbm_playerAttributes = 0;
     }
 }
 
+-(void) acceptInvite:(NSString *)matchId {
+    NSLog(@"ISN acceptInvite");
+    GKTurnBasedMatch* InvitedMatch = [self getMatchWithId:matchId];
+    if(InvitedMatch != NULL) {
+        [InvitedMatch acceptInviteWithCompletionHandler:^(GKTurnBasedMatch * _Nullable match, NSError * _Nullable error) {
+            if(error == nil) {
+                [self updateMatchInfo:match];
+                NSString* matchData = [self serializeMathcData:match];
+                UnitySendMessage("GameCenter_TBM", "OnMatchInvitationAccepted", [ISN_DataConvertor NSStringToChar:matchData]);
+            } else {
+                UnitySendMessage("GameCenter_TBM", "OnMatchInvitationAcceptedFailed",  [ISN_DataConvertor serializeError:error]);
+            }
+        }];
+    } else {
+        
+        UnitySendMessage("GameCenter_TBM", "OnMatchInvitationAcceptedFailed", [ISN_DataConvertor serializeErrorWithData:@"Match Not Found" code:0]);
+    }
+}
+
+-(void) declineInvite:(NSString *)matchId {
+    NSLog(@"ISN acceptInvite");
+    GKTurnBasedMatch* match = [self getMatchWithId:matchId];
+    
+    if(match == NULL) {
+        UnitySendMessage("GameCenter_TBM", "OnMatchInvitationDeclineFailed", [ISN_DataConvertor serializeErrorWithData:@"Match Not Found" code:0]);
+        return;
+    }
+    
+    [match declineInviteWithCompletionHandler:^(NSError * _Nullable error) {
+        if(error == nil) {
+            UnitySendMessage("GameCenter_TBM", "OnMatchInvitationDeclined", [ISN_DataConvertor NSStringToChar:matchId]);
+        } else {
+            UnitySendMessage("GameCenter_TBM", "OnMatchInvitationDeclineFailed", [ISN_DataConvertor serializeError:error]);
+        }
+    }];
+}
+
 
 
 #pragma private
@@ -2547,6 +2768,10 @@ static int tbm_playerAttributes = 0;
     
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     NSString *creationDateString = [dateFormatter stringFromDate:match.creationDate];
+    if(creationDateString ==  NULL) {
+        creationDateString = [dateFormatter stringFromDate:[NSDate date]];
+    }
+    
     [data appendString: creationDateString];
     [data appendString: UNITY_SPLITTER];
     
@@ -2726,6 +2951,15 @@ extern "C" {
         [[ISN_GameCenterManager sharedInstance] authenticateLocalPlayer];
     }
     
+    BOOL _ISN_GK_IsUnderage() {
+        return [[GKLocalPlayer localPlayer] isUnderage];
+    }
+    
+    
+    BOOL _ISN_GK_IsAuthenticated() {
+        return  [[GKLocalPlayer localPlayer] isAuthenticated];
+    }
+    
     
     void _showLeaderboard(char* leaderboardId, int scope) {
         [[ISN_GameCenterManager sharedInstance] showLeaderboard:[ISN_DataConvertor charToNSString:leaderboardId] scope:scope];
@@ -2737,6 +2971,10 @@ extern "C" {
     
     void _ISN_loadLeaderboardInfo (char* leaderboardId, int requestId) {
         [[ISN_GameCenterManager sharedInstance] loadLeaderboardInfo:[ISN_DataConvertor charToNSString:leaderboardId] requestId:requestId];
+    }
+    
+    void _ISN_LoadAchievements() {
+        [[ISN_GameCenterManager sharedInstance] loadAchievements];
     }
     
     void _ISN_loadLeaderboardScore(char* leaderboardId, int scope, int collection, int from, int to) {
@@ -2831,7 +3069,7 @@ extern "C" {
         NSString* lid = [ISN_DataConvertor charToNSString:setId];
         [[ISN_GameCenterManager sharedInstance] loadLeaderboardsForSet:lid];
     }
-
+    
     void _ISN_ShowNotificationBanner (char* title, char* message)  {
         [[ISN_GameCenterManager sharedInstance] showNotificationBanner:[ISN_DataConvertor charToNSString:title] message:[ISN_DataConvertor charToNSString:message]];
     }
@@ -2934,7 +3172,7 @@ extern "C" {
         
         [[ISN_GameCenterRTM sharedInstance] sendDataToAll:s_data withDataMode:mode];
     }
-
+    
     
     
     //--------------------------------------
@@ -3043,6 +3281,58 @@ extern "C" {
         [[ISN_GameCenterTBM sharedInstance] removeMatch:mId];
     }
     
+    void _ISN_TBM_DeclineInvite(char* matchId)  {
+        NSString* mId = [ISN_DataConvertor charToNSString:matchId];
+        [[ISN_GameCenterTBM sharedInstance] declineInvite:mId];
+    }
+    
+    void _ISN_TBM_AcceptInvite(char* matchId)  {
+        NSString* mId = [ISN_DataConvertor charToNSString:matchId];
+        [[ISN_GameCenterTBM sharedInstance] acceptInvite:mId];
+    }
+    
+    
+    //--------------------------------------
+    //  Game Saves
+    //--------------------------------------
+    
+    void _ISN_SaveGame(char* data, char* name) {
+        NSString* mName = [ISN_DataConvertor charToNSString:name];
+        
+        
+        NSString* mDataString = [ISN_DataConvertor charToNSString:data];
+        NSData *mData = [[NSData alloc] initWithBase64Encoding:mDataString];
+        
+        [[ISN_SaveGame sharedInstance] saveGameData:mData withName:mName];
+    }
+    
+    
+    void _ISN_FetchSavedGames() {
+        [[ISN_SaveGame sharedInstance] fetchSavedGames];
+    }
+    
+    void _ISN_DeleteSavedGame(char* name) {
+        NSString* mName = [ISN_DataConvertor charToNSString:name];
+        
+        [[ISN_SaveGame sharedInstance] deleteSavedGames:mName];
+    }
+    
+    void _ISN_ResolveConflictingSavedGames(char* saves, char* data) {
+        NSArray* savesList = [ISN_DataConvertor charToNSArray:saves];
+        
+        NSString* mDataString = [ISN_DataConvertor charToNSString:data];
+        NSData *mData = [[NSData alloc] initWithBase64Encoding:mDataString];
+        
+        [[ISN_SaveGame sharedInstance] resolveConflictingSavedGames:savesList withData:mData];
+    }
+    
+    void _ISN_LoadSaveData(char* name) {
+        NSString* mName = [ISN_DataConvertor charToNSString:name];
+        
+        [[ISN_SaveGame sharedInstance] loadSaveData:mName];
+    }
+
+
     
 }
-
+#endif

@@ -134,7 +134,7 @@ public class SavedGamesExample : MonoBehaviour {
 	private void ActionAvailableGameSavesLoaded (GooglePlayResult res) {
 
 		GooglePlaySavedGamesManager.ActionAvailableGameSavesLoaded -= ActionAvailableGameSavesLoaded;
-		if(res.isSuccess) {
+		if(res.IsSucceeded) {
 			foreach(GP_SnapshotMeta meta in GooglePlaySavedGamesManager.instance.AvailableGameSaves) {
 				Debug.Log("Meta.Title: " 					+ meta.Title);
 				Debug.Log("Meta.Description: " 				+ meta.Description);
@@ -175,8 +175,8 @@ public class SavedGamesExample : MonoBehaviour {
 
 	private void ActionGameSaveLoaded (GP_SpanshotLoadResult result) {
 
-		Debug.Log("ActionGameSaveLoaded: " + result.message);
-		if(result.isSuccess) {
+		Debug.Log("ActionGameSaveLoaded: " + result.Message);
+		if(result.IsSucceeded) {
 
 			Debug.Log("Snapshot.Title: " 					+ result.Snapshot.meta.Title);
 			Debug.Log("Snapshot.Description: " 				+ result.Snapshot.meta.Description);
@@ -189,15 +189,15 @@ public class SavedGamesExample : MonoBehaviour {
 			AndroidMessage.Create("Snapshot Loaded", "Data: " + result.Snapshot.stringData);
 		} 
 
-		SA_StatusBar.text = "Games Loaded: " + result.message;
+		SA_StatusBar.text = "Games Loaded: " + result.Message;
 
 	}
 
 	private void ActionGameSaveResult (GP_SpanshotLoadResult result) {
 		GooglePlaySavedGamesManager.ActionGameSaveResult -= ActionGameSaveResult;
-		Debug.Log("ActionGameSaveResult: " + result.message);
+		Debug.Log("ActionGameSaveResult: " + result.Message);
 
-		if(result.isSuccess) {
+		if(result.IsSucceeded) {
 			SA_StatusBar.text = "Games Saved: " + result.Snapshot.meta.Title;
 		} else {
 			SA_StatusBar.text = "Games Save Failed";
@@ -266,10 +266,11 @@ public class SavedGamesExample : MonoBehaviour {
 
 
 		GooglePlaySavedGamesManager.ActionGameSaveResult += ActionGameSaveResult;
-		GooglePlaySavedGamesManager.instance.CreateNewSnapshot(currentSaveName, description, Screenshot, "some save data, for example you can use JSON or byte array", TotalPlayedTime);
-		
-		
-		
+		GooglePlaySavedGamesManager.instance.CreateNewSnapshot(currentSaveName,
+		                                                       description,
+		                                                       Screenshot,
+		                                                       "some save data, for example you can use JSON or byte array " + Random.Range(1, 10000).ToString(),
+		                                                       TotalPlayedTime);		
 		Destroy(Screenshot);
 	}
 

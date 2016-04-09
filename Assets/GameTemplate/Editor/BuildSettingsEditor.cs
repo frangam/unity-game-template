@@ -78,55 +78,55 @@ public class BuildSettingsEditor : Editor {
 		}
 
 		int i=0;
-		foreach(GTBuildSettingsPack pack in GTBuildSettingsConfig.Instance.packs){
-			//---
-			//Android Build Folder
-			//---
-			bool andBuildFolder = !string.IsNullOrEmpty(pack.build.androidBuildFolder);
-			if(!preBuildResFolder){
-				Debug.LogError("Not Selected Android Build Folder");
-			}
-			else{
-				path = pack.build.androidBuildFolder;
-				path = path.Replace(Application.dataPath.Replace("Assets", ""), "");
+		if (GTBuildSettingsConfig.Instance.packs != null && GTBuildSettingsConfig.Instance.packs.Count > 0) {
+			foreach (GTBuildSettingsPack pack in GTBuildSettingsConfig.Instance.packs) {
+				//---
+				//Android Build Folder
+				//---
+				bool andBuildFolder = !string.IsNullOrEmpty (pack.build.androidBuildFolder);
+				if (!preBuildResFolder) {
+					Debug.LogError ("Not Selected Android Build Folder");
+				} else {
+					path = pack.build.androidBuildFolder;
+					path = path.Replace (Application.dataPath.Replace ("Assets", ""), "");
 
-				if(!System.IO.Directory.Exists(path)){
-					Color prev = GUI.color;
-					GUI.color = Color.yellow;
-					if(GUILayout.Button("Create Android Build " + i.ToString() + " Folder")){
-						System.IO.Directory.CreateDirectory(path);
-						AssetDatabase.Refresh();
+					if (!System.IO.Directory.Exists (path)) {
+						Color prev = GUI.color;
+						GUI.color = Color.yellow;
+						if (GUILayout.Button ("Create Android Build " + i.ToString () + " Folder")) {
+							System.IO.Directory.CreateDirectory (path);
+							AssetDatabase.Refresh ();
+						}
+						GUI.color = prev;
 					}
-					GUI.color = prev;
 				}
-			}
 
-			//---
-			//iOS Build Folder
-			//---
-			bool iosBuildFolder = !string.IsNullOrEmpty(pack.build.androidBuildFolder);
-			if(!preBuildResFolder){
-				Debug.LogError("Not Selected iOS Build Folder");
-			}
-			else{
-				path = pack.build.iosBuildFolder;
-				path = path.Replace(Application.dataPath.Replace("Assets", ""), "");
-				
-				if(!System.IO.Directory.Exists(path)){
-					Color prev = GUI.color;
-					GUI.color = Color.yellow;
-					if(GUILayout.Button("Create iOS Build " + i.ToString() + " Folder")){
-						System.IO.Directory.CreateDirectory(path);
-						AssetDatabase.Refresh();
+				//---
+				//iOS Build Folder
+				//---
+				bool iosBuildFolder = !string.IsNullOrEmpty (pack.build.androidBuildFolder);
+				if (!preBuildResFolder) {
+					Debug.LogError ("Not Selected iOS Build Folder");
+				} else {
+					path = pack.build.iosBuildFolder;
+					path = path.Replace (Application.dataPath.Replace ("Assets", ""), "");
+					
+					if (!System.IO.Directory.Exists (path)) {
+						Color prev = GUI.color;
+						GUI.color = Color.yellow;
+						if (GUILayout.Button ("Create iOS Build " + i.ToString () + " Folder")) {
+							System.IO.Directory.CreateDirectory (path);
+							AssetDatabase.Refresh ();
+						}
+						GUI.color = prev;
 					}
-					GUI.color = prev;
 				}
+
+
+
+
+				i++;
 			}
-
-
-
-
-			i++;
 		}
 	}
 	

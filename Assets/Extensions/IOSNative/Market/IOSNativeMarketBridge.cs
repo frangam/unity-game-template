@@ -31,7 +31,7 @@ public class IOSNativeMarketBridge  {
 
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_RequestInAppSettingState();
+	private static extern bool _ISN_InAppSettingState();
 	
 	[DllImport ("__Internal")]
 	private static extern void _verifyLastPurchase(string url);
@@ -63,9 +63,11 @@ public class IOSNativeMarketBridge  {
 	}
 
 
-	public static void ISN_RequestInAppSettingState() {
+	public static bool ISN_InAppSettingState() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR && INAPP_API_ENABLED) || SA_DEBUG_MODE
-		_ISN_RequestInAppSettingState();
+		return _ISN_InAppSettingState();
+		#else
+		return false;
 		#endif
 	}
 
