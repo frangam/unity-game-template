@@ -84,8 +84,8 @@ public class GTBuildSettingsConfig : ScriptableObject {
 					instance = CreateInstance<GTBuildSettingsConfig>();
 					#if UNITY_EDITOR
 					//string properPath = Path.Combine(Application.dataPath, ANSettingsPath);
-					
-					FileStaticAPI.CreateFolder(path);
+
+					FilesUtilEditor.CreateFolder(path);
 					
 					/*
 					if (!Directory.Exists(properPath)) {

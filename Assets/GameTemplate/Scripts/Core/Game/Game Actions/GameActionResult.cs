@@ -7,7 +7,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameActionResult : ISN_Result {
+public class GameActionResult : BaseDataResult {
 	//--------------------------------------
 	// Private Attributes
 	//--------------------------------------

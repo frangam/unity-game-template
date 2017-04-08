@@ -213,7 +213,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 			
 		}
 	}
-	void OnAuthIOSFinished (ISN_Result res) {
+	void OnAuthIOSFinished (SA.Common.Models.Result res) {
 		GameCenterManager.OnAuthFinished -= OnAuthIOSFinished;
 		if (res.IsSucceeded) {
 			GameCenterManager.ShowAchievements();
@@ -224,8 +224,8 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		//parsing result
 		switch(res) {
 		case AndroidDialogResult.YES:
-			GooglePlayConnection.instance.connect();
-			GooglePlayManager.instance.showAchievementsUI();
+			GooglePlayConnection.Instance.Connect();
+			GooglePlayManager.Instance.ShowAchievementsUI();
 			break;
 		case AndroidDialogResult.NO:
 			break;

@@ -8,6 +8,7 @@ using UnionAssets.FLE;
 using System.Collections;
 using System.Collections.Generic;
 using UnionAssets.FLE;
+using SA.IOSNative.StoreKit;
 
 public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	//--------------------------------------
@@ -41,7 +42,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	private int numProducts = 0;
 	
 	private List<GoogleProductTemplate> productsGoogle = new List<GoogleProductTemplate>();
-	private List<IOSProductTemplate> productsIOS = new List<IOSProductTemplate>();
+	private List<Product> productsIOS = new List<Product>();
 	private List<WP8ProductTemplate> productsWP = new List<WP8ProductTemplate>();
 	
 	//--------------------------------------
@@ -74,7 +75,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		}
 	}
 	
-	public List<IOSProductTemplate> ProductsIOS {
+	public List<Product> ProductsIOS {
 		get {
 			return this.productsIOS;
 		}
@@ -391,7 +392,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 	
 	
 	#region IOSEvents
-	void OnStoreKitInitComplete (ISN_Result result){
+	void OnStoreKitInitComplete (PurchaseResult result){
 		GTDebug.log("Success ? " +result.IsSucceeded);
 		
 		if(result.IsSucceeded) {
@@ -413,18 +414,18 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			
 		}
 		
-		IOSInAppPurchaseManager.OnStoreKitInitComplete -= OnStoreKitInitComplete;
+		PaymentManager.OnStoreKitInitComplete -= OnStoreKitInitComplete;
 	}
-	void OnTransactionComplete (IOSStoreKitResult response){
+	void OnTransactionComplete (PurchaseResult response){
 		GTDebug.log("Product ID: " + response.ProductIdentifier + ". State: " + response.State);
 		
 		
 		switch(response.State) {
-		case InAppPurchaseState.Restored:
+		case PurchaseState.Restored:
 			//			OnProcessingRestorePurchases();
 			//			break;
-		case InAppPurchaseState.Purchased:
-			if(response.State == InAppPurchaseState.Purchased){
+		case PurchaseState.Purchased:
+			if(response.State == PurchaseState.Purchased){
 				//Our product been succsesly purchased or restored
 				//So we need to provide content to our user 
 				//depends on productIdentifier
@@ -435,10 +436,10 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			//Warning: Use 
 			//SANDBOX_VERIFICATION_SERVER url (https://sandbox.itunes.apple.com/verifyReceipt) during app testing  and 
 			//APPLE_VERIFICATION_SERVER url  (https://buy.itunes.apple.com/verifyReceipt) on production.
-			string verifURL = GameSettings.Instance.IS_A_DEV_VERSION ? IOSInAppPurchaseManager.SANDBOX_VERIFICATION_SERVER : IOSInAppPurchaseManager.APPLE_VERIFICATION_SERVER;
-			IOSInAppPurchaseManager.instance.verifyLastPurchase(verifURL);
+			string verifURL = GameSettings.Instance.IS_A_DEV_VERSION ? PaymentManager.SANDBOX_VERIFICATION_SERVER : PaymentManager.APPLE_VERIFICATION_SERVER;
+			PaymentManager.Instance.VerifyLastPurchase(verifURL);
 			break;
-		case InAppPurchaseState.Deferred:
+		case PurchaseState.Deferred:
 			GTDebug.log("State: Deferred");
 			//iOS 8 introduces Ask to Buy, which lets 
 			//parents approve any purchases initiated by children
@@ -451,7 +452,7 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			
 			OnProcessingPurchaseProduct(response.ProductIdentifier, false, true);
 			break;
-		case InAppPurchaseState.Failed:
+		case PurchaseState.Failed:
 			GTDebug.log("State: Failed");
 			
 			OnProcessingPurchaseProduct(response.ProductIdentifier, false);
@@ -462,65 +463,65 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 			break;
 		}
 	}
-	void OnVerificationComplete (IOSStoreKitVerificationResponse response){
-		GTDebug.log("Transaction verification status: " + response.status.ToString());
+	void OnVerificationComplete (VerificationResponse response){
+		GTDebug.log("Transaction verification status: " + response.Status.ToString());
 	}
-	void OnRestoreComplete (ISN_Result response){
+	void OnRestoreComplete (SA.Common.Models.Result response){
 		if(response.IsSucceeded){
 			OnProcessingRestorePurchases();
 			GTDebug.log("All purchases has been restored.");
 		}
 		else{
 			OnProcessingRestorePurchases(false);
-			GTDebug.log("Restore failed: "+ response.Error.Description);
+			GTDebug.log("Restore failed: "+ response.Error.Message);
 		}
 	}
 	#endregion
 	
 	#region WP8Events
 	void OnInitComplete() {
-		if(WP8InAppPurchasesManager.instance.products != null){
-			IsInited = true;
-			
-			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
-				GameLoaderManager.Instance.InAppInited = true;
-			
-			numProducts = WP8InAppPurchasesManager.instance.products.Count;
-			productsWP = WP8InAppPurchasesManager.instance.products;
-			//			dispatcher.dispatch(RETRIEVED_PRODUCTS, WP8InAppPurchasesManager.instance.products);
-			OnRetrievedProducts(true);
-			
-			GTDebug.log("Inited successfully, Avaliable products cound: " + WP8InAppPurchasesManager.instance.products.Count.ToString());
-		}
-		else{
-			//			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
-			OnRetrievedProducts(false);
-			GTDebug.log("Failed in init Stoke Kit :(");
-		}
-		
-		//check if have a durable object but no its assigned yet.
-		foreach(WP8ProductTemplate product in WP8InAppPurchasesManager.instance.products){
-			if(product.Type == WP8PurchaseProductType.Durable) {
-				if(product.isPurchased) {
-					//The Durable product was purchased, we should check here 
-					//if the content is unlocked for our Durable product.
-					OnProcessingPurchaseProduct(product.ProductId);
-					//					GTDebug.log("Product " + product.Name + " is purchased");
-					
-				}
-			}
-		}
-		
-		WP8InAppPurchasesManager.instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
+//		if(WP8InAppPurchasesManager.instance.products != null){
+//			IsInited = true;
+//			
+//			if(BaseGameScreenController.Instance.Section == GameSection.LOAD_SCREEN)
+//				GameLoaderManager.Instance.InAppInited = true;
+//			
+//			numProducts = WP8InAppPurchasesManager.instance.products.Count;
+//			productsWP = WP8InAppPurchasesManager.instance.products;
+//			//			dispatcher.dispatch(RETRIEVED_PRODUCTS, WP8InAppPurchasesManager.instance.products);
+//			OnRetrievedProducts(true);
+//			
+//			GTDebug.log("Inited successfully, Avaliable products cound: " + WP8InAppPurchasesManager.instance.products.Count.ToString());
+//		}
+//		else{
+//			//			dispatcher.dispatch(NOT_RETRIEVED_PRODUCTS);
+//			OnRetrievedProducts(false);
+//			GTDebug.log("Failed in init Stoke Kit :(");
+//		}
+//		
+//		//check if have a durable object but no its assigned yet.
+//		foreach(WP8ProductTemplate product in WP8InAppPurchasesManager.instance.products){
+//			if(product.Type == WP8PurchaseProductType.Durable) {
+//				if(product.isPurchased) {
+//					//The Durable product was purchased, we should check here 
+//					//if the content is unlocked for our Durable product.
+//					OnProcessingPurchaseProduct(product.ProductId);
+//					//					GTDebug.log("Product " + product.Name + " is purchased");
+//					
+//				}
+//			}
+//		}
+//		
+//		WP8InAppPurchasesManager.Instance.removeEventListener(WP8InAppPurchasesManager.INITIALIZED, OnInitComplete);
 	}
 	void OnPurchaseFinished(CEvent e) {
 		WP8PurchseResponce responce = e.data as WP8PurchseResponce;
 		
 		if(responce.IsSuccses) {
 			//Unlock logic for product with id recponce.productId should be here
-			OnProcessingPurchaseProduct(responce.productId);
+			OnProcessingPurchaseProduct(responce.ProductId);
 		} else {
-			OnProcessingPurchaseProduct(responce.productId, false);
+			OnProcessingPurchaseProduct(responce.ProductId, false);
 		}
 	}
 	#endregion
@@ -695,8 +696,8 @@ public class CoreIAPManager : PersistentSingleton<CoreIAPManager>{
 		return product;
 	}
 	
-	private IOSProductTemplate getIOSProductTemplateByID(string id){
-		IOSProductTemplate product = null;
+	private Product getIOSProductTemplateByID(string id){
+		Product product = null;
 		
 		GTDebug.log("Product id " + id + ". Products? "+(productsIOS != null));
 		

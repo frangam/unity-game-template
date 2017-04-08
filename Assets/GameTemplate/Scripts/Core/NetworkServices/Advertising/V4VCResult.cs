@@ -6,7 +6,7 @@ Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 using UnityEngine;
 using System.Collections;
 
-public class V4VCResult : ISN_Result {
+public class V4VCResult : BaseDataResult {
 	private string rewardName;
 	private int amount;
 

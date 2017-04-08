@@ -192,7 +192,7 @@ public class LoginButton : UIBaseButton {
 	// Events Methods
 	//--------------------------------------
 	//On iOS only can connect from the app, not disconnect. (disconnection is made from GameCenter app)
-	void OnAuthIOSFinished (ISN_Result res) {
+	void OnAuthIOSFinished (SA.Common.Models.Result res) {
 		GameCenterManager.OnAuthFinished -= OnAuthIOSFinished;
 
 		if (res.IsSucceeded) {

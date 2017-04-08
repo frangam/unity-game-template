@@ -7,7 +7,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using GoogleMobileAds.Api;
+//using GoogleMobileAds.Api;
 using UnityEngine.Advertisements;
 //using Heyzap;
 
@@ -25,8 +25,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
     //--------------------------------------
     // Setting Attributes
     //--------------------------------------
-	public AdSize banSize = AdSize.SmartBanner;
-	public AdPosition banPos = AdPosition.Top;
+//	public AdSize banSize = AdSize.SmartBanner;
+//	public AdPosition banPos = AdPosition.Top;
 	public bool test = true;
 	public bool useNativeAdmob = false;
 	public bool useNativeUnityAds = false;
@@ -41,8 +41,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	public string unityAndroidID = "";
 	public string unityiOSID = "";
 
-//	public List<string> testDevices = new List<string> (){ "7ED25D61C9899E1848EEADFED7420538", "ed2309f7c7297dea857d6763ff95d2d7" , "f8eaba0e0e5dfa633693be9e948b5a75",
-	//		"b3f4f866e8f4c67aea4889f714d78220d2ab3f4f", "42D2D9ECF99580DD6CF4F6CB797B5059" };
+
 	
 	//--------------------------------------
 	// Private Attributes
@@ -58,9 +57,9 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	private bool waitingFinishInitInApps = false;
 	private bool initedHeyzap = false;
 	private bool usingHeyzapOnlyForAdmobBanner;
-	private BannerView admobBannerView;
-	private InterstitialAd admobInterstitialAd;
-	private RewardBasedVideoAd admobRewardVideoAd;
+//	private BannerView admobBannerView;
+//	private InterstitialAd admobInterstitialAd;
+//	private RewardBasedVideoAd admobRewardVideoAd;
 	private bool showingFullScreenAd = false;
 
 	//--------------------------------------
@@ -107,9 +106,6 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 		if(canShow){
 			switch(type){
 			case AdType.INTERSTITIAL: 
-//				if (!useNativeAdmob && !useNativeUnityAds)
-//					canShow = HZInterstitialAd.IsAvailable (tag);
-//				else
 					if (useNativeAdmob && (useNativeUnityAds && !useUnityAdsForVideoRewardOnly))
 					canShow = admobInterstitialAd.IsLoaded () && Advertisement.IsReady ("defaultZone");
 				else if (useNativeAdmob)
@@ -118,11 +114,6 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 					canShow = Advertisement.IsReady ("defaultZone");
 				break;
 			case AdType.VIDEO:
-//				if (!useNativeAdmob && !useNativeUnityAds) {
-//					HZVideoAd.fetch (); 
-//					canShow = HZVideoAd.IsAvailable (tag); 
-//				}
-//				else 
 					if (useNativeAdmob && (useNativeUnityAds && !useUnityAdsForVideoRewardOnly))
 					canShow = admobInterstitialAd.IsLoaded() && Advertisement.IsReady ("defaultZone");
 				else if (useNativeAdmob)
@@ -131,11 +122,6 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 					canShow = Advertisement.IsReady ("defaultZone");
 				break;
 			case AdType.VIDEO_V4VC: 
-//				if (!useNativeUnityAds) {
-//					HZIncentivizedAd.fetch (); 
-//					canShow = HZIncentivizedAd.IsAvailable (tag); 
-//				}
-//				else 
 					if(useNativeAdmob && useAdmobVideoRewardAds){
 					canShow = admobRewardVideoAd.IsLoaded ();
 				}
@@ -199,7 +185,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 //	private void initHeyzap(){
 //		GTDebug.log ("Initing Heyzap from AdsHandler...");
 //
-//		// Your Publisher ID is: 1d3b3bbd9f2a398c60822451a696ffea
+//		// Your Publisher ID is: #
 //		HeyzapAds.Start(GameSettings.Instance.heyZapID, HeyzapAds.FLAG_NO_OPTIONS);
 //
 //		//--------------------------------------
@@ -391,14 +377,10 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 
 	private void initNativeAdmob(bool onlyInterstitialAndVideo = false){
 		// Create an ad request.
-		AdRequest request = new AdRequest.Builder()
-			.AddTestDevice(AdRequest.TestDeviceSimulator)       // Simulator.
-			.AddTestDevice("7ED25D61C9899E1848EEADFED7420538")  // Nexus 10 Fran
-			.AddTestDevice("ed2309f7c7297dea857d6763ff95d2d7")  //  iPhone5 Fran
-			.AddTestDevice("f8eaba0e0e5dfa633693be9e948b5a75")  // iPhone 4S Fran
-			.AddTestDevice("b3f4f866e8f4c67aea4889f714d78220d2ab3f4f")  // WP8 Prestigio
-			.AddTestDevice("42D2D9ECF99580DD6CF4F6CB797B5059")  // Moto G Fran
-			.Build();
+//		AdRequest request = new AdRequest.Builder()
+//			.AddTestDevice(AdRequest.TestDeviceSimulator)       // Simulator.
+////			.AddTestDevice("***")  // another one
+//			.Build();
 
 		if(!onlyInterstitialAndVideo)
 			initAdmobBanner (request);
@@ -522,6 +504,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	//--------------------------------------
 	//  EVENTS
 	//--------------------------------------
+	#if ADMOB_ENABLED
 	public void OnAdMobBannerLoaded(object sender, EventArgs args){
 		if (admobBannerView != null) {
 			admobBannerView.Show ();
@@ -605,6 +588,41 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 
 		initNativeAdmob (true);
 	}
+
+	public void showNativeAdmobInterstitial(){
+	if(!GameSettings.Instance.IS_PRO_VERSION && admobInterstitialAd != null){
+	showingFullScreenAd = true;
+	admobInterstitialAd.Show ();
+
+	if (RuntimePlatformUtils.IsEditor ())
+	testOnInterstitialClose ();
+	}
+	}
+
+	public void showNativeAdmobRewardVideo(){
+	if(!GameSettings.Instance.IS_PRO_VERSION && admobRewardVideoAd != null){
+	showingFullScreenAd = true;
+	admobRewardVideoAd.Show ();
+
+	if (RuntimePlatformUtils.IsEditor ())
+	testOnVideoFinished ();
+	}
+	}
+
+
+
+	private void destroyNativeAdmobBanner(){
+	if (admobBannerView != null) {
+	admobBannerView.Destroy ();
+	}
+	}
+
+	private void HideNativeAdmobBanner(){
+	if (admobBannerView != null) {
+	admobBannerView.Hide ();
+	}
+	}
+	#endif
 		
 
 	public void testOnInterstitialOpen(){
@@ -661,7 +679,8 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 //				if (!useNativeAdmob)
 //					HZVideoAd.Show ();
 //				else
-					showNativeAdmobInterstitial ();
+				showInterstitial();
+					
 			}
 			//show interstitial
 			else{
@@ -681,7 +700,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 //			if(!useNativeAdmob)
 //				HZVideoAd.Show();
 //			else
-				showNativeAdmobInterstitial ();
+			PlayAVideo();
 		}
 
 		if (RuntimePlatformUtils.IsEditor ())
@@ -718,6 +737,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 //			if(!useNativeAdmob)
 //				HZInterstitialAd.show();
 //			else
+				
 				showNativeAdmobInterstitial ();
 		}
 		#endif
@@ -782,157 +802,17 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 ////		#endif
 //	}
 
-	//--------------------------------------
-	//  Admob
-	//--------------------------------------
-
-	public void showNativeAdmobInterstitial(){
-		if(!GameSettings.Instance.IS_PRO_VERSION && admobInterstitialAd != null){
-			showingFullScreenAd = true;
-			admobInterstitialAd.Show ();
-
-			if (RuntimePlatformUtils.IsEditor ())
-				testOnInterstitialClose ();
-		}
-	}
-
-	public void showNativeAdmobRewardVideo(){
-		if(!GameSettings.Instance.IS_PRO_VERSION && admobRewardVideoAd != null){
-			showingFullScreenAd = true;
-			admobRewardVideoAd.Show ();
-
-			if (RuntimePlatformUtils.IsEditor ())
-				testOnVideoFinished ();
-		}
-	}
 
 
-//	public void refreshNativeAdmobBanner(){
-//	#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-//	if(!GameSettings.Instance.IS_PRO_VERSION)
-//	RefreshBanner();
-//	#endif
-//	}
 
-//	private void CreateNativeAdmobBanner(){
-//	#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-//	if(!GameSettings.Instance.IS_PRO_VERSION){
-//	GTDebug.log ("Creating Native Admob Banner with id "+UniqueBannerID);
-//	GoogleMobileAdBanner banner;
-//
-//	if (registerdBanners.ContainsKey(UniqueBannerID)){
-//	banner = registerdBanners[UniqueBannerID];
-//	}
-//	else{
-//	banner = GoogleMobileAd.CreateAdBanner(anchor, size);
-//	registerdBanners.Add(UniqueBannerID, banner);
-//	GTDebug.log ("Created new Native Admob Banner ...");
-//	}
-//
-//
-//	if(banner.IsLoaded && !banner.IsOnScreen) {
-//	GTDebug.log ("Showing new Native Admob Banner ...");
-//	banner.Show();
-//	}
-//	else{
-//	GTDebug.log ("Waiting for showing Native Admob Banner when loaded. Loaded ? "+banner.IsLoaded+", is on screen ? "+banner.IsOnScreen);
-//	//listening for banner to load example using C# actions:
-//	banner.OnLoadedAction += OnNativeAdmobBannerLoadedAction;
-//
-//	//By setting this flsg to fals we will prevent banner to show when it's loaded
-//	//e will listner for OnLoadedAction event and show it by our selfs instead
-//	banner.ShowOnLoad = false;
-//
-//	}
-//	}
-//	#endif
-//	}
 
-//	private void DestroyAllNativeAdmobBanners(){
-//	#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-//	if(registerdBanners != null && registerdBanners.Count > 0){
-//
-//	foreach(GoogleMobileAdBanner b in registerdBanners.Values){
-//	GTDebug.log("AdsHandler DestroyBanner() - Found banner with id: " + b.id + " destroying");
-//	//				b.Hide();
-//	GoogleMobileAd.DestroyBanner(b.id);
-//	}
-//	}
-//	#endif
-//	}
-
-	private void destroyNativeAdmobBanner(){
-		if (admobBannerView != null) {
-			admobBannerView.Destroy ();
-		}
-	}
-
-	private void HideNativeAdmobBanner(){
-//	#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-//	if (!GameSettings.Instance.IS_PRO_VERSION && registerdBanners.ContainsKey(UniqueBannerID)){
-//	if(GameSettings.Instance.showTestLogs)
-//	Debug.Log("AdsHandler HideBanner() - Found banner with id: " + UniqueBannerID);
-//
-//	GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
-//	if (banner.IsLoaded){
-//	GTDebug.log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " loaded");
-//
-//	if (banner.IsOnScreen){
-//	GTDebug.log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " hiding");
-//
-//	banner.Hide();
-//	}
-//	}
-//	else{
-//	GTDebug.log("AdsHandler HideBanner() - banner with id: " + UniqueBannerID + " not loaded");
-//
-//	banner.ShowOnLoad = false;
-//	}
-//	}
-//	else{
-//	GTDebug.log("AdsHandler HideBanner() - No banner found with id: " + UniqueBannerID);
-//	}
-//	#endif
-
-		if (admobBannerView != null) {
-			admobBannerView.Hide ();
-		}
-	}
-
-//	private void RefreshBanner(){
-//	#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-//	if (registerdBanners.ContainsKey(UniqueBannerID)){
-//	GoogleMobileAdBanner banner = registerdBanners[UniqueBannerID];
-//	if (banner.IsLoaded){
-//	if (banner.IsOnScreen){
-//	GTDebug.log("AdsHandler refresh() - banner with id: " + UniqueBannerID + " refreshing");
-//
-//	//					if(GameSettings.Instance.showTestLogs)
-//	//						Debug.Log("AdsHandler - refreshing banner ad at position: ");
-//
-//	banner.Refresh();
-//	}
-//	else{
-//	GTDebug.log("AdsHandler refresh() - banner with id: " + UniqueBannerID + "not refreshing");
-//	}
-//	}
-//	else{
-//	GTDebug.log("AdsHandler refresh() - banner with id: " + UniqueBannerID + "not loaded");
-//	}
-//	//else
-//	//{
-//	//    banner.ShowOnLoad = true;
-//	//}
-//	}
-//	#endif
-//	}
 
 
 
 	//--------------------------------------
 	//  Unity Ads
 	//--------------------------------------
-
+	#if UNITY_ADS
 	public void showNativeUnityRewardVideo(){
 		ShowOptions options = new ShowOptions();
 		options.resultCallback = OnUnityRewardVideoResult;
@@ -973,7 +853,7 @@ public class AdsHandler : PersistentSingleton<AdsHandler> {
 	public void showNativeUnityVideo(){
 		Advertisement.Show ("defaultZone");
 	}
-
+	#endif
 
 
 

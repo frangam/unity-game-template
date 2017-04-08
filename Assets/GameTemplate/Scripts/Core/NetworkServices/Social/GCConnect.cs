@@ -112,8 +112,8 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 	/*--------------------------------
 	 * Events
 	 -------------------------------*/
-	void OnAuthFinished (ISN_Result res) {
-		if (res.IsSucceeded) {
+	void OnAuthFinished (BaseDataResult res) {
+		if (res.Success) {
 			GTDebug.log("Player connected");
 			PlayerPrefs.SetInt(GameSettings.PP_LAST_OPENNING_USER_CONNECTED_TO_STORE_SERVICE, 1);
 			loadScores();
@@ -139,16 +139,16 @@ public class GCConnect : PersistentSingleton<GCConnect> {
 		}
 	}
 
-	private void OnScoreSubmitted (ISN_Result result) {
-		if(result.IsSucceeded)  {
+	private void OnScoreSubmitted (BaseDataResult result) {
+		if(result.Success)  {
 			GTDebug.log("Score Submitted");
 		} else {
 			GTDebug.log("Score Submit Failed");
 		}
 	}
 
-	private void OnAchievementsLoaded(ISN_Result res) {
-		if(res.IsSucceeded && GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
+	private void OnAchievementsLoaded(BaseDataResult res) {
+		if(res.Success && GameSettings.Instance.CurrentAchievements != null && GameSettings.Instance.CurrentAchievements.Count > 0){
 			GTDebug.log("Starting initial checking in server side");
 			BaseAchievementsManager.Instance.initialCheckingInServerSide();
 		}

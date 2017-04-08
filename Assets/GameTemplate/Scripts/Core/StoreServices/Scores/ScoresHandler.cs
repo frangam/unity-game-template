@@ -298,7 +298,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		#endif
 	}
 	
-	void OnAuthIOSFinished (ISN_Result res) {
+	void OnAuthIOSFinished (SA.Common.Models.Result res) {
 		GameCenterManager.OnAuthFinished -= OnAuthIOSFinished;
 		if (res.IsSucceeded) {
 			if(!string.IsNullOrEmpty(scoreIDToShow))
@@ -310,8 +310,8 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 	private void OnAndroidDialogClose(AndroidDialogResult res) {
 		switch(res) {
 		case AndroidDialogResult.YES:
-			GooglePlayConnection.instance.connect();
-			GooglePlayManager.instance.showAchievementsUI();
+			GooglePlayConnection.Instance.Connect();
+			GooglePlayManager.Instance.ShowAchievementsUI();
 			break;
 		case AndroidDialogResult.NO:
 			break;

@@ -58,7 +58,7 @@ public class EasterEggsController : PersistentSingleton<EasterEggsController> {
 	public void OnEasterEggUnlocked(CEvent e){
 		EasterEggResult result = e.data as EasterEggResult;
 		
-		if(result.IsSucceeded){
+		if(result.Success){
 			//reward of easter egg
 			BaseEasterEggRewardsController.Instance.reward(result.EasterEgg);
 		}
