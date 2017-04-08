@@ -45,7 +45,7 @@ public class IOSNativePreviewBackButton : BaseIOSFeaturePreview {
 
 	public string loadedLevelName {
 		get {
-			#if UNITY_4_6 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_4_7  || UNITY_5_3
+			#if UNITY_4_6 || UNITY_5
 			return Application.loadedLevelName;
 			#else
 			return SceneManager.GetActiveScene().name;

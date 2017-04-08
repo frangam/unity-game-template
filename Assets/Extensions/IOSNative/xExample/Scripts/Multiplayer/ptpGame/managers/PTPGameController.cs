@@ -141,8 +141,8 @@ public class PTPGameController : MonoBehaviour {
 				
 				
 				Debug.Log("Sending HelloPackage ");
-				HelloPackage p =  new HelloPackage();
-				p.send();
+//				HelloPackage p =  new HelloPackage();
+//				p.send();
 			} else {
 				IOSNativePopUpManager.showMessage ("Match Created", "Macth.ExpectedPlayerCount): " + macth.ExpectedPlayerCount);
 			}

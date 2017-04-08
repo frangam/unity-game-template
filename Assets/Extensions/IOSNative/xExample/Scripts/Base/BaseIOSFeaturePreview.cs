@@ -61,7 +61,7 @@ public class BaseIOSFeaturePreview : MonoBehaviour {
 	}
 
 	public void LoadLevel(string levelName) {
-		#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3
+		#if UNITY_4_6 || UNITY_4_7 || UNITY_5
 		Application.LoadLevel(levelName);
 		#else
 		SceneManager.LoadScene(levelName);

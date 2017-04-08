@@ -278,6 +278,8 @@ public class GameSettings : ScriptableObject {
 				return GTBuildSettingsConfig.Instance.CurrentBuildPack.build.IOSGameName;
 				#elif WP8
 				return GTBuildSettingsConfig.Instance.CurrentBuildPack.build.WpGameName;
+				#else
+				return GTBuildSettingsConfig.Instance.CurrentBuildPack.build.androidGameName;
 				#endif
 			}
 			else return null;

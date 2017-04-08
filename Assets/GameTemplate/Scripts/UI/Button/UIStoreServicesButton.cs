@@ -64,6 +64,9 @@ public class UIStoreServicesButton : UIBaseButton {
 					rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].Id;
 #elif UNITY_IPHONE
 					rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].IdForSaveOniOSStore;
+#else
+					rankId = GameSettings.Instance.CurrentScores[scoreIndexForGameMultiversion].Id;
+
 #endif
 					else
 						Debug.LogError("UIStoreServicesButton ("+name+") - score index out of range");
