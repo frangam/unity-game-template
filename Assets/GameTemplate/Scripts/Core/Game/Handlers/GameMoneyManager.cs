@@ -140,24 +140,12 @@ public class GameMoneyManager : PersistentSingleton<GameMoneyManager> {
 		return res;
 	}
 	
-	public bool hasEnoughMoney(UIBasePurchasableListItem pItem){
-		bool res = false;
-		
-		if(pItem != null){
-			res = hasEnoughMoney(pItem.Price);
-		}
-		
-		return res;
+	public bool hasEnoughMoney(int price){
+		return hasEnoughMoney(price);
 	}
 	
-	public bool hasEnoughGems(UIBasePurchasableListItem pItem){
-		bool res = false;
-		
-		if(pItem != null){
-			res = hasEnoughGems(pItem.GemsPrice);
-		}
-		
-		return res;
+	public bool hasEnoughGems(int gems){
+		return hasEnoughGems(gems);
 	}
 	
 	public long getEquivalentGemsInCoins(long coins){

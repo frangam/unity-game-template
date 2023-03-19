@@ -166,72 +166,7 @@ public class BaseAchievementsManager : BaseQuestManager<BaseAchievementsManager,
 		dispatcher.dispatch(ACHIEVEMENTS_INITIAL_CHEKING);
 	}
 	
-	public void showAchievementsFromServer(){
-		#if UNITY_ANDROID
-		if(GooglePlayConnection.state == GPConnectionState.STATE_UNCONFIGURED){
-			GPSConnect.Instance.init();
-			
-			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
-			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
-			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
-			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
-			dialog.ActionComplete += OnAndroidDialogClose;
-		}
-		else if(GooglePlayConnection.state == GPConnectionState.STATE_DISCONNECTED){
-			AndroidDialog dialog = AndroidDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GPS_LOGIN)
-			                                            , Localization.Localize(ExtraLocalizations.POPUP_DESC_GPS_LOGIN)
-			                                            , Localization.Localize(ExtraLocalizations.OK_BUTTON_GPS_LOGIN_POPUP)
-			                                            , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GPS_LOGIN_POPUP));
-			dialog.ActionComplete += OnAndroidDialogClose;
-		}
-		else if(GooglePlayConnection.state == GPConnectionState.STATE_CONNECTED){
-			GooglePlayManager.instance.ShowAchievementsUI();
-		}
-		#elif UNITY_IPHONE
-		if(GameSettings.Instance.USE_GAMECENTER && GameCenterManager.IsPlayerAuthenticated)
-			GameCenterManager.ShowAchievements();
-		else if(GameSettings.Instance.USE_GAMECENTER && !GameCenterManager.IsPlayerAuthenticated){
-			IOSDialog dialog = IOSDialog.Create(Localization.Localize(ExtraLocalizations.POPUP_TITLE_GC_LOGIN)
-			                                    ,Localization.Localize(ExtraLocalizations.POPUP_DESC_GC_LOGIN)
-			                                    , Localization.Localize(ExtraLocalizations.OK_BUTTON_GC_LOGIN_POPUP)
-			                                    , Localization.Localize(ExtraLocalizations.CANCEL_BUTTON_GC_LOGIN_POPUP));
-			dialog.OnComplete += onDialogIOSClose;
-		}
-		#endif
-	}
 	
-	private void onDialogIOSClose(IOSDialogResult result) {
-		
-		//parsing result
-		switch(result) {
-		case IOSDialogResult.YES:
-			GameCenterManager.OnAuthFinished += OnAuthIOSFinished;
-			GameCenterManager.init();
-			break;
-		case IOSDialogResult.NO:
-			break;
-			
-		}
-	}
-	void OnAuthIOSFinished (SA.Common.Models.Result res) {
-		GameCenterManager.OnAuthFinished -= OnAuthIOSFinished;
-		if (res.IsSucceeded) {
-			GameCenterManager.ShowAchievements();
-		} 
-	}
-	private void OnAndroidDialogClose(AndroidDialogResult res) {
-
-		//parsing result
-		switch(res) {
-		case AndroidDialogResult.YES:
-			GooglePlayConnection.Instance.Connect();
-			GooglePlayManager.Instance.ShowAchievementsUI();
-			break;
-		case AndroidDialogResult.NO:
-			break;
-			
-		}
-	}
 	
 	
 	

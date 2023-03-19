@@ -1,64 +1,165 @@
 fileFormatVersion: 2
 guid: 7a4788ec3ff22445581944d0e5e1f06c
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: boton-logros
-    21300002: boton-mute
-    21300004: boton-pausa
-    21300006: boton-play
-    21300008: boton-volumen
-    21300010: boton-volver
-    21300012: boton
-    21300014: clasificacion
-    21300016: btnAchievements
-    21300018: btnBack
-    21300020: btnPause
-    21300022: btnPlay
-    21300024: btnSimple
-    21300026: btnSoundOff
-    21300028: btnSoundOn
-    21300030: buttons-btnAchievements
-    21300032: buttons-btnAction
-    21300034: buttons-btnBack
-    21300036: buttons-btnCancel
-    21300038: buttons-btnClose
-    21300040: buttons-btnFaceboockConnect
-    21300042: buttons-btnGPSLogin
-    21300044: buttons-btnMusicOn
-    21300046: buttons-btnPause
-    21300048: buttons-btnPlay
-    21300050: buttons-btnRanking
-    21300052: buttons-btnSimple
-    21300054: buttons-btnSoundOn
-    21300056: buttons-toggleOff
-    21300058: buttons-toggleOn
-    21300060: sliders-basicSlider-slBackground
-    21300062: sliders-basicSlider-slForeground
-    21300064: sliders-basicSlider-slOverGloss
-    21300066: sprites-Level selection-spCurrentLevelIndicator
-    21300068: sprites-Level selection-spLevelBase0
-    21300070: sprites-Level selection-spLevelBase1
-    21300072: sprites-Level selection-spLevelBase2
-    21300074: sprites-Level selection-spLevelBase3
-    21300076: sprites-Level selection-spLevelPathNode
-    21300078: sprites-Level selection-spLevelStar
-    21300080: sprites-spEmptyStar
-    21300082: sprites-spFacebook
-    21300084: sprites-spForbidden
-    21300086: sprites-spFriendProfImgFrame
-    21300088: sprites-spPlayerProfImgFrame
-    21300090: sprites-spProfileImgAnon
-    21300092: sprites-spStar
-    21300094: buttons-btnSettings
-    21300096: sprites-spWhiteSquare
-  serializedVersion: 2
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: boton-logros
+  - first:
+      213: 21300002
+    second: boton-mute
+  - first:
+      213: 21300004
+    second: boton-pausa
+  - first:
+      213: 21300006
+    second: boton-play
+  - first:
+      213: 21300008
+    second: boton-volumen
+  - first:
+      213: 21300010
+    second: boton-volver
+  - first:
+      213: 21300012
+    second: boton
+  - first:
+      213: 21300014
+    second: clasificacion
+  - first:
+      213: 21300016
+    second: btnAchievements
+  - first:
+      213: 21300018
+    second: btnBack
+  - first:
+      213: 21300020
+    second: btnPause
+  - first:
+      213: 21300022
+    second: btnPlay
+  - first:
+      213: 21300024
+    second: btnSimple
+  - first:
+      213: 21300026
+    second: btnSoundOff
+  - first:
+      213: 21300028
+    second: btnSoundOn
+  - first:
+      213: 21300030
+    second: buttons-btnAchievements
+  - first:
+      213: 21300032
+    second: buttons-btnAction
+  - first:
+      213: 21300034
+    second: buttons-btnBack
+  - first:
+      213: 21300036
+    second: buttons-btnCancel
+  - first:
+      213: 21300038
+    second: buttons-btnClose
+  - first:
+      213: 21300040
+    second: buttons-btnFaceboockConnect
+  - first:
+      213: 21300042
+    second: buttons-btnGPSLogin
+  - first:
+      213: 21300044
+    second: buttons-btnMusicOn
+  - first:
+      213: 21300046
+    second: buttons-btnPause
+  - first:
+      213: 21300048
+    second: buttons-btnPlay
+  - first:
+      213: 21300050
+    second: buttons-btnRanking
+  - first:
+      213: 21300052
+    second: buttons-btnSimple
+  - first:
+      213: 21300054
+    second: buttons-btnSoundOn
+  - first:
+      213: 21300056
+    second: buttons-toggleOff
+  - first:
+      213: 21300058
+    second: buttons-toggleOn
+  - first:
+      213: 21300060
+    second: sliders-basicSlider-slBackground
+  - first:
+      213: 21300062
+    second: sliders-basicSlider-slForeground
+  - first:
+      213: 21300064
+    second: sliders-basicSlider-slOverGloss
+  - first:
+      213: 21300066
+    second: sprites-Level selection-spCurrentLevelIndicator
+  - first:
+      213: 21300068
+    second: sprites-Level selection-spLevelBase0
+  - first:
+      213: 21300070
+    second: sprites-Level selection-spLevelBase1
+  - first:
+      213: 21300072
+    second: sprites-Level selection-spLevelBase2
+  - first:
+      213: 21300074
+    second: sprites-Level selection-spLevelBase3
+  - first:
+      213: 21300076
+    second: sprites-Level selection-spLevelPathNode
+  - first:
+      213: 21300078
+    second: sprites-Level selection-spLevelStar
+  - first:
+      213: 21300080
+    second: sprites-spEmptyStar
+  - first:
+      213: 21300082
+    second: sprites-spFacebook
+  - first:
+      213: 21300084
+    second: sprites-spForbidden
+  - first:
+      213: 21300086
+    second: sprites-spFriendProfImgFrame
+  - first:
+      213: 21300088
+    second: sprites-spPlayerProfImgFrame
+  - first:
+      213: 21300090
+    second: sprites-spProfileImgAnon
+  - first:
+      213: 21300092
+    second: sprites-spStar
+  - first:
+      213: 21300094
+    second: buttons-btnSettings
+  - first:
+      213: 21300096
+    second: sprites-spWhiteSquare
+  externalObjects: {}
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
+    sRGBTexture: 1
     linearTexture: 0
-    correctGamma: 0
     fadeOut: 0
     borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
     mipMapFadeDistanceStart: 1
     mipMapFadeDistanceEnd: 3
   bumpmap:
@@ -67,37 +168,66 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
-  generateCubemap: 0
+  generateCubemap: 6
   cubemapConvolution: 0
-  cubemapConvolutionSteps: 8
-  cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
   textureFormat: -3
   maxTextureSize: 4096
   textureSettings:
-    filterMode: -1
+    serializedVersion: 2
+    filterMode: 1
     aniso: 1
-    mipBias: -1
-    wrapMode: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
-  rGBM: 0
   compressionQuality: 50
-  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
   alphaIsTransparency: 1
+  spriteTessellationDetail: -1
   textureType: 8
-  buildTargetSettings: []
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
+    serializedVersion: 2
     sprites:
-    - name: buttons-btnAchievements
+    - serializedVersion: 2
+      name: buttons-btnAchievements
       rect:
         serializedVersion: 2
         x: 167
@@ -107,16 +237,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -55.5, y: 70.5}
-        - {x: -70.5, y: 37.5}
-        - {x: -70.5, y: -56.5}
-        - {x: -46.5, y: -80.5}
-        - {x: 43.5, y: -80.5}
-        - {x: 80.5, y: -56.5}
-        - {x: 80.5, y: 37.5}
-        - {x: 51.5, y: 70.5}
-    - name: buttons-btnAction
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3305410000000000800000000000000
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnAction
       rect:
         serializedVersion: 2
         x: 543
@@ -126,23 +258,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.49545455, y: 0.49330357}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 111, y: 33.5}
-        - {x: 100, y: 62.5}
-        - {x: 74, y: 93.5}
-        - {x: 37, y: 113.5}
-        - {x: -43, y: 113.5}
-        - {x: -93, y: 69.5}
-        - {x: -101, y: 52.5}
-        - {x: -109, y: 29.5}
-        - {x: -109, y: -36.5}
-        - {x: -95, y: -72.5}
-        - {x: -50, y: -110.5}
-        - {x: 45, y: -110.5}
-        - {x: 55, y: -103.5}
-        - {x: 96, y: -72.5}
-        - {x: 111, y: -36.5}
-    - name: buttons-btnBack
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04305410000000000800000000000000
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnBack
       rect:
         serializedVersion: 2
         x: 2
@@ -152,16 +279,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -55.5, y: 70.5}
-        - {x: -70.5, y: 37.5}
-        - {x: -70.5, y: -56.5}
-        - {x: -46.5, y: -80.5}
-        - {x: 43.5, y: -80.5}
-        - {x: 80.5, y: -56.5}
-        - {x: 80.5, y: 37.5}
-        - {x: 51.5, y: 70.5}
-    - name: buttons-btnCancel
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24305410000000000800000000000000
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnCancel
       rect:
         serializedVersion: 2
         x: 559
@@ -171,25 +300,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 214, y: -35}
-        - {x: 214, y: 38}
-        - {x: 202, y: 54}
-        - {x: 195, y: 58}
-        - {x: 191, y: 60}
-        - {x: -191, y: 60}
-        - {x: -202, y: 54}
-        - {x: -210, y: 45}
-        - {x: -214, y: 34}
-        - {x: -214, y: -35}
-        - {x: -213, y: -40}
-        - {x: -202, y: -53}
-        - {x: -195, y: -58}
-        - {x: -191, y: -60}
-        - {x: 191, y: -60}
-        - {x: 202, y: -54}
-        - {x: 210, y: -45}
-    - name: buttons-btnClose
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44305410000000000800000000000000
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnClose
       rect:
         serializedVersion: 2
         x: 556
@@ -199,18 +321,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.48958334, y: 0.4848485}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 30, y: 51}
-        - {x: -45, y: 51}
-        - {x: -47, y: 45}
-        - {x: -47, y: -41}
-        - {x: -36, y: -47}
-        - {x: -27, y: -48}
-        - {x: 34, y: -48}
-        - {x: 48, y: -35}
-        - {x: 49, y: -30}
-        - {x: 49, y: 33}
-    - name: buttons-btnFaceboockConnect
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64305410000000000800000000000000
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnFaceboockConnect
       rect:
         serializedVersion: 2
         x: 550
@@ -220,25 +342,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.50116825, y: 0.49583334}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 213.5, y: -34.5}
-        - {x: 213.5, y: 38.5}
-        - {x: 201.5, y: 54.5}
-        - {x: 194.5, y: 58.5}
-        - {x: 190.5, y: 60.5}
-        - {x: -191.5, y: 60.5}
-        - {x: -202.5, y: 54.5}
-        - {x: -210.5, y: 45.5}
-        - {x: -214.5, y: 34.5}
-        - {x: -214.5, y: -34.5}
-        - {x: -213.5, y: -39.5}
-        - {x: -202.5, y: -52.5}
-        - {x: -195.5, y: -57.5}
-        - {x: -191.5, y: -59.5}
-        - {x: 190.5, y: -59.5}
-        - {x: 201.5, y: -53.5}
-        - {x: 209.5, y: -44.5}
-    - name: buttons-btnGPSLogin
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84305410000000000800000000000000
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnGPSLogin
       rect:
         serializedVersion: 2
         x: 765
@@ -248,24 +363,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5022831, y: 0.49107143}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 109, y: 35}
-        - {x: 95, y: 72}
-        - {x: 44, y: 113}
-        - {x: 41, y: 114}
-        - {x: -35, y: 114}
-        - {x: -59, y: 111}
-        - {x: -96, y: 71}
-        - {x: -110, y: 35}
-        - {x: -110, y: -37}
-        - {x: -94, y: -70}
-        - {x: -77, y: -91}
-        - {x: -39, y: -110}
-        - {x: 35, y: -110}
-        - {x: 70, y: -93}
-        - {x: 103, y: -54}
-        - {x: 109, y: -31}
-    - name: buttons-btnMusicOn
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4305410000000000800000000000000
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnMusicOn
       rect:
         serializedVersion: 2
         x: 432
@@ -275,16 +384,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.49541286, y: 0.49541286}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -39, y: 55}
-        - {x: -54, y: 45}
-        - {x: -54, y: -33}
-        - {x: -43, y: -54}
-        - {x: 36, y: -54}
-        - {x: 55, y: -43}
-        - {x: 55, y: 41}
-        - {x: 51, y: 55}
-    - name: buttons-btnPause
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4305410000000000800000000000000
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnPause
       rect:
         serializedVersion: 2
         x: 100
@@ -294,16 +405,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -55.5, y: 70.5}
-        - {x: -70.5, y: 37.5}
-        - {x: -70.5, y: -56.5}
-        - {x: -46.5, y: -80.5}
-        - {x: 43.5, y: -80.5}
-        - {x: 80.5, y: -56.5}
-        - {x: 80.5, y: 37.5}
-        - {x: 51.5, y: 70.5}
-    - name: buttons-btnPlay
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4305410000000000800000000000000
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnPlay
       rect:
         serializedVersion: 2
         x: 155
@@ -313,16 +426,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -55.5, y: 70.5}
-        - {x: -70.5, y: 37.5}
-        - {x: -70.5, y: -56.5}
-        - {x: -46.5, y: -80.5}
-        - {x: 43.5, y: -80.5}
-        - {x: 80.5, y: -56.5}
-        - {x: 80.5, y: 37.5}
-        - {x: 51.5, y: 70.5}
-    - name: buttons-btnRanking
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05305410000000000800000000000000
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnRanking
       rect:
         serializedVersion: 2
         x: 253
@@ -332,16 +447,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.4668874, y: 0.5331126}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -55.5, y: 70.5}
-        - {x: -70.5, y: 37.5}
-        - {x: -70.5, y: -56.5}
-        - {x: -46.5, y: -80.5}
-        - {x: 43.5, y: -80.5}
-        - {x: 80.5, y: -56.5}
-        - {x: 80.5, y: 37.5}
-        - {x: 51.5, y: 70.5}
-    - name: buttons-btnSettings
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25305410000000000800000000000000
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnSettings
       rect:
         serializedVersion: 2
         x: 2
@@ -351,18 +468,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 69.5, y: 81.5}
-        - {x: -66.5, y: 81.5}
-        - {x: -81.5, y: 58.5}
-        - {x: -81.5, y: -52.5}
-        - {x: -79.5, y: -62.5}
-        - {x: -39.5, y: -81.5}
-        - {x: 63.5, y: -81.5}
-        - {x: 81.5, y: -49.5}
-        - {x: 81.5, y: 74.5}
-        - {x: 76.5, y: 80.5}
-    - name: buttons-btnSimple
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7305410000000000800000000000000
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnSimple
       rect:
         serializedVersion: 2
         x: 2
@@ -372,25 +489,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 214, y: -35}
-        - {x: 214, y: 38}
-        - {x: 202, y: 54}
-        - {x: 195, y: 58}
-        - {x: 191, y: 60}
-        - {x: -191, y: 60}
-        - {x: -202, y: 54}
-        - {x: -210, y: 45}
-        - {x: -214, y: 34}
-        - {x: -214, y: -35}
-        - {x: -213, y: -40}
-        - {x: -202, y: -53}
-        - {x: -195, y: -58}
-        - {x: -191, y: -60}
-        - {x: 191, y: -60}
-        - {x: 202, y: -54}
-        - {x: 210, y: -45}
-    - name: buttons-btnSoundOn
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45305410000000000800000000000000
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-btnSoundOn
       rect:
         serializedVersion: 2
         x: 432
@@ -400,16 +510,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.49541286, y: 0.49541286}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -39, y: 55}
-        - {x: -54, y: 45}
-        - {x: -54, y: -33}
-        - {x: -43, y: -54}
-        - {x: 36, y: -54}
-        - {x: 55, y: -43}
-        - {x: 55, y: 41}
-        - {x: 51, y: 55}
-    - name: buttons-toggleOff
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65305410000000000800000000000000
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-toggleOff
       rect:
         serializedVersion: 2
         x: 415
@@ -419,15 +531,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.496, y: 0.504}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -58, y: 62}
-        - {x: -62, y: 60}
-        - {x: -62, y: -63}
-        - {x: 41, y: -63}
-        - {x: 63, y: -33}
-        - {x: 63, y: 52}
-        - {x: 35, y: 62}
-    - name: buttons-toggleOn
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85305410000000000800000000000000
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttons-toggleOn
       rect:
         serializedVersion: 2
         x: 336
@@ -437,17 +552,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.4883721, y: 0.5116279}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -28, y: 42}
-        - {x: -32, y: 41}
-        - {x: -42, y: 26}
-        - {x: -42, y: -38}
-        - {x: -24, y: -44}
-        - {x: 32, y: -44}
-        - {x: 44, y: -29}
-        - {x: 44, y: 26}
-        - {x: 27, y: 42}
-    - name: sliders-basicSlider-slBackground
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5305410000000000800000000000000
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sliders-basicSlider-slBackground
       rect:
         serializedVersion: 2
         x: 2
@@ -457,21 +573,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 277.5, y: 24}
-        - {x: 270.5, y: 31}
-        - {x: 265.5, y: 33}
-        - {x: -266.5, y: 33}
-        - {x: -272.5, y: 30}
-        - {x: -277.5, y: 24}
-        - {x: -277.5, y: -24}
-        - {x: -270.5, y: -31}
-        - {x: -265.5, y: -33}
-        - {x: 266.5, y: -33}
-        - {x: 269.5, y: -32}
-        - {x: 272.5, y: -30}
-        - {x: 277.5, y: -24}
-    - name: sliders-basicSlider-slForeground
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5305410000000000800000000000000
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sliders-basicSlider-slForeground
       rect:
         serializedVersion: 2
         x: 2
@@ -481,20 +594,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.49908423, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 273.5, y: 21}
-        - {x: 268.5, y: 26}
-        - {x: 263.5, y: 28}
-        - {x: -262.5, y: 28}
-        - {x: -267.5, y: 26}
-        - {x: -272.5, y: 21}
-        - {x: -272.5, y: -22}
-        - {x: -267.5, y: -26}
-        - {x: -262.5, y: -28}
-        - {x: 263.5, y: -28}
-        - {x: 268.5, y: -26}
-        - {x: 273.5, y: -22}
-    - name: sliders-basicSlider-slOverGloss
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5305410000000000800000000000000
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sliders-basicSlider-slOverGloss
       rect:
         serializedVersion: 2
         x: 2
@@ -505,7 +616,17 @@ TextureImporter:
       pivot: {x: 0.49904943, y: -0.08695652}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: sprites-Level selection-spCurrentLevelIndicator
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06305410000000000800000000000000
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-Level selection-spCurrentLevelIndicator
       rect:
         serializedVersion: 2
         x: 2
@@ -515,17 +636,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.546875, y: 0.5224719}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 40.5, y: 85}
-        - {x: -42.5, y: 85}
-        - {x: -52.5, y: 70}
-        - {x: -52.5, y: -53}
-        - {x: -48.5, y: -93}
-        - {x: 39.5, y: -93}
-        - {x: 42.5, y: -89}
-        - {x: 43.5, y: -35}
-        - {x: 43.5, y: 66}
-    - name: sprites-Level selection-spLevelBase0
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26305410000000000800000000000000
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-Level selection-spLevelBase0
       rect:
         serializedVersion: 2
         x: 155
@@ -535,16 +657,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -40.5, y: 56.5}
-        - {x: -68.5, y: 24.5}
-        - {x: -68.5, y: -37.5}
-        - {x: -53.5, y: -59.5}
-        - {x: 34.5, y: -59.5}
-        - {x: 54.5, y: -55.5}
-        - {x: 54.5, y: 42.5}
-        - {x: 33.5, y: 56.5}
-    - name: sprites-Level selection-spLevelBase1
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46305410000000000800000000000000
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-Level selection-spLevelBase1
       rect:
         serializedVersion: 2
         x: 280
@@ -554,17 +678,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 48.5, y: 56.5}
-        - {x: -47.5, y: 56.5}
-        - {x: -68.5, y: 45.5}
-        - {x: -68.5, y: -50.5}
-        - {x: -63.5, y: -59.5}
-        - {x: 40.5, y: -59.5}
-        - {x: 54.5, y: -29.5}
-        - {x: 54.5, y: 34.5}
-        - {x: 51.5, y: 46.5}
-    - name: sprites-Level selection-spLevelBase2
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66305410000000000800000000000000
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-Level selection-spLevelBase2
       rect:
         serializedVersion: 2
         x: 406
@@ -574,17 +699,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 48.5, y: 56.5}
-        - {x: -47.5, y: 56.5}
-        - {x: -68.5, y: 45.5}
-        - {x: -68.5, y: -50.5}
-        - {x: -63.5, y: -59.5}
-        - {x: 40.5, y: -59.5}
-        - {x: 54.5, y: -29.5}
-        - {x: 54.5, y: 34.5}
-        - {x: 51.5, y: 46.5}
-    - name: sprites-Level selection-spLevelBase3
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86305410000000000800000000000000
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-Level selection-spLevelBase3
       rect:
         serializedVersion: 2
         x: 406
@@ -594,16 +720,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5569106, y: 0.51293105}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -40.5, y: 56.5}
-        - {x: -68.5, y: 24.5}
-        - {x: -68.5, y: -37.5}
-        - {x: -53.5, y: -59.5}
-        - {x: 34.5, y: -59.5}
-        - {x: 54.5, y: -55.5}
-        - {x: 54.5, y: 42.5}
-        - {x: 33.5, y: 56.5}
-    - name: sprites-Level selection-spLevelPathNode
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6305410000000000800000000000000
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-Level selection-spLevelPathNode
       rect:
         serializedVersion: 2
         x: 71
@@ -613,15 +741,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -27, y: 28}
-        - {x: -27, y: -26}
-        - {x: -24, y: -28}
-        - {x: 19, y: -28}
-        - {x: 27, y: -26}
-        - {x: 27, y: 27}
-        - {x: 24, y: 28}
-    - name: sprites-Level selection-spLevelStar
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6305410000000000800000000000000
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-Level selection-spLevelStar
       rect:
         serializedVersion: 2
         x: 320
@@ -631,16 +762,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5422535, y: 0.5294118}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -12.5, y: 32}
-        - {x: -38.5, y: 18}
-        - {x: -38.5, y: -30}
-        - {x: -36.5, y: -36}
-        - {x: 22.5, y: -36}
-        - {x: 32.5, y: -8}
-        - {x: 32.5, y: 20}
-        - {x: 17.5, y: 32}
-    - name: sprites-spEmptyStar
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6305410000000000800000000000000
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spEmptyStar
       rect:
         serializedVersion: 2
         x: 2
@@ -650,17 +783,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 36.5, y: 78.5}
-        - {x: -33.5, y: 78.5}
-        - {x: -82.5, y: 55.5}
-        - {x: -82.5, y: -34.5}
-        - {x: -60.5, y: -78.5}
-        - {x: 56.5, y: -78.5}
-        - {x: 59.5, y: -77.5}
-        - {x: 82.5, y: 4.5}
-        - {x: 82.5, y: 32.5}
-    - name: sprites-spFacebook
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07305410000000000800000000000000
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spFacebook
       rect:
         serializedVersion: 2
         x: 336
@@ -670,12 +804,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5064935, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -39, y: 38.5}
-        - {x: -39, y: -38.5}
-        - {x: 38, y: -38.5}
-        - {x: 38, y: 38.5}
-    - name: sprites-spForbidden
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27305410000000000800000000000000
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spForbidden
       rect:
         serializedVersion: 2
         x: 2
@@ -685,14 +825,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.49253732, y: 0.4814815}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 21, y: 42}
-        - {x: -33, y: -20}
-        - {x: -33, y: -39}
-        - {x: -20, y: -39}
-        - {x: 34, y: 28}
-        - {x: 34, y: 42}
-    - name: sprites-spFriendProfImgFrame
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47305410000000000800000000000000
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spFriendProfImgFrame
       rect:
         serializedVersion: 2
         x: 308
@@ -702,19 +846,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5167785, y: 0.46923077}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -77, y: 69}
-        - {x: -77, y: 32}
-        - {x: -63, y: -58}
-        - {x: -58, y: -61}
-        - {x: 56, y: -61}
-        - {x: 72, y: 34}
-        - {x: 72, y: 69}
-      - - {x: -37, y: -31}
-        - {x: -47, y: 48}
-        - {x: 40, y: 48}
-        - {x: 33, y: -23}
-    - name: sprites-spPlayerProfImgFrame
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67305410000000000800000000000000
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spPlayerProfImgFrame
       rect:
         serializedVersion: 2
         x: 405
@@ -724,19 +867,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.5167785, y: 0.46923077}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -77, y: 69}
-        - {x: -77, y: 32}
-        - {x: -63, y: -58}
-        - {x: -58, y: -61}
-        - {x: 56, y: -61}
-        - {x: 72, y: 34}
-        - {x: 72, y: 69}
-      - - {x: -37, y: -31}
-        - {x: -47, y: 48}
-        - {x: 40, y: 48}
-        - {x: 33, y: -23}
-    - name: sprites-spProfileImgAnon
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87305410000000000800000000000000
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spProfileImgAnon
       rect:
         serializedVersion: 2
         x: 459
@@ -746,12 +888,18 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0.50476193, y: 0.4952381}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -53, y: 53}
-        - {x: -53, y: -52}
-        - {x: 52, y: -52}
-        - {x: 52, y: 53}
-    - name: sprites-spStar
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7305410000000000800000000000000
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spStar
       rect:
         serializedVersion: 2
         x: 169
@@ -761,17 +909,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: 36.5, y: 78.5}
-        - {x: -33.5, y: 78.5}
-        - {x: -82.5, y: 55.5}
-        - {x: -82.5, y: -34.5}
-        - {x: -60.5, y: -78.5}
-        - {x: 56.5, y: -78.5}
-        - {x: 59.5, y: -77.5}
-        - {x: 82.5, y: 4.5}
-        - {x: 82.5, y: 32.5}
-    - name: sprites-spWhiteSquare
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7305410000000000800000000000000
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprites-spWhiteSquare
       rect:
         serializedVersion: 2
         x: 989
@@ -781,13 +930,64 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08305410000000000800000000000000
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      buttons-btnFaceboockConnect: 21300040
+      sliders-basicSlider-slBackground: 21300060
+      buttons-btnAchievements: 21300030
+      buttons-btnBack: 21300034
+      sprites-Level selection-spLevelBase0: 21300068
+      sprites-spPlayerProfImgFrame: 21300088
+      buttons-btnPause: 21300046
+      buttons-btnSettings: 21300094
+      sprites-spProfileImgAnon: 21300090
+      buttons-btnRanking: 21300050
+      sprites-spFriendProfImgFrame: 21300086
+      sliders-basicSlider-slOverGloss: 21300064
+      sprites-Level selection-spLevelBase1: 21300070
+      buttons-btnPlay: 21300048
+      sprites-spFacebook: 21300082
+      sprites-spForbidden: 21300084
+      sprites-Level selection-spLevelBase3: 21300074
+      sprites-Level selection-spCurrentLevelIndicator: 21300066
+      buttons-btnAction: 21300032
+      buttons-btnSoundOn: 21300054
+      sliders-basicSlider-slForeground: 21300062
+      buttons-btnSimple: 21300052
+      buttons-toggleOn: 21300058
+      sprites-Level selection-spLevelStar: 21300078
+      sprites-spEmptyStar: 21300080
+      buttons-btnGPSLogin: 21300042
+      sprites-spStar: 21300092
+      buttons-btnClose: 21300038
+      buttons-btnMusicOn: 21300044
+      sprites-Level selection-spLevelBase2: 21300072
+      buttons-toggleOff: 21300056
+      sprites-spWhiteSquare: 21300096
+      buttons-btnCancel: 21300036
+      sprites-Level selection-spLevelPathNode: 21300076
   spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

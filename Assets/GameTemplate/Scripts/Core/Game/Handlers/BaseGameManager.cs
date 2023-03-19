@@ -52,7 +52,6 @@ public class BaseGameManager : MonoBehaviour {
 	
 	public GameObject 					explosionPrefab;
 	
-	public bool 						showAdWhenPlayerForcesFinishGame = true;
 	
 	
 	//--------------------------------------
@@ -216,63 +215,8 @@ public class BaseGameManager : MonoBehaviour {
 	//--------------------------------------
 	// Private Methods
 	//--------------------------------------
-	/// <summary>
-	/// Checks the ad showing during game play.
-	/// 
-	/// We use WaitForSeconds because we want to pause this process when game is paused
-	/// </summary>
-	/// <returns>The ad showing during game play.</returns>
-	float timerForCheckAdShowingDuringGameplay = 0;
-	private IEnumerator checkAdShowingDuringGamePlay(){
-		yield return null;
-		bool canShowAd = canShowAdDuringGamePlay();
-		
-		if(canShowAd){
-			int secsToNotify = GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD - GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS;
-			
-			//wait time for notify ad will be shown in the next seconds
-			while(canShowAd && timerForCheckAdShowingDuringGameplay < secsToNotify){
-				canShowAd = canShowAdDuringGamePlay(); 
-				timerForCheckAdShowingDuringGameplay += Time.deltaTime;
-				yield return null;
-			}
-			
-			resetTimerForAdShowingDuringGameplay();
-			
-			if(canShowAd){
-				//launch event to notify an ad will be shown in the next seconds
-				launchEventToNotifyAdShowingDurginGamePlay();
-			}
-			
-			//wait the next seconds to show the ad
-			while(canShowAd && timerForCheckAdShowingDuringGameplay < GameSettings.Instance.NOTIFY_AD_DURING_GAMEPLAY_WILL_BE_SHOWN_IN_NEXT_SECONDS){
-				canShowAd = canShowAdDuringGamePlay(); 
-				timerForCheckAdShowingDuringGameplay += Time.deltaTime;
-				yield return null;
-			}
-			
-			//finally show the ad
-			if(canShowAd){			
-				showAdDuringGamePlay();
-			}
-			
-			//reset the timer
-			resetTimerForAdShowingDuringGameplay();
-		}
-		
-		//repeat again
-		if(!isGameOver && !finished)
-			StartCoroutine(checkAdShowingDuringGamePlay());
-	}
 	
-	public virtual void resetTimerForAdShowingDuringGameplay(){
-		timerForCheckAdShowingDuringGameplay = 0;
-	}
 	
-	public virtual bool canShowAdDuringGamePlay(){
-        //return true; TODO nei
-        return AdsHandler.Instance.canShowAdRandom();
-	}
 	
 	private void handleGameOverAdShowing(){
 		int numGameovers = 0, numWins = 0;
@@ -416,16 +360,7 @@ public class BaseGameManager : MonoBehaviour {
 			break;
 		}
 		
-		//refresh banner ad
-//		AdsHandler.Instance.refrescarBanner();
-		
-		//show interstitial ad
-		if((isGameOver && numGameovers % numGameoversToChek == 0) || (!isGameOver && numWins % numWinsToCheck == 0)){
-			AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd();
-			
-			//ANALYTICS
-			GTAnalyticsHandler.Instance.logEvent(GAEventCategories.RANDOM_AD, GAEventActions.SHOWN, GAEventLabels.GAMEOVER);
-		}
+	
 	}
 	
 	private IEnumerator finishGameWithDelay(){
@@ -549,22 +484,10 @@ public class BaseGameManager : MonoBehaviour {
 		return last;
 	}
 	
-	public virtual void showAdDuringGamePlay(){
-		GTDebug.log("Showing Ad during Gameplay");
-		switch(GameSettings.Instance.adTypeDuringGamePlay){
-		case AdType.VIDEO: AdsHandler.Instance.PlayAVideo(); break;
-		case AdType.RANDOM_INTERSTITIAL_VIDEO: AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd(); break;
-		default: AdsHandler.Instance.showInterstitial(); break; 
-		}
-	}
+	
 	
 	public void playerForcesFinishGame(){
-		if(showAdWhenPlayerForcesFinishGame){
-			AdsHandler.Instance.showRandomGameplayInterstitialOrVideoAd();
-			
-			//GA
-			//TODO Analytics GAEvents.INTERSTITIAL_AD_SHOWN_AT_GO
-		}
+		
 	}
 	
 	/// <summary>
@@ -573,10 +496,6 @@ public class BaseGameManager : MonoBehaviour {
 	public virtual void startGame(){
 		started = true;
 		Paused = false;
-		
-		//checks if initing coroutine to check the ad showing during the game play
-		if(!GameSettings.Instance.IS_PRO_VERSION && GameSettings.Instance.SECONDS_DURING_GAME_PLAYING_SHOW_AD > 0)
-			StartCoroutine(checkAdShowingDuringGamePlay());
 	}
 	
 	/// <summary>
@@ -672,8 +591,7 @@ public class BaseGameManager : MonoBehaviour {
 //					if(win != null)	win.releaseTouchDown();
 //				}
 				
-				if(!AdsHandler.Instance.HasPausedGame && started)
-					UIController.Instance.Manager.open(UIBaseWindowIDs.PAUSE);
+				
 				    
 				//				//mute fx
 				//				BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX, true, true);
@@ -681,8 +599,7 @@ public class BaseGameManager : MonoBehaviour {
 				// pause time
 				Time.timeScale= 0f;
 			} else {
-				if(!AdsHandler.Instance.HasPausedGame && started)
-					UIController.Instance.Manager.close(UIBaseWindowIDs.PAUSE);
+				
 				
 				//				//unmute fx
 				//				BaseSoundManager.Instance.muteOrActiveOncesMuteOncesActive(SoundType.FX, true, true);

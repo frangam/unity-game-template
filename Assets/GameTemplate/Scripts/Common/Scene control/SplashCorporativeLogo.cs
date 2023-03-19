@@ -12,7 +12,6 @@ public class SplashCorporativeLogo : MonoBehaviour {
 	//--------------------------------------
 	[SerializeField]
 	public float waitTime = 0.3f;
-	public float waitTimeForWeb = 2f;
 
 	[SerializeField]
 	private GameSection sectionToGo;
@@ -32,11 +31,8 @@ public class SplashCorporativeLogo : MonoBehaviour {
 	// Private Methods
 	//--------------------------------------
 	private IEnumerator splash(){
-		waitTime = Application.isWebPlayer ? waitTimeForWeb : waitTime;
 		float delay = GetComponent<AudioSource>().clip ? GetComponent<AudioSource>().clip.length + waitTime : waitTime;
 		yield return new WaitForSeconds(delay);
-
-
 
 //
 //		float delay = GetComponent<AudioSource>().clip ? GetComponent<AudioSource>().clip.length + waitTime : waitTime;

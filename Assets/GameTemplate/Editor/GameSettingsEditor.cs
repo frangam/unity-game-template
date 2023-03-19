@@ -161,10 +161,10 @@ public class GameSettingsEditor : Editor {
 			EditorGUILayout.Space();
 			Color c = GUI.color;
 			GUI.color = Color.cyan;
-			if(GUILayout.Button("Install Plugin",  GUILayout.Width(120))) {
-				PluginsInstalationUtil.Android_InstallPlugin();
-				UpdateVersionInfo();
-			}
+			// if(GUILayout.Button("Install Plugin",  GUILayout.Width(120))) {
+			// 	PluginsInstalationUtil.Android_InstallPlugin();
+			// 	UpdateVersionInfo();
+			// }
 			GUI.color = c;
 			EditorGUILayout.EndHorizontal();
 		}
@@ -1214,7 +1214,7 @@ public class GameSettingsEditor : Editor {
 				GameSettings.Instance.heyZapID	= EditorGUILayout.TextField(GameSettings.Instance.heyZapID);
 				EditorGUILayout.EndHorizontal();
 				
-				//				adsNetworks();
+				
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(whenShowInitialAd);
@@ -1226,10 +1226,10 @@ public class GameSettingsEditor : Editor {
 				GameSettings.Instance.videoPercentageInRandomShow = EditorGUILayout.IntField(GameSettings.Instance.videoPercentageInRandomShow);
 				EditorGUILayout.EndHorizontal();
 				
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Ad Type during Gameplay");
-				GameSettings.Instance.adTypeDuringGamePlay	=  (AdType) EditorGUILayout.EnumPopup(GameSettings.Instance.adTypeDuringGamePlay);
-				EditorGUILayout.EndHorizontal();
+				// EditorGUILayout.BeginHorizontal();
+				// EditorGUILayout.LabelField("Ad Type during Gameplay");
+				// GameSettings.Instance.adTypeDuringGamePlay	=  (AdType) EditorGUILayout.EnumPopup(GameSettings.Instance.adTypeDuringGamePlay);
+				// EditorGUILayout.EndHorizontal();
 				
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(secDuringGP);
@@ -1299,42 +1299,7 @@ public class GameSettingsEditor : Editor {
 		}
 	}
 	
-	protected virtual  void adsNetworks(){
-		GameSettings.Instance.showAdsNetworks = EditorGUILayout.Foldout(GameSettings.Instance.showAdsNetworks, "Ads Networks");
-		if (GameSettings.Instance.showAdsNetworks) {
-			EditorGUILayout.BeginVertical(GUI.skin.box);
-			
-			if(GameSettings.Instance.adsNetworks.Count == 0) {
-				EditorGUILayout.HelpBox("No Ads Networks to use",MessageType.None);
-			}
-			
-			int i = 0;
-			foreach(AdNetwork d in GameSettings.Instance.adsNetworks) {
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Ad Network"+(i+1).ToString()+":",GUILayout.Width(120));
-				GameSettings.Instance.adsNetworks[i] = (AdNetwork)EditorGUILayout.EnumPopup(GameSettings.Instance.adsNetworks[i]);
-				
-				
-				if(GUILayout.Button("-",  GUILayout.Width(30))) {
-					GameSettings.Instance.adsNetworks.Remove(d);
-					break;
-				}
-				EditorGUILayout.EndHorizontal();
-				i++;
-			}
-			
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if(GUILayout.Button("+",  GUILayout.Width(60))) {
-				GameSettings.Instance.adsNetworks.Add(AdNetwork.GOOGLE_ADMOB);
-			}
-			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.Space();
-			
-			EditorGUILayout.EndVertical();
-		}
-	}
+	
 	
 	protected virtual  void socialNetworksSettings(){
 		GameSettings.Instance.showSocialNetworksSettings = EditorGUILayout.Foldout(GameSettings.Instance.showSocialNetworksSettings, "Social Networks");

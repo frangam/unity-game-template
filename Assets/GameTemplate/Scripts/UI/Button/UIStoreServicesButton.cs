@@ -77,9 +77,7 @@ public class UIStoreServicesButton : UIBaseButton {
 			ScoresHandler.Instance.showRanking(rankId);
 			break;
 			
-		case StoreService.ACHIEVEMENTS:
-			BaseAchievementsManager.Instance.showAchievementsFromServer();
-			break;
+	
 		}
 	}
 }

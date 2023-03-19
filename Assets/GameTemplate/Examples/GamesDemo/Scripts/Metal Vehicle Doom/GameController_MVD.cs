@@ -2,6 +2,7 @@
 // it's called Square Display and it is by Vikas Kumar
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 [AddComponentMenu( "Sample Game Glue Code/Metal Vehicle Destruction/Game Controller MVD" )]
@@ -27,8 +28,8 @@ public class GameController_MVD : BaseGameManager
 	
     private float aSpeed;
 	
-    public GUIText lapText;
-    public GUIText posText;
+    public Text lapText;
+    public Text posText;
 
     // position checking
     private int myPos;
@@ -42,7 +43,7 @@ public class GameController_MVD : BaseGameManager
     public GameObject count2;
     public GameObject count1;
 
-    public GUIText finalPositionText;
+    public Text finalPositionText;
 
     public GameObject [] playerPrefabList;
 

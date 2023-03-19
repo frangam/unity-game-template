@@ -384,7 +384,7 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	public void OnGamePropertyChanged(CEvent e){
 		GameActionResult result = e.data as GameActionResult;
 		
-		if(result.IsSucceeded){
+		if(result.Success){
 			foreach(string id in result.ActionsIds){
 				foreach(GameAction action in actions){
 					if(action.Id == id){
@@ -415,7 +415,7 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 	public void OnGamePropertyReseted(CEvent e){
 		GameActionResult result = e.data as GameActionResult;
 		
-		if(result.IsSucceeded){
+		if(result.Success){
 			foreach(string id in result.ActionsIds){
 				foreach(GameAction action in actions){
 					if(action.Id == id){
@@ -435,7 +435,7 @@ public class BaseQuestManager<S, T> : Singleton<S> where S : MonoBehaviour {
 		GameActionResult result = e.data as GameActionResult;
 		//		List<BaseQuest> completedQuests = null;
 		
-		if(result.IsSucceeded){
+		if(result.Success){
 			foreach(GameAction action in actions){
 				if(action.Id == result.CurrentActionId){
 					checkGoalsProgresses(null, action);

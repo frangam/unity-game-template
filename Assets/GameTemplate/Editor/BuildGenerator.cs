@@ -98,7 +98,7 @@ public class BuildGenerator {
 			EditorUserBuildSettings.development = GameSettings.Instance.IS_A_DEV_VERSION;
 			
 			PlayerSettings.companyName = build.companyName;
-			PlayerSettings.bundleIdentifier = build.bundleIdentifier;
+			PlayerSettings.applicationIdentifier = build.bundleIdentifier;
 			//			PlayerSettings.cloudProjectId = build.cloudProjectID;
 			moveAssetsFromResources();
 		}
@@ -119,7 +119,6 @@ public class BuildGenerator {
 		
 		//		UnityEngine.Debug.Log("path: "+path);
 		
-		AndroidNativeSettings.Instance.base64EncodedPublicKey = build.androidBillingBase64Key;
 		
 		PlayerSettings.bundleVersion = build.androidBundleVersion;
 		PlayerSettings.Android.bundleVersionCode = build.androidBundleVersionCode;
@@ -148,7 +147,6 @@ public class BuildGenerator {
 		//		UnityEngine.Debug.Log("path: "+path);
 		
 		moveIOSGameIconsBeforeBuilt();
-		IOSNativeSettings.Instance.AppleId = build.appleID;
 		PlayerSettings.bundleVersion = build.iOSBundleVersion;
 		PlayerSettings.productName = build.iOSGameName;
 		
@@ -157,8 +155,8 @@ public class BuildGenerator {
 		PlayerSettings.SetPropertyInt("ScriptingBackend", (int)ScriptingImplementation.IL2CPP, BuildTargetGroup.iOS);
 		PlayerSettings.SetPropertyInt("Architecture", (int)IOSArchitecture.Universal, BuildTargetGroup.iOS);
 		#else
-		PlayerSettings.SetPropertyInt("ScriptingBackend", (int)ScriptingImplementation.IL2CPP, BuildTargetGroup.iPhone);
-		PlayerSettings.SetPropertyInt("Architecture", (int)IOSArchitecture.Universal, BuildTargetGroup.iPhone);
+		PlayerSettings.SetPropertyInt("ScriptingBackend", (int)ScriptingImplementation.IL2CPP, BuildTargetGroup.iOS);
+		PlayerSettings.SetPropertyInt("Architecture", (int)IOSArchitecture.Universal, BuildTargetGroup.iOS);
 		#endif
 		
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.iOS);

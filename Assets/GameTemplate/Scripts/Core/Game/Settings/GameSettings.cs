@@ -80,8 +80,6 @@ public class GameSettings : ScriptableObject {
 	public List<string> 						logoLinks				 		= new List<string>(); //for every game version (versinable game)
 	public List<string> 						uniqueRankingIDS 				= new List<string>(); //for every game version (versinable game)
 	public List<string> 						uniqueSurvivalRankingIDS 		= new List<string>(); //for every game version (versinable game)
-	public List<AdNetwork>						adsNetworks						= new List<AdNetwork>(){AdNetwork.GOOGLE_ADMOB}; //for ALL game version
-	public AdType								adTypeDuringGamePlay			= AdType.RANDOM_INTERSTITIAL_VIDEO;
 	public int									videoPercentageInRandomShow    	= 40;
 	public List<List<string>>					worldLevelRankingIDS 			= new List<List<string>>(); //for every game version (versinable game)
 	public List<List<string>>					survivalLevelRankingIDS 		= new List<List<string>>(); //for every game version (versinable game)

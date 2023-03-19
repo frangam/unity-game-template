@@ -1,4 +1,6 @@
-﻿//RadialGradient.shader
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+//RadialGradient.shader
  Shader "GameTemplate/RadialGradient" {
      Properties {
          _ColorA ("Color A", Color) = (1, 1, 1, 1)
@@ -30,7 +32,7 @@
              v2f vert (appdata_t v)
              {
                  v2f o;
-                 o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                 o.vertex = UnityObjectToClipPos(v.vertex);
                  o.texcoord = v.texcoord;
                  return o;
              }

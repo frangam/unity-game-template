@@ -59,13 +59,6 @@ public class GoSpline
 	/// </summary>
 	private static List<Vector3> nodeListFromAsset( string pathAssetName )
 	{
-		if( Application.platform == RuntimePlatform.OSXWebPlayer || Application.platform == RuntimePlatform.WindowsWebPlayer )
-		{
-			Debug.LogError( "The Web Player does not support loading files from disk." );
-			return null;
-		}
-
-		
 		var path = string.Empty;
 		if( !pathAssetName.EndsWith( ".asset" ) )
 			pathAssetName += ".asset";

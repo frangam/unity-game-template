@@ -2,6 +2,7 @@
 // it's called Square Display and it is by Vikas Kumar
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 [AddComponentMenu( "Sample Game Glue Code/Tank Battle/Game Controller TB" )]
@@ -27,8 +28,8 @@ public class GameController_TB : BaseGameManager
 	
     private float aSpeed;
 	
-    public GUIText timerText;
-    public GUIText posText;
+    public Text timerText;
+    public Text posText;
 	
 	private bool isAhead;
     private CarController_TB car2;
@@ -38,7 +39,7 @@ public class GameController_TB : BaseGameManager
     public GameObject count2;
     public GameObject count1;
 
-    public GUIText finalPositionText;
+    public Text finalPositionText;
 
     public GameObject [] playerPrefabList;
 

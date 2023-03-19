@@ -21,7 +21,7 @@ namespace UnityEngine.Advertisements
 #if UNITY_5
       if (target == BuildTarget.iOS) {
 #else
-      if (target == BuildTarget.iPhone) {
+      if (target == BuildTarget.iOS) {
 #endif
         PostProcessBuild_iOS (path);
       }
@@ -33,7 +33,7 @@ namespace UnityEngine.Advertisements
 #if UNITY_5
       if (target == BuildTarget.iOS) {
 #else
-      if (target == BuildTarget.iPhone) {
+      if (target == BuildTarget.iOS) {
 #endif
         FixUnityPlistAppendBug (path);
       }
@@ -42,7 +42,7 @@ namespace UnityEngine.Advertisements
     private static void PostProcessBuild_iOS (string path)
     {
       bool osxEditor = (Application.platform == RuntimePlatform.OSXEditor);
-      CreateModFile (path, !osxEditor || !EditorUserBuildSettings.symlinkLibraries);
+      CreateModFile (path, !osxEditor || !EditorUserBuildSettings.symlinkSources);
       ProcessXCodeProject (path);
     }
 

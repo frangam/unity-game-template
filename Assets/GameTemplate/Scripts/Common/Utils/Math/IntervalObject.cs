@@ -6,8 +6,7 @@ Author:       Francisco Manuel Garcia Moreno (garmodev@gmail.com)
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ANMiniJSON;
-
+using MiniJSON;
 
 //-----
 //We need this dummy classes in order to edit attributes of IntervalObject<T> 

@@ -76,7 +76,7 @@ public class TexturePackerImporter : AssetPostprocessor
 
 	static void updateSpriteMetaData (TextureImporter importer, string pathToData)
 	{
-		if (importer.textureType != TextureImporterType.Advanced) {
+		if (importer.textureType != TextureImporterType.Default) {
 			importer.textureType = TextureImporterType.Sprite;
 		}
 		importer.maxTextureSize = 4096;

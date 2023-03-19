@@ -158,38 +158,6 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		}
 	}
 
-	public void loadBestScoreFromStore(GK_Score gkScore){
-		if(gkScore != null){
-			string id = gkScore.LeaderboardId;
-			id = id.Replace("_", "-");
-			id = id.Replace(GameSettings.Instance.prefixScoresGroupOnIOS, "");
-
-			GTDebug.log("Get score from GameSettings asset with LeaderboardID: "+ id);
-
-			//get local score objhec
-			Score score = getScoreByID(id);
-
-			if(score != null){
-				GTDebug.log("Local score: LeaderboardID: "+ id + " score: " +score.Value);
-
-				//When platform is iOS and formart is elapsed time we work with milliseconds (neScoreValue is in ms)
-				//we ned to do a coversion from milliseconds score to HUNDREDTHS_OF_A_SECOND (convert ms to s and * 100)
-//				if(Application.platform == RuntimePlatform.IPhonePlayer && score.Format == ScoreFormat.ELAPSED_TIME_HUNDREDTHS_OF_A_SECOND){
-//					double scoreSavedInServerDouble = gkScore.GetDoubleScore();
-//					System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(scoreSavedInServerDouble);
-//					long convertedValue = ((long) (timeSpan.TotalMilliseconds)); //milliseconds
-//					GTDebug.log("LeaderboardID: "+ score.IdForSaveOniOSStore + " Server score (in Secs) - Converting Seconds to MilliSeconds score. Before Conversion: "+scoreSavedInServerDouble+"Secs. After: "+ convertedValue+"Ms");
-//					loadBestScoreFromStore(score.Id, convertedValue);
-//				}
-//				else{
-					loadBestScoreFromStore(score.Id, gkScore.LongScore);
-//				}
-			}
-			else{
-				GTDebug.log("Local score not found with LeaderboardID: "+ id);
-			}
-		}
-	}
 
 	/// <summary>
 	/// Loads the best score from store.
@@ -298,39 +266,7 @@ public class ScoresHandler : PersistentSingleton<ScoresHandler> {
 		#endif
 	}
 	
-	void OnAuthIOSFinished (SA.Common.Models.Result res) {
-		GameCenterManager.OnAuthFinished -= OnAuthIOSFinished;
-		if (res.IsSucceeded) {
-			if(!string.IsNullOrEmpty(scoreIDToShow))
-				GameCenterManager.ShowLeaderboard(scoreIDToShow);
-			else
-				GameCenterManager.ShowLeaderboards();
-		} 
-	}
-	private void OnAndroidDialogClose(AndroidDialogResult res) {
-		switch(res) {
-		case AndroidDialogResult.YES:
-			GooglePlayConnection.Instance.Connect();
-			GooglePlayManager.Instance.ShowAchievementsUI();
-			break;
-		case AndroidDialogResult.NO:
-			break;
-			
-		}
-	}
-	private void onDialogIOSClose(IOSDialogResult result) {
-		
-		//parsing result
-		switch(result) {
-		case IOSDialogResult.YES:
-			GameCenterManager.OnAuthFinished += OnAuthIOSFinished;
-			GameCenterManager.init();
-			break;
-		case IOSDialogResult.NO:
-			break;
-			
-		}
-	}
+	
 	public void saveScoreOnlyLocallyByIndex(int rankingIndex, long score){
 		if(GameSettings.Instance.CurrentScores.Count > rankingIndex){
 			saveScoreOnlyLocallyByID(GameSettings.Instance.CurrentScores[rankingIndex].Id, score);

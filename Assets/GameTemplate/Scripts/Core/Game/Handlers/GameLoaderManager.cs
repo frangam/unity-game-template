@@ -162,7 +162,6 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 		if(initedAllSevices){
 			GTDebug.log("Inited all Services -> Loading next scene");
 			
-			handleInitialAdShowing();
 			loadingNextScene = true;
 			
 			if(GameSettings.mandatoryTutorial)
@@ -409,7 +408,6 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 				ScreenLoaderVisualIndicator.Instance.LoadScene(GameSection.TUTORIAL, GameSettings.Instance.showLoadIndicatorInLoadingScene);
 			}
 			else{
-				handleInitialAdShowing();
 				ScreenLoaderVisualIndicator.Instance.LoadScene (GameSection.MAIN_MENU, GameSettings.Instance.showLoadIndicatorInLoadingScene);
 			}
 		}
@@ -682,17 +680,5 @@ public class GameLoaderManager : Singleton<GameLoaderManager> {
 	}
 	
 	
-	/*--------------------------------
-	 * Initial Ad
-	 -------------------------------*/
-	public virtual void handleInitialAdShowing(){
-		int totalOpenings = PlayerPrefs.GetInt(GameSettings.PP_TOTAL_GAME_OPENINGS);
-		int openingsForShowInitialAd = GameSettings.Instance.TIMES_START_GAME_TO_SHOW_AD_AT_START;
-		
-		//show initial Add
-		if(openingsForShowInitialAd > 0 && totalOpenings % openingsForShowInitialAd == 0){
-			GTDebug.log("Showing interstitial ad when start game");
-			AdsHandler.Instance.showInterstitial();
-		}
-	}
+	
 }

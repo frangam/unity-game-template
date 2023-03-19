@@ -14,21 +14,22 @@ public static class RuntimePlatformUtils {
 	}
 	
 	public static bool IsWebPlayer(){
-		return Application.isWebPlayer;
+		return Application.isConsolePlatform;
 	}
 	
 	public static bool IsEditor(){
 		return Application.isEditor;
 	}
-	
-	public static bool IsFlash(){
-		return _platform == RuntimePlatform.FlashPlayer;
-	}
+
+    public static bool IsFlash()
+    {
+        return _platform == RuntimePlatform.FlashPlayer;
+    }
 
 
-	#region mobile
-	public static bool IsMobile(){
-		return IsIOS() || IsAndroid() || IsWP8() || IsBlackberry();
+    #region mobile
+    public static bool IsMobile(){
+		return Application.isMobilePlatform;  //return IsIOS() || IsAndroid() || IsWP8() || IsBlackberry();
 	}
 	
 	public static bool IsIOS(){
