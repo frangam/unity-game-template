@@ -11,11 +11,11 @@ Products
 # Unity junk files
 #################
 
-Publicacion
-Builds
-Packages
-Temp
-Library
+Publicacion/*
+Builds/*
+Packages/*
+Temp/*
+Library/*
 
 
 #################
