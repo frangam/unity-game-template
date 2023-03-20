@@ -10,7 +10,7 @@ GameTemplate is a game framework allows you to speed up all the new projects you
 This framework supports making versionable games easily. This is the other main goal covered by this plugin. If you need to reuse all of the stuff in the previous version of your game you can do it quickly. You will have to set up several features to tell GameTemplate which is the settings for a new game version.
 
 ## Download last release
-Support us downloading our last release of each software
+Support us downloading our last release:
 - Click on this button to download [![GitHub all releases](https://img.shields.io/github/downloads/frangam/unity-game-template/LIBLEMQHTTP.a)](https://github.com/frangam/unity-game-template/releases/download/2.2.0/GameTemplate_v2.2.0.unitypackage.gz) 
 - We also appreciate your support downloading it on ZENODO site: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7740687.svg)](https://doi.org/10.5281/zenodo.7740687)
 
