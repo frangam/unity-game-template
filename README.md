@@ -4,7 +4,7 @@
 
 ---
 
-GameTemplate is a game framework allows you to speed up all the new projects you want to start. It makes easy to implement a set of common functionalities presented in all projects.
+GameTemplate is a game framework allows you to speed up all the new Unity3D projects you want to start. It makes easy to implement a set of common functionalities presented in all projects.
 
 ### Versionable games
 This framework supports making versionable games easily. This is the other main goal covered by this plugin. If you need to reuse all of the stuff in the previous version of your game you can do it quickly. You will have to set up several features to tell GameTemplate which is the settings for a new game version.
